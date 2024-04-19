@@ -1,0 +1,13 @@
+.Adminheaderlightmode {
+    background-color : white;
+    color:black;
+    box-shadow: -1px 10px 12px -7px rgba(32,149,140,0.28);
+    padding: 1%;
+}
+
+.Adminheaderdarkmode {
+    background-color : black;
+    color:white;
+    box-shadow:  -1px 10px 12px -7px rgba(32,149,140,0.28);
+    padding: 1%;
+}

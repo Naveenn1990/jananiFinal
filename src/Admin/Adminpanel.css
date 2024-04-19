@@ -1,0 +1,193 @@
+.sidebar{
+    padding:3% 0%
+}
+
+.sidebarItem{
+    padding:3% 10%;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgb(86, 85, 85);
+    /* box-shadow: 3px 3px 18px -11px rgba(32,149,140,1); */
+    box-shadow: 0px 7px 5px 0px rgba(32,149,140,1);
+}
+
+.sidebarItem:hover {
+    background-color:hsl(175, 65%, 35%);
+    color:white
+}
+
+.sidebarItem1{
+    padding:3% 0%;
+    cursor: pointer;
+    margin-left: 10%;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgb(86, 85, 85);
+
+}
+.sidebarItem1:hover {
+    background-color:#20958c;
+    color:white
+}
+
+.sidebardropdown{
+    text-align: center;
+}
+
+.sidebarItemdropdown{
+    background-color: transparent;
+    color:black;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+
+}
+
+.sidebarItemdropdown :hover{
+    background-color: red;
+}
+
+.dashboardcard {
+    padding:20px;
+    box-shadow: -1px 10px 12px -7px rgba(32,149,140,0.28);
+border-radius: 20px;
+}
+
+th{
+    background-color: #20958c;
+    color:white
+  }
+
+  .AddIcon{
+    font-size: 80px;
+    font-weight: 600;
+    color: #20958c;
+   
+    position: fixed;
+    bottom: 2%;
+    right: 2%;
+    border:1px solid #20958c;
+   border-radius: 50%;
+    cursor: pointer
+  }
+
+  .AddIcon:hover {
+    font-size: 80px;
+    font-weight: 600;
+    color: #20958c;
+    border-radius: 4px;
+    position: fixed;
+    bottom: 2%;
+    right: 2%;
+   border:5px solid #145a54;
+    cursor: pointer;
+   border-radius: 50%;
+
+  }
+
+  .AddIcon1 {
+    font-size: 70px;
+    font-weight: 600;
+    background-color: #20958c;
+    padding: 10px;
+    border-radius: 50%;
+    color: white;
+    position: fixed;
+    bottom: 2%;
+    right: 2%;
+  }
+
+  .AddIcon1:hover {
+    font-size: 70px;
+    font-weight: 600;
+    background-color: #20958c;
+    padding: 10px;
+    border-radius: 50%;
+    color: white;
+    position: fixed;
+    bottom: 2%;
+    right: 2%;
+    border:5px solid #145a54;
+
+  }
+
+
+
+  #box1 {
+  
+  cursor: pointer;
+  }
+
+  #box1:hover {
+    /* Change background color */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a shadow effect */
+    transform: scale(1.0);
+    border-radius: 20px; /* Scale the box slightly on hover */
+  }
+
+
+  #box2 {
+  
+    cursor: pointer;
+    }
+  
+    #box2:hover {
+      /* Change background color */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a shadow effect */
+      transform: scale(1.0);
+      border-radius: 20px; /* Scale the box slightly on hover */
+    }
+
+
+    #box3 {
+  
+        cursor: pointer;
+        }
+      
+        #box3:hover {
+          /* Change background color */
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a shadow effect */
+          transform: scale(1.0);
+          border-radius: 20px; /* Scale the box slightly on hover */
+        }
+
+
+
+        #box4 {
+  
+            cursor: pointer;
+            }
+          
+            #box4:hover {
+              /* Change background color */
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a shadow effect */
+              transform: scale(1.0);
+              border-radius: 20px; /* Scale the box slightly on hover */
+            }
+
+
+            .websiteMcards {
+              border: 1px solid #20958c;
+              margin: 4%;
+              padding: 8% 4% ;
+              background-color: #20958c;
+              color:white;
+              cursor: pointer;
+              font-size: 16px;
+              font-weight: 600;
+            }
+
+           .websiteMcards:hover {
+            box-shadow:  0px 4px 52px -12px rgba(32,149,140,0.64); /* Add a shadow effect */
+            transform: scale(1.1);
+            /* border-radius: 20px; */
+           }
+
+            .WebMI{
+              font-size: 50px;
+              border:2px solid white;
+              padding:4px;
+              color:white;
+              margin-right: 4%;
+            }

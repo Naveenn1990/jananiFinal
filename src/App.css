@@ -1,0 +1,3525 @@
+p {
+  margin-bottom: 0 !important;
+  font-family: math;
+}
+
+.pacClass {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(241, 239, 239, 0.5); /* Semi-transparent background */
+  backdrop-filter: blur(5px); /* Apply a blur effect */
+  z-index: 1000; /* Ensure it's on top of everything else */
+}
+
+.pac-load-class {
+  display: block;
+  position: absolute !important;
+  font-size: 0px;
+  height: 100px;
+  width: 100px;
+  margin: 0px auto;
+  border-color: red;
+  top: 50% !important;
+  left: 50% !important;
+}
+
+.all-bg-green {
+  background-color: #208b8c !important;
+}
+
+.navbar-light .navbar-toggler-icon {
+  background-image: url("/public/img/toggle-img.png") !important;
+  border: 1px solid black !important;
+  border-radius: 4px;
+}
+
+/* patient-sidebar */
+.trigger.mobile-res {
+  display: none;
+  background-color: #208b8c;
+  color: #0000009d;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: math;
+  letter-spacing: 1px;
+}
+
+h5,
+h6 {
+  font-family: math;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.margin-top {
+  margin-top: 80px;
+}
+
+/* All Input and selector */
+input {
+  border-color: #0000006e !important;
+}
+
+select {
+  border-color: #0000006e !important;
+}
+
+textarea {
+  border-color: #0000006e !important;
+}
+
+/* .navbar-toggler {
+
+  background-color: #2e756c !important;
+  color: #fff !important;
+} */
+
+.navigation-all {
+  font-size: 10px !important;
+  font-weight: bold !important;
+  color: #000 !important;
+  padding: 8px !important;
+  margin: 2px !important;
+  border: none;
+  background-color: none !important;
+}
+
+.navigation-all:hover {
+  background-color: rgb(32, 139, 140) !important;
+  color: #fff !important;
+}
+
+.notification-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 12px;
+  margin-top: 12px;
+  color: rgb(32, 139, 140);
+}
+
+/* Scroll bar start */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  /* box-shadow: inset 0 0 5px grey; */
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #208b8c;
+  background-image: -webkit-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #20588c;
+  background-image: -webkit-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+/* Scroll bar End */
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  overflow: hidden;
+  overflow-y: scroll;
+  max-height: 300px;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black !important;
+  padding: 10px 12px;
+  text-decoration: none !important;
+  display: block;
+  font-size: 12px;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: #208b8c;
+  color: #fff !important;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+/* .dropdown:hover .dropbtn {
+  background-color: rgb(32, 139, 140);
+} */
+
+/* dropdow-1 */
+
+.dropbtn-1 {
+  /* background-color: #04AA6D; */
+  color: #000;
+  padding: 0px !important;
+  font-size: 12px;
+  border: none;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown-1 {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content-1 {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  left: 150px;
+  top: 0px;
+}
+
+/* Links inside the dropdown */
+.dropdown-content-1 a {
+  color: black !important;
+  padding: 12px 16px;
+  text-decoration: none !important;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content-1 a:hover {
+  background-color: rgb(32, 139, 140);
+}
+
+/* Show the dropdown menu on hover */
+.dropdown-1:hover .dropdown-content-1 {
+  display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown-1:hover .dropbtn-1 {
+  background-color: rgb(32, 139, 140);
+}
+
+/* hover for cards */
+.card {
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px !important;
+}
+.card:hover {
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px !important;
+}
+
+/*breadcrumb  */
+
+.breadcrumb-hover {
+  font-weight: 600 !important;
+  color: #208b8c !important;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* more btn */
+.more-btn_0 {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  outline: none;
+  border: 0;
+  vertical-align: middle;
+  text-decoration: none;
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+.more-btn_0.learn-more {
+  width: 12rem;
+  height: auto;
+}
+
+.more-btn_0.learn-more .circle {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  position: relative;
+  display: block;
+  margin: 0;
+  width: 3rem;
+  height: 3rem;
+  background: rgb(32, 139, 140);
+  border-radius: 1.625rem;
+}
+
+.more-btn_0.learn-more .circle .icon {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  background: #fff;
+}
+
+.more-btn_0.learn-more .circle .icon.arrow {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  left: 0.625rem;
+  width: 1.125rem;
+  height: 0.125rem;
+  background: none;
+}
+
+.more-btn_0.learn-more .circle .icon.arrow::before {
+  position: absolute;
+  content: "";
+  top: -0.29rem;
+  right: 0.0625rem;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-top: 0.125rem solid #fff;
+  border-right: 0.125rem solid #fff;
+  transform: rotate(45deg);
+}
+
+.more-btn_0.learn-more .butt-text {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.75rem 0;
+  margin: 0 0 0 1.85rem;
+  color: #282936;
+  font-weight: 700;
+  line-height: 1.6;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.more-btn_0:hover .circle {
+  width: 100%;
+}
+
+.more-btn_0:hover .circle .icon.arrow {
+  background: rgb(32, 139, 140);
+  transform: translate(1rem, 0);
+}
+
+.more-btn_0:hover .butt-text {
+  color: #fff;
+}
+
+.card_img_0 {
+  height: 200px !important;
+  width: 100%;
+  border-radius: 10px 10px !important;
+}
+
+.card-body {
+  padding: 14px !important;
+}
+/* buttons */
+
+.red-btn {
+  position: relative;
+  width: 214px;
+  height: 40px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(211 39 40) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 2px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+}
+
+.red-btn::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "VIEW SCEHDULES";
+  transition: all 0.3s;
+}
+
+.red-btn::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "VIEW SCEHDULES";
+  transition: all 0.3s;
+}
+
+.red-btn:hover::before {
+  top: -60px;
+}
+
+.red-btn:hover::after {
+  top: 0;
+  background-color: #cf522cef;
+  color: #fff;
+}
+
+.red-btn-2 {
+  position: relative;
+  width: 214px;
+  height: 40px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(211 39 40) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 1px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+}
+
+.red-btn-2::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "SUBMIT";
+  transition: all 0.3s;
+}
+
+.red-btn-2::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "SUBMIT";
+  transition: all 0.3s;
+}
+
+.red-btn-2:hover::before {
+  top: -60px;
+}
+
+.red-btn-2:hover::after {
+  top: 0;
+  background-color: #cf522cef;
+  color: #fff;
+}
+
+.red-btn-1 {
+  position: relative;
+  width: 100px;
+  height: 35px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(211 39 40) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+}
+
+.red-btn-1::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "SEARCH";
+  transition: all 0.3s;
+}
+
+.red-btn-1::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "SEARCH";
+  transition: all 0.3s;
+}
+
+.red-btn-1:hover::before {
+  top: -60px;
+}
+
+.red-btn-1:hover::after {
+  top: 0;
+  background-color: #862608ef;
+  color: #fff;
+}
+
+.red-btn-3 {
+  position: relative;
+  width: 150px;
+  height: 35px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(211 39 40) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+}
+
+.red-btn-3::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "LEARN MORE";
+  transition: all 0.3s;
+}
+
+.red-btn-3::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "LEARN MORE";
+  transition: all 0.3s;
+}
+
+.red-btn-3:hover::before {
+  top: -60px;
+}
+
+.red-btn-3:hover::after {
+  top: 0;
+  background-color: #862608ef;
+  color: #fff;
+}
+
+.red-btn-4 {
+  position: relative;
+  width: 250px;
+  height: 35px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(211 39 40) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+}
+
+.red-btn-4::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "STORE";
+  transition: all 0.3s;
+}
+
+.red-btn-4::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "STORE";
+  transition: all 0.3s;
+}
+
+.red-btn-4:hover::before {
+  top: -60px;
+}
+
+.red-btn-4:hover::after {
+  top: 0;
+  background-color: #862608ef;
+  color: #fff;
+}
+
+.red-btn-5 {
+  position: relative;
+  width: 100px;
+  height: 35px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(211 39 40) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+}
+
+.red-btn-5::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Older post";
+  transition: all 0.3s;
+}
+
+.red-btn-5::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Older post";
+  transition: all 0.3s;
+}
+
+.red-btn-5:hover::before {
+  top: -60px;
+}
+
+.red-btn-5:hover::after {
+  top: 0;
+  background-color: #862608ef;
+  color: #fff;
+}
+
+.red-btn-6 {
+  position: relative;
+  width: 100px;
+  height: 35px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(211 39 40) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+}
+
+.red-btn-6::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Newer post";
+  transition: all 0.3s;
+}
+
+.red-btn-6::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Newer post";
+  transition: all 0.3s;
+}
+
+.red-btn-6:hover::before {
+  top: -60px;
+}
+
+.red-btn-6:hover::after {
+  top: 0;
+  background-color: #862608ef;
+  color: #fff;
+}
+
+.red-btn-7 {
+  position: relative;
+  width: 120px;
+  height: 47px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 34px !important;
+  background-color: rgb(211 39 40) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-left: 10px;
+}
+
+.red-btn-7::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "SEARCH";
+  transition: all 0.3s;
+}
+
+.red-btn-7::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "SEARCH";
+  transition: all 0.3s;
+}
+
+.red-btn-7:hover::before {
+  top: -60px;
+}
+
+.red-btn-7:hover::after {
+  top: 0;
+  background-color: #862608ef;
+  color: #fff;
+}
+
+.red-btn-8 {
+  position: relative;
+  width: 130px;
+  height: 35px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(211 39 40) !important;
+  color: #000;
+  font-size: 12px !important;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+}
+
+.red-btn-8::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "VIEW SCHEDULES";
+  transition: all 0.3s;
+}
+
+.red-btn-8::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "VIEW SCHEDULES";
+  transition: all 0.3s;
+}
+
+.red-btn-9:hover::before {
+  top: -60px;
+}
+
+.red-btn-9:hover::after {
+  top: 0;
+  background-color: #862608ef;
+  color: #fff;
+}
+
+.red-btn-9 {
+  position: relative;
+  width: 140px;
+  height: 35px;
+  padding: 18px 25px !important;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(211 39 40) !important;
+  color: #000;
+  font-size: 12px !important;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+}
+
+.red-btn-9::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "BOOK APPOINTMENT";
+  transition: all 0.3s;
+}
+
+.red-btn-9::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "BOOK APPOINTMENT";
+  transition: all 0.3s;
+}
+
+.red-btn-9:hover::before {
+  top: -60px;
+}
+
+.red-btn-9:hover::after {
+  top: 0;
+  background-color: #862608ef;
+  color: #fff;
+}
+
+/* green btn */
+
+.green-btn {
+  position: relative;
+  width: 120px;
+  height: 40px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(32 139 140) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  /* margin-bottom: 20px; */
+}
+
+.green-btn::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "KNOW MORE";
+  transition: all 0.3s;
+}
+
+.green-btn::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "KNOW MORE";
+  transition: all 0.3s;
+}
+
+.green-btn:hover::before {
+  top: -60px;
+}
+
+.green-btn:hover::after {
+  top: 0;
+  background-color: rgba(8, 78, 69, 0.937);
+  color: #fff;
+}
+
+.green-btn-1 {
+  position: relative;
+  width: 120px;
+  height: 40px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(32 139 140) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-1::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Add to Cart";
+  transition: all 0.3s;
+}
+
+.green-btn-1::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Add to Cart";
+  transition: all 0.3s;
+}
+
+.green-btn-1:hover::before {
+  top: -60px;
+}
+
+.green-btn-1:hover::after {
+  top: 0;
+  background-color: rgba(8, 78, 69, 0.937);
+  color: #fff;
+}
+
+.green-btn-2 {
+  position: relative;
+  width: 200px;
+  height: 40px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(246, 253, 253) !important;
+  color: #000 !important;
+  font-size: 15px !important;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+}
+
+.green-btn-2::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "BOOK APPOINTMENT";
+  transition: all 0.3s;
+}
+
+.green-btn-2::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "BOOK APPOINTMENT";
+  transition: all 0.3s;
+}
+
+.green-btn-2:hover::before {
+  top: -60px;
+}
+
+.green-btn-2:hover::after {
+  top: 0;
+  background-color: #6090b2;
+  color: #f8f7f7;
+}
+
+.green-btn-3 {
+  position: relative;
+  width: 120px;
+  height: 37px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(32 139 140) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-3::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Medicine";
+  transition: all 0.3s;
+}
+
+.green-btn-3::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Medicine";
+  transition: all 0.3s;
+}
+
+.green-btn-3:hover::before {
+  top: -60px;
+}
+
+.green-btn-3:hover::after {
+  top: 0;
+  background-color: rgba(8, 78, 69, 0.937);
+  color: #fff;
+}
+
+.green-btn-4 {
+  position: relative;
+  width: 180px !important;
+  height: 37px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(32 139 140) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-4::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Save Purchase";
+  transition: all 0.3s;
+}
+
+.green-btn-4::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Save Purchase";
+  transition: all 0.3s;
+}
+
+.green-btn-4:hover::before {
+  top: -60px;
+}
+
+.green-btn-4:hover::after {
+  top: 0;
+  background-color: rgba(8, 78, 69, 0.937);
+  color: #fff;
+}
+
+.green-btn-5 {
+  position: relative;
+  width: 180px !important;
+  height: 37px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(32 139 140) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-5::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Order";
+  transition: all 0.3s;
+}
+
+.green-btn-5::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Order";
+  transition: all 0.3s;
+}
+
+.green-btn-5:hover::before {
+  top: -60px;
+}
+
+.green-btn-5:hover::after {
+  top: 0;
+  background-color: rgba(8, 78, 69, 0.937);
+  color: #fff;
+}
+
+.green-btn-6 {
+  position: relative;
+  width: 180px !important;
+  height: 37px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(32 139 140) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-6::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Generate Invoice";
+  transition: all 0.3s;
+}
+
+.green-btn-6::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Generate Invoice";
+  transition: all 0.3s;
+}
+
+.green-btn-6:hover::before {
+  top: -60px;
+}
+
+.green-btn-6:hover::after {
+  top: 0;
+  background-color: rgba(8, 78, 69, 0.937);
+  color: #fff;
+}
+
+.green-btn-7 {
+  position: relative;
+  width: 180px !important;
+  height: 37px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(32 139 140) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-7::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Wastage Return";
+  transition: all 0.3s;
+}
+
+.green-btn-7::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Wastage Return";
+  transition: all 0.3s;
+}
+
+.green-btn-7:hover::before {
+  top: -60px;
+}
+
+.green-btn-7:hover::after {
+  top: 0;
+  background-color: rgba(8, 78, 69, 0.937);
+  color: #fff;
+}
+
+.green-btn-8 {
+  position: relative;
+  width: 220px !important;
+  height: 37px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(32 139 140) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-8::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Manufacturer Return";
+  transition: all 0.3s;
+}
+
+.green-btn-8::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Manufacturer Return";
+  transition: all 0.3s;
+}
+
+.green-btn-8:hover::before {
+  top: -60px;
+}
+
+.green-btn-8:hover::after {
+  top: 0;
+  background-color: rgba(8, 78, 69, 0.937);
+  color: #fff;
+}
+
+.green-btn-9 {
+  position: relative;
+  width: 150px !important;
+  height: 37px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(32 139 140) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-9::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Patient";
+  transition: all 0.3s;
+}
+
+.green-btn-9::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Patient";
+  transition: all 0.3s;
+}
+
+.green-btn-9:hover::before {
+  top: -60px;
+}
+
+.green-btn-9:hover::after {
+  top: 0;
+  background-color: rgba(8, 78, 69, 0.937);
+  color: #fff;
+}
+
+.green-btn-10 {
+  position: relative;
+  width: 150px !important;
+  height: 37px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(32 139 140) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-10::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Invoice";
+  transition: all 0.3s;
+}
+
+.green-btn-10::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add Invoice";
+  transition: all 0.3s;
+}
+
+.green-btn-10:hover::before {
+  top: -60px;
+}
+
+.green-btn-10:hover::after {
+  top: 0;
+  background-color: rgba(8, 78, 69, 0.937);
+  color: #fff;
+}
+
+.green-btn-11 {
+  position: relative;
+  width: 200px !important;
+  height: 37px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(50, 185, 16) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-11::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add In Patient";
+  transition: all 0.3s;
+}
+
+.green-btn-11::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add In Patient";
+  transition: all 0.3s;
+}
+
+.green-btn-11:hover::before {
+  top: -60px;
+}
+
+.green-btn-11:hover::after {
+  top: 0;
+  background-color: rgb(96, 207, 68);
+  color: #fff;
+}
+
+.green-btn-12 {
+  position: relative;
+  width: 200px !important;
+  height: 37px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(202, 53, 53) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-12::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add out Patient";
+  transition: all 0.3s;
+}
+
+.green-btn-12::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "+ Add ou Patient";
+  transition: all 0.3s;
+}
+
+.green-btn-12:hover::before {
+  top: -60px;
+}
+
+.green-btn-12:hover::after {
+  top: 0;
+  background-color: rgb(185, 27, 16);
+  color: #fff;
+}
+
+.green-btn-13 {
+  position: relative;
+  width: 200px !important;
+  height: 37px;
+  padding: 30px 40px !important;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px !important;
+  background-color: rgb(235 129 20) !important;
+  color: #000;
+  font-size: 18px !important;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-13::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Check Scheules";
+  transition: all 0.3s;
+}
+
+.green-btn-13::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Check Scheules";
+  transition: all 0.3s;
+}
+
+.green-btn-13:hover::before {
+  top: -60px;
+}
+
+.green-btn-13:hover::after {
+  top: 0;
+  background-color: rgb(173, 93, 13);
+  color: #fff;
+}
+
+.green-btn-14 {
+  position: relative;
+  width: 230px !important;
+  height: 37px;
+  padding: 30px 40px !important;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px !important;
+  background-color: rgb(163, 194, 28) !important;
+  color: #000;
+  font-size: 18px !important;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-14::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Book appointment";
+  transition: all 0.3s;
+}
+
+.green-btn-14::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Book appointment";
+  transition: all 0.3s;
+}
+
+.green-btn-14:hover::before {
+  top: -60px;
+}
+
+.green-btn-14:hover::after {
+  top: 0;
+  background-color: rgb(117, 136, 12);
+  color: #fff;
+}
+
+.green-btn-15 {
+  position: relative;
+  width: 250px !important;
+  height: 37px;
+  padding: 30px 40px !important;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px !important;
+  background-color: rgb(9, 79, 172) !important;
+  color: #000;
+  font-size: 18px !important;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.green-btn-15::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Check Booked Appointments ";
+  transition: all 0.3s;
+}
+
+.green-btn-15::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "Check Booked Appointments";
+  transition: all 0.3s;
+}
+
+.green-btn-15:hover::before {
+  top: -60px;
+}
+
+.green-btn-15:hover::after {
+  top: 0;
+  background-color: rgb(5, 45, 99);
+  color: #fff;
+}
+
+/* logo */
+.logo {
+  width: 100%;
+  height: 70px;
+  margin-left: 10px;
+}
+
+/* NAVBAR */
+
+.navbar-height {
+  height: 36px;
+}
+
+.nav-link.nav-icons {
+  padding-right: 0 !important;
+}
+
+.navbar-navigations {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* .appointment-header{
+  border-bottom: 1px solid rgb(211 39 40);
+  padding-bottom: 5px;  
+} */
+
+.home-input {
+  padding: 7px 0px 7px 4px;
+  width: 100%;
+  border-radius: 7px;
+  border: none;
+}
+
+.testimonial-img {
+  margin: auto;
+  height: 150px;
+  border-radius: 50%;
+}
+
+.card-btn {
+  text-decoration: none;
+  padding: 10px;
+  color: white;
+  background-color: rgb(32 139 140) !important;
+  border-radius: 5px;
+}
+
+.card-btn:hover {
+  background-color: rgb(49, 173, 175) !important;
+  color: black !important;
+}
+
+/* latest news */
+.latest {
+  font-size: 12px;
+}
+
+.latest-date {
+  border: 1px solid #000;
+  background-color: #065064;
+  padding: 4px;
+  color: white;
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
+/* appointment */
+.appointment-icon {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.24);
+  box-shadow: 0px 8px 32px 0px rgba(19, 19, 20, 0.37);
+  backdrop-filter: blur(4px);
+  border-radius: 15px;
+  width: 170px !important;
+  padding-top: 12px !important;
+  padding-right: 0px !important;
+  padding-left: 0px !important;
+  text-decoration: none;
+  color: #000;
+}
+
+.appointment-icon:hover {
+  color: #fff !important;
+  background-color: #208b8c;
+  transition: all 0.3s ease;
+}
+
+.appointment-icon a:hover {
+  color: #fff !important;
+  background-color: #007c9d;
+}
+
+/* slide slick */
+
+.slick-dots li button:before {
+  font-family: "slick";
+  font-size: 15px !important;
+  line-height: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  content: "•";
+  text-align: center;
+  opacity: 0.25;
+  color: rgb(32, 139, 140) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+.slick-slidder .slick-track {
+  position: relative;
+  top: -12px !important;
+  left: 0;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* SCHEDULE */
+
+.schedule-row {
+  background-color: rgb(32 139 140);
+  padding: 20px;
+  min-width: 155px;
+}
+
+.tb {
+  padding: 10px;
+}
+
+.available {
+  background-color: rgb(180, 219, 219);
+}
+
+/* PHARMACY */
+
+.pharmacy-heading {
+  font-size: 62px;
+  color: #072264;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.pharmacy-text {
+  text-align: center;
+  /* padding: 80px 0px 0px 100px !important; */
+}
+
+.category-list {
+  padding-top: 10px;
+}
+
+.category-list li a {
+  color: #000;
+}
+
+.category-list li {
+  padding-bottom: 20px;
+}
+
+.pharmacy-navigation {
+  font-size: 13px !important;
+  font-weight: bold !important;
+  color: #208b8c !important;
+  padding: 8px !important;
+  height: 33px;
+}
+
+.pharmacy-navigation:hover {
+  background-color: rgb(32, 139, 140) !important;
+  color: #fff !important;
+}
+
+.pharmacy-navigation-icon {
+  font-size: 20px !important;
+  font-weight: bold !important;
+  color: #208b8c !important;
+  padding: 3px !important;
+  height: 33px;
+}
+
+.pharmacy-navigation-icon:hover {
+  background-color: rgb(32, 139, 140) !important;
+  color: #fff !important;
+}
+
+/* Pharmacy Login */
+.login-pharmacy {
+  border-radius: 20px;
+  box-shadow: 0px 1px 25px 10px rgba(52, 56, 56, 0.28);
+}
+
+/* pharmacy check out */
+
+.address {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #208b8c;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.payment-method {
+  border: 1px solid #208b8c;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.check-img {
+  width: 100px;
+  height: 80px;
+}
+
+.paymentsummery {
+  border: 1px solid #208b8c;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+/* Pharmacy and diagnostic wish List */
+.wishlist-cart-btn {
+  background-color: #208b8c !important;
+  padding: 0px !important;
+  height: 29px !important;
+  width: 90px !important;
+}
+
+.wishlist-remove-btn {
+  background-color: #d30707d1 !important;
+  padding: 0px !important;
+  height: 29px !important;
+  width: 66px !important;
+}
+
+/* Diagnostic */
+
+.Carousel-caption,
+.diagnostic-slide {
+  top: 10% !important;
+  position: absolute;
+  right: 60% !important;
+  bottom: 1.25rem;
+  left: 10% !important;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  color: #fff;
+  text-align: center;
+}
+
+.wishlist-icon {
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+}
+
+.wishlist-icon:hover {
+  color: #fff;
+  fill: #000 !important;
+}
+
+/* Patient portal */
+
+.form_0 {
+  width: 100%;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px;
+  background-color: white;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  transition: 0.4s ease-in-out;
+}
+
+.form_0:hover {
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+  scale: 0.99;
+}
+
+.check {
+  position: relative;
+  align-self: center;
+  top: 4em;
+}
+
+.input_0 {
+  position: relative;
+  width: 2.5em;
+  height: 2.5em;
+  margin: 1em;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  background-color: rgb(235, 235, 235);
+  box-shadow: inset 3px 3px 6px #817f7f, inset -3px -3px 6px #ffffff;
+  top: 1.5em;
+  left: 1.5em;
+  padding-left: 15px;
+  transition: 0.4s ease-in-out;
+}
+
+.input_0:hover {
+  box-shadow: inset 0px 0px 0px #d1d1d1, inset 0px 0px 0px #ffffff;
+  background-color: lightgrey;
+}
+
+.input_0:focus {
+  box-shadow: inset 0px 0px 0px #d1d1d1, inset 0px 0px 0px #ffffff;
+  background-color: lightgrey;
+}
+
+/* ///// */
+.lord {
+  width: 190px;
+  background: white;
+  padding: 0.4em;
+  border-radius: 6px;
+}
+
+.lord-image {
+  background-color: rgb(236, 236, 236);
+  border-radius: 6px 6px 0 0;
+}
+
+.lord-image:hover {
+  transform: scale(0.98);
+}
+
+.lord span {
+  font-size: 12px !important;
+  color: #0000009d;
+}
+.wategory {
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(35 150 142);
+  /* padding: 10px 7px 0; */
+}
+
+.heading_0 {
+  font-weight: 600;
+  color: rgb(35 150 142);
+  padding: 7px;
+}
+
+.heading_0:hover {
+  cursor: pointer;
+}
+
+.patient-login-input {
+  position: relative;
+}
+
+.password-eye {
+  position: absolute;
+  left: 21rem;
+  top: 0.8rem;
+  cursor: pointer;
+}
+
+.create-account-password-1 {
+  position: relative;
+}
+
+.password-eye-1 {
+  position: absolute;
+  left: 35rem;
+  top: 1.5rem;
+  cursor: pointer;
+}
+
+.create-account-password-2 {
+  position: relative;
+}
+
+.password-eye-2 {
+  position: absolute;
+  left: 35rem;
+  top: 1.4rem;
+  cursor: pointer;
+}
+
+.patient-appointment {
+  background: none;
+  padding: 12px !important;
+  margin-left: 24px !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #000 !important;
+}
+
+.patient-appointmen-dropdown {
+  color: #000 !important;
+}
+
+.patient-appointmen-dropdown:hover {
+  background-color: brown !important;
+  color: #f1f1f1 !important;
+}
+
+.mobile_side_0 {
+  display: none;
+}
+
+.badge-side {
+  display: none;
+}
+
+/* Patient Dashboard */
+
+.active-0 {
+  background: #b7432c !important;
+  background: #d43b3b !important;
+  /* width: 19%; */
+}
+
+.a-ele:hover,
+.sub:hover {
+  background: #a01919 !important;
+  background: #dcdde1 !important;
+  color: #000 !important;
+}
+
+.abdhba_0 button {
+  background-color: rgb(32, 139, 140);
+  margin: 20px;
+}
+
+/* patient medical record */
+
+.wrapper {
+  max-width: 100%;
+  /* margin: 50px auto; */
+  padding: 0 20px;
+  position: relative;
+}
+
+.wrapper .row {
+  display: flex;
+}
+
+.wrapper .row section {
+  background-color: #d0e2d0;
+  border-radius: 20px 20px 20px 20px;
+  width: 800px;
+  margin-top: 20px;
+  padding: 20px 20px 20px 20px;
+  position: relative;
+  left: 97px;
+}
+
+/* .wrapper .row section:hover{
+  background-color: #8c9f8dbb;
+} */
+.wrapper .row section h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.wrapper .row section::before {
+  position: absolute;
+  content: "";
+  height: 15px;
+  width: 15px;
+  background: #daf7dbbb;
+  top: 28px;
+  z-index: -1;
+  transform: rotate(45deg);
+  left: -7px;
+}
+
+.details {
+  color: rgb(90, 88, 88);
+}
+
+.row section .icon,
+.center-line .scroll-icon {
+  position: absolute;
+  background-color: white;
+  height: 40px;
+  width: 40px;
+  text-align: center;
+  line-height: 40px;
+  border-radius: 50%;
+  /* color: #8c9f8d; */
+  top: 13px;
+  left: -55px;
+  /* border: 1px solid; */
+}
+
+.wrapper .center-line {
+  position: absolute;
+  height: 95%;
+  width: 4px;
+  background-color: #dce0dc;
+  left: 5.3%;
+  top: 35px;
+  transform: translateX(50%);
+}
+
+.center-line .scroll-icon {
+  bottom: 0px;
+  left: -37px;
+  transform: translateX(50%);
+  top: 105rem;
+}
+
+/* SIDEBAR */
+
+.left-side {
+  background-color: #fcfcfc;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  height: 700px;
+  top: 0px;
+  position: sticky;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+/* Doctors DASHBOARD */
+
+.admin-table-head {
+  background-color: rgb(238, 232, 232);
+}
+
+.admin-table-row:hover {
+  background-color: rgb(224, 224, 224);
+  align-items: center;
+}
+
+.Diseases-btn {
+  text-align: center;
+  font-size: 12px;
+  padding: 3px;
+
+  border-radius: 5px;
+}
+
+.table-details-btn {
+  border: 1px solid #208b8c;
+  color: #208b8c;
+  border-radius: 5px;
+}
+
+.table-details-btn:hover {
+  background-color: #208b8c;
+  color: #f1f1f1;
+}
+
+.patient-group-letter {
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 5px;
+  /* background-color: orange; */
+  border-radius: 10px;
+  margin-right: 5px;
+}
+
+.admin-chat {
+  font-size: 15px;
+}
+
+.admin-chat-online {
+  font-size: 12px;
+}
+
+/* Doctors Login Btn */
+
+.doctor-login-btn button {
+  width: 100px;
+  padding: 5px 12px 5px 12px !important;
+  font-weight: bold;
+  min-height: 45px;
+}
+
+.doctor-login-password {
+  position: relative;
+}
+
+.doctor-login-eye {
+  position: absolute;
+  left: 28rem;
+  top: 1.5rem;
+}
+
+/* All Portal SideBar */
+
+.sidebar {
+  padding: 3% 0%;
+}
+
+.sidebarItem {
+  padding: 7% 10%;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(86, 85, 85);
+  /* box-shadow: 3px 3px 18px -11px rgba(32,149,140,1); */
+  box-shadow: 0px 7px 5px 0px rgba(32, 149, 140, 1);
+  width: 220px;
+}
+
+.sidebarItem:hover {
+  background-color: hsl(175, 65%, 35%);
+  color: white !important;
+}
+
+.sidebarItem1 {
+  padding: 6% 5%;
+  cursor: pointer;
+  margin-left: 5%;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(86, 85, 85);
+}
+
+.sidebarItem1:hover {
+  background-color: #20958c;
+  color: white;
+}
+
+.sidebardropdown {
+  text-align: center;
+}
+
+.sidebarItemdropdown {
+  background-color: transparent;
+  color: black;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sidebarItemdropdown :hover {
+  background-color: red;
+}
+
+.dashboardcard {
+  padding: 20px;
+  box-shadow: -1px 10px 12px -7px rgba(32, 149, 140, 0.28);
+  border-radius: 20px;
+}
+
+.AddIcon {
+  font-size: 80px;
+  font-weight: 600;
+  color: #20958c;
+
+  position: fixed;
+  bottom: 2%;
+  right: 2%;
+  border: 1px solid #20958c;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.AddIcon:hover {
+  font-size: 80px;
+  font-weight: 600;
+  color: #20958c;
+  border-radius: 4px;
+  position: fixed;
+  bottom: 2%;
+  right: 2%;
+  border: 5px solid #145a54;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.AddIcon1 {
+  font-size: 70px;
+  font-weight: 600;
+  background-color: #20958c;
+  padding: 10px;
+  border-radius: 50%;
+  color: white;
+  position: fixed;
+  bottom: 2%;
+  right: 2%;
+}
+
+.AddIcon1:hover {
+  font-size: 70px;
+  font-weight: 600;
+  background-color: #20958c;
+  padding: 10px;
+  border-radius: 50%;
+  color: white;
+  position: fixed;
+  bottom: 2%;
+  right: 2%;
+  border: 5px solid #145a54;
+}
+
+#box1 {
+  cursor: pointer;
+}
+
+#box1:hover {
+  /* Change background color */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  /* Add a shadow effect */
+  transform: scale(1);
+  border-radius: 20px;
+  /* Scale the box slightly on hover */
+}
+
+#box2 {
+  cursor: pointer;
+}
+
+#box2:hover {
+  /* Change background color */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  /* Add a shadow effect */
+  transform: scale(1);
+  border-radius: 20px;
+  /* Scale the box slightly on hover */
+}
+
+#box3 {
+  cursor: pointer;
+}
+
+#box3:hover {
+  /* Change background color */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  /* Add a shadow effect */
+  transform: scale(1);
+  border-radius: 20px;
+  /* Scale the box slightly on hover */
+}
+
+#box4 {
+  cursor: pointer;
+}
+
+#box4:hover {
+  /* Change background color */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  /* Add a shadow effect */
+  transform: scale(1);
+  border-radius: 20px;
+  /* Scale the box slightly on hover */
+}
+
+/* Medicine List */
+
+.dropdown .medicine-list {
+  background: none;
+  padding: 0px !important;
+  margin-left: 24px !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #000 !important;
+  background-color: #fffefe !important;
+}
+
+.dropdown .medicine-list:hover {
+  background-color: #eee8e8 !important;
+}
+
+.medicine-list-dropdown:hover {
+  background-color: #20958c !important;
+}
+
+.medicine-list::after {
+  display: none !important;
+}
+
+/* REFER DOCTORS */
+
+.refer-dashboard {
+  padding: 20px 0px 20px 0px;
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  gap: 45px;
+}
+
+/* CK EDITOR */
+.ck-editor__editable.ck-rounded-corners {
+  height: 300px !important;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+/* Bottom Page change button */
+
+.page-change-btn {
+  border: 1px solid #20958c;
+  padding: 5px;
+  cursor: pointer;
+  color: #007c9d;
+}
+
+.page-change-btn:hover {
+  background-color: #20958c;
+  color: #fff;
+}
+
+/* pagination */
+
+.pagination button {
+  border: 1px solid #0b7676;
+  padding: 5px;
+}
+
+.pagination span {
+  float: right;
+}
+
+.pagination .btn1 {
+  background-color: #0b7676;
+}
+
+.pagination .btn2 {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.pagination .btn3 {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/* OUT PATIENT FORM BUTTON */
+
+.input-heading {
+  font-size: 16px;
+  border: 1px solid #0000006e;
+  padding: 6px 8px;
+  font-weight: bold;
+  min-width: 200px;
+}
+
+.select-width {
+  min-width: 73px !important;
+  background-color: #1399be !important;
+  color: #fff !important;
+  border-radius: 0px !important;
+}
+
+.input-width {
+  min-width: 258px !important;
+  padding: 6px !important;
+  border-radius: 0px !important;
+}
+
+/* Beds */
+
+.bed-green {
+  color: #4ba74b;
+  font-size: 50px;
+}
+
+.bed-red {
+  color: #d91010;
+  font-size: 50px;
+}
+
+.bed-blue {
+  color: #2323e5;
+  font-size: 50px;
+}
+
+.bed-green-details {
+  cursor: pointer;
+  border: 2px solid #4ba74b;
+  border-radius: 5px;
+  text-align: center;
+  width: 100px;
+}
+
+.bed-red-details {
+  cursor: pointer;
+  border: 2px solid #d91010;
+  border-radius: 5px;
+  text-align: center;
+  width: 100px;
+}
+
+.bed-blue-details {
+  cursor: pointer;
+  border: 2px solid #2323e5;
+  border-radius: 5px;
+  text-align: center;
+  width: 100px;
+}
+
+/* Staff doctor management */
+
+.staff-doctor-management-h5 {
+  padding: 10px;
+  background-color: #df3665;
+  width: 250px;
+  border-radius: 5px;
+  color: rgb(255, 255, 255);
+  margin-bottom: 20px;
+  font-family: "Oswald variant0";
+  text-align: center;
+  margin-left: 10px;
+}
+
+.nav-link.active {
+  background-color: rgb(32 139 140) !important;
+  color: #fff !important;
+}
+
+/* calendar event */
+.calendar_default_event_inner {
+  background: #2e78d6;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 10pt;
+  padding: 5px;
+  opacity: 0.8;
+}
+
+/* NavBar Page Progress bar */
+.progressVisualFull {
+  display: flex;
+  /* change the value if you want different thickness */
+  height: 2px;
+  /* margin: 20px 0; */
+}
+
+.progressVisualPart {
+  /* Number of the seconds for complete animation */
+  transition: width 5s;
+}
+
+/*Mobile Patient Sidebar  */
+
+/* Patient Sidebar */
+
+.Patient-sidebar-page {
+  width: 100%;
+  height: 100%;
+}
+
+.content {
+  width: calc(100% - 50px);
+  margin-left: auto;
+  padding: 15px;
+  height: 100%;
+  word-break: break-word;
+}
+
+.Patient-sidebar {
+  position: fixed;
+  top: 0;
+  width: 50px;
+  height: 100%;
+  background-color: #f3f8fa;
+  transition: width 0.3s ease;
+  /* border-right: 1px #4d606e solid; */
+  padding-top: 15px;
+  z-index: 999;
+}
+
+/* .Patient-sidebars{
+  position: fixed;
+  top: 0;
+  width: 50px;
+  height: 100%;
+  background-color: #2a363b;
+  transition: width 0.3s ease;
+  border-right: 1px #4d606e solid;
+  padding-top: 15px;
+  z-index: 999;
+}  */
+
+.Patient-sidebar .Patient-sidebar-position {
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  text-align: left;
+}
+
+.Patient-sidebar .Patient-sidebar-position:hover {
+  background-color: #fafeff;
+  /* border-right: 5px #e84a5f solid; */
+}
+
+/* .Patient-sidebar svg {
+  color: #000000ad;
+  min-width: 25px;
+} */
+
+.Patient-sidebar span {
+  width: 0;
+  height: 0;
+  padding: 0 15px;
+  transition: width 1.3s ease !important;
+  color: #c9c9c9;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.Patient-sidebar--open {
+  width: 220px;
+  transition: width 1.3s ease !important;
+  max-height: calc(100vh - 2.5rem);
+  overflow-y: auto;
+}
+
+.Patient-sidebar--open .Patient-sidebar-position span {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: #000000ad;
+}
+
+.trigger {
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 12px 15px;
+}
+
+/* 404 Page */
+
+.section-ptb {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+.page-not-found .search-error-wrapper {
+  text-align: center;
+}
+
+.page-not-found .search-error-wrapper h1 {
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.page-not-found .search-error-wrapper h1 span:nth-child(odd) {
+  color: #9dcd45;
+}
+
+.page-not-found .search-error-wrapper h2 span:nth-child(odd) {
+  color: #9dcd45;
+}
+
+.page-not-found .search-error-wrapper h2 {
+  font-size: 50px;
+  font-weight: 600;
+}
+
+/* Counter up */
+.counter-up-border {
+  border-radius: 5px;
+  padding: 20px;
+  /* border: 1px solid rgba(0, 0, 0, 0.253); */
+  box-shadow: 0px 0px 6px 2px;
+  width: 265px !important;
+}
+
+.counter-up-border p {
+  font-family: "math";
+}
+
+.counter-up {
+  display: flex;
+  gap: 10px;
+  max-height: 85px;
+}
+
+.counter-up h5 {
+  font-size: 30px;
+  color: #080808;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke-width: 1.4px;
+  -webkit-text-stroke-color: #080808;
+  position: relative;
+  line-height: 105px;
+}
+
+/* Gallery */
+
+.bhRnqO {
+  position: absolute;
+  top: calc(50% - 17.5px);
+  height: 35px;
+  width: 35px;
+  background: #208b8c !important;
+  border-radius: 50%;
+  box-shadow: 0 0 5px 0 #208b8c !important;
+  z-index: 10;
+  cursor: pointer;
+  font-size: 10px;
+  opacity: 0.6;
+  -webkit-transition: opacity 0.25s;
+  transition: opacity 0.25s;
+  left: initial;
+  right: 5px;
+}
+
+.kVtMtA {
+  position: absolute;
+  top: calc(50% - 17.5px);
+  height: 35px;
+  width: 35px;
+  background: #208b8c !important;
+  border-radius: 50%;
+  box-shadow: 0 0 5px 0 #208b8c !important;
+  z-index: 10;
+  cursor: pointer;
+  font-size: 10px;
+  opacity: 0.6;
+  -webkit-transition: opacity 0.25s;
+  transition: opacity 0.25s;
+  left: -22px !important;
+  right: initial;
+}
+
+/* Contacts */
+
+.contact-icon {
+  border: 1px solid white !important;
+  border-radius: 50%;
+  background: white !important;
+  color: #208b8c !important;
+  padding: 0px 5px !important;
+}
+
+/* pharma store */
+/* website order */
+.store-download-btn {
+  display: flex !important;
+  gap: 10px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: #208b8c !important;
+  width: 300px !important;
+  height: 42px;
+  margin-top: 27px !important;
+  margin-left: 12px;
+  font-size: 14px !important;
+}
+/* footer */
+
+.footer-btn {
+  margin: 0 !important;
+  font-size: 12px !important;
+}
+
+/* MEDIA QUERY */
+
+@media only screen and (max-width: 600px) {
+  /* Home Page */
+
+  .home-contact-number {
+    display: none !important;
+  }
+
+  .Home-carousel-img {
+    height: 200px !important;
+  }
+
+  /* LAB */
+  .lab-carousel {
+    height: 300px !important;
+  }
+
+  .lab-carousel-text h3 {
+    font-size: 12px !important;
+    width: 220px !important;
+  }
+
+  .lab-carousel-text p {
+    font-size: 12px !important;
+    width: 220px !important;
+  }
+
+  .lab-carousel-text .green-btn-2 {
+    font-size: 8px !important;
+    width: 120px !important;
+    margin-left: 53px !important;
+    margin-top: 50px;
+  }
+
+  .search-width {
+    width: 280px !important;
+  }
+
+  .search-btn {
+    display: none !important;
+  }
+
+  .lab-pharma-contact {
+    display: none !important;
+  }
+
+  /* Pharmacy */
+  .pharmacy-left-col {
+    display: none !important;
+  }
+
+  .pharmacy-slide {
+    height: 200px !important;
+  }
+
+  /* Contact Us */
+  .google-map {
+    height: 300px !important;
+  }
+
+  /* All Header Background Img */
+  .head-back-img {
+    height: auto !important;
+  }
+
+  .container .back-img-head {
+    padding-top: 30px !important;
+    padding-bottom: 30px !important;
+  }
+
+  /* Patient Portal */
+
+  .patient-login {
+    width: 300px !important;
+    padding: 0px !important;
+  }
+
+  .patient-login-bg {
+    height: 70px !important;
+  }
+
+  .patient-portal-logo {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .patient-portal-img {
+    width: 90px !important;
+    height: 70px !important;
+  }
+
+  .password-eye {
+    position: absolute;
+    left: 15rem;
+    top: 0.8rem;
+    cursor: pointer;
+  }
+
+  /* create account */
+  .flex-1 {
+    flex-direction: column !important;
+    gap: 0rem !important;
+    margin-bottom: 20px !important;
+  }
+
+  .width-respns {
+    width: 300px !important;
+  }
+
+  .create-account-password-1 {
+    position: relative;
+  }
+
+  .password-eye-1 {
+    position: absolute;
+    left: 17rem;
+    top: 1.5rem;
+    cursor: pointer;
+  }
+
+  .create-account-password-2 {
+    position: relative;
+  }
+
+  .password-eye-2 {
+    position: absolute;
+    left: 17rem;
+    top: 1.4rem;
+    cursor: pointer;
+  }
+
+  .younger {
+    font-size: 14px;
+  }
+
+  /* Patient portal Sidebar */
+
+  /* .mobile_side {
+    display: none;
+  }
+
+  .left-side {
+    height: auto;
+  }
+
+  .badge-side {
+    display: block;
+  } */
+
+  .sidebarItem {
+    padding: 4% 10%;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgb(86, 85, 85);
+    /* box-shadow: 3px 3px 18px -11px rgba(32,149,140,1); */
+    box-shadow: 0px 7px 5px 0px rgba(32, 149, 140, 1);
+    width: 320px;
+  }
+
+  .wrapper .center-line {
+    display: none;
+  }
+
+  .center-line .scroll-icon {
+    display: none;
+  }
+
+  .your-appointment-respns {
+    width: 320px !important;
+    justify-content: center;
+  }
+
+  /* Patient sidebar */
+
+  .Patient-sidebars {
+    display: none;
+  }
+
+  .trigger {
+    display: block !important;
+  }
+
+  .Patient-sidebar--open {
+    position: fixed;
+    top: 40px !important;
+  }
+
+  .patient-sidebarItem {
+    padding: 4% 10%;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgb(86, 85, 85);
+    box-shadow: 3px 3px 18px -11px rgba(32, 149, 140, 1);
+    box-shadow: 0px 7px 5px 0px rgba(32, 149, 140, 1);
+    width: 215px;
+  }
+
+  .patient-sidebarItem:hover {
+    background-color: hsl(175, 65%, 35%);
+    color: white !important;
+  }
+
+  .patient-mobile {
+    display: none;
+  }
+
+  .left-side {
+    height: auto;
+    position: relative;
+    z-index: 9999;
+  }
+
+  /* Patient Bill Invoice */
+  .invoice-rspns {
+    width: 700px;
+  }
+
+  /* pharmacy */
+
+  .pharmacy-slide-img {
+    width: 120px !important;
+    height: 120px !important;
+  }
+
+  .pharmacy-slide-text {
+    font-size: 12px !important;
+  }
+
+  .radius-img {
+    border-radius: 5px !important;
+    height: 200px !important;
+    padding: 0px;
+  }
+
+  .mobile-padding-0 {
+    padding: 0px !important;
+  }
+
+  /* Pharmacy Login Page */
+  .login-pharmacy-img {
+    width: auto !important;
+    height: 300px !important;
+  }
+
+  .login-pharmacy-head {
+    font-size: 24px;
+  }
+
+
+
+  /*  Pharmacy chechk out*/
+  .table-rspn {
+    overflow: hidden !important;
+    overflow-x: scroll !important;
+    /* width: auto; */
+    /* max-width: 300px !important; */
+  }
+}
+
+/* Media Query 768px */
+@media only screen and (max-width: 768px) and (min-width: 600px) {
+  /* Patient portal Medical record */
+  .wrapper .center-line {
+    left: 8.7% !important;
+    top: 35px !important;
+  }
+
+  .center-line .scroll-icon {
+    left: -37px !important;
+    top: 107rem !important;
+  }
+
+  /* Patient sidebar */
+
+  .Patient-sidebars {
+    display: none;
+  }
+
+  .trigger {
+    display: block !important;
+  }
+
+  .Patient-sidebar--open {
+    position: fixed;
+    top: 40px !important;
+  }
+
+  .patient-sidebarItem {
+    padding: 4% 10%;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgb(86, 85, 85);
+    /* box-shadow: 3px 3px 18px -11px rgba(32,149,140,1); */
+    box-shadow: 0px 7px 5px 0px rgba(32, 149, 140, 1);
+    width: 244px;
+  }
+
+  .patient-sidebarItem:hover {
+    background-color: hsl(175, 65%, 35%);
+    color: white !important;
+  }
+
+  .patient-mobile {
+    display: none;
+  }
+
+  .left-side {
+    height: auto;
+    position: relative;
+    z-index: 9999;
+  }
+
+  .width-respns {
+    width: 300px !important;
+  }
+
+  .width-respns-768px {
+    width: 600px !important;
+  }
+}
+
+/* Media Query 1024px */
+@media only screen and (max-width: 1024px) {
+  /* Patient portal Medical record */
+  /* .wrapper .center-line {
+    left: 8%;
+    top: 35px;
+
+  }
+
+  .center-line .scroll-icon {
+    bottom: 0px;
+    left: -39px;
+    transform: translateX(50%);
+    top: 104rem;
+  } */
+}
+
+/* Media Query 1024 to 992 */
+
+@media only screen and (max-width: 1024px) and (min-width: 992px) {
+  /* Patient Portal Sidebar */
+
+  .left-side {
+    background-color: #fcfcfc;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    height: 550px;
+    top: 0px;
+    position: sticky;
+    overflow: hidden;
+    overflow-y: scroll;
+    width: 200px;
+    z-index: 1;
+  }
+
+  .sidebarItem {
+    padding: 7% 10%;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgb(86, 85, 85);
+    box-shadow: 3px 3px 18px -11px rgba(32, 149, 140, 1);
+    box-shadow: 0px 7px 5px 0px rgba(32, 149, 140, 1);
+    width: 190px;
+  }
+
+  .sidebarItem1 {
+    padding: 6% 5%;
+    cursor: pointer;
+    margin-left: 5%;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgb(86, 85, 85);
+  }
+
+  .side-profile-name {
+    font-size: 20px !important;
+  }
+
+  .wrapper .center-line {
+    left: 8%;
+    top: 35px;
+  }
+
+  .center-line .scroll-icon {
+    bottom: 0px;
+    left: -39px;
+    transform: translateX(50%);
+    top: 104rem;
+  }
+}
+
+.wt-50 {
+  height: 125px;
+  width: 160px;
+}
+
+.product-title h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.product-inventory h6 {
+  margin-right: 15px;
+}
+
+.pro-price-label {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.price-box .new-price {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.price-box .old-price {
+  font-size: 16px;
+  text-decoration: line-through;
+  padding-left: 5px;
+}
+
+.product-label {
+  margin-left: 5px;
+}
+
+.product_details_info .product-description {
+  margin-top: 10px;
+  color: #9a9a9a;
+}
+
+.pro-detail-button-0 {
+  display: flex;
+  gap: 35px;
+}
+
+.wish-09 {
+  font-size: 14px;
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  background-color: #028148;
+  justify-content: center;
+  border-radius: 50px;
+  color: white;
+  cursor: pointer;
+  margin-right: 5px;
+  height: 40px;
+  border: 1px solid #028148;
+}
+
+.product-sku {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #ededed;
+  display: flex;
+  align-items: center;
+}
+
+.product-sku span {
+  margin-left: 15px;
+  line-height: 1;
+}
+
+.tab-0-active {
+  border: 1px solid #028148;
+  cursor: pointer;
+}
+.img__item:hover {
+  border: 1px solid #028148;
+  cursor: pointer;
+}
+
+.presentation {
+  justify-content: center;
+  display: flex;
+  list-style: none;
+  column-gap: 80px;
+}
+
+.des-0__0 {
+  padding: 8px 15px;
+  position: relative;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 50px;
+  text-transform: uppercase;
+  color: #949494;
+}
+
+.uni-details-hero {
+  padding: 40px 20px;
+}
+
+.pre-active {
+  border: 1px solid black;
+  color: black;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.des-0__0:hover {
+  border: 1px solid black;
+  color: black;
+  cursor: pointer;
+}
+
+.spr-form-input-text {
+  border: 1px solid #e5e5e5;
+  padding: 8px 10px;
+  border-radius: 3px;
+  width: 100%;
+  outline: 0;
+}
+
+.spr-header-title {
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.write_re {
+  font-size: 16px;
+  color: #028148;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.write_re__090 {
+  font-size: 16px;
+  color: #028148;
+  cursor: pointer;
+  border: none;
+  background-color: unset !important;
+  text-decoration: underline;
+}
+.re-pro-0-9 h4 {
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  text-align: center;
+}
+
+.wish-0911 {
+  font-size: 14px;
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  background-color: #028148;
+  justify-content: center;
+  border-radius: 50px;
+  color: white;
+  cursor: pointer;
+  margin-right: 5px;
+  height: 40px;
+  border: 1px solid #028148;
+}
+
+.wish-09111 {
+  font-size: 14px;
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  background-color: red;
+  justify-content: center;
+  border-radius: 50px;
+  color: white;
+  cursor: pointer;
+  margin-right: 5px;
+  height: 40px;
+  border: 1px solid red;
+}
