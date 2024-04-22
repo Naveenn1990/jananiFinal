@@ -1,11 +1,21 @@
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, FloatingLabel, Form, Modal } from "react-bootstrap";
+import { FaEdit } from "react-icons/fa";
 export const YourAppointment = () => {
   const patientMedicalRecordObj = JSON.parse(
     sessionStorage.getItem("PatientUser")
   );
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = (item) => {
+    setShow(true);
+    setAppointmentId(item);
+  };
+
   const [AppointmentList, setAppointmentList] = useState([]);
 
   const getAppointmentList = () => {
@@ -26,6 +36,50 @@ export const YourAppointment = () => {
         // handle error
         console.log(error);
       });
+  };
+
+  const [Doctors, setDoctors] = useState([]);
+  const getDoctors = () => {
+    axios
+      .get("http://localhost:8521/api/Doctor/getDoctorsList")
+      .then(function (response) {
+        // handle success
+        setDoctors(response.data.DoctorsInfo);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+  };
+  console.log("Doctors", Doctors);
+
+  const [AppointmentId, setAppointmentId] = useState({});
+  const [Time, setTime] = useState("");
+  const [DateofApp, setDateofApp] = useState("");
+
+  const UpdateBookingAppointment = async () => {
+    try {
+      const config = {
+        url: "/user/rescheduleapp",
+        method: "put",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          Id:AppointmentId?._id,
+          Time: Time,
+          Dateofappointment: DateofApp,
+        },
+      };
+
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert("reschedule successfully");
+        getAppointmentList();
+        handleClose();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
   };
 
   useEffect(() => {
@@ -62,8 +116,18 @@ export const YourAppointment = () => {
                         {item?.Firstname} {item?.Dateofappointment} {item?.Time}
                       </p>
                       <p className="mb-2 fw-bold">Hospital service</p>
+                      <p className="mb-2 fw-bold">Token No : {item?.token}</p>
                       <p className="mb-2 fw-bold">{item?.Condition}</p>
                     </div>
+                    <p
+                      style={{
+                        color: "green",
+                        fontSize: "20px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <FaEdit onClick={() => handleShow(item)} />
+                    </p>
                   </div>
                 </div>
               </div>
@@ -71,6 +135,58 @@ export const YourAppointment = () => {
           })}
         </div>
       </Container>
+
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Modal title</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <h6>Time of Appointment</h6>
+            <Form.Select
+              className="width-respns width-respns-768px"
+              style={{ width: "400px", marginBottom: "20px" }}
+              aria-label="Default select example"
+              onChange={(e) => setTime(e.target.value)}
+            >
+              <option>Time</option>
+              <option value="10:30 - 11:00">10:30 - 11:00</option>
+              <option value="11:00 - 11:30">11:00 - 11:30</option>
+              <option value="11:30 - 12:00">11:30 - 12:00</option>
+              <option value="12:00 - 12:30">12:00 - 12:30</option>
+              <option value="12:30 - 01:00">12:30 - 01:00</option>
+              <option value="03:30 - 4:00">03:30 - 4:00</option>
+              <option value="04:00 - 4:30">04:00 - 4:30</option>
+              <option value="04:30 - 5:00">04:30 - 5:00</option>
+            </Form.Select>
+          </div>
+          <FloatingLabel
+            className="width-respns"
+            style={{ width: "400px" }}
+            controlId="floatingDate"
+            label="Date of Appointment"
+          >
+            <Form.Control
+              type="date"
+              placeholder="Date of Appointment"
+              onChange={(e) => setDateofApp(e.target.value)}
+            />
+          </FloatingLabel>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button onClick={UpdateBookingAppointment} variant="primary">
+            Understood
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

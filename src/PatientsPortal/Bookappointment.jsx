@@ -36,8 +36,18 @@ export const Bookappointment = () => {
 
   const formdata = new FormData();
 
+  const generateRandomNumber = () => {
+    // Generate a random number between 1000 and 9999
+    const randomNumber = Math.floor(Math.random() * 9000) + 1000;
+    return randomNumber;
+  };
+
+  const prefix = 'JAN';
+  const randomNumber = generateRandomNumber();
+
   const BookAppointment = async (e) => {
     e.preventDefault();
+    formdata.append("token",prefix + randomNumber)
     formdata.append("PatientId", user?._id);
     formdata.append("Firstname", Others ? patientfirstname : user?.Firstname);
     formdata.append("Lastname", Others ? patientlastname : user?.Lastname);
@@ -55,7 +65,7 @@ export const Bookappointment = () => {
     formdata.append("medicalReason", medicalReason);
 
     try {
-      {
+     
         const config = {
           url: "/user/addappointment",
           method: "post",
@@ -68,8 +78,9 @@ export const Bookappointment = () => {
           console.log(res.data);
           console.log(res.data.success);
           alert("Appointment Added");
+          window.location.assign("/yourappointment");
         }
-      }
+    
     } catch (error) {
       console.log(error.response);
       if (error.response) {

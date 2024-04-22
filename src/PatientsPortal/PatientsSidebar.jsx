@@ -191,7 +191,8 @@ export default function PatientsSidebar() {
         <div className="sidebar patient-mobile">
           <img
             className="d-flex m-auto"
-            src="./img/testimonial-img-1.webp"
+            // src="./img/testimonial-img-1.webp"
+            src={`http://localhost:8521/PatientREG/${patientDetails?.profilepic}`}
             alt=""
             style={{
               width: "80px",
