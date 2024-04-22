@@ -6,7 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Container, Modal, ProgressBar, Table } from "react-bootstrap";
+import { Button, Container, Modal, ProgressBar, Table } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import { FaClipboardUser, FaUserTag } from "react-icons/fa";
@@ -21,11 +21,18 @@ export const PatientsList = () => {
   const [show1, setShow1] = useState();
   const medHistoryClose1 = () => setShow1(false);
   const medHistoryShow1 = () => setShow1(true);
+
+  const [show2, setShow2] = useState();
+  const medHistoryClose2 = () => setShow2(false);
+  const medHistoryShow2 = () => setShow2(true);
+
   const [Topic, setTopic] = useState("");
   const [description, setdescription] = useState("");
   const [docs, setdocs] = useState("");
 
   const [patientlist, setpatientlist] = useState([]);
+  const [selectedPatient, setselectedPatient] = useState({});
+  const [FilterPatientType, setFilterPatientType] = useState("OPD");
 
   const getpatientlist = () => {
     axios
@@ -38,6 +45,30 @@ export const PatientsList = () => {
         // handle error
         console.log(error);
       });
+  };
+
+  const getDocReqFromOPDtoIPD = async () => {
+    try {
+      const config = {
+        url: "/user/getDocReqFromOPDtoIPD",
+        method: "put",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          requestedDoc: doctorData?._id,
+          patientid: selectedPatient,
+        },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        medHistoryClose2();
+
+        alert(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("something went wrong!");
+    }
   };
 
   const [chosenPatient, setchosenPatient] = useState("");
@@ -82,99 +113,127 @@ export const PatientsList = () => {
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
         Patients
       </h4>
+      <Button
+        style={{ backgroundColor: "#20958C", margin: "10px" }}
+        onClick={() => setFilterPatientType("OPD")}
+      >
+        OPD
+      </Button>{" "}
+      <Button
+        style={{ backgroundColor: "#20958C", margin: "10px" }}
+        onClick={() => setFilterPatientType("IPD")}
+      >
+        IPD
+      </Button>
       <Container className="p-4">
         <div className="row mb-4">
-          {patientlist?.map((item) => {
-            return (
-              <div className="col-lg-4 mb-3">
-                <Card
-                  style={{
-                    width: "20rem",
-                    boxShadow: "0px 8px 16px 0px rgba(0, 0, 0, 0.2)",
-                  }}
-                >
-                  <Card.Header>
-                    <div className="d-flex gap-3 align-items-center ">
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <div style={{ marginRight: "10px" }}>
-                          <FaUserTag
-                            style={{
-                              fontSize: "50px",
-                              borderRadius: "50%",
-                              margin: "4px",
-                            }}
-                          />
-                          <span
-                            className="fw-bold"
-                            style={{ color: "rgb(32, 139, 140)" }}
-                          >
-                            {item?.Firstname}{" "}
-                          </span>
+          {patientlist
+            ?.filter((val) => val?.registrationType === FilterPatientType)
+            ?.map((item) => {
+              return (
+                <div className="col-lg-4 mb-3">
+                  <Card
+                    style={{
+                      width: "20rem",
+                      boxShadow: "0px 8px 16px 0px rgba(0, 0, 0, 0.2)",
+                    }}
+                  >
+                    <Card.Header>
+                      <div className="d-flex gap-3 align-items-center ">
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <div style={{ marginRight: "10px" }}>
+                            <FaUserTag
+                              style={{
+                                fontSize: "50px",
+                                borderRadius: "50%",
+                                margin: "4px",
+                              }}
+                            />
+                            <span
+                              className="fw-bold"
+                              style={{ color: "rgb(32, 139, 140)" }}
+                            >
+                              {item?.Firstname}{" "}
+                            </span>
+                          </div>
+                          <div style={{ marginLeft: "62px" }}>
+                            <button
+                              title="medical History"
+                              className="table-details-btn"
+                              onClick={() => {
+                                setchosenPatient(item._id);
+                                medHistoryShow1();
+                              }}
+                            >
+                              Details+
+                            </button>
+                          </div>
                         </div>
-                        <div style={{ marginLeft: "62px" }}>
-                          <button
-                            title="medical History"
-                            className="table-details-btn"
-                            onClick={() => {
-                              setchosenPatient(item._id);
-                              medHistoryShow1();
-                            }}
-                          >
-                            Details+
-                          </button>
+                        <div>
+                          {/* <span className='ms-auto fw-bold'>10:00 - 10:30 AM</span> */}
                         </div>
                       </div>
-                      <div>
-                        {/* <span className='ms-auto fw-bold'>10:00 - 10:30 AM</span> */}
-                      </div>
-                    </div>
-                    <p>Patient Id : {item?.PatientId} </p>
-                  </Card.Header>
+                      <p>Patient Id : {item?.PatientId} </p>
+                    </Card.Header>
 
-                  <ListGroup variant="flush">
-                    <ListGroup.Item>
-                      <p>
-                        {" "}
-                        <FontAwesomeIcon
-                          icon={faLocationDot}
-                          className="me-3 "
-                        />
-                        {item?.Address1}{" "}
-                      </p>
-                      <p>
-                        {" "}
-                        <FontAwesomeIcon icon={faPhoneVolume} /> +
-                        {item?.PhoneNumber}
-                      </p>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      {/* <p>Blood Group: O+</p> */}
-                      <p>
-                        Reports:{" "}
-                        <FontAwesomeIcon
-                          icon={faFilePdf}
-                          className="text-danger"
-                        />
-                      </p>
-                    </ListGroup.Item>
-                    <ListGroup.Item className="text-center">
-                      <button
-                        onClick={ReadMoreShow}
-                        className="table-details-btn"
-                      >
-                        Read More
-                      </button>
-                    </ListGroup.Item>
-                  </ListGroup>
-                </Card>
-              </div>
-            );
-          })}
+                    <ListGroup variant="flush">
+                      <ListGroup.Item>
+                        <p>
+                          {" "}
+                          <FontAwesomeIcon
+                            icon={faLocationDot}
+                            className="me-3 "
+                          />
+                          {item?.Address1}{" "}
+                        </p>
+                        <p>
+                          {" "}
+                          <FontAwesomeIcon icon={faPhoneVolume} /> +
+                          {item?.PhoneNumber}
+                        </p>
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        {/* <p>Blood Group: O+</p> */}
+                        <p className="d-flex justify-content-between">
+                          <span>
+                            Reports:{" "}
+                            <FontAwesomeIcon
+                              icon={faFilePdf}
+                              className="text-danger"
+                            />
+                          </span>
+                          {item.registrationType === "OPD" ? (
+                            <span>
+                              <Button
+                                onClick={() => {
+                                  setselectedPatient(item);
+                                  medHistoryShow2();
+                                }}
+                              >
+                                Admit to IPD
+                              </Button>
+                            </span>
+                          ) : (
+                            <></>
+                          )}
+                        </p>
+                      </ListGroup.Item>
+                      <ListGroup.Item className="text-center">
+                        <button
+                          onClick={ReadMoreShow}
+                          className="table-details-btn"
+                        >
+                          Read More
+                        </button>
+                      </ListGroup.Item>
+                    </ListGroup>
+                  </Card>
+                </div>
+              );
+            })}
         </div>
       </Container>
-
       {/* Read More Modal */}
-
       <Modal size="lg" show={show} onHide={ReadMoreClose}>
         <Modal.Header className="all-bg-green text-light">
           <Modal.Title>Patient Profile</Modal.Title>
@@ -365,7 +424,6 @@ export const PatientsList = () => {
           </div>
         </Modal.Footer> */}
       </Modal>
-
       <Modal size="lg" show={show1} onHide={medHistoryClose1}>
         <Modal.Header className="all-bg-green text-light">
           <Modal.Title>Patient Medical Details</Modal.Title>
@@ -430,6 +488,24 @@ export const PatientsList = () => {
           </button>
           <button onClick={addMedicalHistory} className="table-details-btn">
             Add Medical details
+          </button>
+        </Modal.Footer>
+      </Modal>
+      <Modal size="lg" show={show2} onHide={medHistoryClose2}>
+        <Modal.Header className="all-bg-green text-light">
+          <Modal.Title>Patient Medical Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="all-bg-green ">
+          <div className="row" style={{ color: "white" }}>
+            Are you sure, you want to admit this patient to the IPD?
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button onClick={medHistoryClose2} className="btn btn-danger">
+            Close
+          </button>
+          <button onClick={getDocReqFromOPDtoIPD} className="table-details-btn">
+            Done
           </button>
         </Modal.Footer>
       </Modal>
