@@ -166,6 +166,7 @@ import { ServiceDetails } from "./Components/ServiceDetails";
 import { BlogDetails } from "./Components/BlogDetails";
 import { DepartmentDetails } from "./Components/DepartmentDetails";
 import DoctorDetails from "./Components/DoctorDetails";
+import PatientProfile from "./PatientsPortal/PatientProfile";
 
 function App() {
   return (
@@ -605,6 +606,18 @@ function App() {
                   children={
                     <>
                       <YourAppointment />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/patientprofile"
+              element={
+                <PatientsCommanDashboard
+                  children={
+                    <>
+                      <PatientProfile />
                     </>
                   }
                 />

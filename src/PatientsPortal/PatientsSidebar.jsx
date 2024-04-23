@@ -26,8 +26,11 @@ import { RxDashboard } from "react-icons/rx";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { faBell, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 export default function PatientsSidebar() {
+
+  const navigate = useNavigate()
   const [DoctorM, setDoctorM] = useState(false);
   //  const [PatientM, setPatientM] = useState(false);
   //  const [LabM, setLabM] = useState(false);
@@ -203,6 +206,7 @@ export default function PatientsSidebar() {
           />
 
           <p
+          onClick={()=>navigate("/patientprofile")}
             className="side-profile-name text-center"
             style={{
               fontSize: "25px",
@@ -210,6 +214,7 @@ export default function PatientsSidebar() {
               // fontFamily: "cursive",
               marginTop: "10px",
               color: "rgb(32 139 140)",
+              cursor:"pointer"
             }}
           >
             {patientDetails.Firstname} {patientDetails.Lastname}
