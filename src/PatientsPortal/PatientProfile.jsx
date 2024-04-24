@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useRef, useState } from "react";
+import Barcode from "react-barcode";
 import { Button, Form, Modal, Table } from "react-bootstrap";
 import { FaEdit } from "react-icons/fa";
 import QRCode from "react-qr-code";
@@ -191,19 +192,11 @@ function PatientProfile() {
           <hr />
           <div className="d-flex justify-content-center mb-3">
             <div>
-             
-            <QRCode
-                  size={256}
-                  style={{ height: "189px", width: "200px" }}
-                  value={`
-                  Name :${patientDetails?.Firstname}\n
-                 Phone Number ${patientDetails?.PhoneNumber}\n
-                 Email: ${patientDetails?.Email}
-                  
-                  `}
-                  viewBox={`0 0 256 256`}
-                />
-             
+            <Barcode value={`${patientDetails?.Firstname} ${patientDetails?.Lastname}`} width={1} height={50}  />
+
+{/* Generate a barcode with additional options */}
+{/* <Barcode value="987654321" width={1} height={50} /> */}
+            
               <p style={{ textAlign: "center" }}>Profile Details</p>
             </div>
           </div>

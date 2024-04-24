@@ -46,6 +46,7 @@
     "moment-timezone": "^0.5.43",
     "react": "^18.2.0",
     "react-animated-css": "^1.2.1",
+    "react-barcode": "^1.5.1",
     "react-barcodes": "^1.0.3",
     "react-bootstrap": "^2.8.0",
     "react-ckeditor-component": "^1.1.0",
