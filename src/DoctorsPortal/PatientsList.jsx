@@ -493,9 +493,13 @@ export const PatientsList = () => {
       </Modal>
       <Modal size="lg" show={show2} onHide={medHistoryClose2}>
         <Modal.Header className="all-bg-green text-light">
-          <Modal.Title>Patient Medical Details</Modal.Title>
+          <Modal.Title>OPD to IPD</Modal.Title>
         </Modal.Header>
         <Modal.Body className="all-bg-green ">
+          <div style={{ color: "white" }}>
+            <label>Reason</label>
+            <textarea></textarea>
+          </div>
           <div className="row" style={{ color: "white" }}>
             Are you sure, you want to admit this patient to the IPD?
           </div>
