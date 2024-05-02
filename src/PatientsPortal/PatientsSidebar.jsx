@@ -69,7 +69,7 @@ export default function PatientsSidebar() {
         </div>
       )}
       {acc ? (
-        <div className="mobile-res">
+        <div className="mobile-res" style={{overflowX:"scroll"}}>
           <div className="Patient-sidebar-page">
             {/* <div className="content">
                       <a
@@ -145,6 +145,15 @@ export default function PatientsSidebar() {
                 <FontAwesomeIcon icon={faFileInvoice} />
                 <span>Billings</span>
               </div>
+
+              {/* <div
+                className="Patient-sidebar-position patient-sidebarItem "
+                onClick={() => window.location.assign("/patientConsentForms")}
+              >
+                <FontAwesomeIcon icon={faFileInvoice} />
+                <span>Consent Forms</span>
+              </div> */}
+
 
               <div
                 className="Patient-sidebar-position patient-sidebarItem"
@@ -306,6 +315,18 @@ export default function PatientsSidebar() {
               style={{ marginRight: "5px", fontSize: "15px" }}
             />
             Billing
+          </h6>
+
+          <h6
+            className="sidebarItem"
+            onClick={() => window.location.assign("/patientConsentForms")}
+          >
+            {" "}
+            <FontAwesomeIcon
+              icon={faFileInvoice}
+              style={{ marginRight: "5px", fontSize: "15px" }}
+            />
+            Consent Forms
           </h6>
 
           <h6

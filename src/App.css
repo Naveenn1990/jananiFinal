@@ -3523,3 +3523,11 @@ textarea {
   height: 40px;
   border: 1px solid red;
 }
+
+.vi_0 {
+  border: 2px solid #dee2e6;
+  outline-width: 0px;
+  padding: 7px;
+  border-radius: 5px;
+  width: 100%;
+}

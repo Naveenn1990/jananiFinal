@@ -167,6 +167,7 @@ import { BlogDetails } from "./Components/BlogDetails";
 import { DepartmentDetails } from "./Components/DepartmentDetails";
 import DoctorDetails from "./Components/DoctorDetails";
 import PatientProfile from "./PatientsPortal/PatientProfile";
+import PatientConsentForms from "./PatientsPortal/PatientConsentForms";
 
 function App() {
   return (
@@ -678,6 +679,18 @@ function App() {
                   children={
                     <>
                       <PatientBilling />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/patientConsentForms"
+              element={
+                <PatientsCommanDashboard
+                  children={
+                    <>
+                      <PatientConsentForms />
                     </>
                   }
                 />
