@@ -153,6 +153,7 @@ export default function PatientsSidebar() {
                 <FontAwesomeIcon icon={faFileInvoice} />
                 <span>Consent Forms</span>
               </div> */}
+              
 
 
               <div

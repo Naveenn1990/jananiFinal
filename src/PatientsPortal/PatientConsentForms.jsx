@@ -11,176 +11,22 @@ import html2canvas from "html2canvas";
 import { useParams } from "react-router-dom";
 
 const PatientConsentForms = () => {
-    const user = JSON.parse(sessionStorage.getItem("adminDetails"));
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const [show, setShow] = useState(false);
-  
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-  
-    const [show2, setShow2] = useState(false);
-  
-    const handleClose2 = () => setShow2(false);
-    const handleShow2 = () => setShow2(true);
+    const user = JSON.parse(sessionStorage.getItem("PatientUser"));
+
+    console.log("PatientUser",user);
+
   
     const [btn1, setbtn1] = useState(true);
     const [btn2, setbtn2] = useState(true);
     const [btn3, setbtn3] = useState(true);
     const [btn4, setbtn4] = useState(true);
   
-    function ValidateEmail(mail) {
-      if (
-        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-          mail
-        )
-      ) {
-        return true;
-      }
-      alert("You have entered an invalid email address!");
-      return false;
-    }
   
-    function validatename(inputtxt) {
-      var phoneno = /^[a-zA-Z ]{2,30}$/; // var no = /^\d{10}$/;
-      if (inputtxt.match(phoneno)) {
-        return true;
-      } else {
-        alert("You have entered an invalid name!");
-        return false;
-      }
-    }
   
-    function phonenumber(inputtxt) {
-      var phoneno = /^[6-9]\d{9}$/; // var no = /^\d{10}$/;
-      if (inputtxt.match(phoneno)) {
-        return true;
-      } else {
-        alert("You have entered an invalid mobile number!");
-        return false;
-      }
-    }
+   
   
-    function CheckPassword(inputtxt) {
-      var decimal =
-        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,20}$/;
-      if (inputtxt.match(decimal)) {
-        return true;
-      } else {
-        alert(
-          "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character!"
-        );
-        return false;
-      }
-    }
+ 
   
-    const [medications, setmedications] = useState();
-    const [medicinesTaking, setmedicinesTaking] = useState();
-    let formdata = new FormData();
-    const [patientfirstname, setpatientfirstname] = useState("");
-    const [patientlastname, setpatientlastname] = useState("");
-    const [gender, setgender] = useState("");
-    const [DOB, setDOB] = useState("");
-    const [email, setemail] = useState("");
-    const [mobileno, setmobileno] = useState();
-    const [alternatePhoneNumber, setalternatePhoneNumber] = useState();
-    const [Address, setAddress] = useState();
-    const [Address1, setAddress1] = useState();
-    const [City, setCity] = useState();
-  
-    const [State, setState] = useState();
-    const [Zipcode, setZipcode] = useState();
-    const [Marital, setMarital] = useState();
-  
-    const [password, setpassword] = useState("");
-    const [conpassword, setconpassword] = useState("");
-  
-    const [MaritalStatus, setMaritalStatus] = useState("");
-    const [PatientAge18, setPatientAge18] = useState("");
-    const [relativeName, setrelativeName] = useState("");
-    const [relationWithPatient, setrelationWithPatient] = useState("");
-    const [relativePhone, setrelativePhone] = useState("");
-    const [AdmitDate, setAdmitDate] = useState("");
-    const [followUpsDate, setfollowUpsDate] = useState("");
-    const [allergy, setallergy] = useState("");
-  
-    const [haveInsurance, sethaveInsurance] = useState("");
-    const [insuranceDoc, setinsuranceDoc] = useState("");
-    const [insuranceProviderCompany, setinsuranceProviderCompany] = useState("");
-    const [insuranceAmt, setinsuranceAmt] = useState("");
-    let [patientAllergies, setpatientAllergies] = useState([]);
-    const [clickedAddAllergyBtn, setclickedAddAllergyBtn] = useState("");
-  
-    // function addPatientAllergies() {
-    //   console.log(patientAllergies);
-    //   patientAllergies.push(allergy);
-    // }
-  
-    const [category, setcategory] = useState([]);
-  
-    const getcategory = () => {
-      axios
-        .get("http://localhost:8521/api/user/getPatientList")
-        .then(function (response) {
-          // handle success
-          setcategory(response.data.UsersInfo);
-        })
-        .catch(function (error) {
-          // handle error
-          console.log(error);
-        });
-    };
-  
-    const [HServicesList, setHServicesList] = useState([]);
-  
-    const getHospitalServiceList = async () => {
-      try {
-        let response = await axios.get(
-          "http://localhost:8521/api/admin/HospitalServicesList"
-        );
-        if (response.status === 200) {
-          setHServicesList(response.data.allHospitalServices);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-  
-    useEffect(() => {
-      getcategory();
-      getHospitalServiceList();
-    }, []);
-  
-    // function addAllergy() {
-    //   patientAllergies.push(allergy);
-    //   // setpatientAllergies(patientAllergies);
-    //   console.log(patientAllergies);
-    // }
-  
-    useEffect(() => {
-      setpatientAllergies(patientAllergies);
-      setclickedAddAllergyBtn("");
-      setallergy("");
-    }, [clickedAddAllergyBtn]);
-  
-    console.log(category, "category");
-    const [userdetail, setuserdetail] = useState([]);
-    const getquestionbyid = async () => {
-      try {
-        let res = await axios.get(
-          `http://localhost:8521/api/user/getPatientDetailByid/${id}`
-        );
-        if (res.status == 200) {
-          setuserdetail(res.data.success);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    useEffect(() => {
-      getquestionbyid();
-    }, []);
-    console.log("userdetail", userdetail);
   
     const createPDF = async () => {
       // dynamic image is also adding in the PDF
@@ -492,7 +338,7 @@ const PatientConsentForms = () => {
                       <input
                         type="text"
                         className="vi_0"
-                        value={userdetail?.Firstname}
+                        value={user?.cause?.consentform?.patientname}
                         style={{ width: "490px" }}
                         readOnly
                       />
@@ -585,6 +431,8 @@ const PatientConsentForms = () => {
                             type="text"
                             className="vi_0"
                             style={{ width: "344px" }}
+                            value={user?.ConDoctorName}
+                            readOnly
                           />
                         </span>{" "}
                       </h6>
@@ -635,7 +483,7 @@ const PatientConsentForms = () => {
                             type="text"
                             className="vi_0"
                             style={{ width: "344px" }}
-                            value={userdetail?.relativeName}
+                            value={user?.relativeName}
                           />
                         </span>
                       </h6>
@@ -645,7 +493,7 @@ const PatientConsentForms = () => {
                           type="text"
                           className="vi_0"
                           style={{ width: "344px" }}
-                          value={userdetail?.relativeName}
+                          value={user?.relativeName}
                         />
                       </span>
                       <br />
@@ -662,7 +510,7 @@ const PatientConsentForms = () => {
                             type="text"
                             className="vi_0"
                             style={{ width: "344px" }}
-                            value={userdetail?.relationWithPatient}
+                            value={user?.relationWithPatient}
                           />
                         </span>
                       </h6>
@@ -688,7 +536,7 @@ const PatientConsentForms = () => {
                             type="text"
                             className="vi_0"
                             style={{ width: "344px" }}
-                            value={userdetail?.Firstname}
+                            value={user?.Firstname}
                           />
                         </span>
                       </h6>
@@ -966,21 +814,7 @@ const PatientConsentForms = () => {
                                   className="vi_0"
                                   style={{ width: "321px" }}
                                 /> */}
-                                <select
-                                  name=""
-                                  id=""
-                                  className="vi_0"
-                                  style={{ width: "321px" }}
-                                >
-                                  <option value="">select the surgery</option>
-                                  {HServicesList?.map((val) => {
-                                    return (
-                                      <option value={val?.hSurgeryService}>
-                                        {val?.hSurgeryService}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
+                               
                               </span>{" "}
                             </div>
                             <div
@@ -992,24 +826,7 @@ const PatientConsentForms = () => {
                               }}
                             >
                               <span style={{ borderBottom: "1px solid black" }}>
-                                {HServicesList.map((val) => {
-                                  const isInsured =
-                                    val?.hServicePriceInsuredPeople === "true" && val?.hSurgeryService; // Replace with your condition to check if the patient is insured
-  
-                                  return (
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "321px" }}
-                                      value={
-                                        isInsured
-                                          ? val?.hServicePriceInsuredPeople
-                                          : val?.hServicePriceNonInsuredPeople
-                                      }
-                                      readOnly // If you want the input to be non-editable
-                                    />
-                                  );
-                                })}
+                              
                               </span>{" "}
                             </div>
                             <div
@@ -1045,21 +862,7 @@ const PatientConsentForms = () => {
                                   className="vi_0"
                                   style={{ width: "321px" }}
                                 /> */}
-                                <select
-                                  name=""
-                                  id=""
-                                  className="vi_0"
-                                  style={{ width: "321px" }}
-                                >
-                                  <option value="">select the surgery</option>
-                                  {HServicesList?.map((val) => {
-                                    return (
-                                      <option value={val?.hSurgeryService}>
-                                        {val?.hSurgeryService}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
+                               
                               </span>{" "}
                             </div>
                             <div
@@ -1296,21 +1099,8 @@ const PatientConsentForms = () => {
                                   className="vi_0"
                                   style={{ width: "321px" }}
                                 /> */}
-                                <select
-                                  name=""
-                                  id=""
-                                  className="vi_0"
-                                  style={{ width: "321px" }}
-                                >
-                                  <option value="">select the surgery</option>
-                                  {HServicesList?.map((val) => {
-                                    return (
-                                      <option value={val?.hSurgeryService}>
-                                        {val?.hSurgeryService}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
+                                
+                                
                               </span>{" "}
                             </div>
                             <div
@@ -1362,21 +1152,7 @@ const PatientConsentForms = () => {
                                   className="vi_0"
                                   style={{ width: "321px" }}
                                 /> */}
-                                <select
-                                  name=""
-                                  id=""
-                                  className="vi_0"
-                                  style={{ width: "321px" }}
-                                >
-                                  <option value="">select the surgery</option>
-                                  {HServicesList?.map((val) => {
-                                    return (
-                                      <option value={val?.hSurgeryService}>
-                                        {val?.hSurgeryService}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
+                                
                               </span>{" "}
                             </div>
                             <div
@@ -1461,7 +1237,7 @@ const PatientConsentForms = () => {
                             type="text"
                             className="vi_0"
                             style={{ width: "270px" }}
-                            value={userdetail?.relativeName}
+                            // value={userdetail?.relativeName}
                           />
                           <input
                             type="text"
@@ -1632,7 +1408,7 @@ const PatientConsentForms = () => {
                                       id=""
                                       className="vi_0"
                                       style={{ width: "190px" }}
-                                      value={userdetail?.Firstname}
+                                      // value={userdetail?.Firstname}
                                     />
                                   </span>
                                 </div>
@@ -1814,7 +1590,7 @@ const PatientConsentForms = () => {
                                         type="text"
                                         className="vi_0"
                                         style={{ width: "200px" }}
-                                        value={userdetail?.relativeName}
+                                        // value={userdetail?.relativeName}
                                       />
                                     </span>
                                     who is admitted on{" "}
@@ -3266,7 +3042,7 @@ const PatientConsentForms = () => {
                                             type="text"
                                             className="vi_0"
                                             style={{ width: "301px" }}
-                                            value={userdetail?.Firstname}
+                                            // value={userdetail?.Firstname}
                                           />
                                         </span>
                                         (Patient Name), give my full consent out
@@ -3351,18 +3127,7 @@ const PatientConsentForms = () => {
                                         <br />I hereby absolve Janani
                                         Multispeciailty Hospital.
                                         <span>
-                                        <select name="" id="" className="vi_0" style={{width:"331px"}}>
-                                        <option value="">
-                                        select the surgery
-                                      </option>{HServicesList?.map((val) => {
-  
-                                    return (
-                                      <option value={val?.hSurgeryService}>
-                                        {val?.hSurgeryService}
-                                      </option>
-                                    );
-                                  })}
-                                  </select>
+                                        gjghj
                                         </span>
                                         and its surgical team & hospital staff of
                                         anyliability for consequences arising
@@ -3379,7 +3144,7 @@ const PatientConsentForms = () => {
                                             type="text"
                                             className="vi_0"
                                             style={{ width: "331px" }}
-                                            value={userdetail?.Firstname}
+                                            // value={userdetail?.Firstname}
                                           />
                                         </span>
                                         hence I,{" "}
@@ -3388,7 +3153,7 @@ const PatientConsentForms = () => {
                                             type="text"
                                             className="vi_0"
                                             style={{ width: "331px" }}
-                                            value={userdetail?.relativeName}
+                                            // value={userdetail?.relativeName}
                                           />
                                         </span>{" "}
                                         (Name /relationship with Patient)

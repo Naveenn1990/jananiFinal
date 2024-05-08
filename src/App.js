@@ -168,6 +168,8 @@ import { DepartmentDetails } from "./Components/DepartmentDetails";
 import DoctorDetails from "./Components/DoctorDetails";
 import PatientProfile from "./PatientsPortal/PatientProfile";
 import PatientConsentForms from "./PatientsPortal/PatientConsentForms";
+import PharmacyProducts from "./Components/WebsitePharmacy/PharmacyProducts";
+import DoctorForms from "./DoctorsPortal/DoctorForms";
 
 function App() {
   return (
@@ -357,7 +359,16 @@ function App() {
                 </>
               }
             />
-
+<Route
+              path="/pharmacyproducts"
+              element={
+                <>
+                  {/* <Headerpharmacy /> */}
+                  <PharmacyProducts />
+                  <Footer />
+                </>
+              }
+            />
             <Route
               path="/pharmacydesc"
               element={
@@ -765,6 +776,18 @@ function App() {
                   children={
                     <>
                       <DoctorsList />
+                    </>
+                  }
+                />
+              }
+            />
+             <Route
+              path="/doctorforms"
+              element={
+                <AdminDashboard
+                  children={
+                    <>
+                      <DoctorForms />
                     </>
                   }
                 />

@@ -331,10 +331,14 @@ console.log(today);
                         <img
                           style={{ width: "30px", height: "30px", borderRadius: "5px" }}
                           src={`http://localhost:8521/Doctor/${item?.ProfileImg}`}
+                          // src=""
                           alt=""
                         />
                       </td>
-                      <td><a href="#">{item?.Firstname}&nbsp;{item?.Lastname}</a> ({item?.Education})</td>
+                      <td><a href="#">
+                        {item?.Firstname}&nbsp;
+                        {item?.Lastname}
+                        </a> ({item?.Education})</td>
                       <td>{item?.mondayweekoff && today == "Monday" || item?.tuesdayweekoff && today == "Tuesday"  || item?.wednesdayweekoff && today == "Wednesday" || item?.thrusdayweekoff && today == "Thursday" || item?.fridayweekoff && today == "Friday" || item?.saturdayweekoff && today == "Saturday" || item?.sundayweekoff && today == "Sunday" ?   <button className="btn btn-outline-danger">
                         Absend
                       </button> :  <button className="btn btn-outline-success">

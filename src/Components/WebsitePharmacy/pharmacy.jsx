@@ -19,10 +19,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { AiOutlineHeart } from "react-icons/ai";
 import axios from "axios";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Headerpharmacy } from "./headerpharmacy";
 
 export const Pharmacy = () => {
+  const navigate = useNavigate();
   let pharmacyUser = JSON.parse(sessionStorage.getItem("pharmacyUser"));
 
   const [categoryList, setcategoryList] = useState([]);
@@ -595,13 +596,19 @@ export const Pharmacy = () => {
             </Container>
 
             <Container className="mt-4">
+              <div className="d-flex justify-content-between">
               <h4
                 className="fw-bold  ms-3 "
                 style={{ color: "rgb(32 139 140)" }}
               >
                 Health Products
               </h4>
+              <div>
+              <Button className="green-btn-1-viewmore" onClick={()=>{navigate("/pharmacyproducts")}}></Button>
+              </div>
 
+              </div>
+             
               <div className="row">
                 {ProductList?.map((item) => {
                   return (
@@ -653,6 +660,7 @@ export const Pharmacy = () => {
                                 onClick={() => AddToWishlist(item)}
                               />
                             )}
+                            
                           </div>
                         </Card.Title>
 
