@@ -54,7 +54,8 @@ const DoctorForms = () => {
         >
           Doctors Notes
         </button>
-        <button
+       
+            <button
               style={{
                 padding: "6px",
                 border: "1px solid white",
@@ -62,13 +63,14 @@ const DoctorForms = () => {
                 color: "white",
                 borderRadius: "0px",
               }}
+              // onClick={() => navigate("/admin/SurgeryReport")}
               onClick={() => {
                 setDocTreatChart(false);
                 setDocNotes(false);
                 setSurgeryReport(true)
               }}
             >
-              Surgical Safety
+              Surgery Report
             </button>
       </div>
 

@@ -7,11 +7,11 @@ import { Breadcrumbs, Typography } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 
 
 export const Doctors = () => {
-
+const navigate = useNavigate();
     const [SelectedDepartment, setSelectedDepartment] = useState()
 
     useEffect(() => {
@@ -21,6 +21,7 @@ export const Doctors = () => {
 
     // Get Doctors
     const [Doctors, setDoctors] = useState([]);
+    
     const getDoctors = () => {
         axios
             .get("http://localhost:8521/api/Doctor/getDoctorsList")
@@ -52,7 +53,7 @@ export const Doctors = () => {
 
 
             <Container className='mt-5'>
-
+            <div className='d-flex justify-content-between'>
                 <div className="mb-4">
                     <Breadcrumbs aria-label="breadcrumb">
                         <Link
@@ -72,6 +73,24 @@ export const Doctors = () => {
                             Doctors
                         </Typography>
                     </Breadcrumbs>
+                </div>
+                <div>
+                <button
+                       style={{
+                        padding: "6px",
+                        border: "none",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "5px",
+                        width:"6rem",
+                      }}
+                        onClick={()=>{navigate("/loginforeveryone")}}
+                      >
+                        Login
+                      </button>
+                </div>
+                
+
                 </div>
 
                 <div className='text-center mb-2'>

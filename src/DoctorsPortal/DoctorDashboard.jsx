@@ -364,7 +364,7 @@ console.log(today);
 
 
         <Container className="mt-5">
-          <div className="row " >
+          <div className="row">
             {/* <div className="col-lg-6" style={{ overflow: 'hidden ', overflowY: 'scroll' }}>
               <h5 className="fw-bold mb-4">Todo List</h5>
               <ul style={{ fontSize: '16px' }}>

@@ -45,8 +45,8 @@ export const DoctorsHeader = () => {
               <div className="dropdown">
                 <a href="#">
                   <button className="dropbtn navigation-all fs-6">
-                    {/* {doctorDetails.Firstname}
-                    {doctorDetails.Lastname}{" "} */}
+                    {doctorDetails.Firstname}
+                    {doctorDetails.Lastname}{" "}
                     <img
                       style={{
                         width: "40px ",
@@ -54,8 +54,8 @@ export const DoctorsHeader = () => {
                         height: "40px",
                         borderRadius: "50%",
                       }}
-                      // src={`http://localhost:8521/Doctor/${doctorDetails.ProfileImg}`}
-                      src=""
+                      src={`http://localhost:8521/Doctor/${doctorDetails.ProfileImg}`}
+                      // src=""
                       alt="img"
                     />
                   </button>

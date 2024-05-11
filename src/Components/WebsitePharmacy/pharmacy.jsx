@@ -204,12 +204,15 @@ export const Pharmacy = () => {
         {/* Left baar */}
 
         <div className="row ">
+         
           <div
             className="col-lg-3 p-4 mb-4 pharmacy-left-col"
-            style={{ backgroundColor: "#fff " }}
+            style={{ backgroundColor: "#208B8C" }}
           >
+            <br />
+            <br />
             <a href="/pharmacy">
-              <h4 className="fw-bold ps-4 text-dark">
+              <h4 className="fw-bold ps-4 text-light">
                 <FontAwesomeIcon icon={faBars} /> Category{" "}
               </h4>
             </a>
@@ -217,7 +220,7 @@ export const Pharmacy = () => {
               {categoryList?.map((item) => {
                 return (
                   <li>
-                    <a href="/pharmacy"> {item?.categoryName} </a>
+                    <a href="/pharmacy" className="text-light"> {item?.categoryName} </a>
                   </li>
                 );
               })}
@@ -231,6 +234,8 @@ export const Pharmacy = () => {
             </ul>
 
             <div className="mb-4">
+            <br />
+            <br />
               <ul className="category-list" style={{ listStyle: "none" }}>
                 <li>
                   <FontAwesomeIcon
@@ -242,7 +247,7 @@ export const Pharmacy = () => {
                       borderRadius: "5px",
                     }}
                   />
-                  <a href="/pharmacy"> Medicine </a>
+                  <a href="/pharmacy" className="text-light"> Medicine </a>
                 </li>
                 <li>
                   {" "}
@@ -255,7 +260,7 @@ export const Pharmacy = () => {
                       borderRadius: "5px",
                     }}
                   />
-                  <a href="/pharmacy"> Wellness</a>
+                  <a href="/pharmacy" className="text-light"> Wellness</a>
                 </li>
                 <li>
                   {" "}
@@ -268,7 +273,7 @@ export const Pharmacy = () => {
                       borderRadius: "5px",
                     }}
                   />
-                  <a href="/diagnostic"> Diagnostic</a>{" "}
+                  <a href="/diagnostic" className="text-light"> Diagnostic</a>{" "}
                 </li>
                 <li>
                   {" "}
@@ -281,7 +286,7 @@ export const Pharmacy = () => {
                       borderRadius: "5px",
                     }}
                   />{" "}
-                  <a href="/pharmacy"> Health corener</a>{" "}
+                  <a href="/pharmacy" className="text-light"> Health corener</a>{" "}
                 </li>
                 <li>
                   {" "}
@@ -294,49 +299,52 @@ export const Pharmacy = () => {
                       borderRadius: "5px",
                     }}
                   />{" "}
-                  <a href="/pharmacy"> Other</a>{" "}
+                  <a href="/pharmacy" className="text-light"> Other</a>{" "}
                 </li>
               </ul>
             </div>
 
             <div className="mb-5">
-              <h4 className="fw-bold ps-4 text-dark"> Popular Brands </h4>
+            <br />
+            <br />
+              <h4 className="fw-bold ps-4 text-light"> Popular Brands </h4>
               <ul className="category-list" style={{ listStyle: "none" }}>
                 <li>
-                  <a href="/pharmacy"> Premier Value </a>
+                  <a href="/pharmacy" className="text-light"> Premier Value </a>
                 </li>
                 <li>
-                  <a href="/pharmacy"> Sunmark </a>
-                </li>
-                <li>
-                  {" "}
-                  <a href="/pharmacy">Nature value</a>{" "}
+                  <a href="/pharmacy" className="text-light"> Sunmark </a>
                 </li>
                 <li>
                   {" "}
-                  <a href="/pharmacy"> Cover girl</a>{" "}
+                  <a href="/pharmacy" className="text-light">Nature value</a>{" "}
                 </li>
                 <li>
                   {" "}
-                  <a href="/pharmacy"> Natures beauty</a>{" "}
+                  <a href="/pharmacy" className="text-light"> Cover girl</a>{" "}
                 </li>
                 <li>
                   {" "}
-                  <a href="/pharmacy"> Sport aid</a>{" "}
+                  <a href="/pharmacy" className="text-light"> Natures beauty</a>{" "}
                 </li>
                 <li>
                   {" "}
-                  <a href="/pharmacy"> Neutrogena</a>{" "}
+                  <a href="/pharmacy" className="text-light"> Sport aid</a>{" "}
                 </li>
                 <li>
                   {" "}
-                  <a href="/pharmacy">View all</a>{" "}
+                  <a href="/pharmacy" className="text-light"> Neutrogena</a>{" "}
+                </li>
+                <li>
+                  {" "}
+                  <a href="/pharmacy" className="text-light">View all</a>{" "}
                 </li>
               </ul>
             </div>
 
             <div className="mb-5">
-              <h4 className="fw-bold ps-4 text-dark">Hot Deals </h4>
+            <br />
+              <h4 className="fw-bold ps-4 text-light">Hot Deals </h4>
               <Card
                 className="col-lg-4 m-auto mb-3 p-0"
                 style={{ width: "16rem" }}
@@ -376,7 +384,8 @@ export const Pharmacy = () => {
             </div>
 
             <div className="mb-5">
-              <h4 className="fw-bold ps-4 text-dark"> Hot Products</h4>
+            <br />
+              <h4 className="fw-bold ps-4 text-light"> Hot Products</h4>
               <ul className="category-list" style={{ listStyle: "none" }}>
                 <li>
                   <div className="d-flex">
@@ -389,7 +398,7 @@ export const Pharmacy = () => {
                       />
                     </div>
                     <div className="p-2">
-                      <a href="/pharmacy"> Organic salmon collagen </a>
+                      <a href="/pharmacy" className="text-light"> Organic salmon collagen </a>
                       <p
                         className="fw-bolder fs-4"
                         style={{ color: "#eb3a7b" }}
@@ -411,7 +420,7 @@ export const Pharmacy = () => {
                       />
                     </div>
                     <div className="p-2">
-                      <a href="/pharmacy"> Nutrilite Memory bulider </a>
+                      <a href="/pharmacy" className="text-light"> Nutrilite Memory bulider </a>
                       <p
                         className="fw-bolder fs-4"
                         style={{ color: "#eb3a7b" }}
@@ -433,7 +442,7 @@ export const Pharmacy = () => {
                       />
                     </div>
                     <div className="p-2">
-                      <a href="/pharmacy"> Himalaya evecare </a>
+                      <a href="/pharmacy" className="text-light"> Himalaya evecare </a>
                       <p
                         className="fw-bolder fs-4"
                         style={{ color: "#eb3a7b" }}
@@ -597,12 +606,12 @@ export const Pharmacy = () => {
 
             <Container className="mt-4">
               <div className="d-flex justify-content-between">
-              <h4
+              <h3
                 className="fw-bold  ms-3 "
                 style={{ color: "rgb(32 139 140)" }}
               >
                 Health Products
-              </h4>
+              </h3>
               <div>
               <Button className="green-btn-1-viewmore" onClick={()=>{navigate("/pharmacyproducts")}}></Button>
               </div>
@@ -614,7 +623,7 @@ export const Pharmacy = () => {
                   return (
                     <Card
                       className="col-lg-4 m-auto mb-3 p-0"
-                      style={{ width: "17rem", height: "420px" }}
+                      style={{ width: "17rem", height: "443px" }}
                     >
                       <Card.Img
                         variant="top"

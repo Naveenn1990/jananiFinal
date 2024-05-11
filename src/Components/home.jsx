@@ -252,11 +252,11 @@ export const Home = () => {
             <Container fluid className='p-4 all-bg-green' >
 
                 {/* <Nav variant="underline" defaultActiveKey="/home"> */}
-                <div className='row justify-content-between'>
-                    <div className='col-lg-3' >
+                <div className='row justify-content-evenly '>
+                    <div className='col-lg-3' style={{borderRight:"1px solid white"}}>
                         {/* <Nav.Item>
                                 <Nav.Link href="/home">Active</Nav.Link> */}
-                        <h5 className='fw-bold mb-4 text-light appointment-header'>CHECK SCHEDULES</h5>
+                        <h4 className='fw-bold mb-4 text-light appointment-header text-center' >CHECK SCHEDULES</h4>
                         <label className='mb-1 text-light' for="name">Department's Name</label><br />
                         <Form.Select className='mb-2 ' aria-label="Default select example">
                             <option>Choose Department</option>
@@ -276,17 +276,20 @@ export const Home = () => {
                             <option value="3">Dr.name 3</option>
                             <option value="3">Dr.name 4</option>
                         </Form.Select>
+                        <div className='text-center'>
                         <a href="/schedules"> <Button className='red-btn mb-5'></Button></a>
+                        </div>
+                        
                         {/* </Nav.Item> */}
                     </div>
 
 
 
-                    <div className='col-lg-8 ' >
+                    <div className='col-lg-8' >
                         {/* <Nav.Item>
                                 <Nav.Link eventKey="link-1">Option 2</Nav.Link> */}
-                        <div className='row '>
-                            <h5 className='fw-bold mb-4 text-light'>BOOK APPOINTMENT</h5>
+                        <div className='row text-center'>
+                            <h4 className='fw-bold mb-4 text-light text-center'>BOOK APPOINTMENT</h4>
                             <div className='col-lg-4'>
 
                                 <form>
@@ -294,6 +297,7 @@ export const Home = () => {
                                     <input className='home-input mb-2' type="text" placeholder='Name' /><br />
                                     <label className='mb-1 text-light' for="date">Choose Date</label>
                                     <input className='home-input mb-2' type="date" />
+                                    
                                 </form>
                             </div>
 
@@ -310,6 +314,7 @@ export const Home = () => {
                                         <option value="6">Urology</option>
                                         <option value="5">Peditric</option>
                                     </Form.Select>
+                                    <a href="#"><Button className='red-btn-2 mt-4 mb-2' ></Button></a>
                                 </form>
                             </div>
 
@@ -317,8 +322,11 @@ export const Home = () => {
                                 <form >
                                     <label className='mb-1 text-light' for="email" >Email address</label><br />
                                     <input className='home-input mb-3' type="email" placeholder='example@gmail.com' /><br />
-                                    <a href="#"><Button className='red-btn-2 mt-4 mb-2' ></Button></a>
+                                   
                                 </form>
+                            </div>
+                            <div className="col-lg-12">
+                            
                             </div>
                         </div>
                         {/* </Nav.Item> */}
@@ -457,6 +465,8 @@ export const Home = () => {
                         </button>
                     </div>
                 </a>
+                
+            
             </Container>
             {/* OUR DOCTORS */}
 

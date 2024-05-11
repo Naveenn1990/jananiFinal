@@ -55,14 +55,14 @@ export default function DoctorsSidebar() {
       >
         <div className=" text-center m-3 ms-5">
           <img
-            // src={`http://localhost:8521/Doctor/${doctorDetails.ProfileImg}`}
-            src=""
+            src={`http://localhost:8521/Doctor/${doctorDetails.ProfileImg}`}
+            // src=""
             alt=""
             style={{ width: "70px", height: "70px" }}
           />
           <p className="fs-4 fw-bold" style={{ color: "rgb(32 139 140)" }}>
-            {/* {doctorDetails.Firstname}
-            {doctorDetails.Lastname} */}
+            {doctorDetails.Firstname}
+            {doctorDetails.Lastname}
           </p>
           <p
             style={{
@@ -175,14 +175,14 @@ export default function DoctorsSidebar() {
 
       <h6
         className="sidebarItem"
-        onClick={() => window.location.assign("/doctorforms")}
+        onClick={() => window.location.assign("/patientreports")}
       >
         {" "}
         <FontAwesomeIcon
           icon={faChartBar}
           style={{ color: "", marginRight: "5px" }}
         />
-        Doctor Forms
+        Patient Reports
       </h6>
 
       <h6
