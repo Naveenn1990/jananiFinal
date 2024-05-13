@@ -1,140 +1,148 @@
-import React from 'react'
-import { Container, Dropdown, Navbar } from 'react-bootstrap'
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
-import Label from 'react-bootstrap/FormLabel';
-import { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
-import { faCalendarDays, faEllipsisVertical, faEnvelope, faEye, faLocationDot, faPhoneVolume, faBandage, faCheck, faAngleRight, faAngleLeft, faCancel, faCirclePlus, faArrowsRotate, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useNavigate } from 'react-router-dom';
-import { MdEdit } from 'react-icons/md';
-import { AiFillDelete } from 'react-icons/ai';
+import React, { useEffect, useState } from "react";
+import { Container, Navbar, Table } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import { useNavigate } from "react-router-dom";
+import { MdEdit } from "react-icons/md";
+import { AiFillDelete } from "react-icons/ai";
+import axios from "axios";
 
 const PatientReport = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  let doctorDetails = JSON.parse(sessionStorage.getItem("DoctorDetails"));
+
+  const [patientList, setPatientList] = useState([]);
+
+  useEffect(() => {
+    getPatientList();
+  }, []); // Run once when component mounts
+const [Patientdetailsnew, setPatientdetailsnew] = useState([])
+  const getPatientList = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8521/api/user/getPatientList"
+      );
+      setPatientList(response.data.UsersInfo);
+      setPatientdetailsnew(response.data.UsersInfo);
+    } catch (error) {
+      console.error("Error fetching patient list:", error);
+    }
+  };
+
+  const [AssignedPatientList, setAssignedPatientList] = useState([]);
+  useEffect(() => {
+    const assignedPatients = patientList?.filter((val) => {
+      const data = val?.assigndocts?.filter((patient) => {
+        return (
+          patient.doctorsId?._id.toString() === doctorDetails?._id.toString()
+        );
+      });
+
+      if (data.length) {
+        return val;
+      }
+    });
+    setAssignedPatientList(assignedPatients);
+  }, [patientList]);
+
+
+
+  // const [PatientCauseIDs, setPatientCauseIDs] = useState([]);
+  // useEffect(() => {  
+  //   const assignedPatients = patientList?.filter((val) =>
+  //     val?.assigndocts.some((doctorsid) => doctorsid.doctorsId?._id === doctorDetails?._id)
+  //   );
+  //   const causeIds = assignedPatients.map(patient => patient.assigndocts.map(doctorsid => doctorsid.causeId));
+  //   const flattenedCauseIds = causeIds.flat();
+  //   setPatientCauseIDs(flattenedCauseIds);
+  // }, []);
+
+
+
+  // console.log("PatientCauseIDsss", PatientCauseIDs);
+
+
   return (
     <div>
+      <Navbar expand="lg" style={{ backgroundColor: "#dae1f3" }}>
+        <Container fluid>
+          <Navbar.Brand className="fw-bold" href="#">
+            Patients
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="navbarScroll" />
+          <Navbar.Collapse id="navbarScroll">
+            <Form className="d-flex">
+              <Form.Control
+                type="search"
+                placeholder="Search"
+                className="me-2"
+                aria-label="Search"
+              />
+              <Button variant="outline-primary">Search</Button>
+            </Form>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
 
-            <Navbar expand="lg" style={{ backgroundColor: '#dae1f3' }}>
-                <Container fluid>
-                    <Navbar.Brand className='fw-bold' href="#">Patients</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="navbarScroll" />
-                    <Navbar.Collapse id="navbarScroll">
-
-                        <Form className="d-flex">
-                            <Form.Control
-                                type="search"
-                                placeholder="Search"
-                                className="me-2"
-                                aria-label="Search"
-                            />
-                            <Button variant="outline-primary">Search</Button>
-                        </Form>
-
-                      
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
-
-            <Container className='mb-5'>
-                <table class="table" >
-                    <thead>
-                        <tr className="admin-table-head" >
-                            <th className="fw-bold"> Patient ID </th>
-                            <th className="fw-bold">Name</th>
-                            <th className="fw-bold">Age</th>
-                            <th className="fw-bold">Sex</th>
-                            <th className="fw-bold">Address</th>
-                            <th className="fw-bold">Report</th>
-                            <th className="fw-bold">Actions </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr className="admin-table-row" >
-
-
-                            <td>John Doe</td>
-                            <td>12/05/2016 </td>
-                            <td>test@email.com</td>
-
-                            <td>
-                                123456789
-                            </td>
-                            <td>
-                                God creature is sixth was abundantly and sea gathered
-                            </td>
-                            <td>
-                   
-                      <button
-                        style={{
-                          padding: "6px",
-                          border: "none",
-                          backgroundColor: "#20958c",
-                          color: "white",
-                          borderRadius: "0px",
-                        }}
-                        onClick={() =>
-                          navigate(
-                            `/doctorforms`
-                          )
-                        }
-                      >
-                        Report
-                      </button>
+      <Container className="mt-4">
+        <Table class="table" bordered>
+          <thead>
+            <tr className="admin-table-head">
+              <th className="fw-bold"> Patient ID </th>
+              <th className="fw-bold">Name</th>
+              <th className="fw-bold">Age</th>
+              <th className="fw-bold">Sex</th>
+              <th className="fw-bold">Address</th>
+              <th className="fw-bold">Report</th>
+              {/* <th className="fw-bold">Actions </th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {AssignedPatientList?.map((item, i) => {
+             
+              return (
+                <tr className="admin-table-row">
+                  <td>{item?.PatientId}</td>
+                  <td>{`${item?.Firstname} ${item?.Lastname}`} </td>
+                  <td>
+                    {Math.floor((new Date() - new Date(item?.DOB)) / (1000 * 60 * 60 * 24 * 365.25))} years
                     </td>
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          textAlign: "center",
-                          justifyContent: "space-evenly",
-                        }}
-                      >
-                        <MdEdit
-                          style={{ color: "#20958c", marginRight: "1%" }}
-                        />
-                        <AiFillDelete style={{ color: "red" }} />
-                      </div>
-                    </td>
-
-                        </tr>
-
-                       
-
-
-                    </tbody>
-
-
-                </table>
-                <div className='d-flex gap-3  '>
-                    <Form.Select className=' mb-5 ms-auto' style={{ width: '100px', height: '40px' }} aria-label="Default select example">
-                        <option value="1">5</option>
-                        <option value="2">10</option>
-                        <option value="3">15</option>
-                    </Form.Select>
-                    <div className='mt-2'>
-                        <span className='me-4 '>1-10 of 13 page</span>
-                       <button className='me-4 ' > <FontAwesomeIcon icon={faAngleLeft} /></button>
-                       <button> <FontAwesomeIcon icon={faAngleRight} className='' /></button>   
+                  <td>{item?.Gender}</td>
+                  <td>{item?.Address1} , {item?.Address2} , {item?.Zipcode}</td>
+                  <td>
+                    <button
+                      style={{
+                        padding: "6px",
+                        border: "none",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "5px",
+                      }}
+                      onClick={() => navigate(`/doctorforms`,{state:item})}
+                    >
+                      Report
+                    </button>
+                  </td>
+                  {/* <td>
+                    <div
+                      style={{
+                        display: "flex",
+                        textAlign: "center",
+                        justifyContent: "space-evenly",
+                      }}
+                    >
+                      <MdEdit style={{ color: "#20958c", marginRight: "1%" }} />
+                      <AiFillDelete style={{ color: "red" }} />
                     </div>
-                </div>
-            </Container>
+                  </td> */}
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+      </Container>
+    </div>
+  );
+};
 
-
-
-
-
-
-           
-
-
-            
-
-
-        </div>
-  )
-}
-
-export default PatientReport
+export default PatientReport;
