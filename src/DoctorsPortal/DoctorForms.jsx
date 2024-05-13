@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation} from "react-router-dom";
 import { Button, Table } from "react-bootstrap";
-import { FiDownload } from "react-icons/fi";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { Form } from "react-bootstrap";
@@ -12,9 +11,9 @@ import axios from "axios";
 const DoctorForms = () => {
   let doctorDetails = JSON.parse(sessionStorage.getItem("DoctorDetails"));
   const location = useLocation();
-  const Patientdetails = location.state;
-  console.log("Patientdetails", Patientdetails);
-  const dobString = Patientdetails?.DOB;
+  const { item, causeId } = location.state;
+  console.log("item", item, causeId);
+  const dobString = item?.DOB;
   const dob = new Date(dobString);
   const currentDate = new Date();
   const differenceMs = currentDate - dob;
@@ -28,20 +27,83 @@ const DoctorForms = () => {
     ageOutput = `${ageYears} years`;
   }
 
+  const [CauseDetails, setCauseDetails] = useState([]);
+
+  useEffect(() => {
+    const assignedPatients = item?.cause?.filter((val) => val._id === causeId);
+    setCauseDetails(assignedPatients[0]);
+  }, [item]);
+
+  console.log("CauseDetails", CauseDetails);
 
   // DOCTORS TREATMENT CHART
 
-  const [DTdate, setDTdate] = useState("")
-  const [DTTime, setDTTime] = useState("")
-  const [DTNotes, setDTNotes] = useState("")
+  const [DTdate, setDTdate] = useState("");
+  const [DTTime, setDTTime] = useState("");
+  const [DTNotes, setDTNotes] = useState("");
 
-  const [DoctorsNotes, setDoctorsNotes] = useState([])
+  const [DoctorsTreatment, setDoctorsTreatment] = useState([]);
+  const Adddoctorstreatment = async () => {
+    const newNote = {
+      doctorid: item?._id,
+      DTdate: DTdate,
+      DTTime: DTTime,
+      DTNotes: DTNotes,
+    };
+    setDoctorsTreatment((prevDrug) => [...prevDrug, newNote]);
+  };
+  const deletedoctorstreatment = async (indexToDelete) => {
+    const updatedDrugList = DoctorsTreatment.filter(
+      (_, index) => index !== indexToDelete
+    );
+    setDoctorsTreatment(updatedDrugList);
+  };
+
+  const submitDoctorTreatment = async () => {
+    try {
+      const config = {
+        url: "/adddoctorstreatment",
+        method: "put",
+        baseURL: "http://localhost:8521/api/staff",
+        headers: { "content-type": "application/json" },
+        data: {
+          patientId: item?._id,
+          causeId: CauseDetails?._id,
+          DoctorsTreatment: DoctorsTreatment,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        setDTdate("");
+        setDTTime("");
+        setDTNotes("");
+        setDoctorsNotes([]);
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
+  const [DocTreatChart, setDocTreatChart] = useState(true);
+  const [DocNotes, setDocNotes] = useState(false);
+  const [SurgeryReport, setSurgeryReport] = useState(false);
+
+  // DOCTORS NOTES
+
+  const [DrugAllergies, setDrugAllergies] = useState("");
+  const [Diagnosis, setDiagnosis] = useState("");
+
+  const [DoctorsNotes, setDoctorsNotes] = useState([]);
+  const [DNDate, setDNDate] = useState("");
+  const [DNTime, setDNTime] = useState("");
+  const [DNOtes, setDNOtes] = useState("");
   const Adddoctorsnotes = async () => {
     const newNote = {
-      doctorid:Patientdetails?._id,
-      DTdate:DTdate,
-      DTTime:DTTime,
-      DTNotes:DTNotes,
+      doctorid: item?._id,
+      DNDate: DNDate,
+      DNTime: DNTime,
+      DNOtes: DNOtes,
     };
     setDoctorsNotes((prevDrug) => [...prevDrug, newNote]);
   };
@@ -52,31 +114,72 @@ const DoctorForms = () => {
     setDoctorsNotes(updatedDrugList);
   };
 
-  const submitIntakeOut = async () => {
+  const submitDoctorNotes = async () => {
     try {
       const config = {
-        url: "/addintakeout",
+        url: "/adddoctorsnotes",
         method: "put",
         baseURL: "http://localhost:8521/api/staff",
         headers: { "content-type": "application/json" },
         data: {
-          patientId: Patientdetails?._id,
-          // causeId: cause?._id,
+          patientId: item?._id,
+          causeId: CauseDetails?._id,
           DoctorsNotes: DoctorsNotes,
+          DrugAllergies: DrugAllergies,
+          Diagnosis: Diagnosis,
         },
       };
       let res = await axios(config);
       if (res.status === 200) {
         alert(res.data.success);
+        setDrugAllergies("");
+        setDiagnosis("");
+        setDNDate("");
+        setDNTime("");
+        setDNOtes("");
+        DoctorsNotes([]);
       }
     } catch (error) {
       alert(error.response.data.error);
     }
   };
-  
-  const [DocTreatChart, setDocTreatChart] = useState(true);
-  const [DocNotes, setDocNotes] = useState(false);
-  const [SurgeryReport, setSurgeryReport] = useState(false);
+
+  //SURGERY REPORT
+  const [PreOperativeDiagnosis, setPreOperativeDiagnosis] = useState("")
+const [NameofOperation, setNameofOperation] = useState("")
+const [Procedure, setProcedure] = useState("")
+const [Findings, setFindings] = useState("")
+const [ReportCheck, setReportCheck] = useState("")
+  const submitSurgeryReport = async () => {
+    try {
+      const config = {
+        url: "/addsurgeryreport",
+        method: "put",
+        baseURL: "http://localhost:8521/api/staff",
+        headers: { "content-type": "application/json" },
+        data: {
+          patientId: item?._id,
+          causeId: CauseDetails?._id,
+          doctorid: item?._id,
+          PreOperativeDiagnosis:PreOperativeDiagnosis,
+          NameofOperation:NameofOperation,
+          Procedure:Procedure,
+          Findings:Findings,
+          ReportCheck:ReportCheck,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        setNameofOperation("");
+        setProcedure("");
+        setFindings("");
+        setReportCheck("")
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
 
   return (
     <div>
@@ -135,6 +238,13 @@ const DoctorForms = () => {
         >
           Surgery Report
         </button>
+      </div>
+
+      <div className="container">
+        <h3>
+          Patient Cause :{" "}
+          <span style={{ color: "red" }}>{CauseDetails?.CauseName}</span>
+        </h3>
       </div>
 
       {DocTreatChart ? (
@@ -217,8 +327,7 @@ const DoctorForms = () => {
                       <td
                         style={{ width: "33%", border: "2px  solid #20958C" }}
                       >
-                        Name :{" "}
-                        {`${Patientdetails?.Firstname} ${Patientdetails?.Lastname}`}
+                        Name : {`${item?.Firstname} ${item?.Lastname}`}
                       </td>
                       <td
                         style={{ width: "33%", border: "2px  solid #20958C" }}
@@ -228,7 +337,7 @@ const DoctorForms = () => {
                       <td
                         style={{ width: "33%", border: "2px  solid #20958C" }}
                       >
-                        Sex : {Patientdetails?.Gender}
+                        Sex : {item?.Gender}
                       </td>
                     </tr>
                   </tbody>
@@ -243,7 +352,7 @@ const DoctorForms = () => {
                   <tbody>
                     <tr>
                       <td style={{ width: "50%", border: "2px solid #20958C" }}>
-                        Pt ID : {Patientdetails?.PatientId}
+                        Pt ID : {item?.PatientId}
                       </td>
                       <td style={{ width: "50%", border: "2px solid #20958C" }}>
                         Ward : 26/32
@@ -266,7 +375,8 @@ const DoctorForms = () => {
                             style={{ width: "90%" }}
                           />
                         </div> */}
-                         Doctor Incharge : {`${doctorDetails?.Firstname} ${doctorDetails?.Lastname} `}
+                        Doctor Incharge :{" "}
+                        {`${doctorDetails?.Firstname} ${doctorDetails?.Lastname} `}
                       </td>
                     </tr>
                   </tbody>
@@ -306,7 +416,7 @@ const DoctorForms = () => {
                           type="date"
                           className="vi_0"
                           value={DTdate}
-                          onChange={(e)=>setDTdate(e.target.value)}
+                          onChange={(e) => setDTdate(e.target.value)}
                           min={new Date().toISOString().split("T")[0]}
                         />
                       </td>
@@ -315,38 +425,33 @@ const DoctorForms = () => {
                           type="time"
                           className="vi_0"
                           style={{ width: "86%" }}
-                          onChange={(e)=>setDTTime(e.target.value)}
+                          onChange={(e) => setDTTime(e.target.value)}
                           value={DTTime}
                         />
                       </td>
                       <td style={{ width: "50%", border: "2px solid #20958C" }}>
-                      <Form.Control 
-                      className="vi_0"
-                      as="textarea" 
-                      rows={3} 
-                      onChange={(e)=>setDTNotes(e.target.value)}
-                      value={DTNotes}
-                      />
+                        <Form.Control
+                          className="vi_0"
+                          as="textarea"
+                          rows={3}
+                          onChange={(e) => setDTNotes(e.target.value)}
+                          value={DTNotes}
+                        />
                       </td>
                       <td
                         style={{ width: "20%", border: "2px  solid #20958C" }}
                       >
-                        <input
-                          type="text"
-                          className="vi_0"                          
-                        />
+                        <input type="text" className="vi_0" />
                       </td>
                       <td
                         style={{ width: "10%", border: "2px  solid #20958C" }}
                       >
-                        <Button
-                           onClick={Adddoctorsnotes}
-                        >
+                        <Button onClick={Adddoctorstreatment}>
                           <IoMdAdd />
                         </Button>
                       </td>
                     </tr>
-                    {DoctorsNotes?.map((item, i) => {
+                    {DoctorsTreatment?.map((item, i) => {
                       return (
                         <tr>
                           <td>{moment(item?.DTdate).format("DD-MM-YYYY")}</td>
@@ -355,7 +460,7 @@ const DoctorForms = () => {
                           <td></td>
                           <td>
                             <MdDelete
-                                onClick={() => deletedoctorsnote(i)}
+                              onClick={() => deletedoctorstreatment(i)}
                               style={{
                                 cursor: "pointer",
                                 color: "red",
@@ -371,7 +476,9 @@ const DoctorForms = () => {
             </div>
           </div>
           <div className="text-center mt-2 mb-2">
-            <button className="btn btn-success">Submit</button>
+            <button className="btn btn-success" onClick={submitDoctorTreatment}>
+              Submit
+            </button>
           </div>
         </>
       ) : (
@@ -463,7 +570,7 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Name: Sheetal
+                            Name: {`${item?.Firstname} ${item?.Lastname}`}
                           </td>
                           <td
                             style={{
@@ -471,7 +578,7 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Age: 22
+                            Age: {ageOutput}
                           </td>
                           <td
                             style={{
@@ -479,7 +586,7 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Sex: Female
+                            Sex: {item?.Gender}
                           </td>
                         </tr>
                       </tbody>
@@ -499,7 +606,7 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Pt ID: 9097768656
+                            Pt ID: {item?.PatientId}
                           </td>
                           <td
                             style={{
@@ -517,7 +624,7 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Dept: Neurologists
+                            Dept: {doctorDetails?.Department}
                           </td>
                           <td
                             style={{
@@ -525,7 +632,8 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Doctor: Unknown
+                            Doctor:{" "}
+                            {`${doctorDetails?.Firstname} ${doctorDetails?.Lastname} `}
                           </td>
                         </tr>
                         <tr>
@@ -535,7 +643,7 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            DOA: jsdgdf
+                            DOA: {moment(item?.createdAt).format("DD-MM-YYYY")}
                           </td>
                           <td
                             style={{
@@ -543,14 +651,19 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Known Drug Allergies:{" "}
-                            <span>
-                              <input
-                                type="text"
-                                className="vi_0"
-                                style={{ width: "70%" }}
-                              />
-                            </span>
+                            <div className="d-flex align-items-center">
+                              <div>Known Drug Allergies : </div>
+                              <span>
+                                <input
+                                  type="text"
+                                  className="vi_0"
+                                  value={DrugAllergies}
+                                  onChange={(e) =>
+                                    setDrugAllergies(e.target.value)
+                                  }
+                                />
+                              </span>
+                            </div>
                           </td>
                         </tr>
                         <tr>
@@ -561,14 +674,15 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Diagnosis:{" "}
-                            <span>
+                            <div className="d-flex align-items-center">
+                              <div>Diagnosis:</div>
                               <input
                                 type="text"
                                 className="vi_0"
-                                style={{ width: "92%" }}
+                                value={Diagnosis}
+                                onChange={(e) => setDiagnosis(e.target.value)}
                               />
-                            </span>
+                            </div>
                           </td>
                         </tr>
                       </tbody>
@@ -633,9 +747,11 @@ const DoctorForms = () => {
                             }}
                           >
                             <input
-                              type="text"
+                              type="date"
                               className="vi_0"
-                              style={{ width: "100%" }}
+                              value={DNDate}
+                              onChange={(e) => setDNDate(e.target.value)}
+                              min={new Date().toISOString().split("T")[0]}
                             />
                           </td>
                           <td
@@ -645,9 +761,10 @@ const DoctorForms = () => {
                             }}
                           >
                             <input
-                              type="text"
+                              type="time"
                               className="vi_0"
-                              style={{ width: "100%" }}
+                              value={DNTime}
+                              onChange={(e) => setDNTime(e.target.value)}
                             />
                           </td>
                           <td
@@ -656,10 +773,12 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            <input
-                              type="text"
+                            <Form.Control
                               className="vi_0"
-                              style={{ width: "100%" }}
+                              as="textarea"
+                              rows={3}
+                              onChange={(e) => setDNOtes(e.target.value)}
+                              value={DNOtes}
                             />
                           </td>
                           <td
@@ -680,20 +799,41 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            <Button
-                            //    onClick={adddrug}
-                            >
+                            <Button onClick={Adddoctorsnotes}>
                               <IoMdAdd />
                             </Button>
                           </td>
                         </tr>
+                        {DoctorsNotes?.map((item, i) => {
+                          return (
+                            <tr>
+                              <td>
+                                {moment(item?.DNDate).format("DD-MM-YYYY")}
+                              </td>
+                              <td>{item?.DNTime}</td>
+                              <td>{item?.DNOtes}</td>
+                              <td></td>
+                              <td>
+                                <MdDelete
+                                  onClick={() => deletedoctorsnote(i)}
+                                  style={{
+                                    cursor: "pointer",
+                                    color: "red",
+                                  }}
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </Table>
                   </div>
                 </div>
               </div>
               <div className="text-center mt-2 mb-2">
-                <button className="btn btn-success">Submit</button>
+                <button className="btn btn-success" onClick={submitDoctorNotes}>
+                  Submit
+                </button>
               </div>
             </>
           ) : (
@@ -796,7 +936,7 @@ const DoctorForms = () => {
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                Name: Sheetal Aily
+                                Name: {`${item?.Firstname} ${item?.Lastname}`}
                               </td>
                               <td
                                 colSpan={2}
@@ -805,7 +945,7 @@ const DoctorForms = () => {
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                Age: 22
+                                Age: {ageOutput}
                               </td>
                               <td
                                 colSpan={2}
@@ -814,7 +954,7 @@ const DoctorForms = () => {
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                Sex: Female
+                                Sex: {item?.Gender}
                               </td>
                             </tr>
                             <tr>
@@ -825,7 +965,7 @@ const DoctorForms = () => {
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                Pt ID: 908866756
+                                Pt ID: {item?.PatientId}
                               </td>
                               <td
                                 colSpan={3}
@@ -845,14 +985,15 @@ const DoctorForms = () => {
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                Pre-Operative Diagnosis:{" "}
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "85%" }}
+                                <div className="d-flex align-items-cemter">
+                                  <div> Pre-Operative Diagnosis:</div>
+                                  <input 
+                                  type="text" 
+                                  className="vi_0" 
+                                  value={PreOperativeDiagnosis}
+                                  onChange={(e)=>setPreOperativeDiagnosis(e.target.value)}
                                   />
-                                </span>
+                                </div>
                               </td>
                             </tr>
                             <tr>
@@ -863,7 +1004,7 @@ const DoctorForms = () => {
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                Surgeon: Rahul
+                                Surgeon:  {`${doctorDetails?.Firstname} ${doctorDetails?.Lastname} `}
                               </td>
                               <td
                                 colSpan={2}
@@ -969,7 +1110,18 @@ const DoctorForms = () => {
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                Name of Operaton{" "}
+                                <div className="d-flex align-items-center"> 
+                                <div style={{width:"20%"}}>
+                                Name of Operaton :
+                                </div>                                 
+                                <input 
+                                type="text" 
+                                className="vi_0"
+                                value={NameofOperation}
+                                onChange={(e)=>setNameofOperation(e.target.value)}
+                                />
+                                </div>
+                               
                               </td>
                             </tr>
                             <tr>
@@ -986,7 +1138,10 @@ const DoctorForms = () => {
                                   controlId="exampleForm.ControlTextarea1"
                                 >
                                   <Form.Label>Procedure</Form.Label>
-                                  <Form.Control as="textarea" rows={3} />
+                                  <Form.Control
+                                  value={Procedure} 
+                                  onChange={(e)=>setProcedure(e.target.value)}
+                                  as="textarea" rows={3} />
                                 </Form.Group>
                               </td>
                             </tr>
@@ -1004,7 +1159,11 @@ const DoctorForms = () => {
                                   controlId="exampleForm.ControlTextarea1"
                                 >
                                   <Form.Label>Findings</Form.Label>
-                                  <Form.Control as="textarea" rows={3} />
+                                  <Form.Control 
+                                  as="textarea" 
+                                  rows={3} 
+                                  onChange={(e)=>setFindings(e.target.value)}
+                                  />
                                 </Form.Group>
                               </td>
                             </tr>
@@ -1019,7 +1178,15 @@ const DoctorForms = () => {
                                 colSpan={2}
                                 style={{ border: "2px  solid #20958C" }}
                               >
-                                <Checkbox /> <Checkbox /> <hr />
+                               Checked : <Checkbox 
+                               onChange={(e)=>setReportCheck(e.target.checked ? "Checked":"")}
+                               checked={ReportCheck === "Checked"}
+                               /> 
+                                <hr />
+                               Unchecked :  <Checkbox 
+                               onChange={(e)=>setReportCheck(e.target.checked ? "Unchecked":"")}
+                               checked={ReportCheck === "Unchecked"}
+                               />
                               </td>
                               <td
                                 colSpan={2}
@@ -1034,7 +1201,9 @@ const DoctorForms = () => {
                     </div>
                   </div>
                   <div className="text-center mt-2 mb-2">
-                    <button className="btn btn-success">Submit</button>
+                    <button className="btn btn-success"
+                    onClick={submitSurgeryReport}
+                    >Submit</button>
                   </div>
                 </>
               ) : (
