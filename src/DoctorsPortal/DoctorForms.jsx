@@ -986,7 +986,7 @@ const DoctorForms = () => {
                                   controlId="exampleForm.ControlTextarea1"
                                 >
                                   <Form.Label>Procedure</Form.Label>
-                                  <Form.Control as="textarea" rows={3} />
+                                  <Form.Control as="textarea" rows={3} className="vi_0"/>
                                 </Form.Group>
                               </td>
                             </tr>

@@ -171,6 +171,7 @@ import PatientConsentForms from "./PatientsPortal/PatientConsentForms";
 import PharmacyProducts from "./Components/WebsitePharmacy/PharmacyProducts";
 import DoctorForms from "./DoctorsPortal/DoctorForms";
 import PatientReport from "./DoctorsPortal/PatientReport";
+import PatientAdmissionForm from "./PatientsPortal/PatientAdmissionForm";
 
 function App() {
   return (
@@ -703,6 +704,18 @@ function App() {
                   children={
                     <>
                       <PatientConsentForms />
+                    </>
+                  }
+                />
+              }
+            />
+             <Route
+              path="/patientAdmisssionForm"
+              element={
+                <PatientsCommanDashboard
+                  children={
+                    <>
+                      <PatientAdmissionForm />
                     </>
                   }
                 />
