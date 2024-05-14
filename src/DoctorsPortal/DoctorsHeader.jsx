@@ -55,6 +55,7 @@ export const DoctorsHeader = () => {
                         borderRadius: "50%",
                       }}
                       src={`http://localhost:8521/Doctor/${doctorDetails.ProfileImg}`}
+                      // src=""
                       alt="img"
                     />
                   </button>

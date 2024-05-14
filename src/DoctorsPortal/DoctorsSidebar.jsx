@@ -56,6 +56,7 @@ export default function DoctorsSidebar() {
         <div className=" text-center m-3 ms-5">
           <img
             src={`http://localhost:8521/Doctor/${doctorDetails.ProfileImg}`}
+            // src=""
             alt=""
             style={{ width: "70px", height: "70px" }}
           />
@@ -171,6 +172,20 @@ export default function DoctorsSidebar() {
         />
         Contacts
       </h6>
+
+      <h6
+        className="sidebarItem"
+        onClick={() => window.location.assign("/patientreports")}
+      >
+        {" "}
+        <FontAwesomeIcon
+          icon={faChartBar}
+          style={{ color: "", marginRight: "5px" }}
+        />
+        Patient Reports
+      </h6>
+
+     
 
       <h6
         className="sidebarItem"

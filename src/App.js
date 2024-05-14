@@ -168,6 +168,11 @@ import { DepartmentDetails } from "./Components/DepartmentDetails";
 import DoctorDetails from "./Components/DoctorDetails";
 import PatientProfile from "./PatientsPortal/PatientProfile";
 import HealthPack from "./Components/Diagnostic/HealthPack";
+import PatientConsentForms from "./PatientsPortal/PatientConsentForms";
+import PharmacyProducts from "./Components/WebsitePharmacy/PharmacyProducts";
+import DoctorForms from "./DoctorsPortal/DoctorForms";
+import PatientReport from "./DoctorsPortal/PatientReport";
+import PatientAdmissionForm from "./PatientsPortal/PatientAdmissionForm";
 
 function App() {
   return (
@@ -357,7 +362,16 @@ function App() {
                 </>
               }
             />
-
+            <Route
+              path="/pharmacyproducts"
+              element={
+                <>
+                  {/* <Headerpharmacy /> */}
+                  <PharmacyProducts />
+                  <Footer />
+                </>
+              }
+            />
             <Route
               path="/pharmacydesc"
               element={
@@ -695,6 +709,30 @@ function App() {
               }
             />
             <Route
+              path="/patientConsentForms"
+              element={
+                <PatientsCommanDashboard
+                  children={
+                    <>
+                      <PatientConsentForms />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/patientAdmisssionForm"
+              element={
+                <PatientsCommanDashboard
+                  children={
+                    <>
+                      <PatientAdmissionForm />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
               path="/patientbillinvoice"
               element={
                 <PatientsCommanDashboard
@@ -763,6 +801,30 @@ function App() {
                   children={
                     <>
                       <DoctorsList />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/patientreports"
+              element={
+                <AdminDashboard
+                  children={
+                    <>
+                      <PatientReport />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/doctorforms"
+              element={
+                <AdminDashboard
+                  children={
+                    <>
+                      <DoctorForms />
                     </>
                   }
                 />

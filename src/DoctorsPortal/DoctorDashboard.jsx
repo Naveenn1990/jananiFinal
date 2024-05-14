@@ -331,10 +331,14 @@ console.log(today);
                         <img
                           style={{ width: "30px", height: "30px", borderRadius: "5px" }}
                           src={`http://localhost:8521/Doctor/${item?.ProfileImg}`}
+                          // src=""
                           alt=""
                         />
                       </td>
-                      <td><a href="#">{item?.Firstname}&nbsp;{item?.Lastname}</a> ({item?.Education})</td>
+                      <td><a href="#">
+                        {item?.Firstname}&nbsp;
+                        {item?.Lastname}
+                        </a> ({item?.Education})</td>
                       <td>{item?.mondayweekoff && today == "Monday" || item?.tuesdayweekoff && today == "Tuesday"  || item?.wednesdayweekoff && today == "Wednesday" || item?.thrusdayweekoff && today == "Thursday" || item?.fridayweekoff && today == "Friday" || item?.saturdayweekoff && today == "Saturday" || item?.sundayweekoff && today == "Sunday" ?   <button className="btn btn-outline-danger">
                         Absend
                       </button> :  <button className="btn btn-outline-success">
@@ -360,7 +364,7 @@ console.log(today);
 
 
         <Container className="mt-5">
-          <div className="row " >
+          <div className="row">
             {/* <div className="col-lg-6" style={{ overflow: 'hidden ', overflowY: 'scroll' }}>
               <h5 className="fw-bold mb-4">Todo List</h5>
               <ul style={{ fontSize: '16px' }}>
