@@ -319,6 +319,18 @@ export default function PatientsSidebar() {
           </h6>
 
           <h6
+        className="sidebarItem"
+        onClick={() => window.location.assign("/patientAdmisssionForm")}
+      >
+        {" "}
+        <FontAwesomeIcon
+          icon={faFileInvoice}
+          style={{ color: "",marginRight: "5px"}}
+        />
+        Admission Form(IPD)
+      </h6>
+
+          <h6
             className="sidebarItem"
             onClick={() => window.location.assign("/patientConsentForms")}
           >

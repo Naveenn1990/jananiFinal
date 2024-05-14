@@ -167,11 +167,13 @@ import { BlogDetails } from "./Components/BlogDetails";
 import { DepartmentDetails } from "./Components/DepartmentDetails";
 import DoctorDetails from "./Components/DoctorDetails";
 import PatientProfile from "./PatientsPortal/PatientProfile";
+import HealthPack from "./Components/Diagnostic/HealthPack";
 import PatientConsentForms from "./PatientsPortal/PatientConsentForms";
 import PharmacyProducts from "./Components/WebsitePharmacy/PharmacyProducts";
 import DoctorForms from "./DoctorsPortal/DoctorForms";
 import PatientReport from "./DoctorsPortal/PatientReport";
 import DoctorsViewForms from "./DoctorsPortal/DoctorsViewForms";
+import PatientAdmissionForm from "./PatientsPortal/PatientAdmissionForm";
 
 function App() {
   return (
@@ -361,7 +363,7 @@ function App() {
                 </>
               }
             />
-<Route
+            <Route
               path="/pharmacyproducts"
               element={
                 <>
@@ -484,12 +486,22 @@ function App() {
               }
             />
             <Route
-              path="/gastroenterology"
+              path="/hospital-lab-test-list"
               element={
                 <>
                   <HeaderDiagnostic />
                   <Gastroenterology />
                   <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/healthpack"
+              element={
+                <>
+                  {/* <HeaderDiagnostic /> */}
+                  <HealthPack />
+                  {/* <Footer /> */}
                 </>
               }
             />
@@ -710,6 +722,18 @@ function App() {
               }
             />
             <Route
+              path="/patientAdmisssionForm"
+              element={
+                <PatientsCommanDashboard
+                  children={
+                    <>
+                      <PatientAdmissionForm />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
               path="/patientbillinvoice"
               element={
                 <PatientsCommanDashboard
@@ -795,7 +819,7 @@ function App() {
                 />
               }
             />
-             <Route
+            <Route
               path="/doctorforms"
               element={
                 <AdminDashboard

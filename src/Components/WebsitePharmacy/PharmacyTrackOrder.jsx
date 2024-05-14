@@ -1,7 +1,7 @@
 import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-import { Button, Container, Table } from "react-bootstrap";
+import { Button, Container, Table, Modal } from "react-bootstrap";
 import { BsDot } from "react-icons/bs";
 import { FaSlack } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,10 @@ import { Headerpharmacy } from "./headerpharmacy";
 import axios from "axios";
 import moment from "moment";
 export const PharmacyTrackOrder = () => {
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const navigate = useNavigate();
   let pharmacyUser = sessionStorage.getItem("pharmacyUser");
   const [PlaceOrder, setPlaceOrder] = useState(true);
@@ -64,8 +68,16 @@ export const PharmacyTrackOrder = () => {
       setorderlistDetails([]);
     }
   };
+  const [selectedorderid, setselectedorderid] = useState("");
+  const [selectedorderiddetails, setselectedorderiddetails] = useState("");
 
-  const cancelProductOrderStatus = async (id1, id2) => {
+  const cancelProductOrderStatus = async () => {
+    if (!selectedorderid) {
+      return alert("selectedorderid");
+    }
+    if (!selectedorderiddetails) {
+      return alert("selectedorderid");
+    }
     try {
       const config = {
         url: "/pharmacy/cancelProductOrderStatus",
@@ -73,8 +85,8 @@ export const PharmacyTrackOrder = () => {
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
         data: {
-          orderid: id1,
-          orderitemid: id2,
+          orderid: selectedorderid,
+          orderitemid: selectedorderiddetails,
         },
       };
       let res = await axios(config);
@@ -188,85 +200,87 @@ export const PharmacyTrackOrder = () => {
                 </div>
               </div> */}
 
-              {orderlistDetails?.map((orderVal) => {
-                return (
-                  <div className="row align-items-center border border-secondary">
-                    <div className="col-lg-3">
-                      <p
-                        className="ms-4 fw-bold"
-                        style={{
-                          color: "#208b8c",
-                          textDecoration: "underline",
-                        }}
-                      >
-                        Product Details
-                      </p>
-                      <ul>
-                        <li>
-                          Order Placed :{" "}
-                          <span>
-                            {`${new Date(orderVal?.createdAt).getDate()}-${
-                              new Date(orderVal?.createdAt).getMonth() + 1
-                            }-${new Date(
-                              orderVal?.createdAt
-                            ).getFullYear()}`}{" "}
-                            {`${new Date(
-                              orderVal?.createdAt
-                            ).getHours()}:${new Date(
-                              orderVal?.createdAt
-                            ).getMinutes()}`}
-                          </span>
-                        </li>
-                        <li>
-                          Shipping Address :{" "}
-                          <span>
-                            {orderVal?.shippingAddress}, {orderVal?.zipcode}
-                          </span>
-                        </li>
+              {orderlistDetails
+                ?.filter((val) => val?.orderStatus === "PLACED_ORDER")
+                ?.map((orderVal) => {
+                  return (
+                    <div className="row align-items-center border border-secondary mt-3">
+                      <div className="col-lg-3">
+                        <p
+                          className="ms-4 fw-bold"
+                          style={{
+                            color: "#208b8c",
+                            textDecoration: "underline",
+                          }}
+                        >
+                          Product Details
+                        </p>
+                        <ul>
+                          <li>
+                            Order Placed :{" "}
+                            <span>
+                              {`${new Date(orderVal?.createdAt).getDate()}-${
+                                new Date(orderVal?.createdAt).getMonth() + 1
+                              }-${new Date(
+                                orderVal?.createdAt
+                              ).getFullYear()}`}{" "}
+                              {`${new Date(
+                                orderVal?.createdAt
+                              ).getHours()}:${new Date(
+                                orderVal?.createdAt
+                              ).getMinutes()}`}
+                            </span>
+                          </li>
+                          <li>
+                            Shipping Address :{" "}
+                            <span>
+                              {orderVal?.shippingAddress}, {orderVal?.zipcode}
+                            </span>
+                          </li>
 
-                        <li>
-                          Total Ordered Items :{" "}
-                          <span>{orderVal?.totalOrderedItems}</span>
-                        </li>
-                        <li>
-                          Total Ordered Price :{" "}
-                          <span>{orderVal?.totalOrderedPrice}/-</span>
-                        </li>
-                        <li>
-                          Payment Option :{" "}
-                          <span>
-                            {orderVal?.paymentOption == "PAY_ON_DELIVERY" ? (
-                              <>Cash On Delivery</>
-                            ) : (
-                              <>Online Paid</>
-                            )}
-                          </span>
-                        </li>
-                        <li>
-                          Payment Status :{" "}
-                          <span>
-                            {orderVal?.orderPayment == "DONE" ? (
-                              <span style={{ color: "green" }}>Paid</span>
-                            ) : (
-                              <span style={{ color: "red" }}>Not Paid</span>
-                            )}
-                          </span>
-                        </li>
-                      </ul>
-                    </div>
+                          <li>
+                            Total Ordered Items :{" "}
+                            <span>{orderVal?.totalOrderedItems}</span>
+                          </li>
+                          <li>
+                            Total Ordered Price :{" "}
+                            <span>{orderVal?.totalOrderedPrice}/-</span>
+                          </li>
+                          <li>
+                            Payment Option :{" "}
+                            <span>
+                              {orderVal?.paymentOption == "PAY_ON_DELIVERY" ? (
+                                <>Cash On Delivery</>
+                              ) : (
+                                <>Online Paid</>
+                              )}
+                            </span>
+                          </li>
+                          <li>
+                            Payment Status :{" "}
+                            <span>
+                              {orderVal?.orderPayment == "DONE" ? (
+                                <span style={{ color: "green" }}>Paid</span>
+                              ) : (
+                                <span style={{ color: "red" }}>Not Paid</span>
+                              )}
+                            </span>
+                          </li>
+                        </ul>
+                      </div>
 
-                    <div className="col-lg-7">
-                      <Table>
-                        <thead>
-                          <th
-                            style={{
-                              textAlign: "center",
-                              border: "1px solid black",
-                            }}
-                          >
-                            Product
-                          </th>
-                          {/* <th
+                      <div className="col-lg-7">
+                        <Table>
+                          <thead>
+                            <th
+                              style={{
+                                textAlign: "center",
+                                border: "1px solid black",
+                              }}
+                            >
+                              Product
+                            </th>
+                            {/* <th
                             style={{
                               textAlign: "center",
                               border: "1px solid black",
@@ -282,40 +296,40 @@ export const PharmacyTrackOrder = () => {
                           >
                             Quantity
                           </th> */}
-                          <th
-                            style={{
-                              textAlign: "center",
-                              border: "1px solid black",
-                            }}
-                          >
-                            Total Price
-                          </th>
-                          <th
-                            style={{
-                              textAlign: "center",
-                              border: "1px solid black",
-                            }}
-                          >
-                            Action
-                          </th>
-                        </thead>
-                        <tbody>
-                          {orderVal?.orderedItems?.map((val) => {
-                            return (
-                              <tr>
-                                <td className="row">
-                                  <span className="col-md-2">
-                                    <img
-                                      style={{ width: "50px" }}
-                                      src={`http://localhost:8521/AdminInventory/${val?.productid?.productImgs[0]}`}
-                                      alt=""
-                                    />
-                                  </span>{" "}
-                                  <span className="col-md-7">
-                                    {val?.productid?.productName}
-                                  </span>
-                                </td>
-                                {/* <td>
+                            <th
+                              style={{
+                                textAlign: "center",
+                                border: "1px solid black",
+                              }}
+                            >
+                              Total Price
+                            </th>
+                            <th
+                              style={{
+                                textAlign: "center",
+                                border: "1px solid black",
+                              }}
+                            >
+                              Action
+                            </th>
+                          </thead>
+                          <tbody>
+                            {orderVal?.orderedItems?.map((val) => {
+                              return (
+                                <tr>
+                                  <td className="row">
+                                    <span className="col-md-2">
+                                      <img
+                                        style={{ width: "50px" }}
+                                        src={`http://localhost:8521/AdminInventory/${val?.productid?.productImgs[0]}`}
+                                        alt=""
+                                      />
+                                    </span>{" "}
+                                    <span className="col-md-7 text-center">
+                                      {val?.productid?.productName}
+                                    </span>
+                                  </td>
+                                  {/* <td>
                                   {val?.productid?.productPrice -
                                     (val?.productid?.productPrice *
                                       val?.productid?.discount) /
@@ -323,51 +337,82 @@ export const PharmacyTrackOrder = () => {
                                   /-
                                 </td>
                                 <td>{val?.quantity}</td> */}
-                                <td>
-                                  {(val?.productid?.productPrice -
-                                    (val?.productid?.productPrice *
-                                      val?.productid?.discount) /
-                                      100) *
-                                    val?.quantity}
-                                  /-
-                                </td>
-                                <td>
-                                  <Button
-                                    style={{ backgroundColor: "#d51212" }}
-                                  >
-                                    Cancel Order
-                                  </Button>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </Table>
-                    </div>
+                                  <td>
+                                    {(
+                                      (val?.productid?.productPrice -
+                                        (val?.productid?.productPrice *
+                                          val?.productid?.discount) /
+                                          100) *
+                                      val?.quantity
+                                    ).toFixed(1)}
+                                    /-
+                                  </td>
+                                  <td>
+                                    <Button
+                                      style={{ backgroundColor: "#d51212" }}
+                                      onClick={() => {
+                                        setselectedorderid(orderVal?._id);
+                                        setselectedorderiddetails(val?._id);
+                                        handleShow();
+                                      }}
+                                    >
+                                      Cancel Order
+                                    </Button>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </Table>
+                      </div>
 
-                    <div className="col-lg-2">
-                      <Button
-                        onClick={() =>
-                          navigate("/pharmacyvieworder", {
-                            state: { orderVal: orderVal },
-                          })
-                        }
-                        style={{
-                          backgroundColor: "#208b8c",
-                          marginBottom: "10px",
-                        }}
-                      >
-                        View Order
-                      </Button>
-                      <br />
-                      <Button style={{ backgroundColor: "#d51212" }}>
-                        Cancel Order
-                      </Button>
+                      <div className="col-lg-2">
+                        <Button
+                          onClick={() =>
+                            navigate("/pharmacyvieworder", {
+                              state: { orderVal: orderVal },
+                            })
+                          }
+                          style={{
+                            backgroundColor: "#208b8c",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          View Order
+                        </Button>
+                        <br />
+                        {/* <Button style={{ backgroundColor: "#d51212" }}>
+                          Cancel Order
+                        </Button> */}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
+            <Modal show={show} onHide={handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Cancelling product</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <b>
+                  Are you really sure you want to{" "}
+                  <span style={{ color: "red" }}>cancel</span> the product from
+                  your Order?
+                </b>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="primary" onClick={handleClose}>
+                  NO
+                </Button>
+                <Button
+                  className="yesButtonHover"
+                  variant="secondary"
+                  onClick={cancelProductOrderStatus}
+                >
+                  YES
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </>
         ) : (
           <>
@@ -400,86 +445,93 @@ export const PharmacyTrackOrder = () => {
                   </div>
                 </div> */}
 
-                  {orderlistDetails?.map((orderVal) => {
-                    return (
-                      <div className="row align-items-center border border-secondary">
-                        <div className="col-lg-3">
-                          <p
-                            className="ms-4 fw-bold"
-                            style={{
-                              color: "#208b8c",
-                              textDecoration: "underline",
-                            }}
-                          >
-                            Product Details
-                          </p>
-                          <ul>
-                            <li>
-                              Order Placed :{" "}
-                              <span>
-                                {`${new Date(orderVal?.createdAt).getDate()}-${
-                                  new Date(orderVal?.createdAt).getMonth() + 1
-                                }-${new Date(
-                                  orderVal?.createdAt
-                                ).getFullYear()}`}{" "}
-                                {`${new Date(
-                                  orderVal?.createdAt
-                                ).getHours()}:${new Date(
-                                  orderVal?.createdAt
-                                ).getMinutes()}`}
-                              </span>
-                            </li>
-                            <li>
-                              Shipping Address :{" "}
-                              <span>
-                                {orderVal?.shippingAddress}, {orderVal?.zipcode}
-                              </span>
-                            </li>
+                  {orderlistDetails
+                    ?.filter((val) => val?.orderStatus === "OUT_FOR_DELIVERY")
+                    ?.map((orderVal) => {
+                      return (
+                        <div className="row align-items-center border border-secondary mt-3">
+                          <div className="col-lg-3">
+                            <p
+                              className="ms-4 fw-bold"
+                              style={{
+                                color: "#208b8c",
+                                textDecoration: "underline",
+                              }}
+                            >
+                              Product Details
+                            </p>
+                            <ul>
+                              <li>
+                                Order Placed :{" "}
+                                <span>
+                                  {`${new Date(
+                                    orderVal?.createdAt
+                                  ).getDate()}-${
+                                    new Date(orderVal?.createdAt).getMonth() + 1
+                                  }-${new Date(
+                                    orderVal?.createdAt
+                                  ).getFullYear()}`}{" "}
+                                  {`${new Date(
+                                    orderVal?.createdAt
+                                  ).getHours()}:${new Date(
+                                    orderVal?.createdAt
+                                  ).getMinutes()}`}
+                                </span>
+                              </li>
+                              <li>
+                                Shipping Address :{" "}
+                                <span>
+                                  {orderVal?.shippingAddress},{" "}
+                                  {orderVal?.zipcode}
+                                </span>
+                              </li>
 
-                            <li>
-                              Total Ordered Items :{" "}
-                              <span>{orderVal?.totalOrderedItems}</span>
-                            </li>
-                            <li>
-                              Total Ordered Price :{" "}
-                              <span>{orderVal?.totalOrderedPrice}/-</span>
-                            </li>
-                            <li>
-                              Payment Option :{" "}
-                              <span>
-                                {orderVal?.paymentOption ==
-                                "PAY_ON_DELIVERY" ? (
-                                  <>Cash On Delivery</>
-                                ) : (
-                                  <>Online Paid</>
-                                )}
-                              </span>
-                            </li>
-                            <li>
-                              Payment Status :{" "}
-                              <span>
-                                {orderVal?.orderPayment == "DONE" ? (
-                                  <span style={{ color: "green" }}>Paid</span>
-                                ) : (
-                                  <span style={{ color: "red" }}>Not Paid</span>
-                                )}
-                              </span>
-                            </li>
-                          </ul>
-                        </div>
+                              <li>
+                                Total Ordered Items :{" "}
+                                <span>{orderVal?.totalOrderedItems}</span>
+                              </li>
+                              <li>
+                                Total Ordered Price :{" "}
+                                <span>{orderVal?.totalOrderedPrice}/-</span>
+                              </li>
+                              <li>
+                                Payment Option :{" "}
+                                <span>
+                                  {orderVal?.paymentOption ==
+                                  "PAY_ON_DELIVERY" ? (
+                                    <>Cash On Delivery</>
+                                  ) : (
+                                    <>Online Paid</>
+                                  )}
+                                </span>
+                              </li>
+                              <li>
+                                Payment Status :{" "}
+                                <span>
+                                  {orderVal?.orderPayment == "DONE" ? (
+                                    <span style={{ color: "green" }}>Paid</span>
+                                  ) : (
+                                    <span style={{ color: "red" }}>
+                                      Not Paid
+                                    </span>
+                                  )}
+                                </span>
+                              </li>
+                            </ul>
+                          </div>
 
-                        <div className="col-lg-7">
-                          <Table>
-                            <thead>
-                              <th
-                                style={{
-                                  textAlign: "center",
-                                  border: "1px solid black",
-                                }}
-                              >
-                                Product
-                              </th>
-                              {/* <th
+                          <div className="col-lg-7">
+                            <Table>
+                              <thead>
+                                <th
+                                  style={{
+                                    textAlign: "center",
+                                    border: "1px solid black",
+                                  }}
+                                >
+                                  Product
+                                </th>
+                                {/* <th
                               style={{
                                 textAlign: "center",
                                 border: "1px solid black",
@@ -495,40 +547,40 @@ export const PharmacyTrackOrder = () => {
                             >
                               Quantity
                             </th> */}
-                              <th
-                                style={{
-                                  textAlign: "center",
-                                  border: "1px solid black",
-                                }}
-                              >
-                                Total Price
-                              </th>
-                              <th
-                                style={{
-                                  textAlign: "center",
-                                  border: "1px solid black",
-                                }}
-                              >
-                                Action
-                              </th>
-                            </thead>
-                            <tbody>
-                              {orderVal?.orderedItems?.map((val) => {
-                                return (
-                                  <tr>
-                                    <td className="row">
-                                      <span className="col-md-2">
-                                        <img
-                                          style={{ width: "50px" }}
-                                          src={`http://localhost:8521/AdminInventory/${val?.productid?.productImgs[0]}`}
-                                          alt=""
-                                        />
-                                      </span>{" "}
-                                      <span className="col-md-7">
-                                        {val?.productid?.productName}
-                                      </span>
-                                    </td>
-                                    {/* <td>
+                                <th
+                                  style={{
+                                    textAlign: "center",
+                                    border: "1px solid black",
+                                  }}
+                                >
+                                  Total Price
+                                </th>
+                                <th
+                                  style={{
+                                    textAlign: "center",
+                                    border: "1px solid black",
+                                  }}
+                                >
+                                  Action
+                                </th>
+                              </thead>
+                              <tbody>
+                                {orderVal?.orderedItems?.map((val) => {
+                                  return (
+                                    <tr>
+                                      <td className="row">
+                                        <span className="col-md-2">
+                                          <img
+                                            style={{ width: "50px" }}
+                                            src={`http://localhost:8521/AdminInventory/${val?.productid?.productImgs[0]}`}
+                                            alt=""
+                                          />
+                                        </span>{" "}
+                                        <span className="col-md-7">
+                                          {val?.productid?.productName}
+                                        </span>
+                                      </td>
+                                      {/* <td>
                                     {val?.productid?.productPrice -
                                       (val?.productid?.productPrice *
                                         val?.productid?.discount) /
@@ -536,36 +588,37 @@ export const PharmacyTrackOrder = () => {
                                     /-
                                   </td>
                                   <td>{val?.quantity}</td> */}
-                                    <td>
-                                      {(val?.productid?.productPrice -
-                                        (val?.productid?.productPrice *
-                                          val?.productid?.discount) /
-                                          100) *
-                                        val?.quantity}
-                                      /-
-                                    </td>
-                                    <td>
-                                      <Button
-                                        style={{ backgroundColor: "#d51212" }}
-                                        onClick={() => {
-                                          cancelProductOrderStatus(
-                                            orderVal?._id,
-                                            val?._id
-                                          );
-                                        }}
-                                      >
-                                        Cancel Order
-                                      </Button>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </Table>
-                        </div>
+                                      <td>
+                                        {(val?.productid?.productPrice -
+                                          (val?.productid?.productPrice *
+                                            val?.productid?.discount) /
+                                            100) *
+                                          val?.quantity}
+                                        /-
+                                      </td>
+                                      <td>
+                                        <Button
+                                          style={{ backgroundColor: "#d51212" }}
+                                          onClick={() => {
+                                            // handleShow();
+                                            // // cancelProductOrderStatus(
+                                            // //   orderVal?._id,
+                                            // //   val?._id
+                                            // // );
+                                          }}
+                                        >
+                                          Cancel Order
+                                        </Button>
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </Table>
+                          </div>
 
-                        <div className="col-lg-2">
-                          {/* <Button
+                          <div className="col-lg-2">
+                            {/* <Button
                             onClick={() => navigate("/pharmacyvieworder")}
                             style={{
                               backgroundColor: "#208b8c",
@@ -575,13 +628,13 @@ export const PharmacyTrackOrder = () => {
                             View Order
                           </Button>
                           <br /> */}
-                          <Button style={{ backgroundColor: "#d51212" }}>
+                            {/* <Button style={{ backgroundColor: "#d51212" }}>
                             Cancel Order
-                          </Button>
+                          </Button> */}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </>
             ) : (
@@ -767,19 +820,23 @@ export const PharmacyTrackOrder = () => {
                                             </span>
                                           </td>
                                           <td>
-                                            {val?.productid?.productPrice -
+                                            {(
+                                              val?.productid?.productPrice -
                                               (val?.productid?.productPrice *
                                                 val?.productid?.discount) /
-                                                100}
+                                                100
+                                            ).toFixed(1)}
                                             /-
                                           </td>
                                           <td>{val?.quantity}</td>
                                           <td>
-                                            {(val?.productid?.productPrice -
-                                              (val?.productid?.productPrice *
-                                                val?.productid?.discount) /
-                                                100) *
-                                              val?.quantity}
+                                            {(
+                                              (val?.productid?.productPrice -
+                                                (val?.productid?.productPrice *
+                                                  val?.productid?.discount) /
+                                                  100) *
+                                              val?.quantity
+                                            ).toFixed(1)}
                                             /-
                                           </td>
                                           <td>

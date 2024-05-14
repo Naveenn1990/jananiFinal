@@ -233,49 +233,60 @@ export const PharmacyCheckOut = () => {
   };
 
   const Placeorder = async () => {
-    console.log("SelectedAddress: ", Object.keys(SelectedAddress).length);
+    // if (CartList?.totalItems > 10) {
+    //   return alert("Maximum order limit exceeds!!!");
+    // }
+    let flag = 1;
+    CartList?.cartItems?.map((val) => {
+      if (val?.productid?.maxOrderlimit < val?.quantity) {
+        flag = 0;
+        return alert("Maximum order limit exceeds!");
+      }
+    });
     if (!Object.keys(SelectedAddress).length) {
       return alert("Please select the address");
     }
-    try {
-      const config = {
-        url: "/pharmacy/placeorder",
-        method: "post",
-        baseURL: "http://localhost:8521/api",
-        headers: { "content-type": "application/json" },
-        data: {
-          patientid: pharmacyUser?._id,
-          zipcode: SelectedAddress?.Pincode,
-          shippingAddress:
-            SelectedAddress?.houseno +
-            "," +
-            SelectedAddress?.landmark +
-            "," +
-            SelectedAddress?.state,
-          city: SelectedAddress?.city,
-          name: SelectedAddress?.Name,
-          number: SelectedAddress?.number,
-          email: SelectedAddress?.email,
-          paymentOption: PaymentType,
-          orderStatus: "PLACED_ORDER",
-          orderPayment: PaymentType === "PAY_ONLINE" ? "DONE" : "PENDING",
-          orderedItems: CartList?.cartItems,
-          totalOrderedItems: CartList?.totalItems,
-          totalOrderedPrice: CartList?.totalAmt,
-        },
-      };
-      let res = await axios(config);
-      if (res.status === 200) {
-        deleteCart();
-        alert("Order Placed");
-        getAllAddress();
-        setShow(false);
-        navigate("/pharmacytrackorder");
-      }
-    } catch (error) {
-      console.log(error.response);
-      if (error.response) {
-        alert(error.response.data.error);
+    if (flag) {
+      try {
+        const config = {
+          url: "/pharmacy/placeorder",
+          method: "post",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            patientid: pharmacyUser?._id,
+            zipcode: SelectedAddress?.Pincode,
+            shippingAddress:
+              SelectedAddress?.houseno +
+              "," +
+              SelectedAddress?.landmark +
+              "," +
+              SelectedAddress?.state,
+            city: SelectedAddress?.city,
+            name: SelectedAddress?.Name,
+            number: SelectedAddress?.number,
+            email: SelectedAddress?.email,
+            paymentOption: PaymentType,
+            orderStatus: "PLACED_ORDER",
+            orderPayment: PaymentType === "PAY_ONLINE" ? "DONE" : "PENDING",
+            orderedItems: CartList?.cartItems,
+            totalOrderedItems: CartList?.totalItems,
+            totalOrderedPrice: CartList?.totalAmt,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          deleteCart();
+          alert("Order Placed");
+          getAllAddress();
+          setShow(false);
+          navigate("/pharmacytrackorder");
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
       }
     }
   };

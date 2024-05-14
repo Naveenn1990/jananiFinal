@@ -185,6 +185,8 @@ export default function DoctorsSidebar() {
         Patient Reports
       </h6>
 
+     
+
       <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/loginforeveryone")}

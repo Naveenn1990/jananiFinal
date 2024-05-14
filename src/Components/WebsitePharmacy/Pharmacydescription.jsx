@@ -4,18 +4,22 @@ import { Tooltip } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Headerpharmacy } from "./headerpharmacy";
+import { IoMdHeart } from "react-icons/io";
+import { IoMdHeartEmpty } from "react-icons/io";
+import { IoCartOutline } from "react-icons/io5";
+import { IoCart } from "react-icons/io5";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 function Pharmacydescription(props) {
   let pharmacyUser = sessionStorage.getItem("pharmacyUser");
   const location = useLocation();
   const { item } = location.state;
-  console.log(item, "kmlklkl");
 
   const [showMore, setShowMore] = useState(false);
   const [RelatedProduct, setRelatedProduct] = useState([]);
 
   const [qty, setqty] = useState(1);
 
-  console.log("item", item);
   const [previewImg, setPreviewImg] = useState(
     "http://localhost:8521/AdminInventory/" + item?.productImgs[0]
   );
@@ -66,6 +70,58 @@ function Pharmacydescription(props) {
     }
   };
 
+  const AddToWishlist = async (item) => {
+    try {
+      if (!pharmacyUser) {
+        return alert("Please login first");
+      }
+      const config = {
+        url: "/pharmacy/addtowishlist",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          patientid: JSON.parse(pharmacyUser)?._id,
+          productid: item?._id,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        getWishlist();
+        alert("Product Added to Wishlist");
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        alert("Something went wrong with the data...");
+      }
+    }
+  };
+  const removeFromWishlist = async (item) => {
+    try {
+      const config = {
+        url: "/pharmacy/removeFromWishlist",
+        method: "put",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          patientid: JSON.parse(pharmacyUser)?._id,
+          productid: item?._id,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        getWishlist();
+        alert("Remove product from wishlist");
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        alert("Something went wrong with the data...");
+      }
+    }
+  };
+
   const [wishlistData, setWishlistData] = useState({});
   const getWishlist = async () => {
     try {
@@ -93,12 +149,42 @@ function Pharmacydescription(props) {
         }`
       );
       if (res.status === 200) {
-        setCartItemsList(res.data.cartlist);
+        setCartItemsList(JSON.parse(JSON.stringify(res.data.cartlist)));
       }
     } catch (error) {
       setCartItemsList({});
     }
   };
+
+  const AddToCart = async (item) => {
+    if (!pharmacyUser) {
+      return alert("Please login first");
+    }
+    try {
+      const config = {
+        url: "/pharmacy/addtocart",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          patientid: JSON.parse(pharmacyUser)?._id,
+          productid: item?._id,
+          quantity: 1,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        getCartItems();
+        alert(res.data.success);
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
   useEffect(() => {
     if (!pharmacyUser) {
       return alert("Please login first!!!");
@@ -107,7 +193,6 @@ function Pharmacydescription(props) {
       getCartItems();
     }
   }, [pharmacyUser]);
-
   return (
     <>
       <Headerpharmacy
@@ -157,6 +242,7 @@ function Pharmacydescription(props) {
                             }
                             alt=""
                             className=" img-fluid wt-50"
+                            style={{ height: "94px" }}
                           />
                         </div>
                         <div
@@ -181,6 +267,7 @@ function Pharmacydescription(props) {
                             }
                             alt=""
                             className="img-fluid wt-50"
+                            style={{ height: "94px" }}
                           />
                         </div>
 
@@ -206,6 +293,7 @@ function Pharmacydescription(props) {
                             }
                             alt=""
                             className="img-fluid wt-50"
+                            style={{ height: "94px" }}
                           />
                         </div>
                         <div
@@ -230,6 +318,7 @@ function Pharmacydescription(props) {
                             }
                             alt=""
                             className="img-fluid wt-50"
+                            style={{ height: "94px" }}
                           />
                         </div>
                       </div>
@@ -261,7 +350,11 @@ function Pharmacydescription(props) {
                         <div class="pro-price-label mb-2">
                           <div class="price-box">
                             <span class="new-price" id="ProductPrice">
-                              ₹ {(item?.productPrice).toFixed(2)}
+                              ₹{" "}
+                              {(
+                                item?.productPrice -
+                                (item?.productPrice * item?.discount) / 100
+                              ).toFixed(2)}
                             </span>
                             <span class="old-price" id="ComparePrice">
                               ₹ {(item?.productPrice).toFixed(2)}
@@ -270,34 +363,33 @@ function Pharmacydescription(props) {
 
                           <div class="product-label">
                             <span class="sale-title" id="ProductDiscount">
-                              {item.productdiscount}%
+                              <b>{item.discount}%</b>
                             </span>
                           </div>
                         </div>
                         <div class="product-inventory d-flex mb-2">
-                          <h6>Availability:</h6>
+                          <label>Availability: </label>
 
-                          <span class="in-stock text-success">
-                            {item.producttotalstack < 1 ? (
-                              <span style={{ color: "red" }}>
+                          <span style={{ marginLeft: "5px" }}>
+                            {item.stock <= item.minstock ? (
+                              <b style={{ color: "red", fontSize: "14px" }}>
                                 OUT OF STOCK{" "}
-                              </span>
+                              </b>
                             ) : (
-                              <span style={{ color: "green" }}> IN STOCK</span>
+                              <b style={{ color: "green", fontSize: "14px" }}>
+                                {" "}
+                                IN STOCK
+                              </b>
                             )}
                             <i class="ti-check"></i>
                           </span>
                         </div>
 
                         <div class="product-inventory d-flex mb-2">
-                          <h6>Product Brand:</h6>
+                          <label>Product Brand:</label>
 
-                          <span class="in-stock text-success">
-                            {item.productbrand ? (
-                              <span style={{ color: "green" }}>
-                                {item.productbrand}
-                              </span>
-                            ) : null}
+                          <span style={{ marginLeft: "5px" }}>
+                            {item.brand ? <b>{item.brand}</b> : null}
                             <i class="ti-check"></i>
                           </span>
                         </div>
@@ -305,8 +397,8 @@ function Pharmacydescription(props) {
                         <div class="product-description mb-2">
                           <p className="lorem-09">
                             {showMore
-                              ? item.productdiscription
-                              : `${item.productdiscription?.substring(0, 300)}`}
+                              ? item.description
+                              : `${item.description?.substring(0, 300)}`}
                             <button
                               className="btn"
                               onClick={() => setShowMore(!showMore)}
@@ -329,7 +421,7 @@ function Pharmacydescription(props) {
                             </select>
                           </div>
                         </div> */}
-                        <div className="product-quantity mb-5 mt-5 d-flex">
+                        {/* <div className="product-quantity mb-5 mt-5 d-flex">
                           <b>Quantity :</b>{" "}
                           <div className="cart-plus-minus">
                             <div className="dec qtybutton" onClick={decrement}>
@@ -346,33 +438,30 @@ function Pharmacydescription(props) {
                               +
                             </div>
                           </div>
-                        </div>
+                        </div> */}
                         <div className="pro-detail-button-0 mb-2">
-                          <div className="wish-0911">
-                            <Tooltip title="WISHLIST">
-                              <span class="add-wishlist-0" id="app-title">
-                                <i class="fa fa-heart"></i>
-                              </span>
-                            </Tooltip>
+                          <div>
+                            {wishlistData?.wishlistItems?.some(
+                              (val) => val.productid?._id === item?._id
+                            ) ? (
+                              <IoMdHeart
+                                // className="wishlist-icon"
+                                style={{ color: "red", fontSize: "35px" }}
+                                onClick={() => removeFromWishlist(item)}
+                              />
+                            ) : (
+                              <IoMdHeartEmpty
+                                style={{ color: "red", fontSize: "35px" }}
+                                onClick={() => AddToWishlist(item)}
+                              />
+                            )}
                           </div>
 
-                          <div className="wish-09111">
-                            <Tooltip title="REMOVE-WISHLIST">
-                              <span class="add-wishlist-0" id="app-title">
-                                <i class="fa fa-heart"></i>
-                              </span>
-                            </Tooltip>
-                          </div>
-
-                          <div className="wish-09">
-                            <button
-                              style={{
-                                border: "none",
-                                backgroundColor: "transparent",
-                              }}
-                            >
-                              <span>ADD TO CART</span>
-                            </button>
+                          <div>
+                            <IoCartOutline
+                              style={{ color: "green", fontSize: "35px" }}
+                              onClick={() => AddToCart(item)}
+                            />
                           </div>
                           {/* <div className="wish-09">
                             <button
@@ -414,7 +503,7 @@ function Pharmacydescription(props) {
                 >
                   Description
                 </li>
-                <li
+                {/* <li
                   className={`des-0__0 ${tab1 ? "pre-active" : ""}`}
                   onClick={() => {
                     settab(false);
@@ -424,7 +513,7 @@ function Pharmacydescription(props) {
                 >
                   {" "}
                   Additional information
-                </li>
+                </li> */}
                 {/* <li
                   className={`des-0__0 ${tab2 ? "pre-active" : ""}`}
                   onClick={() => {
@@ -444,16 +533,90 @@ function Pharmacydescription(props) {
                     <div className="M-0_0 mb-2">
                       <h5 className="des-0__0">More Detail</h5>
                       <ul>
-                        <li></li>
+                        <li>
+                          <b>
+                            <label>Description: </label>
+                            <span>{item?.description}</span>
+                          </b>
+                        </li>
+                        {item?.brand ? (
+                          <li>
+                            <b>
+                              <label>Brand: </label>
+                              <span> {item?.brand}</span>
+                            </b>
+                          </li>
+                        ) : (
+                          <></>
+                        )}
+                        {item?.countryOfOrigin ? (
+                          <li>
+                            <b>
+                              <label>Country Of Origin: </label>
+                              <span> {item?.countryOfOrigin}</span>
+                            </b>
+                          </li>
+                        ) : (
+                          <></>
+                        )}
+                        {item?.manufactureraddress ? (
+                          <li>
+                            <b>
+                              <label>Manufacturer Address: </label>
+                              <span> {item?.manufactureraddress}</span>
+                            </b>
+                          </li>
+                        ) : (
+                          <></>
+                        )}
+                        {item?.manufacturercompanyname ? (
+                          <li>
+                            <b>
+                              <label>Manufacturer Company: </label>
+                              <span> {item?.manufacturercompanyname}</span>
+                            </b>
+                          </li>
+                        ) : (
+                          <></>
+                        )}
+                        {item?.manufacturingDate ? (
+                          <li>
+                            <b>
+                              <label>Manufacturing Date: </label>
+                              <span>
+                                {" "}
+                                {new Date(item?.manufacturingDate).getDate()}-
+                                {new Date(item?.manufacturingDate).getMonth() +
+                                  1}
+                                -
+                                {new Date(
+                                  item?.manufacturingDate
+                                ).getFullYear()}
+                              </span>
+                            </b>
+                          </li>
+                        ) : (
+                          <></>
+                        )}
+                        {item?.variant ? (
+                          <li>
+                            <b>
+                              <label>Variant: </label>
+                              <span> {item?.variant}</span>
+                            </b>
+                          </li>
+                        ) : (
+                          <></>
+                        )}
                       </ul>
                     </div>
 
-                    <div className="M-0_0  mb-2">
+                    {/* <div className="M-0_0  mb-2">
                       <h5 className="des-0__0">Key Specification</h5>
                       <ul>
                         <li></li>
                       </ul>
-                    </div>
+                    </div> */}
                   </>
                 ) : (
                   <>
