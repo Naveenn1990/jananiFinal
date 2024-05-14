@@ -167,6 +167,7 @@ import { BlogDetails } from "./Components/BlogDetails";
 import { DepartmentDetails } from "./Components/DepartmentDetails";
 import DoctorDetails from "./Components/DoctorDetails";
 import PatientProfile from "./PatientsPortal/PatientProfile";
+import HealthPack from "./Components/Diagnostic/HealthPack";
 
 function App() {
   return (
@@ -470,12 +471,22 @@ function App() {
               }
             />
             <Route
-              path="/gastroenterology"
+              path="/hospital-lab-test-list"
               element={
                 <>
                   <HeaderDiagnostic />
                   <Gastroenterology />
                   <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/healthpack"
+              element={
+                <>
+                  {/* <HeaderDiagnostic /> */}
+                  <HealthPack />
+                  {/* <Footer /> */}
                 </>
               }
             />

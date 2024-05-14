@@ -3,6 +3,11 @@ p {
   font-family: math;
 }
 
+.yesButtonHover:hover {
+  background-color: red !important;
+  color: white !important;
+}
+
 .pacClass {
   position: fixed;
   top: 0;
@@ -1054,7 +1059,7 @@ textarea {
   left: 0;
   width: 100%;
   height: 100%;
-  content: "BOOK APPOINTMENT";
+  content: "BOOK TEST";
   transition: all 0.3s;
 }
 
@@ -1067,7 +1072,7 @@ textarea {
   left: 0;
   width: 100%;
   height: 100%;
-  content: "BOOK APPOINTMENT";
+  content: "BOOK TEST";
   transition: all 0.3s;
 }
 
@@ -1857,7 +1862,7 @@ textarea {
   box-shadow: 0px 8px 32px 0px rgba(19, 19, 20, 0.37);
   backdrop-filter: blur(4px);
   border-radius: 15px;
-  width: 170px !important;
+  /* width: 170px !important; */
   padding-top: 12px !important;
   padding-right: 0px !important;
   padding-left: 0px !important;
@@ -3522,4 +3527,35 @@ textarea {
   margin-right: 5px;
   height: 40px;
   border: 1px solid red;
+}
+
+
+/* =============== Karthika =========================== */
+.random{
+  display: flex;
+  text-wrap:wrap;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 25px;
+}
+.jgjhk{
+  height: 180px !important;
+  width: 200px !important;
+  border: 2px solid black;
+
+}
+.healthpack-content{
+  display: flex;
+  gap: 20px;
+}
+.health-image{
+margin-top: 30px;
+}
+.health-list{
+  margin-top: 30px;
+  margin-left: 20px;
+}
+
+td{
+  border: none !important;
 }

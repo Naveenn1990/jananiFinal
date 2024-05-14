@@ -27,6 +27,13 @@ export const PharmacyCart = () => {
     updateQuantityWithDebounce();
   };
 
+  function CartItemCountChange(index, value) {
+    sampleCartDetails["cartItems"][index]["quantity"] = value;
+    setsampleCartDetails(JSON.parse(JSON.stringify(sampleCartDetails)));
+
+    updateQuantityWithDebounce();
+  }
+
   const decrementCount = (index) => {
     //debouncing logic
     if (sampleCartDetails["cartItems"][index]["quantity"] > 1) {
@@ -158,7 +165,7 @@ export const PharmacyCart = () => {
       getWishlist();
     }
   }, []);
-
+  console.log("sampleCartDetails: ", sampleCartDetails);
   return (
     <div>
       <Headerpharmacy
@@ -197,7 +204,7 @@ export const PharmacyCart = () => {
                           style={{
                             border: "1px solid #0000003d",
                             borderRadius: "20px",
-                            width: "100px",
+                            width: "130px",
                             padding: "5px",
                           }}
                         >
@@ -206,7 +213,13 @@ export const PharmacyCart = () => {
                             icon={faMinus}
                             onClick={() => decrementCount(index)}
                           />
-                          {item?.quantity}
+                          <input
+                            style={{ width: "40px", textAlign: "center" }}
+                            value={item?.quantity}
+                            onChange={(e) =>
+                              CartItemCountChange(index, e.target.value)
+                            }
+                          />
                           <FontAwesomeIcon
                             style={{ cursor: "pointer" }}
                             icon={faPlus}
