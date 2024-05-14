@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Adminpanel.css";
 import { FaBriefcaseMedical, FaRupeeSign } from "react-icons/fa";
 import { GiCutPalm } from "react-icons/gi";
@@ -16,13 +16,14 @@ var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 export default function Dashboard() {
-  const [show, setShow] = useState(false);
+  let adminDetails = sessionStorage.getItem("adminDetails");
+  let subadminDetails = sessionStorage.getItem("Subadmin");
 
+  const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const [show2, setShow2] = useState(false);
-
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
 
@@ -66,6 +67,15 @@ export default function Dashboard() {
   const handleSelect = (data) => {
     setMNumber(data.value);
   };
+
+  useEffect(() => {
+    adminDetails = sessionStorage.getItem("adminDetails");
+    subadminDetails = sessionStorage.getItem("Subadmin");
+    if (!adminDetails && !subadminDetails) {
+      alert("Login details are required!!!");
+      window.location.assign("/");
+    }
+  }, []);
 
   return (
     <div style={{ padding: "1%" }}>
@@ -313,29 +323,33 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        <div className="col-lg-3" id="box4">
-          <div className="dashboardcard">
-            <div className="row">
-              <div className="col-lg-4">
-                <FaRupeeSign style={{ fontSize: "50px", color: "#20958c" }} />
-              </div>
-              <div className="col-lg-8">
-                <h6 style={{ fontSize: "15px", fontWeight: "600" }}>
-                  Hospital Earn..
-                </h6>
-                <h6
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: "600",
-                    color: "#20958c",
-                  }}
-                >
-                  25,000
-                </h6>
+        {subadminDetails ? (
+          <></>
+        ) : (
+          <div className="col-lg-3" id="box4">
+            <div className="dashboardcard">
+              <div className="row">
+                <div className="col-lg-4">
+                  <FaRupeeSign style={{ fontSize: "50px", color: "#20958c" }} />
+                </div>
+                <div className="col-lg-8">
+                  <h6 style={{ fontSize: "15px", fontWeight: "600" }}>
+                    Hospital Earn..
+                  </h6>
+                  <h6
+                    style={{
+                      fontSize: "24px",
+                      fontWeight: "600",
+                      color: "#20958c",
+                    }}
+                  >
+                    25,000
+                  </h6>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* <div className="row">

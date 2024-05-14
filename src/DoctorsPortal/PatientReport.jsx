@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import { AiFillDelete } from "react-icons/ai";
 import axios from "axios";
-
+import { FaEye } from "react-icons/fa";
 const PatientReport = () => {
   const navigate = useNavigate();
   let doctorDetails = JSON.parse(sessionStorage.getItem("DoctorDetails"));
@@ -99,7 +99,7 @@ const PatientReport = () => {
       </Navbar>
 
       <Container className="mt-4">
-        <Table class="table" bordered>
+        <Table className="table text-center" bordered >
           <thead>
             <tr className="admin-table-head">
               <th className="fw-bold"> Patient ID </th>
@@ -108,7 +108,7 @@ const PatientReport = () => {
               <th className="fw-bold">Sex</th>
               <th className="fw-bold">Address</th>
               <th className="fw-bold">Report</th>
-              {/* <th className="fw-bold">Actions </th> */}
+             <th className="fw-bold">View Reports </th> 
             </tr>
           </thead>
           <tbody>
@@ -141,6 +141,16 @@ const PatientReport = () => {
                     >
                       Report
                     </button>
+                  </td>
+                  <td>
+                    <div 
+                     onClick={() => navigate(`/doctorsviewforms`, { state: { item, causeId: selectedcauseid } })}
+                    style={{color:"green",cursor:"pointer"}}>
+                    <FaEye 
+                    style={{fontSize:"30px"}}
+                    />
+
+                    </div>
                   </td>
                   {/* <td>
                     <div

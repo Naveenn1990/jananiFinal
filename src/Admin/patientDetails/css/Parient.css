@@ -1,0 +1,13 @@
+.patientViewtable table {
+  border: 1px solid #20958c;
+  border-collapse: collapse;
+  align-self: center;
+  width: 95%;
+  margin: auto;
+}
+
+.patientViewtable tr,
+td {
+  border: 1px solid #20958c;
+  align-items: center;
+}

@@ -1,10 +1,13 @@
-import React, { useState } from "react";
-import { Modal, Table } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Modal, Table } from "react-bootstrap";
 import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { BsFillEyeFill, BsFillPlusCircleFill } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { FaUserMd } from "react-icons/fa";
 import { ImLab } from "react-icons/im";
+import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCancel } from "@fortawesome/free-solid-svg-icons";
 
 export default function AddServiceCategory() {
   const [show, setShow] = useState(false);
@@ -12,15 +15,81 @@ export default function AddServiceCategory() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const [show1, setShow1] = useState(false);
-
-  const handleClose1 = () => setShow1(false);
-  const handleShow1 = () => setShow1(true);
-
   const [show2, setShow2] = useState(false);
-
   const handleClose2 = () => setShow2(false);
-  const handleShow2 = () => setShow2(true);
+  const handleShow2 = (id) => {
+    setShow2(true);
+    setdeletData(id);
+  };
+
+  const [ServiceCategory, setServiceCategory] = useState("");
+
+  const AddServiceCat = async (e) => {
+    e.preventDefault();
+    try {
+      const config = {
+        url: "/admin/AdminAddServiceCat",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          ServiceCategory: ServiceCategory,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        console.log(res.data);
+        console.log(res.data.success);
+        alert("Service Category Added");
+        getcategory();
+        handleClose();
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
+  const [category, setcategory] = useState([]);
+  const getcategory = () => {
+    axios
+      .get("http://localhost:8521/api/admin/getServiceCat")
+      .then(function (response) {
+        // handle success
+        setcategory(response.data.ServiceCat);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+  };
+
+  // Delete
+  const [deletData, setdeletData] = useState();
+  const DeleteServiceCat = async () => {
+    try {
+      const config = {
+        url: "/admin/deleteServiceCat/" + deletData,
+        baseURL: "http://localhost:8521/api",
+        method: "delete",
+        headers: { "Content-Type": "application/json" },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        handleClose2();
+        getcategory();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
+  useEffect(() => {
+    getcategory();
+  }, []);
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -41,209 +110,153 @@ export default function AddServiceCategory() {
               onClick={() => setShow(true)}
             />
           </div>
-          <input
-            placeholder="Search Service Category"
-            style={{
-              padding: "5px 10px",
-              border: "1px solid #20958c",
-              borderRadius: "0px",
-            }}
-          />
         </div>
-
-        <Modal size="md" show={show} onHide={handleClose}>
-          <Modal.Header>
-            <Modal.Title>Add Service Category</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="row">
-              <div className="col-lg-12">
-                <input
-                  placeholder="Service Category"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                ></input>
-              </div>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <div style={{ display: "flex" }}>
-              <button
-                style={{
-                  backgroundColor: "grey",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontWeight: "600",
-                  marginRight: "20px",
-                  border: "1px solid white",
-                  padding: "4px 10px",
-                }}
-                onClick={() => setShow(false)}
-              >
-                CANCEL
-              </button>
-
-              <button
-                style={{
-                  backgroundColor: "orange",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontWeight: "600",
-                  border: "1px solid white",
-                  padding: "4px 10px",
-                }}
-                onClick={() => {
-                  setShow(false);
-                  alert("Service created");
-                }}
-              >
-                SUBMIT
-              </button>
-            </div>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal size="md" show={show1} onHide={handleClose1}>
-          <Modal.Header>
-            <Modal.Title>Edit Service Category</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="row">
-              <div className="col-lg-12">
-                <input
-                  placeholder="Service Category"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                ></input>
-              </div>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <div style={{ display: "flex" }}>
-              <button
-                style={{
-                  backgroundColor: "grey",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontWeight: "600",
-                  marginRight: "20px",
-                  border: "1px solid white",
-                  padding: "4px 10px",
-                }}
-                onClick={() => setShow1(false)}
-              >
-                CANCEL
-              </button>
-
-              <button
-                style={{
-                  backgroundColor: "orange",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  border: "1px solid white",
-                  fontWeight: "600",
-                  padding: "4px 10px",
-                }}
-                onClick={() => {
-                  setShow1(false);
-                  alert("Service Updated");
-                }}
-              >
-                SUBMIT
-              </button>
-            </div>
-          </Modal.Footer>
-        </Modal>
 
         <Table responsive="md" style={{ marginTop: "1%" }}>
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
+              <th>S.No</th>
               <th>Service Category</th>
-
               <th>ACTION</th>
             </tr>
           </thead>
           <tbody>
-            <tr style={{ fontSize: "15px", textAlign: "center" }}>
-              <td>Category-1</td>
-
-              <td>
-                <div
-                  style={{
-                    display: "flex",
-                    textAlign: "center",
-                    justifyContent: "space-evenly",
-                  }}
-                >
-                  <MdEdit
-                    style={{ color: "#20958c", marginRight: "1%" }}
-                    onClick={() => setShow1(true)}
-                  />
-                  <AiFillDelete style={{ color: "red" }} />
-                  <button
-                    style={{
-                      fontSize: "12px",
-                      border: "none",
-                      backgroundColor: "#20958c",
-                      color: "white",
-                      fontWeight: "600",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    BLOCK
-                  </button>
-                </div>
-              </td>
-            </tr>
-
-            <tr style={{ fontSize: "15px", textAlign: "center" }}>
-              <td>Category-1</td>
-
-              <td>
-                <div
-                  style={{
-                    display: "flex",
-                    textAlign: "center",
-                    justifyContent: "space-evenly",
-                  }}
-                >
-                  <MdEdit
-                    style={{ color: "#20958c", marginRight: "1%" }}
-                    onClick={() => setShow1(true)}
-                  />
-                  <AiFillDelete style={{ color: "red" }} />
-                  <button
-                    style={{
-                      fontSize: "12px",
-                      border: "none",
-                      backgroundColor: "#20958c",
-                      color: "white",
-                      fontWeight: "600",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    BLOCK
-                  </button>
-                </div>
-              </td>
-            </tr>
+            {category?.map((item, i) => {
+              return (
+                <>
+                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                    <td>{i + 1}</td>
+                    <td>{item?.ServiceCategory}</td>
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          textAlign: "center",
+                          justifyContent: "space-evenly",
+                        }}
+                      >
+                        <AiFillDelete
+                          style={{ color: "red" }}
+                          onClick={() => handleShow2(item?._id)}
+                        />
+                        {/* <button
+                          style={{
+                            fontSize: "12px",
+                            border: "none",
+                            backgroundColor: "#20958c",
+                            color: "white",
+                            fontWeight: "600",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          BLOCK
+                        </button> */}
+                      </div>
+                    </td>
+                  </tr>
+                </>
+              );
+            })}
           </tbody>
         </Table>
       </div>
+
+      {/* Add Modal */}
+      <Modal size="md" show={show} onHide={handleClose}>
+        <Modal.Header>
+          <Modal.Title>Add Service Category</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="row">
+            <div className="col-lg-12">
+              <input
+                placeholder="Service Category"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                onChange={(e) => setServiceCategory(e.target.value)}
+              ></input>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div style={{ display: "flex" }}>
+            <button
+              style={{
+                backgroundColor: "grey",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                marginRight: "20px",
+                border: "1px solid white",
+                padding: "4px 10px",
+              }}
+              onClick={() => setShow(false)}
+            >
+              CANCEL
+            </button>
+
+            <button
+              style={{
+                backgroundColor: "orange",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                border: "1px solid white",
+                padding: "4px 10px",
+              }}
+              onClick={(e) => {
+                AddServiceCat(e);
+              }}
+            >
+              SUBMIT
+            </button>
+          </div>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Delete Modal */}
+      <Modal
+        show={show2}
+        onHide={handleClose2}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          <div className="text-center">
+            <img
+              style={{
+                width: "80px",
+                height: "80px",
+                borderRadius: "5px",
+                marginBottom: "10px",
+              }}
+              src="../Images/Delete.png"
+              alt=""
+            />
+            <h4 className="fw-bold text-light mb-2">Are You Sure</h4>
+            <p className="text-light">
+              This event data will be removed permanently
+            </p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={handleClose2}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={DeleteServiceCat}>
+            <FontAwesomeIcon icon={faCancel} className=" me-2" />
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

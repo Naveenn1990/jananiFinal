@@ -49,7 +49,7 @@ function SubAdminLogin() {
         );
 
         alert("Login Success");
-        window.location.assign("/admin");
+        window.location.assign("/admin/dashboard");
       }
     } catch (error) {
       console.log(error.response);

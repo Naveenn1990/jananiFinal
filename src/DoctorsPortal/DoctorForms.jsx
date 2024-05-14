@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Button, Table } from "react-bootstrap";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
@@ -124,7 +124,10 @@ const DoctorForms = () => {
         data: {
           patientId: item?._id,
           causeId: CauseDetails?._id,
-          DoctorsNotes: DoctorsNotes,
+          doctorid: item?._id,
+          DNDate: DNDate,
+          DNTime: DNTime,
+          DNOtes: DNOtes,
           DrugAllergies: DrugAllergies,
           Diagnosis: Diagnosis,
         },
@@ -137,7 +140,7 @@ const DoctorForms = () => {
         setDNDate("");
         setDNTime("");
         setDNOtes("");
-        DoctorsNotes([]);
+       
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -145,11 +148,11 @@ const DoctorForms = () => {
   };
 
   //SURGERY REPORT
-  const [PreOperativeDiagnosis, setPreOperativeDiagnosis] = useState("")
-const [NameofOperation, setNameofOperation] = useState("")
-const [Procedure, setProcedure] = useState("")
-const [Findings, setFindings] = useState("")
-const [ReportCheck, setReportCheck] = useState("")
+  const [PreOperativeDiagnosis, setPreOperativeDiagnosis] = useState("");
+  const [NameofOperation, setNameofOperation] = useState("");
+  const [Procedure, setProcedure] = useState("");
+  const [Findings, setFindings] = useState("");
+  const [ReportCheck, setReportCheck] = useState("");
   const submitSurgeryReport = async () => {
     try {
       const config = {
@@ -161,11 +164,11 @@ const [ReportCheck, setReportCheck] = useState("")
           patientId: item?._id,
           causeId: CauseDetails?._id,
           doctorid: item?._id,
-          PreOperativeDiagnosis:PreOperativeDiagnosis,
-          NameofOperation:NameofOperation,
-          Procedure:Procedure,
-          Findings:Findings,
-          ReportCheck:ReportCheck,
+          PreOperativeDiagnosis: PreOperativeDiagnosis,
+          NameofOperation: NameofOperation,
+          Procedure: Procedure,
+          Findings: Findings,
+          ReportCheck: ReportCheck,
         },
       };
       let res = await axios(config);
@@ -174,7 +177,7 @@ const [ReportCheck, setReportCheck] = useState("")
         setNameofOperation("");
         setProcedure("");
         setFindings("");
-        setReportCheck("")
+        setReportCheck("");
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -728,14 +731,7 @@ const [ReportCheck, setReportCheck] = useState("")
                           >
                             Doctor's sign
                           </th>
-                          <th
-                            style={{
-                              width: "10%",
-                              border: "2px  solid #20958C",
-                            }}
-                          >
-                            Action
-                          </th>
+                         
                         </tr>
                       </thead>
                       <tbody>
@@ -793,38 +789,9 @@ const [ReportCheck, setReportCheck] = useState("")
                               style={{ width: "100%" }}
                             />
                           </td>
-                          <td
-                            style={{
-                              width: "10%",
-                              border: "2px  solid #20958C",
-                            }}
-                          >
-                            <Button onClick={Adddoctorsnotes}>
-                              <IoMdAdd />
-                            </Button>
-                          </td>
+                        
                         </tr>
-                        {DoctorsNotes?.map((item, i) => {
-                          return (
-                            <tr>
-                              <td>
-                                {moment(item?.DNDate).format("DD-MM-YYYY")}
-                              </td>
-                              <td>{item?.DNTime}</td>
-                              <td>{item?.DNOtes}</td>
-                              <td></td>
-                              <td>
-                                <MdDelete
-                                  onClick={() => deletedoctorsnote(i)}
-                                  style={{
-                                    cursor: "pointer",
-                                    color: "red",
-                                  }}
-                                />
-                              </td>
-                            </tr>
-                          );
-                        })}
+                      
                       </tbody>
                     </Table>
                   </div>
@@ -987,11 +954,13 @@ const [ReportCheck, setReportCheck] = useState("")
                               >
                                 <div className="d-flex align-items-cemter">
                                   <div> Pre-Operative Diagnosis:</div>
-                                  <input 
-                                  type="text" 
-                                  className="vi_0" 
-                                  value={PreOperativeDiagnosis}
-                                  onChange={(e)=>setPreOperativeDiagnosis(e.target.value)}
+                                  <input
+                                    type="text"
+                                    className="vi_0"
+                                    value={PreOperativeDiagnosis}
+                                    onChange={(e) =>
+                                      setPreOperativeDiagnosis(e.target.value)
+                                    }
                                   />
                                 </div>
                               </td>
@@ -1004,7 +973,8 @@ const [ReportCheck, setReportCheck] = useState("")
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                Surgeon:  {`${doctorDetails?.Firstname} ${doctorDetails?.Lastname} `}
+                                Surgeon:{" "}
+                                {`${doctorDetails?.Firstname} ${doctorDetails?.Lastname} `}
                               </td>
                               <td
                                 colSpan={2}
@@ -1110,18 +1080,19 @@ const [ReportCheck, setReportCheck] = useState("")
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                <div className="d-flex align-items-center"> 
-                                <div style={{width:"20%"}}>
-                                Name of Operaton :
-                                </div>                                 
-                                <input 
-                                type="text" 
-                                className="vi_0"
-                                value={NameofOperation}
-                                onChange={(e)=>setNameofOperation(e.target.value)}
-                                />
+                                <div className="d-flex align-items-center">
+                                  <div style={{ width: "20%" }}>
+                                    Name of Operaton :
+                                  </div>
+                                  <input
+                                    type="text"
+                                    className="vi_0"
+                                    value={NameofOperation}
+                                    onChange={(e) =>
+                                      setNameofOperation(e.target.value)
+                                    }
+                                  />
                                 </div>
-                               
                               </td>
                             </tr>
                             <tr>
@@ -1139,9 +1110,13 @@ const [ReportCheck, setReportCheck] = useState("")
                                 >
                                   <Form.Label>Procedure</Form.Label>
                                   <Form.Control
-                                  value={Procedure} 
-                                  onChange={(e)=>setProcedure(e.target.value)}
-                                  as="textarea" rows={3} />
+                                    value={Procedure}
+                                    onChange={(e) =>
+                                      setProcedure(e.target.value)
+                                    }
+                                    as="textarea"
+                                    rows={3}
+                                  />
                                 </Form.Group>
                               </td>
                             </tr>
@@ -1159,10 +1134,12 @@ const [ReportCheck, setReportCheck] = useState("")
                                   controlId="exampleForm.ControlTextarea1"
                                 >
                                   <Form.Label>Findings</Form.Label>
-                                  <Form.Control 
-                                  as="textarea" 
-                                  rows={3} 
-                                  onChange={(e)=>setFindings(e.target.value)}
+                                  <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    onChange={(e) =>
+                                      setFindings(e.target.value)
+                                    }
                                   />
                                 </Form.Group>
                               </td>
@@ -1178,15 +1155,25 @@ const [ReportCheck, setReportCheck] = useState("")
                                 colSpan={2}
                                 style={{ border: "2px  solid #20958C" }}
                               >
-                               Checked : <Checkbox 
-                               onChange={(e)=>setReportCheck(e.target.checked ? "Checked":"")}
-                               checked={ReportCheck === "Checked"}
-                               /> 
+                                Checked :{" "}
+                                <Checkbox
+                                  onChange={(e) =>
+                                    setReportCheck(
+                                      e.target.checked ? "Checked" : ""
+                                    )
+                                  }
+                                  checked={ReportCheck === "Checked"}
+                                />
                                 <hr />
-                               Unchecked :  <Checkbox 
-                               onChange={(e)=>setReportCheck(e.target.checked ? "Unchecked":"")}
-                               checked={ReportCheck === "Unchecked"}
-                               />
+                                Unchecked :{" "}
+                                <Checkbox
+                                  onChange={(e) =>
+                                    setReportCheck(
+                                      e.target.checked ? "Unchecked" : ""
+                                    )
+                                  }
+                                  checked={ReportCheck === "Unchecked"}
+                                />
                               </td>
                               <td
                                 colSpan={2}
@@ -1201,9 +1188,12 @@ const [ReportCheck, setReportCheck] = useState("")
                     </div>
                   </div>
                   <div className="text-center mt-2 mb-2">
-                    <button className="btn btn-success"
-                    onClick={submitSurgeryReport}
-                    >Submit</button>
+                    <button
+                      className="btn btn-success"
+                      onClick={submitSurgeryReport}
+                    >
+                      Submit
+                    </button>
                   </div>
                 </>
               ) : (

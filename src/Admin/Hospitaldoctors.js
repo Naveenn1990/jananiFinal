@@ -70,8 +70,8 @@ export default function Hospitaldoctors() {
   }
 
   function validatename(inputtxt) {
-    var phoneno = /^[a-zA-Z ]{2,30}$/; // var no = /^\d{10}$/;
-    if (inputtxt.match(phoneno)) {
+    var nameReg = /^[a-zA-Z ]{2,30}$/; // var no = /^\d{10}$/;
+    if (inputtxt.match(nameReg)) {
       return true;
     } else {
       alert("You have entered an invalid name!");
@@ -161,6 +161,7 @@ export default function Hospitaldoctors() {
       phonenumber(mobileno) &&
       CheckPassword(password)
     ) {
+      formdata.set("DoctorType", "hospital");
       formdata.set("Firstname", doctorfirstname);
       formdata.set("Lastname", doctorlastname);
       formdata.set("Gender", gender);
@@ -208,7 +209,11 @@ export default function Hospitaldoctors() {
       .get("http://localhost:8521/api/Doctor/getDoctorsList")
       .then(function (response) {
         // handle success
-        setDoctors(response.data.DoctorsInfo);
+        setDoctors(
+          response.data.DoctorsInfo?.filter(
+            (data) => data.DoctorType === "hospital"
+          )
+        );
       })
       .catch(function (error) {
         // handle error
@@ -443,8 +448,24 @@ export default function Hospitaldoctors() {
       });
   };
 
+  // Get Hospital Department
+  const [GetDepartmentData, setGetDepartmentData] = useState([]);
+  const GetDepartment = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/admin/getDepartment"
+      );
+      if (res.status === 200) {
+        setGetDepartmentData(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getDoctors();
+    GetDepartment();
   }, []);
 
   return (
@@ -468,40 +489,8 @@ export default function Hospitaldoctors() {
               borderRadius: "0px",
             }}
           />
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", position:'relative', zIndex:'999' }}>
             <FaUserMd className="AddIcon1" onClick={() => setShow(true)} />
-
-            {/* <button
-              style={{
-                border: "none",
-                fontSize: "14px",
-                fontWeight: "600",
-                backgroundColor: "#20958c",
-                margin: "0px 10px",
-                borderRadius: "4px",
-                color: "white",
-              }}
-              onClick={() => setShow1(true)}
-            >
-              {" "}
-              + MAKE A PAYMENT
-            </button>
-
-            <button
-              style={{
-                border: "none",
-                fontSize: "14px",
-                fontWeight: "600",
-                backgroundColor: "#20958c",
-                borderRadius: "4px",
-
-                color: "white",
-              }}
-              onClick={() => setShow2(true)}
-            >
-              {" "}
-              + ADD APPOINTMENT CHARGE
-            </button> */}
           </div>
         </div>
 
@@ -611,8 +600,11 @@ export default function Hospitaldoctors() {
                   onChange={(e) => setDepartment(e.target.value)}
                 >
                   <option>Select Department</option>
-                  <option value="oooo">Department-1</option>
-                  <option value="oooo">Department-2</option>
+                  {GetDepartmentData?.map((item) => (
+                    <>
+                      <option value={item?.DepartmentName}>{item?.DepartmentName}</option>
+                    </>
+                  ))}
                 </select>
               </div>
 
@@ -2341,7 +2333,6 @@ export default function Hospitaldoctors() {
               <th>D-O-B</th>
               <th>Document</th>
               <th>Schedule</th>
-
               <th>ACTION</th>
             </tr>
           </thead>
@@ -2482,7 +2473,7 @@ export default function Hospitaldoctors() {
                             }}
                           >
                             <i
-                              class="	fa fa-database"
+                              class=" fa fa-database"
                               style={{ marginRight: "2%" }}
                             ></i>{" "}
                             Add Charge{" "}
@@ -2535,7 +2526,7 @@ export default function Hospitaldoctors() {
                             style={{ textDecoration: "none", color: "#20958c" }}
                           >
                             <i
-                              class="	fa fa-unlock"
+                              class=" fa fa-unlock"
                               style={{ marginRight: "2%" }}
                             ></i>{" "}
                             Block{" "}

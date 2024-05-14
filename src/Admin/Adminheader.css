@@ -11,3 +11,17 @@
     box-shadow:  -1px 10px 12px -7px rgba(32,149,140,0.28);
     padding: 1%;
 }
+.min-stock-alert-button{
+    
+    /* justify-content: center; */
+    /* align-items: center; */
+  background-color: #FFFFFF !important;
+  border: 1px solid #FF0000 !important;
+  margin-top: 2px;
+  color: #FF0000 !important;
+  }
+
+.min-stock-alert-button:hover{
+    background-color: #ff0000 !important; 
+    color: #ffffff !important;
+  }

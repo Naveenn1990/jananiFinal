@@ -1,48 +1,31 @@
 import React, { useState } from "react";
-import { Modal, Table } from "react-bootstrap";
 import {
-  AiFillDelete,
   AiOutlineFastBackward,
-  AiOutlinePlusCircle,
 } from "react-icons/ai";
 import {
-  BsFillEyeFill,
   BsFillImageFill,
-  BsImages,
-  BsNewspaper,
+  BsPeople,
 } from "react-icons/bs";
-import { MdEdit, MdEmojiEvents } from "react-icons/md";
-import { FaBlog, FaUserMd } from "react-icons/fa";
+import {
+  FaBlog,
+  FaClinicMedical,
+  FaRegHospital,
+} from "react-icons/fa";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 
-import { ImLab } from "react-icons/im";
 import { RiGalleryFill } from "react-icons/ri";
 
-import { IoMdImages } from "react-icons/io";
-import { GrCircleInformation, GrGallery } from "react-icons/gr";
 import AddBanner from "./Addbanners";
 import AddAboutUS from "./AddAboutUS";
-import AddLatestNews from "./AddLatestNews";
 import Addgallery from "./Addgallery";
 import Addblog from "./Addblog";
-import Addevents from "./Addevents";
+import AddClinicalExecellence from "./AddClinicalExecellence";
+import AddBestHospital from "./AddBestHospital";
+import { GoTrophy } from "react-icons/go";
+import AddHospitalDepartment from "./AddHospitalDepart";
+import AddTestimonial from "./AddTestimonial";
 
 export default function Websitemanagement() {
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  const [show1, setShow1] = useState(false);
-
-  const handleClose1 = () => setShow1(false);
-  const handleShow1 = () => setShow1(true);
-
-  const [show2, setShow2] = useState(false);
-
-  const handleClose2 = () => setShow2(false);
-  const handleShow2 = () => setShow2(true);
-
   const [ViewModal, setViewModal] = useState();
   const [View, setView] = useState(false);
 
@@ -103,19 +86,7 @@ export default function Websitemanagement() {
                 ADD-ABOUT-US
               </div>
             </div>
-            <div className="col-lg-4">
-              {" "}
-              <div
-                className="websiteMcards"
-                onClick={() => {
-                  setViewModal(<AddLatestNews />);
-                  setView(true);
-                }}
-              >
-                <BsNewspaper className="WebMI" />
-                ADD-LATEST-NEWS
-              </div>
-            </div>
+
             <div className="col-lg-4">
               {" "}
               <div
@@ -129,6 +100,7 @@ export default function Websitemanagement() {
                 ADD-GALLERY
               </div>
             </div>
+
             <div className="col-lg-4">
               <div
                 className="websiteMcards"
@@ -139,20 +111,63 @@ export default function Websitemanagement() {
               >
                 {" "}
                 <FaBlog className="WebMI" />
-                ADD-BLOG
+                BLOG / LATEST NEWS
               </div>
             </div>
+
             <div className="col-lg-4">
               {" "}
               <div
                 className="websiteMcards"
                 onClick={() => {
-                  setViewModal(<Addevents />);
+                  setViewModal(<AddHospitalDepartment />);
                   setView(true);
                 }}
               >
-                <MdEmojiEvents className="WebMI" />
-                ADD-EVENTS
+                <FaRegHospital className="WebMI" />
+                HOSPITAL-DEPARMENT
+              </div>
+            </div>
+
+            <div className="col-lg-4">
+              {" "}
+              <div
+                className="websiteMcards"
+                onClick={() => {
+                  setViewModal(<AddTestimonial />);
+                  setView(true);
+                }}
+              >
+                <BsPeople className="WebMI" />
+                ADD-TESTIMONIAL
+              </div>
+            </div>
+
+            <div className="col-lg-4">
+              {" "}
+              <div
+                className="websiteMcards"
+                onClick={() => {
+                  setViewModal(<AddClinicalExecellence />);
+                  setView(true);
+                }}
+              >
+                <GoTrophy className="WebMI" />
+                CLINICAL-EXECELLENCE
+              </div>
+            </div>
+
+            <div className="col-lg-4">
+              {" "}
+              <div
+                className="websiteMcards"
+                onClick={() => {
+                  setViewModal(<AddBestHospital />);
+                  setView(true);
+                }}
+              >
+                <FaClinicMedical className="WebMI" />
+                BEST-HOSPITAL-TOWN
               </div>
             </div>
           </div>

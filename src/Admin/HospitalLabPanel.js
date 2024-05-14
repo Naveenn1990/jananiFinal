@@ -30,12 +30,13 @@ import Addgallery from "./Addgallery";
 import Addblog from "./Addblog";
 import Addevents from "./Addevents";
 import Hospitallab from "./Hospitallab";
+import HospitallabCategory from "./HospitallabCategory";
 import { GiTestTubes } from "react-icons/gi";
 import { TbReportSearch } from "react-icons/tb";
 import Hospitallabtestlist from "./HospitalLabTest";
 import Hospitallabtestreport from "./Hospitallabreport";
 import TotalHLabRevenue from "./TotalHlabRevenue";
-import  HLabProfile from "./HLabProfile";
+import HLabProfile from "./HLabProfile";
 export default function HospitalLabPanel() {
   const [show, setShow] = useState(false);
 
@@ -96,6 +97,20 @@ export default function HospitalLabPanel() {
               <div
                 className="websiteMcards"
                 onClick={() => {
+                  setViewModal(<HospitallabCategory />);
+                  setView(true);
+                  setTitle("ADD-LAB-TEST-CATEGORY");
+                }}
+              >
+                <PiTestTubeFill className="WebMI" style={{ color: "white" }} />
+                ADD-LAB-TEST-CATEGORY
+              </div>
+            </div>
+
+            <div className="col-lg-4">
+              <div
+                className="websiteMcards"
+                onClick={() => {
                   setViewModal(<Hospitallab />);
                   setView(true);
                   setTitle("ADD-LAB-TEST");
@@ -112,12 +127,12 @@ export default function HospitalLabPanel() {
                 className="websiteMcards"
                 onClick={() => {
                   setViewModal(<Hospitallabtestlist />);
-                  setTitle("LAB TEST-LIST");
+                  setTitle("HEALTH PACKAGE");
                   setView(true);
                 }}
               >
                 <GiTestTubes className="WebMI" />
-                LAB TEST-LIST
+                HEALTH-PACKAGE
               </div>
             </div>
 
