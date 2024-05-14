@@ -15,8 +15,9 @@ const PatientReport = () => {
 
   useEffect(() => {
     getPatientList();
+    cousebyid();
   }, []); // Run once when component mounts
-const [Patientdetailsnew, setPatientdetailsnew] = useState([])
+  const [Patientdetailsnew, setPatientdetailsnew] = useState([]);
   const getPatientList = async () => {
     try {
       const response = await axios.get(
@@ -29,13 +30,29 @@ const [Patientdetailsnew, setPatientdetailsnew] = useState([])
     }
   };
 
+  const [Cause, setCause] = useState([]);
+  const cousebyid = async () => {
+    try {
+      const resv = await axios.get(
+        "http://localhost:8521/api/user/causebypatientid"
+      );
+      setCause(resv.data.cause);
+    } catch (error) {
+      console.error("Error fetching cause list:", error);
+    }
+  };
+
+  console.log("Cause",Cause);
+
   const [AssignedPatientList, setAssignedPatientList] = useState([]);
+  const [selectedcauseid, setselectedcauseid] = useState("");
   useEffect(() => {
     const assignedPatients = patientList?.filter((val) => {
       const data = val?.assigndocts?.filter((patient) => {
-        return (
-          patient.doctorsId?._id.toString() === doctorDetails?._id.toString()
-        );
+         if(patient.doctorsId?._id.toString() === doctorDetails?._id.toString()){
+          setselectedcauseid(patient.causeId);
+          return true;
+         }return false;
       });
 
       if (data.length) {
@@ -45,10 +62,10 @@ const [Patientdetailsnew, setPatientdetailsnew] = useState([])
     setAssignedPatientList(assignedPatients);
   }, [patientList]);
 
-
+  console.log("selectedcauseid: ", selectedcauseid)
 
   // const [PatientCauseIDs, setPatientCauseIDs] = useState([]);
-  // useEffect(() => {  
+  // useEffect(() => {
   //   const assignedPatients = patientList?.filter((val) =>
   //     val?.assigndocts.some((doctorsid) => doctorsid.doctorsId?._id === doctorDetails?._id)
   //   );
@@ -57,10 +74,7 @@ const [Patientdetailsnew, setPatientdetailsnew] = useState([])
   //   setPatientCauseIDs(flattenedCauseIds);
   // }, []);
 
-
-
   // console.log("PatientCauseIDsss", PatientCauseIDs);
-
 
   return (
     <div>
@@ -99,16 +113,21 @@ const [Patientdetailsnew, setPatientdetailsnew] = useState([])
           </thead>
           <tbody>
             {AssignedPatientList?.map((item, i) => {
-             
               return (
                 <tr className="admin-table-row">
                   <td>{item?.PatientId}</td>
                   <td>{`${item?.Firstname} ${item?.Lastname}`} </td>
                   <td>
-                    {Math.floor((new Date() - new Date(item?.DOB)) / (1000 * 60 * 60 * 24 * 365.25))} years
-                    </td>
+                    {Math.floor(
+                      (new Date() - new Date(item?.DOB)) /
+                        (1000 * 60 * 60 * 24 * 365.25)
+                    )}{" "}
+                    years
+                  </td>
                   <td>{item?.Gender}</td>
-                  <td>{item?.Address1} , {item?.Address2} , {item?.Zipcode}</td>
+                  <td>
+                    {item?.Address1} , {item?.Address2} , {item?.Zipcode}
+                  </td>
                   <td>
                     <button
                       style={{
@@ -118,7 +137,7 @@ const [Patientdetailsnew, setPatientdetailsnew] = useState([])
                         color: "white",
                         borderRadius: "5px",
                       }}
-                      onClick={() => navigate(`/doctorforms`,{state:item})}
+                      onClick={() => navigate(`/doctorforms`, { state: { item, causeId: selectedcauseid } })}
                     >
                       Report
                     </button>
