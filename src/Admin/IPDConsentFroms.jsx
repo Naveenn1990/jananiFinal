@@ -1,9 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { Table, Modal, ProgressBar, Button, Form } from "react-bootstrap";
-import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
-import { MdEdit } from "react-icons/md";
+import {Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FiDownload } from "react-icons/fi";
 import { jsPDF } from "jspdf";
@@ -14,69 +12,11 @@ import moment from "moment";
 const IPDConsentFroms = () => {
   const user = JSON.parse(sessionStorage.getItem("adminDetails"));
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  const [show2, setShow2] = useState(false);
-
-  const handleClose2 = () => setShow2(false);
-  const handleShow2 = () => setShow2(true);
 
   const [btn1, setbtn1] = useState(true);
   const [btn2, setbtn2] = useState(true);
   const [btn3, setbtn3] = useState(true);
   const [btn4, setbtn4] = useState(true);
-
-  function ValidateEmail(mail) {
-    if (
-      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-        mail
-      )
-    ) {
-      return true;
-    }
-    alert("You have entered an invalid email address!");
-    return false;
-  }
-
-  function validatename(inputtxt) {
-    var phoneno = /^[a-zA-Z ]{2,30}$/; // var no = /^\d{10}$/;
-    if (inputtxt.match(phoneno)) {
-      return true;
-    } else {
-      alert("You have entered an invalid name!");
-      return false;
-    }
-  }
-
-  function phonenumber(inputtxt) {
-    var phoneno = /^[6-9]\d{9}$/; // var no = /^\d{10}$/;
-    if (inputtxt.match(phoneno)) {
-      return true;
-    } else {
-      alert("You have entered an invalid mobile number!");
-      return false;
-    }
-  }
-
-  function CheckPassword(inputtxt) {
-    var decimal =
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,20}$/;
-    if (inputtxt.match(decimal)) {
-      return true;
-    } else {
-      alert(
-        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character!"
-      );
-      return false;
-    }
-  }
-
-  
-  const [allergy, setallergy] = useState("");
 
   let [patientAllergies, setpatientAllergies] = useState([]);
   const [clickedAddAllergyBtn, setclickedAddAllergyBtn] = useState("");
@@ -106,7 +46,7 @@ const IPDConsentFroms = () => {
   useEffect(() => {
     setpatientAllergies(patientAllergies);
     setclickedAddAllergyBtn("");
-    setallergy("");
+   
   }, [clickedAddAllergyBtn]);
 
   const [userdetail, setuserdetail] = useState([]);
@@ -193,28 +133,7 @@ const IPDConsentFroms = () => {
     // Save the PDF
     pdf.save("ServiceInvoice.pdf");
   };
-  const createPDF3 = async () => {
-    // dynamic image is also adding in the PDF
-    const pdf = new jsPDF("portrait", "pt", "a4");
-    const data = await html2canvas(document.querySelector("#pdf"), {
-      useCORS: true,
-    });
 
-    const img = data.toDataURL("image/png");
-    const imgProperties = pdf.getImageProperties(img);
-
-    // Calculate the scaling factor to fit the image on A4 paper
-    const scaleFactor = pdf.internal.pageSize.getWidth() / imgProperties.width;
-
-    // Calculate the height after scaling
-    const pdfHeight = imgProperties.height * scaleFactor;
-
-    // Add the image to PDF with the calculated dimensions
-    pdf.addImage(img, "PNG", 0, 0, pdf.internal.pageSize.getWidth(), pdfHeight);
-
-    // Save the PDF
-    pdf.save("ServiceInvoice.pdf");
-  };
   const createPDF4 = async () => {
     // dynamic image is also adding in the PDF
     const pdf = new jsPDF("portrait", "pt", "a4");
@@ -244,10 +163,6 @@ const IPDConsentFroms = () => {
   }, [userdetail]);
 
   // Hospitalization Consent Form
-
-
-  
-
   const [NameOfSurgery, setNameOfSurgery] = useState("");
   const [SurgeryEstimatePrice, setSurgeryEstimatePrice] = useState();
   console.log("SurgeryEstimatePrice",SurgeryEstimatePrice);
@@ -276,6 +191,7 @@ const IPDConsentFroms = () => {
         setSurgeryEstimatePrice(estimatecost);
     }
   }, [NameOfSurgery]);
+
   //Special Procedure Charges
 
   const [NameofProcedure, setNameofProcedure] = useState("");
@@ -419,8 +335,6 @@ const IPDConsentFroms = () => {
           Guardian1:Guardian1,
           Date5:Date5,
           Time4:Time4,
-
-
           NameOfSurgery:NameOfSurgery,
         },
       };
@@ -524,11 +438,11 @@ const IPDConsentFroms = () => {
           </button>
         </div>
       </div>
-      <div>
-        <label>Please Select Cause</label>
+      <div className="d-flex mt-2 align-items-center">
+        <div style={{width:"15%"}}>Please Select Cause : </div>
         <Form.Select
           onChange={(e) => setCauseId(e.target.value)}
-          aria-label="Default select example"
+         style={{width:"25%"}}
         >
           <option>Select The Cause</option>
           {userdetail?.cause?.map((item) => {
@@ -650,52 +564,13 @@ const IPDConsentFroms = () => {
                   my own free will, authorize the hospital to admit myself/ my
                   relative.{" "}
                 </p>
-              </div>
-              {/* <div className="text-center mt-1">
-                {" "}
-                <h6
-                  className="fw-bold mt-2"
-                  style={{ color: "#20958C", fontSize: "30px" }}
-                >
-                  ಸಾಮಾನ್ಯ ಒಪ್ಪಿಗೆ ಪತ್ರ
-                </h6>
-              </div>
-              <div
-                style={{
-                  paddingLeft: "42px",
-                  paddingRight: "42px",
-                  textAlign: "justify",
-                }}
-              >
-                <p style={{ fontSize: "18px" }}>
-                  ಕೇಳಿಗಿನ ಸಹಿ ಮಾಡಿದ ನಾನು / ನನ್ನ ಸಂಬಂಧಿ{" "}
-                  <span style={{ borderBottom: "1px solid black" }}>
-                    <input
-                      type="text"
-                      className="vi_0"
-                      style={{ width: "490px" }}
-                      value={userdetail?.Firstname}
-                      readOnly
-                    />
-                  </span>{" "}
-                  ಗೆ ಆಸ್ಪತ್ರೆಯಲ್ಲಿ ದಾಖಲಿಸಲು ಅನುಮತಿ ಕೊಟ್ಟಿದ್ದೇನೆ.
-                </p>
-                <p style={{ fontSize: "18px" }}>
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ನಾನು ಸ್ವೈಚ್
-                  ಇಂದ ಈ ಆಸ್ಪತ್ರೆಗೆ ಬಂದಿದ್ದೇನೆ ಮತ್ತು ಆಸ್ಪತ್ರೆಯಲ್ಲಿ ಲಭ್ಯವಿರುವ
-                  ವಿಶೇಷತೆಗಳ ಬಗ್ಗೆ ನನಗೆ ತಿಳಿಯಿಲ್ಲ ಮತ್ತು ನಾನು ತಿಳಿದಿಲ್ಲ. ಆಸ್ಪತ್ರೆಯ
-                  ನಿಯಮಗಳನ್ನು ಸರಿಯಾಗಿ ಪಾಲಿಸುತ್ತೇನೆ ಮತ್ತು ನನ್ನಿಂದ ವೈದ್ಯರು,
-                  ಆಸ್ಪತ್ರೆಯ ಸಿಬ್ಬಂದಿಗಳು ಮತ್ತು ಇತರ ರೋಗಿಗಳಿಗೆ ಯಾವ ತೊಂದರೆಯೂ
-                  ಇಲ್ಲದಂತೆ ನನ್ನ ಸಹಾಯವನ್ನು ಒದಗಿಸುತ್ತೇನೆ. ಆಸ್ಪತ್ರೆಯಲ್ಲಿ ನಡೆಯುವ
-                  ಸೇವೆಗಳ ಬಿಲಗಳನ್ನು ಪವತಿಸುತ್ತೇನೆ.{" "}
-                </p>
-              </div> */}
+              </div>             
               <div className="container">
                 <div className="row" style={{ border: "1px solid #20958C" }}>
                   <div
                     className="col-md-4"
                     style={{
-                      paddingTop: "10px",
+                     
                       border: "1px solid #20958C",
                       paddingLeft: "unset",
                       paddingRight: "unset",
@@ -707,41 +582,36 @@ const IPDConsentFroms = () => {
                         fontSize: "18px",
                       }}
                     >
-                      Doctor :
-                      <span style={{ borderBottom: "1px solid black" }}>
-                        <input
-                          type="text"
-                          className="vi_0"
-                          style={{ width: "344px" }}
-                          // onChange={(e)=>setConsentDoctor(e.target.value)}
-                        />
-                      </span>{" "}
+                      Doctor                    
                     </h6>
-                    <h6 style={{ fontSize: "18px" }}>Name : </h6>
-                    <span style={{ borderBottom: "1px solid black" }}>
+                    <div className="d-flex align-items-center mb-2">
+                    <b style={{ fontSize: "18px" }}>Name : </b>
+                    <span>
                       <input
                         type="text"
                         className="vi_0"
-                        style={{ width: "344px" }}
+                        style={{ width: "276px" }}
                         onChange={(e) => setConDoctorName(e.target.value)}
                       />
                     </span>
-                    <br />
-                    <br />
+                    </div>                   
+                   
                     <h6
                       style={{
                         borderTop: "1px solid #20958C",
                         fontSize: "18px",
                       }}
                     >
-                      Sign :
+                      <div className="d-flex align-items-center mt-2" >
+                      <b>Sign :</b>
                       <span>
                         <input
                           type="text"
                           className="vi_0"
-                          style={{ width: "344px" }}
+                          style={{ width: "270px" }}
                         />
                       </span>
+                      </div>                     
                     </h6>
                   </div>
                   <div
@@ -759,15 +629,7 @@ const IPDConsentFroms = () => {
                         fontSize: "18px",
                       }}
                     >
-                      Tenant/ Relative :
-                      <span style={{ borderBottom: "1px solid black" }}>
-                        <input
-                          type="text"
-                          className="vi_0"
-                          style={{ width: "344px" }}
-                          value={userdetail?.relativeName}
-                        />
-                      </span>
+                      Tenant/ Relative                      
                     </h6>
                     <h6 style={{ fontSize: "20px" }}>Name : </h6>
                     <span style={{ borderBottom: "1px solid black" }}>
