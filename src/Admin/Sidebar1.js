@@ -194,7 +194,7 @@ export default function Sidebar1() {
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/AddProduct")}
+              onClick={() => window.location.assign("/admin/addinventory")}
             >
               Inventory
             </h6>

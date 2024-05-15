@@ -3638,3 +3638,79 @@ td{
   width: 100%;
   padding: 13px 0;
 }
+
+.Adminlogin{
+  background-image: url('/public/Images/Admin.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  height:100dvh
+  
+}
+.modal-header {
+  background-color: #20958c;
+  color:white
+}
+
+.modal-footer {
+  background-color: #20958c !important;
+  color:white
+}
+
+.modal-body {
+  background-color: #20958c !important;
+ 
+}
+
+.denis-border :hover.denis-borders{
+  border: 2px solid #20958c;
+  cursor: pointer;
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+  background-color: #20958c;
+  color: white;
+}
+
+.loading-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ff0000;
+  margin: 5px;
+  animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.7;
+  }
+}
+.canvasjs-chart-credit{
+  display: none;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loading-icons {
+  display: flex;
+  align-items: center;
+}
+.App {
+  font-family: Lato,sans-serif;
+}

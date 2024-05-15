@@ -84,7 +84,7 @@ export const PatientBilling = () => {
                   <div className="d-flex gap-3">
                     <button
                       onClick={() => {
-                        navigate("/patientbillinvoice", {
+                        navigate("/patientinvoice", {
                           state: {
                             patientCauseInfo: item,
                             patientdetails: patientdetails,

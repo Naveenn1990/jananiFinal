@@ -28,7 +28,6 @@ import { Contact } from "./Components/contact";
 // doctor portal
 import { DoctorDashboard } from "./DoctorsPortal/DoctorDashboard";
 import AdminDashboard from "./DoctorsPortal/AdminDashboard";
-import { DoctorsAppointment } from "./DoctorsPortal/DoctorsAppointment";
 import { DoctorsList } from "./DoctorsPortal/DoctorsList";
 import { PatientsList } from "./DoctorsPortal/PatientsList";
 import { DoctorsSettings } from "./DoctorsPortal/DoctorsSettings";
@@ -100,7 +99,7 @@ import { ReferLabSettings } from "./ReferLab/ReferLabSettings";
 
 // Staff Portal
 import { StaffCommanDashboard } from "./Staff Portal/StaffCommanDashboard";
-import { StaffAttendance } from "./Staff Portal/StaffAttendance";
+// import { StaffAttendance } from "./Staff Portal/StaffAttendance";
 import { StaffDashboard } from "./Staff Portal/StaffDashboard";
 import { StaffOutPatientForm } from "./Staff Portal/StaffOutPatientForm";
 import { StaffInPatientForm } from "./Staff Portal/StaffInPatientForm";
@@ -133,7 +132,6 @@ import { LabCampManagement } from "./LabPortal/LabCampManagement";
 import { LabAddNewCamp } from "./LabPortal/LabAddNewCamp";
 import { LabDashboard } from "./LabPortal/LabDashboard";
 import { Gastroenterology } from "./Components/Diagnostic/gastroenterology";
-import { PatientBillInvoice } from "./PatientsPortal/PatientBillInvoice";
 import { LoginPharmacy } from "./Components/WebsitePharmacy/LoginPharmacy";
 import { RegisterPharmacy } from "./Components/WebsitePharmacy/RegisterPharmacy";
 import { PharmacyCart } from "./Components/WebsitePharmacy/PharmacyCart";
@@ -174,6 +172,71 @@ import DoctorForms from "./DoctorsPortal/DoctorForms";
 import PatientReport from "./DoctorsPortal/PatientReport";
 import DoctorsViewForms from "./DoctorsPortal/DoctorsViewForms";
 import PatientAdmissionForm from "./PatientsPortal/PatientAdmissionForm";
+import AdminLogin from "./Admin/AdminLogin";
+import PageLoaderA from "./Admin/PageloaderA";
+import Adminpanel from "./Admin/Adminpanel";
+import Dashboard from "./Admin/Dashboard";
+import SubAdminLogin from "./Admin/SubadminLogin";
+import Subadmin from "./Admin/Subadmin";
+import Hospitaldoctors from "./Admin/Hospitaldoctors";
+import Clinicaldoctors from "./Admin/Clinicaldoctors";
+import Staffmanagement from "./Admin/Staffmanagement";
+import Staffmanagementdashboard from "./Admin/Staffmanagementdashboard";
+import Inpatientlist from "./Admin/Inpatientlist";
+import PatientForm from "./Admin/PatientForm";
+import PatientDetails from "./Admin/patientDetails/PatientDetails";
+import IPDConsentFroms from "./Admin/IPDConsentFroms";
+import Outpatientlist from "./Admin/Outpatientlist";
+import Hospitallab from "./Admin/Hospitallab";
+import Clinicallab from "./Admin/Clinicallab";
+import AddServiceCategory from "./Admin/AddServiceCategory";
+import AddService from "./Admin/AddService";
+import RequestedService from "./Admin/RequestedService";
+import Websitemanagement from "./Admin/Websitemanagement";
+import AddproductCategory from "./Admin/AddproductCategory";
+import { OPDPharmacy } from "./Admin/OPDPharmacy";
+import StaffOPDPharmacyBill from "./Admin/StaffOPDPharmacyBill";
+import OPDtoIPD from "./Admin/OPDtoIPD";
+import AddVendor from "./Admin/AddVendor";
+import ProductOrders from "./Admin/ProductOrders";
+import ProductCustomerOrder from "./Admin/ProductCustomerOrder";
+import ProductBrands from "./Admin/ProductBrands";
+import AddHouseKeeping from "./Admin/AddHouseKeeping";
+import AddHospitalServices from "./Admin/AddHospitalServices";
+import AddAccesories from "./Admin/AddAccesories";
+import BillingList from "./Admin/BillingList";
+import Enquiry from "./Admin/Enquiry";
+import Accounts from "./Admin/Accounts";
+import AddHospitalRooms from "./Admin/AddHospitalRooms";
+import Adddepartment from "./Admin/Adddepartment";
+import Notifications from "./Admin/Notifications";
+import AddLabPackages from "./Admin/AddLabPackages";
+import HospitalLabPanel from "./Admin/HospitalLabPanel";
+import Hospitallabtestlist from "./Admin/HospitalLabTest";
+import ClinicalLabPanel from "./Admin/ClinicalLabPanel";
+import Bedmanagement from "./Admin/Bedmanagement";
+import AddFloor from "./Admin/AddFloor";
+import GenralWard from "./Admin/GenralWard";
+import LabourWard from "./Admin/LabourWard";
+import IpBillingSheet from "./Admin/patientDetails/IpBillingSheet";
+import DocTreatmentChart from "./Admin/PatientAdmitForms/DocTreatmentChart";
+import DocNotes from "./Admin/PatientAdmitForms/DocNotes";
+import MedicationChart from "./Admin/patientDetails/MedicationChart";
+import NursingAssessOnAdmit from "./Admin/PatientAdmitForms/NursingAssessOnAdmit";
+import NursesNotes from "./Admin/PatientAdmitForms/NursesNotes";
+import HouslyObserveChart from "./Admin/PatientAdmitForms/HouslyObserveChart";
+import SurgeryReport from "./Admin/patientDetails/SurgeryReport";
+import InatkeOutput from "./Admin/PatientAdmitForms/InatkeOutput";
+import PreOperativeChecklist from "./Admin/PatientAdmitForms/PreOperativeChecklist";
+import PreAnestheticAssessment from "./Admin/PatientAdmitForms/PreAnestheticAssessment";
+import ChecklistForSurgical from "./Admin/PatientAdmitForms/ChecklistForSurgical";
+import PostSurgical from "./Admin/PatientAdmitForms/PostSurgical";
+import AddProductInvetory from "./Admin/AddProductInvetory";
+import { PatientInvoice } from "./PatientsPortal/PatientInvoice";
+import { PatientBillInvoice } from "./Admin/PatientBillInvoice";
+import { AppointmentList } from "./DoctorsPortal/AppointmentList";
+import DoctorsAppointment from "./Admin/Doctorsappointment";
+import { StaffAttendance } from "./Admin/StaffAttendance";
 
 function App() {
   return (
@@ -413,7 +476,7 @@ function App() {
                 </>
               }
             />
-            <Route
+            {/* <Route
               path="/staffattendance"
               element={
                 <StaffCommanDashboard
@@ -424,7 +487,7 @@ function App() {
                   }
                 />
               }
-            />
+            /> */}
             <Route
               path="/pharmacytrackorder"
               element={
@@ -734,12 +797,12 @@ function App() {
               }
             />
             <Route
-              path="/patientbillinvoice"
+              path="/patientinvoice"
               element={
                 <PatientsCommanDashboard
                   children={
                     <>
-                      <PatientBillInvoice />
+                      <PatientInvoice />
                     </>
                   }
                 />
@@ -784,12 +847,12 @@ function App() {
               }
             />
             <Route
-              path="/doctorsappointment"
+              path="/appointmentlist"
               element={
                 <AdminDashboard
                   children={
                     <>
-                      <DoctorsAppointment />
+                      <AppointmentList />
                     </>
                   }
                 />
@@ -831,7 +894,7 @@ function App() {
                 />
               }
             />
-             <Route
+            <Route
               path="/doctorsviewforms"
               element={
                 <AdminDashboard
@@ -1765,6 +1828,626 @@ function App() {
                 />
               }
             />
+
+            {/* =======================> Admin Panel <============================= */}
+
+            <Route
+              path="/admin"
+              element={
+                <>
+                  <PageLoaderA />
+                  <AdminLogin />
+                </>
+              }
+            />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Dashboard />} />
+                </>
+              }
+            />
+            <Route
+              path="/Subadmin-login"
+              element={
+                <>
+                  <SubAdminLogin />
+                </>
+              }
+            />
+
+            <Route
+              path="/admin/subadmin"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Subadmin />} />
+                </>
+              }
+            />
+            <Route
+              path="/admin/Hospitaldoctors"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Hospitaldoctors />} />
+                </>
+              }
+            />
+            <Route
+              path="/admin/Clinicaldoctors"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Clinicaldoctors />} />
+                </>
+              }
+            />
+
+            <Route
+              path="/admin/Staffmanagement"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Staffmanagement />} />{" "}
+                </>
+              }
+            />
+            <Route
+              path="/admin/Staffmanagementdashboard"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Staffmanagementdashboard />} />{" "}
+                </>
+              }
+            />
+
+            <Route
+            path="/admin/StaffAttendance"
+            element={
+              <>
+                <PageLoaderA />
+                <Adminpanel children={<StaffAttendance />} />{" "}
+              </>
+            }
+          />
+
+            <Route
+              path="/admin/Inpatientlist"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Inpatientlist />} />{" "}
+                </>
+              }
+            />
+            <Route
+              path="/admin/patientdetails/:id"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<PatientDetails />} />{" "}
+                </>
+              }
+            />
+            <Route
+              path="/admin/patientform"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<PatientForm />} />{" "}
+                </>
+              }
+            />
+            <Route
+              path="/admin/InpatientlistConsentForms/:id"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<IPDConsentFroms />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/Outpatientlist"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Outpatientlist />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+            path="/admin/DoctorsAppointment"
+            element={
+              <>
+                <PageLoaderA />
+                <Adminpanel children={<DoctorsAppointment />} />{" "}
+              </>
+            }
+          ></Route>
+
+            <Route
+              path="/admin/Hospitallab"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Hospitallab />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/Clinicallab"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Clinicallab />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/AddServiceCategory"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AddServiceCategory />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/AddService"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AddService />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/RequestedService"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<RequestedService />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/Websitemanagement"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Websitemanagement />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/AddProductCategory"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AddproductCategory />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+            path="/admin/patientbillinvoice"
+            element={
+              <>
+                <PageLoaderA />
+                <Adminpanel children={<PatientBillInvoice />} />{" "}
+              </>
+            }
+          ></Route>
+
+            {/* <Route
+            path="/admin/opdMedicineInvoice"
+            element={
+              <>
+                <PageLoaderA />
+                <Adminpanel children={<OPDMedicineInvoice />} />{" "}
+              </>
+            }
+          ></Route> */}
+            <Route
+              path="/admin/OPDPharmacy"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<OPDPharmacy />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/StaffOPDPharmacyBill"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<StaffOPDPharmacyBill />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/opdtoipd"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<OPDtoIPD />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/AddVendor"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AddVendor />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+            path="/admin/addinventory"
+            element={
+              <>
+                <PageLoaderA />
+                <Adminpanel children={<AddProductInvetory />} />{" "}
+              </>
+            }
+          ></Route>
+
+            <Route
+              path="/admin/ProductOrders"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<ProductOrders />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/ProductCustomerOrders"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<ProductCustomerOrder />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/ProductBrands"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<ProductBrands />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/AddHouseKeeping"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AddHouseKeeping />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/AddHospitalServices"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AddHospitalServices />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/AddAccesories"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AddAccesories />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/Billinglist"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<BillingList />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/Enquiry"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Enquiry />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/Accounts"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Accounts />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/AddHospitalRooms"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AddHospitalRooms />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/Adddepartment"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Adddepartment />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/Notifications"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Notifications />} />{" "}
+                </>
+              }
+            ></Route>
+
+           
+
+            <Route
+              path="/admin/Packages"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AddLabPackages />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/HospitalLabPanel"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<HospitalLabPanel />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/Hospitallabtestlist"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Hospitallabtestlist />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/ClinicalLabPanel"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<ClinicalLabPanel />} />{" "}
+                </>
+              }
+            ></Route>
+
+            {/* <Route
+            path="/admin/AddWastageReturn"
+            element={
+              <>
+                <PageLoaderA />
+                <Adminpanel children={<AddWastageReturn />} />{" "}
+              </>
+            }
+          ></Route> */}
+
+            
+          {/* <Route
+            path="/admin/AddManufacturerReturn"
+            element={
+              <>
+                <PageLoaderA />
+                <Adminpanel children={<AddManufacturerReturn />} />{" "}
+              </>
+            }
+          ></Route> */}
+
+            <Route
+              path="/admin/Bedmanagement"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Bedmanagement />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/AddFloor"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AddFloor />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/GenralWard"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<GenralWard />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/LabourWard"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<LabourWard />} />{" "}
+                </>
+              }
+            ></Route>
+            {/* Patient Admission Forms starts */}
+            <Route
+              path="/admin/IPBillingSheet"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<IpBillingSheet />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/DocTreatmentChart"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<DocTreatmentChart />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/DocNotes"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<DocNotes />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/MedicationChart"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<MedicationChart />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/NursingAssessOnAdmit"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<NursingAssessOnAdmit />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/NursesNotes"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<NursesNotes />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/HouslyObserveChart"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<HouslyObserveChart />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/SurgeryReport"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<SurgeryReport />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/InatkeOutput"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<InatkeOutput />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/PreOperativeChecklist"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<PreOperativeChecklist />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/PreAnestheticAssessment"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<PreAnestheticAssessment />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/ChecklistForSurgical"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<ChecklistForSurgical />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/PostSurgical"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<PostSurgical />} />{" "}
+                </>
+              }
+            ></Route>
 
             {/* 404 Page */}
             <Route

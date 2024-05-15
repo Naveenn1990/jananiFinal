@@ -9,7 +9,7 @@ import { FiDownload } from "react-icons/fi";
 import { useParams } from "react-router-dom";
 import { BsEmojiSmile } from "react-icons/bs";
 import { RiBillFill } from "react-icons/ri";
-import { motion } from "framer-motion";
+
 function PatientForm() {
   const navigate = useNavigate();
 

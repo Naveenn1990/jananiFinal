@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./PageLoader.css"; // Import your CSS file for styling
 
-const PageLoader = () => {
+const PageLoaderA = () => {
   // State to manage the visibility of the loader
   const [loading, setLoading] = useState(true);
 
@@ -21,4 +21,4 @@ const PageLoader = () => {
   );
 };
 
-export default PageLoader;
+export default PageLoaderA;

@@ -24,7 +24,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export const DoctorsAppointment = () => {
+export const AppointmentList = () => {
   const navigate = useNavigate();
 
   const doctor = JSON.parse(sessionStorage.getItem("DoctorDetails"));

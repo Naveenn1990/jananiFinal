@@ -91,7 +91,7 @@ export default function DoctorsSidebar() {
 
       <h6
         className="sidebarItem"
-        onClick={() => window.location.assign("/doctorsappointment")}
+        onClick={() => window.location.assign("/appointmentlist")}
       >
         {" "}
         <FontAwesomeIcon
@@ -116,6 +116,7 @@ export default function DoctorsSidebar() {
       <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/patientslist")}
+        
       >
         {" "}
         <FontAwesomeIcon

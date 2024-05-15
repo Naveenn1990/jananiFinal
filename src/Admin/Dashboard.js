@@ -10,7 +10,7 @@ import { BiHandicap, BiMessageRoundedEdit } from "react-icons/bi";
 import { Modal, Table } from "react-bootstrap";
 
 import CanvasJSReact from "@canvasjs/react-charts";
-import PageLoader from "./Pageloader";
+// import PageLoader from "./Pageloader";
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;

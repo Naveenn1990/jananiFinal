@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
-export const PatientBillInvoice = () => {
+export const PatientInvoice = () => {
   const location = useLocation();
   let { patientCauseInfo, patientdetails } = location["state"];
   console.log("sabval: ", patientCauseInfo, patientdetails);

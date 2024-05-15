@@ -19,7 +19,7 @@ import axios from "axios";
 import Carousel from "react-multi-carousel";
 import moment from "moment/moment";
 
-export default function AddProduct() {
+export default function AddProductInvetory() {
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
   const responsive = {
     superLargeDesktop: {
