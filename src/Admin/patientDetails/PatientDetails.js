@@ -4,17 +4,33 @@ import ConsentView from "./ConsentView";
 import PatientView from "./PatientView";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import DrawIcon from "@mui/icons-material/Draw";
-import { Button, Form, Table } from "react-bootstrap";
+import { Button, Container, Form, Table } from "react-bootstrap";
 import axios from "axios";
 import { CiBarcode } from "react-icons/ci";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import Barcode from "react-barcode";
 
 const PatientDetails = () => {
   const { id } = useParams();
   const [consentform, setConsentForm] = useState(false);
   const [patientform, setPatientForm] = useState(false);
   const [patientdetail, setpatientdetail] = useState([]);
+
+  const dobString = patientdetail?.DOB;
+  const dob = new Date(dobString);
+  const currentDate = new Date();
+  const differenceMs = currentDate - dob;
+  const msInYear = 1000 * 60 * 60 * 24 * 365.25;
+  const msInMonth = msInYear / 12;
+  let ageOutput;
+  if (differenceMs < msInYear) {
+    const ageMonths = Math.floor(differenceMs / msInMonth);
+    ageOutput = `${ageMonths} months`;
+  } else {
+    const ageYears = Math.floor(differenceMs / msInYear);
+    ageOutput = `${ageYears} years`;
+  }
 
   const getpatientbyid = async () => {
     try {
@@ -74,7 +90,7 @@ const PatientDetails = () => {
         <h6
           className="ihie"
           style={{
-            fontSize: "22px",
+            fontSize: "33px",
             fontWeight: "600",
             textAlign: "center",
             paddingTop: "15px",
@@ -83,46 +99,66 @@ const PatientDetails = () => {
           Patients Details
         </h6>
 
-        <Table>
-          <tbody>
-            <tr style={{ textAlign: "center" }}>
-              <td>
-                {" "}
-                <img
-                  src={`http://localhost:8521/PatientREG/${patientdetail?.profilepic}`}
-                  alt=""
-                  style={{
-                    height: "75px",
-                    width: "75px",
-                    borderRadius: "100%",
-                  }}
-                />{" "}
-              </td>
-              <td>Patient Id</td>
-              <td>Mobile </td>
-              <td>Email</td>
-              <td>Sex</td>
-              <td>Age</td>
-              <td>Barcode</td>
-            </tr>
-            <tr style={{ textAlign: "center" }}>
-              <td>
+        <Container style={{padding:"36px"}}>
+          <div
+            className="row"
+            style={{
+              border: "1px solid #1F938A",
+              borderRadius: "10px",
+              position: "relative",
+            }}
+          >
+            <div className="col-md-12 text-center" >
+              <div
+                className="fw-bold"
+                style={{
+                  color: "#1F938A",
+                  fontSize: "1.5rem",
+                  position: "absolute",
+                  top: "-20px",
+                  left: "10px",
+                  backgroundColor: "white",
+                }}
+              >
                 {patientdetail.Firstname} {patientdetail.Lastname}
-              </td>
-              <td>{patientdetail.PatientId}</td>
-              <td>{patientdetail.PhoneNumber}</td>
-              <td>{patientdetail.Email}</td>
-              <td>{patientdetail.Gender}</td>
-              <td>{patientdetail.DOB}</td>
-              <td>
-                <CiBarcode style={{ cursor: "pointer", fontSize: "35px" }} />
-              </td>
-            </tr>
-          </tbody>
-        </Table>
+              </div>
+            </div>
+
+            <div className="col-md-3 text-start mt-4">
+              <p>Patient Id : {patientdetail.PatientId}</p>
+              <p>Mobile : {patientdetail.PhoneNumber}</p>
+              <p>Email : {patientdetail.Email}</p>
+            </div>
+            <div className="col-md-3 text-start mt-4">
+              <p>Sex : {patientdetail.Gender}</p>
+              <p>DOB : {patientdetail.DOB}</p>
+              <p>Age : {ageOutput}</p>
+            </div>
+            <div className="col-md-3 text-start mt-4">
+              <img
+                src={`http://localhost:8521/PatientREG/${patientdetail?.profilepic}`}
+                alt=""
+                style={{
+                  height: "118px",
+                  width: "157px",
+                  borderRadius: "100%",
+                }}
+              />
+            </div>
+            <div className="col-md-3 text-start mt-4">
+              <div>
+                <Barcode
+                  value={patientdetail?.PatientId}
+                  width={1}
+                  height={50}
+                />
+              </div>
+            </div>
+          </div>
+        </Container>
       </div>
       <hr />
-      <div className="col2" style={{ display: "flex" }}>
+      <div className="col2" style={{ display: "flex",justifyContent:"center" }}>
         <div
           className="patientForm"
           style={{
