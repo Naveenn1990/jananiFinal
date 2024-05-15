@@ -1197,7 +1197,7 @@ export default function BillingList() {
                             setBillDetailsList(item.causeBillDetails);
                             handleShow3();
                           }}
-                          style={{ color: "#20958c", marginRight: "1%" }}
+                          style={{ color: "white", marginRight: "1%" }}
                         />
                       </div>
                     </td>
@@ -1212,7 +1212,8 @@ export default function BillingList() {
                               },
                             });
                           }}
-                          className=" fs-5"
+                          className="fs-5"
+                         
                           style={{ border: "none" }}
                         >
                           <FaEye

@@ -23,9 +23,7 @@ function DoctorsViewForms() {
   } else {
     ageOutput = `${ageYears} years`;
   }
-
   const [CauseDetails, setCauseDetails] = useState([]);
-
   useEffect(() => {
     const assignedPatients = item?.cause?.filter((val) => val._id === causeId);
     setCauseDetails(assignedPatients[0]);
