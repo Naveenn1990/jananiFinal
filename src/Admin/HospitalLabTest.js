@@ -312,8 +312,8 @@ export default function Hospitallabtestlist() {
                   <th>Test Category</th>
                   <th>Test Image</th>
                   <th>Test Name</th>
-                  <th>After Food Reference value</th>
-                  <th>Before Food Reference value</th>
+                  {/* <th>After Food Reference value</th>
+                  <th>Before Food Reference value</th> */}
                   <th>General Reference value</th>
                   <th>Unit</th>
                 </thead>
@@ -331,8 +331,8 @@ export default function Hospitallabtestlist() {
                           />
                         </td>
                         <td>{val?.testName}</td>
-                        <td>{val?.afterFoodRefVal}</td>
-                        <td>{val?.beforeFoodRefVal}</td>
+                        {/* <td>{val?.afterFoodRefVal}</td>
+                        <td>{val?.beforeFoodRefVal}</td> */}
                         <td>{val?.generalRefVal}</td>
                         <td>{val?.unit}</td>
                       </tr>

@@ -11,6 +11,8 @@ import Select from "react-select";
 export const Diagnostic = () => {
   const navigate = useNavigate();
 
+  const labUserDetails = sessionStorage.getItem("labUser");
+
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
 
@@ -91,8 +93,8 @@ export const Diagnostic = () => {
           priceNonInsurance: val.priceNonInsurance,
           priceInsurance: val.priceInsurance,
           unit: val.unit,
-          beforeFoodRefVal: val.beforeFoodRefVal,
-          afterFoodRefVal: val.afterFoodRefVal,
+          // beforeFoodRefVal: val.beforeFoodRefVal,
+          // afterFoodRefVal: val.afterFoodRefVal,
           generalRefVal: val.generalRefVal,
         };
       })
