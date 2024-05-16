@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Form, Modal, Table } from "react-bootstrap";
 import { AiFillDelete, AiOutlineUserAdd } from "react-icons/ai";
 import { MdDelete, MdEdit } from "react-icons/md";
@@ -33,15 +34,31 @@ function BookedLabTest() {
   const handleprint = useReactToPrint({
     content: () => componentRef.current,
     documentTitle: "LabTestInvoice",
-    // onAfterPrint: () => alert("print successfully"),
   });
 
   const componentRef1 = useRef();
   const handleprint1 = useReactToPrint({
     content: () => componentRef1.current,
     documentTitle: "LabTestInvoice",
-    // onAfterPrint: () => alert("print successfully"),
   });
+
+
+  // Get All Lab Test Requests
+const [AllTestList, setAllTestList] = useState([])
+  const GetLabtestList = async()=>{
+    try {
+        const res = await axios.get("http://localhost:8521/api/user/getBookedHospitalLabTest")
+        setAllTestList(res.data.list)
+    } catch (error) {
+        console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    GetLabtestList()
+  }, [])
+  console.log("AllTestList",AllTestList);
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -86,29 +103,34 @@ function BookedLabTest() {
               </tr>
             </thead>
             <tbody>
-              <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                <td>Process</td>
-                <td>#4411</td>
-                <td>Sarah Smith</td>
-                <td>7541086135</td>
-                <td>dev@gmail.com</td>
-                <td>20-05-2024</td>
-                <td>
-                  <Button onClick={() => handleShow2()}>View</Button>
-                </td>
-                <td>2000/-</td>
-                <td>pending</td>
-
-                <td>
-                  <Button onClick={() => handleShow5()}>Add Report</Button>
-                </td>
-                <td>
-                  <Button onClick={() => handleShow1()}>Invoice</Button>
-                </td>
-                <td>
-                  <Button onClick={() => handleShow3()}>View Report</Button>
-                </td>
-              </tr>
+                {AllTestList?.map((item,i)=>{
+                    return(
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                        <td>Process</td>
+                        <td>#4411</td>
+                        <td>Sarah Smith</td>
+                        <td>7541086135</td>
+                        <td>dev@gmail.com</td>
+                        <td>20-05-2024</td>
+                        <td>
+                          <Button onClick={() => handleShow2()}>View</Button>
+                        </td>
+                        <td>2000/-</td>
+                        <td>pending</td>
+        
+                        <td>
+                          <Button onClick={() => handleShow5()}>Add Report</Button>
+                        </td>
+                        <td>
+                          <Button onClick={() => handleShow1()}>Invoice</Button>
+                        </td>
+                        <td>
+                          <Button onClick={() => handleShow3()}>View Report</Button>
+                        </td>
+                      </tr>
+                    )
+                })}
+             
             </tbody>
           </Table>
         </div>
@@ -496,7 +518,12 @@ function BookedLabTest() {
                               <option>Default select</option>
                             </Form.Select>
                           </td>
-                          <td>110</td>
+                          <td>
+                            <input
+                            type="text"
+                            className="vi_0"
+                            />
+                          </td>
                           <td>mili/cm</td>
                           <td>110 mili - 120 mili </td>
                           <td><Button>Submit</Button> </td>
