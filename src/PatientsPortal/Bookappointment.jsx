@@ -285,6 +285,7 @@ console.log("Doctors", Doctors);
                   >
                     <Form.Control
                       type="date"
+                     min={new Date().toISOString().split('T')[0]} 
                       placeholder="Date of Appointment"
                       onChange={(e) => setDateofApp(e.target.value)}
                     />

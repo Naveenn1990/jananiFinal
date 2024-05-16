@@ -26,9 +26,10 @@ export default function DoctorsAppointment() {
   const [show1, setShow1] = useState(false);
 
   const handleClose1 = () => setShow1(false);
-  const handleShow1 = (item) => {setShow1(true);setAppointmentId(item)}
-
-
+  const handleShow1 = (item) => {
+    setShow1(true);
+    setAppointmentId(item);
+  };
 
   const generateRandomNumber = () => {
     // Generate a random number between 1000 and 9999
@@ -36,9 +37,8 @@ export default function DoctorsAppointment() {
     return randomNumber;
   };
 
-  const prefix = 'JAN';
+  const prefix = "JAN";
   const randomNumber = generateRandomNumber();
-
 
   const [patientfirstname, setpatientfirstname] = useState("");
   const [patientlastname, setpatientlastname] = useState("");
@@ -59,7 +59,7 @@ export default function DoctorsAppointment() {
 
   const BookAppointment = async (e) => {
     e.preventDefault();
-    formdata.append("token",prefix + randomNumber);
+    formdata.append("token", prefix + randomNumber);
     formdata.append("PatientId", "Admin");
     formdata.append("Firstname", patientfirstname);
     formdata.append("Lastname", patientlastname);
@@ -131,7 +131,6 @@ export default function DoctorsAppointment() {
 
   const [AppointmentId, setAppointmentId] = useState({});
 
-
   const UpdateBookingAppointment = async () => {
     try {
       const config = {
@@ -140,7 +139,7 @@ export default function DoctorsAppointment() {
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
         data: {
-          Id:AppointmentId?._id,
+          Id: AppointmentId?._id,
           Time: Time,
           Dateofappointment: DateofApp,
         },
@@ -701,53 +700,57 @@ export default function DoctorsAppointment() {
             </div>
           </Modal.Footer>
         </Modal> */}
-
-        <Table responsive="md" style={{ marginTop: "1%" }}>
-          <thead>
-            <tr style={{ fontSize: "15px", textAlign: "center" }}>
-              {/* <th>Profile</th> */}
-              <th> Sl.No</th>
-              <th> Name</th>             
-              <th>Email-Id</th>
-              <th>Date of Appointment</th>
-              <th>From / To</th>
-             
-              <th>Mobile</th>
-         
-              <th>Injury/Condition</th>
-              <th>Token</th>
-              <th>Reschedule</th>
-
-            </tr>
-          </thead>
-          <tbody>
-            {AppointmentList?.map((item, i) => {
-              return(
-                <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                <td>{i+1}</td>
-                <td>{item?.Firstname} {item?.Lastname}</td>
-                <td>{item?.Email}</td>
-                <td>{item?.Dateofappointment}</td>
-                <td>{item?.Time}</td>              
-                <td>{item?.PhoneNumber}</td>
-                
-                <td>{item?.medicalReason}</td>
-                <td>{item?.token}</td>
-                <td> <p
-                      style={{
-                        color: "green",
-                        fontSize: "20px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <FaEdit onClick={() => handleShow1(item)} />
-                    </p></td>
+        <div 
+     style={{overflow:"hidden",overflowX:"scroll"}}
+        >
+          <Table responsive="md" style={{ marginTop: "1%" }}>
+            <thead>
+              <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                {/* <th>Profile</th> */}
+                <th> Sl.No</th>
+                <th> Name</th>
+                <th>Email-Id</th>
+                <th>Date of Appointment</th>
+                <th>From / To</th>
+                <th>Mobile</th>
+                <th>Injury/Condition</th>
+                <th>Token</th>
+                <th>Reschedule</th>
               </tr>
-              )
-             
-            })}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {AppointmentList?.map((item, i) => {
+                return (
+                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                    <td>{i + 1}</td>
+                    <td>
+                      {item?.Firstname} {item?.Lastname}
+                    </td>
+                    <td>{item?.Email}</td>
+                    <td>{item?.Dateofappointment}</td>
+                    <td>{item?.Time}</td>
+                    <td>{item?.PhoneNumber}</td>
+
+                    <td>{item?.medicalReason}</td>
+                    <td>{item?.token}</td>
+                    <td>
+                      {" "}
+                      <p
+                        style={{
+                          color: "green",
+                          fontSize: "20px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <FaEdit onClick={() => handleShow1(item)} />
+                      </p>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </div>
       </div>
 
       <Modal

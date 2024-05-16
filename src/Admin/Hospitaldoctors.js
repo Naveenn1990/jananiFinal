@@ -2319,8 +2319,8 @@ export default function Hospitaldoctors() {
             </div>
           </Modal.Body>
         </Modal>
-
-        <Table responsive="md" style={{ marginTop: "1%" }}>
+   <div style={{overflow:"hidden",overflowX:"scroll"}}>
+        <Table  style={{ marginTop: "1%" }}>
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
               <th>Sl.No</th>
@@ -2549,6 +2549,7 @@ export default function Hospitaldoctors() {
             })}
           </tbody>
         </Table>
+        </div>
       </div>
     </div>
   );

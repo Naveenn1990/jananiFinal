@@ -1,22 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { Button, Container, Table } from "react-bootstrap";
-import { BiTrendingUp, BiTrendingDown } from "react-icons/bi";
-import {
-  BsCheckCircle,
-  BsTrash3,
-  BsArrowDownCircle,
-  BsFileEarmarkZip,
-} from "react-icons/bs";
-import { ImCancelCircle } from "react-icons/im";
-import { PiFileTextLight } from "react-icons/pi";
-import {
-  AiFillFilePdf,
-  AiOutlineFilePdf,
-  AiOutlineFileWord,
-  AiOutlineFileImage,
-} from "react-icons/ai";
-import { FaTablets, FaCapsules, FaSyringe, FaPills } from "react-icons/fa";
+import { Container, Table } from "react-bootstrap";
 import axios from "axios";
 import moment from "moment";
 export const TodayAppointment = () => {

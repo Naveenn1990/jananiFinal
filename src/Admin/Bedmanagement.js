@@ -1515,7 +1515,7 @@ export default function Bedmanagement() {
                       disablePortal
                       id="combo-box-demo"
                       options={updatedIPDPatients}
-                      sx={{ width: 300 }}
+                      // sx={{ width: 300 }}
                       value={selectedIPDObj}
                       onChange={handleselectedIPDChange}
                       renderInput={(params) => (
