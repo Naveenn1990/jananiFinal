@@ -724,8 +724,8 @@ export default function Hospitallab() {
                   <td>{valitem?.priceNonInsurance}</td>
                   <td>{valitem?.priceInsurance}</td>
                   <td>{valitem?.unit}</td>
-                  <td>{valitem?.beforeFoodRefVal}</td>
-                  <td>{valitem?.afterFoodRefVal}</td>
+                  {/* <td>{valitem?.beforeFoodRefVal}</td>
+                  <td>{valitem?.afterFoodRefVal}</td> */}
                   <td>{valitem?.generalRefVal}</td>
                   <td>
                     <div
