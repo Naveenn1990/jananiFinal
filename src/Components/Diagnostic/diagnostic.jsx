@@ -126,8 +126,6 @@ export const Diagnostic = () => {
     }
   };
 
-  console.log("HospitalLabList: ", HospitalLabList);
-
   return (
     <div>
       <h1
