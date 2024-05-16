@@ -50,8 +50,8 @@ export default function Hospitallab() {
   const [priceNonInsurance, setpriceNonInsurance] = useState(0);
   const [priceInsurance, setpriceInsurance] = useState(0);
   const [unit, setunit] = useState("");
-  const [beforeFoodRefVal, setbeforeFoodRefVal] = useState("");
-  const [afterFoodRefVal, setafterFoodRefVal] = useState("");
+  // const [beforeFoodRefVal, setbeforeFoodRefVal] = useState("");
+  // const [afterFoodRefVal, setafterFoodRefVal] = useState("");
   const [generalRefVal, setgeneralRefVal] = useState("");
   const [testImg, settestImg] = useState({});
   const AddHospitalLabTest = async () => {
@@ -61,8 +61,8 @@ export default function Hospitallab() {
       priceNonInsurance,
       priceInsurance,
       unit,
-      beforeFoodRefVal,
-      afterFoodRefVal,
+      // beforeFoodRefVal,
+      // afterFoodRefVal,
       generalRefVal,
       testImg,
     };
@@ -85,8 +85,8 @@ export default function Hospitallab() {
         setpriceNonInsurance(0);
         setpriceInsurance(0);
         setunit("");
-        setbeforeFoodRefVal("");
-        setafterFoodRefVal("");
+        // setbeforeFoodRefVal("");
+        // setafterFoodRefVal("");
         setgeneralRefVal("");
         settestImg({});
       }
@@ -344,7 +344,7 @@ export default function Hospitallab() {
                 ></input>
               </div>
 
-              <div className="col-lg-6" style={{ marginTop: "4%" }}>
+              {/* <div className="col-lg-6" style={{ marginTop: "4%" }}>
                 <label
                   style={{
                     color: "white",
@@ -392,7 +392,7 @@ export default function Hospitallab() {
                   value={afterFoodRefVal}
                   onChange={(e) => setafterFoodRefVal(e.target.value)}
                 ></input>
-              </div>
+              </div> */}
 
               <div className="col-lg-6" style={{ marginTop: "4%" }}>
                 <label
@@ -700,8 +700,8 @@ export default function Hospitallab() {
               <th>Non-Insurance Price</th>
               <th>Insurance Price</th>
               <th>Unit</th>
-              <th>Before Food Reference value</th>
-              <th>After Food Reference value</th>
+              {/* <th>Before Food Reference value</th>
+              <th>After Food Reference value</th> */}
               <th>General Reference value</th>
 
               <th>ACTION</th>
