@@ -3714,3 +3714,8 @@ td{
 .App {
   font-family: Lato,sans-serif;
 }
+
+.modeltable_header{
+  background-color: #d95757;
+  color: white;
+}
