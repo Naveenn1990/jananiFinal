@@ -72,6 +72,7 @@ export const Diagnostic = () => {
   const [Phoneno, setPhoneno] = useState("");
   const [email, setemail] = useState("");
   const [testDate, settestDate] = useState("");
+  const [causeid, setcauseid] = useState("");
   const [Labtests, setLabtests] = useState([]);
 
   const [testid, settestid] = useState("");
@@ -103,19 +104,48 @@ export const Diagnostic = () => {
   };
 
   const bookLabTest = async () => {
+    let obj;
+    if (
+      labUserDetails &&
+      JSON.parse(labUserDetails)?.registrationType === "IPD"
+    ) {
+      obj = {
+        causeid: causeid,
+        patientid: JSON.parse(labUserDetails)?._id,
+        patientname: patientname,
+        Phoneno: Phoneno,
+        email: email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+      };
+    } else if (
+      labUserDetails &&
+      JSON.parse(labUserDetails)?.registrationType === "OPD"
+    ) {
+      obj = {
+        patientid: JSON.parse(labUserDetails)?._id,
+        patientname: patientname,
+        Phoneno: Phoneno,
+        email: email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+      };
+    } else if (!labUserDetails) {
+      obj = {
+        patientname: patientname,
+        Phoneno: Phoneno,
+        email: email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+      };
+    }
     try {
       const config = {
         url: "/user/bookHospitalLabTest",
         method: "post",
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
-        data: {
-          patientname: patientname,
-          Phoneno: Phoneno,
-          email: email,
-          testDate: testDate,
-          Labtests: selectedOptions,
-        },
+        data: obj,
       };
       let res = await axios(config);
       if (res.status === 200 || res.status === 201) {
@@ -631,7 +661,7 @@ export const Diagnostic = () => {
 
       {/* ==================================================== */}
 
-      {/* BOOK APPOINTMENT MODAL */}
+      {/* BOOK TEST MODAL */}
       <Modal
         show={show}
         onHide={handleClose}
@@ -712,6 +742,32 @@ export const Diagnostic = () => {
                 onChange={(e) => settestDate(e.target.value)}
               />
             </FloatingLabel>
+            {labUserDetails &&
+            JSON.parse(labUserDetails)?.registrationType === "IPD" ? (
+              <FloatingLabel
+                className="col-md-6 p-2"
+                controlId="floatingCause"
+                label="Cause"
+              >
+                <Form.Select
+                  type="text"
+                  value={causeid}
+                  placeholder="Cause"
+                  onChange={(e) => setcauseid(e.target.value)}
+                >
+                  <option>Open this select menu</option>
+                  {JSON.parse(labUserDetails)?.cause?.map((itemdata) => {
+                    return (
+                      <option value={itemdata?._id}>
+                        {itemdata?.CauseName}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </FloatingLabel>
+            ) : (
+              <></>
+            )}
           </Row>
 
           <Button

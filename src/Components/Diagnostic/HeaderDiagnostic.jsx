@@ -98,7 +98,12 @@ export const HeaderDiagnostic = () => {
                   <Dropdown.Item href="/diagnosticmyprofile">
                     Profile
                   </Dropdown.Item>
-                  <Dropdown.Item href="/diagnostic">Logout</Dropdown.Item>
+                  <Dropdown.Item
+                    href="/diagnostic"
+                    onClick={() => sessionStorage.removeItem("labUser")}
+                  >
+                    Logout
+                  </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
 
