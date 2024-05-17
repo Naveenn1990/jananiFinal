@@ -1,4 +1,5 @@
 import axios from "axios";
+import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Form, Modal, Table } from "react-bootstrap";
 import { AiFillDelete, AiOutlineUserAdd } from "react-icons/ai";
@@ -42,22 +43,82 @@ function BookedLabTest() {
     documentTitle: "LabTestInvoice",
   });
 
-
   // Get All Lab Test Requests
-const [AllTestList, setAllTestList] = useState([])
-  const GetLabtestList = async()=>{
+  const [AllTestList, setAllTestList] = useState([]);
+  const GetLabtestList = async () => {
     try {
-        const res = await axios.get("http://localhost:8521/api/user/getBookedHospitalLabTest")
-        setAllTestList(res.data.list)
+      const res = await axios.get(
+        "http://localhost:8521/api/user/getBookedHospitalLabTest"
+      );
+      setAllTestList(res.data.list);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
-    GetLabtestList()
-  }, [])
-  console.log("AllTestList",AllTestList);
+    GetLabtestList();
+    HospitallabList();
+  }, []);
+
+  const [HospitalLabList, setHospitalLabList] = useState([]);
+  const HospitallabList = () => {
+    axios
+      .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
+      .then(function (response) {
+        // handle success
+        if (response.status === 200) {
+          const data = response.data.HospitalLabTests;
+          setHospitalLabList(data);
+        }
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+        setHospitalLabList([]);
+      });
+  };
+  console.log("AllTestList", AllTestList);
+
+  const [Labtests, setLabtests] = useState({});
+  const [Labreport, setLabreport] = useState("");
+  const [TestId, setTestId] = useState("");
+  const [TestDetails, setTestDetails] = useState({});
+
+  // Handle selection change
+  const handleTestChange = (e) => {
+    const selectedId = e.target.value;
+    setTestId(selectedId);
+
+    // Find the details of the selected test
+    const selectedTest = Labtests?.Labtests?.find(
+      (item) => item._id === selectedId
+    );
+    setTestDetails(selectedTest || {});
+  };
+
+  const addLabReport = async () => {
+    try {
+      const config = {
+        url: "/addlabreport",
+        method: "put",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "application/json" },
+        data: {
+          hospitallabtestid: Labtests?._id,
+          labtestid: TestId,
+          patientReportVal: Labreport,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        handleClose5();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
 
   return (
     <div>
@@ -103,41 +164,74 @@ const [AllTestList, setAllTestList] = useState([])
               </tr>
             </thead>
             <tbody>
-                {AllTestList?.map((item,i)=>{
-                    return(
-                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                        <td>Process</td>
-                        <td>#4411</td>
-                        <td>Sarah Smith</td>
-                        <td>7541086135</td>
-                        <td>dev@gmail.com</td>
-                        <td>20-05-2024</td>
-                        <td>
-                          <Button onClick={() => handleShow2()}>View</Button>
-                        </td>
-                        <td>2000/-</td>
-                        <td>pending</td>
-        
-                        <td>
-                          <Button onClick={() => handleShow5()}>Add Report</Button>
-                        </td>
-                        <td>
-                          <Button onClick={() => handleShow1()}>Invoice</Button>
-                        </td>
-                        <td>
-                          <Button onClick={() => handleShow3()}>View Report</Button>
-                        </td>
-                      </tr>
-                    )
-                })}
-             
+              {AllTestList?.map((item, i) => {
+                return (
+                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                    <td>
+                      {item?.testCompletion === false ? (
+                        <p>Process</p>
+                      ) : (
+                        <p>Successfully</p>
+                      )}
+                    </td>
+                    <td>#4411</td>
+                    <td>{item?.patientname}</td>
+                    <td>{item?.Phoneno}</td>
+                    <td>{item?.email}</td>
+                    <td>{moment(item?.testDate).format("DD/MM/YYYY")}</td>
+                    <td>
+                      <Button
+                        onClick={() => {
+                          handleShow2();
+                          setLabtests(item);
+                        }}
+                      >
+                        View
+                      </Button>
+                    </td>
+                    <td>2000/-</td>
+                    <td>pending</td>
+
+                    <td>
+                      <Button
+                        onClick={() => {
+                          handleShow5();
+                          setLabtests(item);
+                        }}
+                      >
+                        Add Report
+                      </Button>
+                    </td>
+                    <td>
+                      <Button
+                        onClick={() => {
+                          handleShow1();
+                          setLabtests(item);
+                        }}
+                      >
+                        Invoice
+                      </Button>
+                    </td>
+                    <td>
+                      <Button
+                        onClick={() => {
+                          handleShow3();
+                          setLabtests(item);
+                        }}
+                      >
+                        View Report
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         </div>
 
         <Modal show={show1} onHide={handleClose1} size="lg">
           <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
+            <Modal.Title>Invoice</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <div ref={componentRef}>
@@ -148,9 +242,6 @@ const [AllTestList, setAllTestList] = useState([])
                     boxShadow: " 0px 8px 32px 0px rgba(19, 19, 20, 0.37)",
                     background: "#f5f6fa",
                     backdropFilter: "blur(4px)",
-                    // border:"1px solid black",
-                    // height: "100%",
-                    // width: "100%",
                     padding: "20px",
                   }}
                 >
@@ -172,7 +263,7 @@ const [AllTestList, setAllTestList] = useState([])
                       <br />
                       <span>JananiPharmacy@gmail.com</span>
                       <br />
-                      <span>+1999212993</span>
+                      <span>+91 9992129936</span>
                       <br />
                       <span>Singapur Layout, Banglore</span>
                       <br />
@@ -206,7 +297,7 @@ const [AllTestList, setAllTestList] = useState([])
                     <thead>
                       <tr className="admin-table-head">
                         <th className="fw-bold">SL No</th>
-                        <th className="fw-bold">Item</th>
+                        <th className="fw-bold">Test Name</th>
                         <th className="fw-bold">Price</th>
                         <th className="fw-bold">Quantity</th>
                         <th className="fw-bold">Amount</th>
@@ -214,13 +305,19 @@ const [AllTestList, setAllTestList] = useState([])
                     </thead>
 
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>Water Pick</td>
-                        <td>&#8377;5205</td>
-                        <td>1</td>
-                        <td>₹5025</td>
-                      </tr>
+                      {Labtests?.Labtests?.filter(
+                        (ele) => ele.patientReportVal
+                      )?.map((item, i) => {
+                        return (
+                          <tr>
+                            <td>{i + 1}</td>
+                            <td>{item?.testName}</td>
+                            <td>&#8377;5205</td>
+                            <td>1</td>
+                            <td>₹5025</td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
 
@@ -255,7 +352,7 @@ const [AllTestList, setAllTestList] = useState([])
                       </tbody>
                     </table>
                   </div>
-
+                  <hr />
                   <div className="text-center text-dark ">
                     <p>Thanks For Shoping. </p>
                     <p>
@@ -277,34 +374,39 @@ const [AllTestList, setAllTestList] = useState([])
           </Modal.Footer>
         </Modal>
 
-        <Modal show={show2} onHide={handleClose2}>
+        <Modal show={show2} onHide={handleClose2} size="lg">
           <Modal.Header closeButton>
             <Modal.Title>Test List</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Table bordered style={{ backgroundColor: "aliceblue" }}>
-              <thead className="modeltable_header">
-                <tr>
-                  <td>Sl.</td>
-                  <td>Test Name</td>
-                  <td>Test Price</td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>hello</td>
-                  <td>Boss</td>
-                </tr>
-              </tbody>
-            </Table>
+            <div className="row p-3" style={{ backgroundColor: "white" }}>
+              <Table bordered>
+                <thead className="">
+                  <tr>
+                    <th>Sl.</th>
+                    <th>Test Name</th>
+                    <th>Test Price</th>
+                    <th>Test Price(Insurance)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Labtests?.Labtests?.map((item, i) => {
+                    return (
+                      <tr>
+                        <td>{i + 1}</td>
+                        <td>{item?.testName}</td>
+                        <td>{item?.priceNonInsurance}</td>
+                        <td>{item?.priceInsurance}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose2}>
               Close
-            </Button>
-            <Button variant="primary" onClick={handleClose2}>
-              Save Changes
             </Button>
           </Modal.Footer>
         </Modal>
@@ -322,9 +424,6 @@ const [AllTestList, setAllTestList] = useState([])
                     boxShadow: " 0px 8px 32px 0px rgba(19, 19, 20, 0.37)",
                     background: "#f5f6fa",
                     backdropFilter: "blur(4px)",
-                    // border:"1px solid black",
-                    // height: "100%",
-                    // width: "100%",
                     padding: "20px",
                   }}
                 >
@@ -359,7 +458,7 @@ const [AllTestList, setAllTestList] = useState([])
                   >
                     <div className="col-sm-4">
                       <div>
-                        <b>Patient Name : </b> Bishwajit AD
+                        <b>Patient Name : </b> {Labtests?.patientname}
                       </div>
                       <div>
                         <b>Patient Age : </b> 45 years
@@ -375,11 +474,12 @@ const [AllTestList, setAllTestList] = useState([])
                     </div>
                     <div className="col-sm-4">
                       <div>
-                        <b>Register Date : </b>12/23/6767
+                        <b>Register Date : </b>
+                        {moment(Labtests?.testDate).format("DD/MM/YYYY")}
                       </div>
-                      <div>
+                      {/* <div>
                         <b>Receiving Date : </b> 12/23/6767
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div className="row mt-2">
@@ -393,12 +493,18 @@ const [AllTestList, setAllTestList] = useState([])
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>Blood Suger</td>
-                          <td>110</td>
-                          <td>mili/cm</td>
-                          <td>110 mili - 120 mili </td>
-                        </tr>
+                        {Labtests?.Labtests?.filter(
+                          (ele) => ele.patientReportVal
+                        )?.map((item, i) => {
+                          return (
+                            <tr>
+                              <td>{item?.testName}</td>
+                              <td>{item?.patientReportVal}</td>
+                              <td>{item?.unit}</td>
+                              <td>{item?.generalRefVal} </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </Table>
                   </div>
@@ -440,9 +546,6 @@ const [AllTestList, setAllTestList] = useState([])
                     boxShadow: " 0px 8px 32px 0px rgba(19, 19, 20, 0.37)",
                     background: "#f5f6fa",
                     backdropFilter: "blur(4px)",
-                    // border:"1px solid black",
-                    // height: "100%",
-                    // width: "100%",
                     padding: "20px",
                   }}
                 >
@@ -477,7 +580,7 @@ const [AllTestList, setAllTestList] = useState([])
                   >
                     <div className="col-sm-4">
                       <div>
-                        <b>Patient Name : </b> Bishwajit AD
+                        <b>Patient Name : </b> {Labtests?.patientname}
                       </div>
                       <div>
                         <b>Patient Age : </b> 45 years
@@ -493,11 +596,10 @@ const [AllTestList, setAllTestList] = useState([])
                     </div>
                     <div className="col-sm-4">
                       <div>
-                        <b>Register Date : </b>12/23/6767
+                        <b>Register Date : </b>
+                        {moment(Labtests?.testDate).format("DD-MM-YYYY")}
                       </div>
-                      <div>
-                        <b>Receiving Date : </b> 12/23/6767
-                      </div>
+                      <div></div>
                     </div>
                   </div>
                   <div className="row mt-2">
@@ -514,19 +616,33 @@ const [AllTestList, setAllTestList] = useState([])
                       <tbody>
                         <tr>
                           <td>
-                            <Form.Select className="vi_0">
-                              <option>Default select</option>
+                            <Form.Select
+                              className="vi_0"
+                              onChange={handleTestChange}
+                              value={TestId}
+                            >
+                              <option>Select Test</option>
+                              {Labtests?.Labtests?.map((item) => {
+                                return (
+                                  <option value={item?._id}>
+                                    {item?.testName}
+                                  </option>
+                                );
+                              })}
                             </Form.Select>
                           </td>
                           <td>
                             <input
-                            type="text"
-                            className="vi_0"
+                              type="text"
+                              className="vi_0"
+                              onChange={(e) => setLabreport(e.target.value)}
                             />
                           </td>
-                          <td>mili/cm</td>
-                          <td>110 mili - 120 mili </td>
-                          <td><Button>Submit</Button> </td>
+                          <td>{TestDetails?.unit}</td>
+                          <td>{TestDetails?.generalRefVal} </td>
+                          <td>
+                            <Button onClick={addLabReport}>Submit</Button>{" "}
+                          </td>
                         </tr>
                       </tbody>
                     </Table>
@@ -544,133 +660,9 @@ const [AllTestList, setAllTestList] = useState([])
 
         <Modal size="md" show={show} onHide={handleClose}>
           <Modal.Header>
-            <Modal.Title>Add Profile</Modal.Title>
+            <Modal.Title>Register For Lab Test</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            <div className="row">
-              <div className="col-lg-12">
-                <input
-                  placeholder="Patient ID"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                ></input>
-              </div>
-
-              <div className="col-lg-12">
-                <input
-                  placeholder="Name"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                ></input>
-              </div>
-
-              <div className="col-lg-12">
-                <input
-                  placeholder="SAC"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                ></input>
-              </div>
-
-              <div className="col-lg-2" style={{ marginTop: "4%" }}>
-                <label
-                  style={{
-                    marginTop: "14%",
-                    marginLeft: "25%",
-                    color: "white",
-                    fontWeight: "400",
-                    fontSize: "18px",
-                  }}
-                >
-                  Choose
-                </label>
-              </div>
-              <div className="col-lg-8" style={{ marginTop: "4%" }}>
-                <input
-                  placeholder="Test "
-                  type="text"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                ></input>
-              </div>
-
-              <div className="col-lg-2" style={{ marginTop: "4%" }}>
-                <Button variant="danger">ADD</Button>
-              </div>
-
-              <Table
-                className="table table-bordered border-light"
-                responsive
-                style={{ width: "100%", marginTop: "4%" }}
-              >
-                <thead>
-                  <tr className="admin-table-head">
-                    <th className="fw-bold" style={{ color: "#fff" }}>
-                      #
-                    </th>
-                    <th
-                      className="fw-bold"
-                      style={{ color: "#fff", width: "280px" }}
-                    >
-                      Test
-                    </th>
-                    <th className="fw-bold" style={{ color: "#fff" }}>
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr className="admin-table-row">
-                    <td>1.</td>
-
-                    <td>AFB - SPUTUM(3Days)</td>
-                    <td>
-                      <MdDelete
-                        style={{ color: "#e01f1f", cursor: "pointer" }}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </Table>
-
-              <div className="col-lg-12">
-                <input
-                  placeholder="TAT(Unit)"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                ></input>
-              </div>
-            </div>
-          </Modal.Body>
+          <Modal.Body></Modal.Body>
           <Modal.Footer>
             <div style={{ display: "flex" }}>
               <button

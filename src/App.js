@@ -238,6 +238,7 @@ import { PatientBillInvoice } from "./Admin/PatientBillInvoice";
 import { AppointmentList } from "./DoctorsPortal/AppointmentList";
 import DoctorsAppointment from "./Admin/Doctorsappointment";
 import { StaffAttendance } from "./Admin/StaffAttendance";
+import ReportsList from "./PatientsPortal/ReportsList";
 
 function App() {
   return (
@@ -684,6 +685,18 @@ function App() {
                   children={
                     <>
                       <PatientDashboard />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/reportslist"
+              element={
+                <PatientsCommanDashboard
+                  children={
+                    <>
+                      <ReportsList />
                     </>
                   }
                 />
