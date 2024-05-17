@@ -1,10 +1,18 @@
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Form, Modal, Table } from "react-bootstrap";
+import {
+  Button,
+  Form,
+  Modal,
+  Table,
+  FloatingLabel,
+  Row,
+} from "react-bootstrap";
 import { AiFillDelete, AiOutlineUserAdd } from "react-icons/ai";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useReactToPrint } from "react-to-print";
+import Select from "react-select";
 
 function BookedLabTest() {
   const [show, setShow] = useState(false);
@@ -56,7 +64,21 @@ function BookedLabTest() {
     }
   };
 
+  const [patientlist, setpatientlist] = useState([]);
+
+  const getPatientlist = () => {
+    axios
+      .get("http://localhost:8521/api/user/getPatientList")
+      .then(function (response) {
+        setpatientlist(response.data.UsersInfo);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
+    getPatientlist();
     GetLabtestList();
     HospitallabList();
   }, []);
@@ -69,6 +91,10 @@ function BookedLabTest() {
         // handle success
         if (response.status === 200) {
           const data = response.data.HospitalLabTests;
+          data.forEach((item) => {
+            item.label = item.testName;
+            item.value = item.testName;
+          });
           setHospitalLabList(data);
         }
       })
@@ -120,6 +146,87 @@ function BookedLabTest() {
     }
   };
 
+  // const [patientname, setpatientname] = useState("");
+  // const [Phoneno, setPhoneno] = useState("");
+  // const [email, setemail] = useState("");
+  // const [testDate, settestDate] = useState("");
+  // const [causeid, setcauseid] = useState("");
+  // const [patientData, setpatientData] = useState({});
+  // // const [Labtests, setLabtests] = useState([]);
+  // let [selectedOptions, setSelectedOptions] = useState([]);
+
+  // const AddLabTest = (Labtests) => {
+  //   setSelectedOptions(
+  //     Labtests?.map((val) => {
+  //       return {
+  //         testid: val._id,
+  //         testName: val.testName,
+  //         priceNonInsurance: val.priceNonInsurance,
+  //         priceInsurance: val.priceInsurance,
+  //         unit: val.unit,
+  //         // beforeFoodRefVal: val.beforeFoodRefVal,
+  //         // afterFoodRefVal: val.afterFoodRefVal,
+  //         generalRefVal: val.generalRefVal,
+  //       };
+  //     })
+  //   );
+  //   setLabtests(Labtests);
+  // };
+  // const bookLabTest = async () => {
+  //   let obj;
+  //   // if (
+  //   //   patientData &&
+  //   //   JSON.parse(patientData)?.registrationType === "IPD"
+  //   // ) {
+  //   //   obj = {
+  //   //     causeid: causeid,
+  //   //     patientid: JSON.parse(patientData)?._id,
+  //   //     patientname: patientname,
+  //   //     Phoneno: Phoneno,
+  //   //     email: email,
+  //   //     testDate: testDate,
+  //   //     Labtests: selectedOptions,
+  //   //   };
+  //   // } else if (
+  //   //   patientData &&
+  //   //   JSON.parse(patientData)?.registrationType === "OPD"
+  //   // ) {
+  //   //   obj = {
+  //   //     patientid: JSON.parse(patientData)?._id,
+  //   //     patientname: patientname,
+  //   //     Phoneno: Phoneno,
+  //   //     email: email,
+  //   //     testDate: testDate,
+  //   //     Labtests: selectedOptions,
+  //   //   };
+  //   // } else if (!patientData) {
+  //   //   obj = {
+  //   //     patientname: patientname,
+  //   //     Phoneno: Phoneno,
+  //   //     email: email,
+  //   //     testDate: testDate,
+  //   //     Labtests: selectedOptions,
+  //   //   };
+  //   // }
+  //   try {
+  //     const config = {
+  //       url: "/user/bookHospitalLabTest",
+  //       method: "post",
+  //       baseURL: "http://localhost:8521/api",
+  //       headers: { "content-type": "application/json" },
+  //       data: obj,
+  //     };
+  //     let res = await axios(config);
+  //     if (res.status === 200 || res.status === 201) {
+  //       alert("Lab test booked");
+  //       // thankyouShow();
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     return alert(error.response.data.error);
+  //   }
+  // };
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -138,18 +245,15 @@ function BookedLabTest() {
               borderRadius: "0px",
             }}
           />
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <AiOutlineUserAdd
-              className="AddIcon1"
-              onClick={() => setShow(true)}
-            />
-          </div>
+          {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <AiOutlineUserAdd className="AddIcon1" onClick={handleShow} />
+          </div> */}
         </div>
         <div style={{ overflow: "hidden", overflowX: "scroll" }}>
           <Table className="mt-2" bordered>
             <thead>
               <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                <th>Test Status</th>
+                {/* <th>Test Status</th> */}
                 <th>Patient ID</th>
                 <th>Name</th>
                 <th>Phone No</th>
@@ -167,14 +271,25 @@ function BookedLabTest() {
               {AllTestList?.map((item, i) => {
                 return (
                   <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td>
-                      {item?.testCompletion === false ? (
-                        <p>Process</p>
+                    {/* <td>
+                    {item?.Labtests?.length ===
+                      item?.Labtests?.filter((val) => val.patientReportVal)
+                        ?.length ? (
+                        <b style={{ color: "green" }}>Reports Added</b>
                       ) : (
-                        <p>Successfully</p>
+                        <p>Process</p>
+                      )}
+                    </td> */}
+                    <td>
+                      {item?.patientid?._id ? (
+                        <>
+                          {item?.patientid?._id}(
+                          {item?.patientid?.registrationType})
+                        </>
+                      ) : (
+                        <>--/--</>
                       )}
                     </td>
-                    <td>#4411</td>
                     <td>{item?.patientname}</td>
                     <td>{item?.Phoneno}</td>
                     <td>{item?.email}</td>
@@ -189,38 +304,85 @@ function BookedLabTest() {
                         View
                       </Button>
                     </td>
-                    <td>2000/-</td>
-                    <td>pending</td>
+                    <td>
+                      {item?.patientid?._id &&
+                      item?.patientid?.haveInsurance ? (
+                        <>
+                          ₹
+                          {item?.Labtests?.reduce(
+                            (acc, curr) => acc + curr.priceInsurance,
+                            0
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          ₹
+                          {item?.Labtests?.reduce(
+                            (acc, curr) => acc + curr.priceNonInsurance,
+                            0
+                          )}
+                        </>
+                      )}
+                    </td>
+                    <td>
+                      {item?.paymentStatus === "UNPAID" ? (
+                        <b style={{ color: "red" }}>UNPAID</b>
+                      ) : (
+                        <b style={{ color: "green" }}>PAID</b>
+                      )}
+                    </td>
 
                     <td>
-                      <Button
-                        onClick={() => {
-                          handleShow5();
-                          setLabtests(item);
-                        }}
-                      >
-                        Add Report
-                      </Button>
+                      {item?.Labtests?.length ===
+                      item?.Labtests?.filter((val) => val.patientReportVal)
+                        ?.length ? (
+                        <b style={{ color: "green" }}>Reports Added</b>
+                      ) : (
+                        <Button
+                          onClick={() => {
+                            handleShow5();
+                            setLabtests(item);
+                          }}
+                        >
+                          Add Report
+                        </Button>
+                      )}
                     </td>
                     <td>
-                      <Button
-                        onClick={() => {
-                          handleShow1();
-                          setLabtests(item);
-                        }}
-                      >
-                        Invoice
-                      </Button>
+                      {item?.Labtests?.length ===
+                      item?.Labtests?.filter((val) => val.patientReportVal)
+                        ?.length ? (
+                        <Button
+                          onClick={() => {
+                            handleShow1();
+                            setLabtests(item);
+                          }}
+                        >
+                          Invoice
+                        </Button>
+                      ) : (
+                        <b style={{ color: "red" }}>
+                          Invoice are not generated
+                        </b>
+                      )}
                     </td>
                     <td>
-                      <Button
-                        onClick={() => {
-                          handleShow3();
-                          setLabtests(item);
-                        }}
-                      >
-                        View Report
-                      </Button>
+                      {item?.Labtests?.length ===
+                      item?.Labtests?.filter((val) => val.patientReportVal)
+                        ?.length ? (
+                        <Button
+                          onClick={() => {
+                            handleShow3();
+                            setLabtests(item);
+                          }}
+                        >
+                          View Report
+                        </Button>
+                      ) : (
+                        <b style={{ color: "red" }}>
+                          Reports are not generated
+                        </b>
+                      )}
                     </td>
                   </tr>
                 );
@@ -299,8 +461,8 @@ function BookedLabTest() {
                         <th className="fw-bold">SL No</th>
                         <th className="fw-bold">Test Name</th>
                         <th className="fw-bold">Price</th>
-                        <th className="fw-bold">Quantity</th>
-                        <th className="fw-bold">Amount</th>
+                        {/* <th className="fw-bold">Quantity</th>
+                        <th className="fw-bold">Amount</th> */}
                       </tr>
                     </thead>
 
@@ -312,9 +474,16 @@ function BookedLabTest() {
                           <tr>
                             <td>{i + 1}</td>
                             <td>{item?.testName}</td>
-                            <td>&#8377;5205</td>
-                            <td>1</td>
-                            <td>₹5025</td>
+                            <td>
+                              {Labtests?.patientid?._id &&
+                              Labtests?.patientid?.haveInsurance ? (
+                                <>₹{item?.priceInsurance}</>
+                              ) : (
+                                <>₹{item?.priceNonInsurance}</>
+                              )}
+                            </td>
+                            {/* <td>1</td>
+                            <td>₹5025</td> */}
                           </tr>
                         );
                       })}
@@ -329,25 +498,48 @@ function BookedLabTest() {
                       <tbody>
                         <tr>
                           <td className="fw-bold p-0 text-start">Total :</td>
-                          <td className="p-0 text-end">&#8377;2020</td>
+                          <td className="p-0 text-end">
+                            {Labtests?.patientid?._id &&
+                            Labtests?.patientid?.haveInsurance ? (
+                              <>
+                                ₹
+                                {Labtests?.Labtests?.reduce(
+                                  (acc, curr) => acc + curr.priceInsurance,
+                                  0
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                ₹
+                                {Labtests?.Labtests?.reduce(
+                                  (acc, curr) => acc + curr.priceNonInsurance,
+                                  0
+                                )}
+                              </>
+                            )}
+                          </td>
                         </tr>
-                        <tr>
+                        {/* <tr>
                           <td className="fw-bold p-0 text-start">Discount :</td>
                           <td className="p-0 text-end">&#8377;20</td>
                         </tr>
                         <tr>
                           <td className="fw-bold p-0 text-start">Gst :</td>
                           <td className="p-0 text-end">&#8377;20</td>
-                        </tr>
-                        <tr>
+                        </tr> */}
+                        {/* <tr>
                           <td className="fw-bold p-0 text-start">
                             Grand Total:
                           </td>
                           <td className="p-0 text-end">&#8377;2020</td>
-                        </tr>
+                        </tr> */}
                         <tr>
                           <td className="fw-bold p-0 text-start">Status :</td>
-                          <td className="p-0 text-end">Paid</td>
+                          <td className="p-0 text-end">
+                            <b style={{ color: "red" }}>
+                              {Labtests?.paymentStatus}
+                            </b>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -622,7 +814,9 @@ function BookedLabTest() {
                               value={TestId}
                             >
                               <option>Select Test</option>
-                              {Labtests?.Labtests?.map((item) => {
+                              {Labtests?.Labtests?.filter(
+                                (val) => !val.patientReportVal
+                              )?.map((item) => {
                                 return (
                                   <option value={item?._id}>
                                     {item?.testName}
@@ -658,49 +852,147 @@ function BookedLabTest() {
           </Modal.Footer>
         </Modal>
 
-        <Modal size="md" show={show} onHide={handleClose}>
-          <Modal.Header>
-            <Modal.Title>Register For Lab Test</Modal.Title>
+        {/* <Modal
+          show={show}
+          onHide={handleClose}
+          // backdrop="static"
+          keyboard={false}
+          size="lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title style={{ color: "white", fontWeight: "bold" }}>
+              Book Your Test
+            </Modal.Title>
           </Modal.Header>
-          <Modal.Body></Modal.Body>
-          <Modal.Footer>
-            <div style={{ display: "flex" }}>
-              <button
-                style={{
-                  backgroundColor: "grey",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  border: "1px solid white",
-                  fontWeight: "600",
-                  marginRight: "20px",
-                  padding: "4px 10px",
-                }}
-                onClick={() => setShow(false)}
+          <Modal.Body>
+            <Row>
+             
+              <FloatingLabel
+                className="col-md-6 p-2"
+                controlId="floatingName"
+                label="Name"
               >
-                CANCEL
-              </button>
+                <Form.Select
+                  // type="text"
+                  value={patientData}
+                  // placeholder="Name"
+                  onChange={(e) => setpatientData(e.target.value)}
+                >
+                  <option>Open this select menu</option>
+                  {patientlist?.map((valdata) => {
+                    return (
+                      <option value={JSON.stringify(valdata)}>
+                        {valdata?._id} {valdata?.Firstname}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </FloatingLabel>
 
-              <button
-                style={{
-                  backgroundColor: "orange",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontWeight: "600",
-                  border: "1px solid white",
-                  padding: "4px 10px",
-                }}
-                onClick={() => {
-                  setShow(false);
-                  alert("Hospital lab test created");
-                }}
+              <FloatingLabel
+                className="col-md-6 p-2"
+                controlId="floatingName"
+                label="Name"
               >
-                SUBMIT
-              </button>
-            </div>
-          </Modal.Footer>
-        </Modal>
+                <Form.Control
+                  type="text"
+                  value={patientname}
+                  placeholder="Name"
+                  onChange={(e) => setpatientname(e.target.value)}
+                />
+              </FloatingLabel>
+            </Row>
+            <Row>
+              <FloatingLabel
+                className="  col-md-6 p-2"
+                controlId="floatingMobile"
+                label="Mobile"
+              >
+                <Form.Control
+                  type="number"
+                  value={Phoneno}
+                  placeholder="Mobile"
+                  onChange={(e) => setPhoneno(e.target.value)}
+                />
+              </FloatingLabel>
+              <FloatingLabel
+                className="col-md-6 p-2"
+                controlId="floatingEmail"
+                label="Email"
+              >
+                <Form.Control
+                  type="email"
+                  value={email}
+                  placeholder="Email"
+                  onChange={(e) => setemail(e.target.value)}
+                />
+              </FloatingLabel>
+            </Row>
+            <Row className="d-flex mt-2 justify-content-center mb-3">
+              <FloatingLabel className="col-md-6 p-1" controlId="floatingName">
+                <Select
+                  // defaultValue={[colourOptions[2], colourOptions[3]]}
+                  isMulti
+                  name="colors"
+                  options={HospitalLabList}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                  value={Labtests}
+                  onChange={AddLabTest}
+                />
+              </FloatingLabel>
+              <FloatingLabel
+                className="col-md-6 "
+                controlId="floatingEmail"
+                label=""
+              >
+                <Form.Control
+                  type="date"
+                  placeholder=""
+                  value={testDate}
+                  onChange={(e) => settestDate(e.target.value)}
+                />
+              </FloatingLabel>
+            </Row>
+            <Row className="d-flex mt-2 justify-content-center mb-3">
+              {patientData &&
+              JSON.parse(patientData)?.registrationType === "IPD" ? (
+                <FloatingLabel
+                  className="col-md-6 p-2"
+                  controlId="floatingCause"
+                  label="Cause"
+                >
+                  <Form.Select
+                    type="text"
+                    value={causeid}
+                    placeholder="Cause"
+                    onChange={(e) => setcauseid(e.target.value)}
+                  >
+                    <option>Open this select menu</option>
+                    {JSON.parse(patientData)?.cause?.map((itemdata) => {
+                      return (
+                        <option value={itemdata?._id}>
+                          {itemdata?.CauseName}
+                        </option>
+                      );
+                    })}
+                  </Form.Select>
+                </FloatingLabel>
+              ) : (
+                <></>
+              )}
+            </Row>
+
+            <Button
+              onClick={bookLabTest}
+              onHide={handleClose}
+              className="col-md-12"
+              style={{ backgroundColor: "white", color: "#20958C" }}
+            >
+              Submit
+            </Button>
+          </Modal.Body>
+        </Modal> */}
 
         <Modal size="md" show={show4} onHide={handleClose4}>
           <Modal.Header>
