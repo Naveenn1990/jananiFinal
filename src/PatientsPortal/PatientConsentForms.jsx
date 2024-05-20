@@ -353,8 +353,7 @@ const PatientConsentForms = () => {
             </div>           
           </div>
               )
-            })}
-            
+            })}           
 
           </div>
         </>
