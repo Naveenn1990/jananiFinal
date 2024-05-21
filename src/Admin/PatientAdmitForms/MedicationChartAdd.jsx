@@ -5,7 +5,7 @@ import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const MedicationChart = () => {
+const MedicationChartAdd = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { patientdetails, cause } = location.state || {};
@@ -311,4 +311,4 @@ console.log("causeName",causeName);
   );
 };
 
-export default MedicationChart;
+export default MedicationChartAdd;

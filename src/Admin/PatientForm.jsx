@@ -83,7 +83,7 @@ function PatientForm() {
                 width: "210px",
               }}
               onClick={() =>
-                navigate("/admin/MedicationChart", {
+                navigate("/admin/medicationchartadd", {
                   state: {
                     patientdetails: item,
                     cause: selectCause,
