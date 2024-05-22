@@ -245,9 +245,9 @@ function BookedLabTest() {
               borderRadius: "0px",
             }}
           />
-          {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <AiOutlineUserAdd className="AddIcon1" onClick={handleShow} />
-          </div> */}
+          </div>
         </div>
         <div style={{ overflow: "hidden", overflowX: "scroll" }}>
           <Table className="mt-2" bordered>
@@ -852,7 +852,7 @@ function BookedLabTest() {
           </Modal.Footer>
         </Modal>
 
-        {/* <Modal
+        <Modal
           show={show}
           onHide={handleClose}
           // backdrop="static"
@@ -866,17 +866,16 @@ function BookedLabTest() {
           </Modal.Header>
           <Modal.Body>
             <Row>
-             
               <FloatingLabel
                 className="col-md-6 p-2"
                 controlId="floatingName"
                 label="Name"
               >
                 <Form.Select
-                  // type="text"
-                  value={patientData}
-                  // placeholder="Name"
-                  onChange={(e) => setpatientData(e.target.value)}
+                // type="text"
+                // value={patientData}
+                // placeholder="Name"
+                // onChange={(e) => setpatientData(e.target.value)}
                 >
                   <option>Open this select menu</option>
                   {patientlist?.map((valdata) => {
@@ -896,9 +895,9 @@ function BookedLabTest() {
               >
                 <Form.Control
                   type="text"
-                  value={patientname}
+                  // value={patientname}
                   placeholder="Name"
-                  onChange={(e) => setpatientname(e.target.value)}
+                  // onChange={(e) => setpatientname(e.target.value)}
                 />
               </FloatingLabel>
             </Row>
@@ -910,9 +909,9 @@ function BookedLabTest() {
               >
                 <Form.Control
                   type="number"
-                  value={Phoneno}
+                  // value={Phoneno}
                   placeholder="Mobile"
-                  onChange={(e) => setPhoneno(e.target.value)}
+                  // onChange={(e) => setPhoneno(e.target.value)}
                 />
               </FloatingLabel>
               <FloatingLabel
@@ -922,9 +921,9 @@ function BookedLabTest() {
               >
                 <Form.Control
                   type="email"
-                  value={email}
+                  // value={email}
                   placeholder="Email"
-                  onChange={(e) => setemail(e.target.value)}
+                  // onChange={(e) => setemail(e.target.value)}
                 />
               </FloatingLabel>
             </Row>
@@ -938,7 +937,7 @@ function BookedLabTest() {
                   className="basic-multi-select"
                   classNamePrefix="select"
                   value={Labtests}
-                  onChange={AddLabTest}
+                  // onChange={AddLabTest}
                 />
               </FloatingLabel>
               <FloatingLabel
@@ -949,12 +948,12 @@ function BookedLabTest() {
                 <Form.Control
                   type="date"
                   placeholder=""
-                  value={testDate}
-                  onChange={(e) => settestDate(e.target.value)}
+                  // value={testDate}
+                  // onChange={(e) => settestDate(e.target.value)}
                 />
               </FloatingLabel>
             </Row>
-            <Row className="d-flex mt-2 justify-content-center mb-3">
+            {/* <Row className="d-flex mt-2 justify-content-center mb-3">
               {patientData &&
               JSON.parse(patientData)?.registrationType === "IPD" ? (
                 <FloatingLabel
@@ -981,10 +980,10 @@ function BookedLabTest() {
               ) : (
                 <></>
               )}
-            </Row>
+            </Row> */}
 
             <Button
-              onClick={bookLabTest}
+              // onClick={bookLabTest}
               onHide={handleClose}
               className="col-md-12"
               style={{ backgroundColor: "white", color: "#20958C" }}
@@ -992,7 +991,7 @@ function BookedLabTest() {
               Submit
             </Button>
           </Modal.Body>
-        </Modal> */}
+        </Modal>
 
         <Modal size="md" show={show4} onHide={handleClose4}>
           <Modal.Header>
