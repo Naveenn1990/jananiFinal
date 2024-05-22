@@ -4,11 +4,8 @@ import ConsentView from "./ConsentView";
 import PatientView from "./PatientView";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import DrawIcon from "@mui/icons-material/Draw";
-import { Button, Container, Form, Table } from "react-bootstrap";
+import { Button, Container} from "react-bootstrap";
 import axios from "axios";
-import { CiBarcode } from "react-icons/ci";
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
 import Barcode from "react-barcode";
 
 const PatientDetails = () => {
@@ -48,35 +45,10 @@ const PatientDetails = () => {
   useEffect(() => {
     getpatientbyid();
   }, []);
-
-  console.log("patientdetail:", patientdetail);
-  const navigate = useNavigate();
-
   const [SelectCause, setSelectCause] = useState({});
-  console.log("SelectCause", SelectCause);
-
   const handleSelect = (event) => {
     setSelectCause(JSON.parse(event.target.value));
   };
-
-  let generalConsent = 0;
-
-  // let count = SelectCause.consentform.map((i) => {
-  //   if (i.formname === "GeneralConsentForms") {
-  //     generalConsent++;
-  //   }
-  // });
-  const [first, setfirst] = useState([]);
-  console.log(SelectCause.consentform);
-  // SelectCause.consentform.map((item) => {
-  //   if (item.forname === "GeneralConsentForms") {
-
-  //     generalConsent++;
-  //   }
-  //   return generalConsent;
-  // });
-  console.log("general consent form:", generalConsent);
-
   return (
     <>
       <div
@@ -216,9 +188,10 @@ const PatientDetails = () => {
 
       {consentform ? (
         <>
-          <div className="m-3">
-            <label>Please Select Cause</label> <br />
+          <div className="m-3 d-flex align-items-center" >
+            <div style={{width:"16%"}}>Please Select Cause : </div> 
             <select
+            style={{width:"36%"}}
               className="vi_0"
               value={JSON.stringify(SelectCause)}
               onChange={handleSelect}
@@ -233,11 +206,29 @@ const PatientDetails = () => {
               })}
             </select>
           </div>
-          <ConsentView />
+          <ConsentView SelectCause={SelectCause} />
         </>
       ) : patientform ? (
         <>
-          <PatientView />
+          <div className="m-3 d-flex align-items-center" >
+            <div style={{width:"16%"}}>Please Select Cause : </div> 
+            <select
+            style={{width:"36%"}}
+              className="vi_0"
+              value={JSON.stringify(SelectCause)}
+              onChange={handleSelect}
+            >
+              <option>Select The Cause</option>
+              {patientdetail?.cause?.map((item) => {
+                return (
+                  <option value={JSON.stringify(item)}>
+                    {item?.CauseName}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <PatientView SelectCause={SelectCause} patientdetail={patientdetail}/>
         </>
       ) : (
         <></>
