@@ -145,7 +145,8 @@ export default function PatientsSidebar() {
 
               <div
                 className="Patient-sidebar-position patient-sidebarItem"
-                onClick={() => window.location.assign("/patientsettings")}
+                onClick={() => window.location.assign("/patientprofile")}
+                // onClick={() => window.location.assign("/patientsettings")}
               >
                 <FontAwesomeIcon icon={faPenToSquare} />
                 <span>Settings</span>
@@ -184,7 +185,7 @@ export default function PatientsSidebar() {
           />
 
           <p
-          onClick={()=>navigate("/patientprofile")}
+         
             className="side-profile-name text-center"
             style={{
               fontSize: "25px",
@@ -192,7 +193,7 @@ export default function PatientsSidebar() {
               // fontFamily: "cursive",
               marginTop: "10px",
               color: "rgb(32 139 140)",
-              cursor:"pointer"
+             
             }}
           >
             {patientDetails.Firstname} {patientDetails.Lastname}
@@ -298,7 +299,7 @@ export default function PatientsSidebar() {
             Report
           </h6>
 
-          <h6
+          {/* <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/patientAdmisssionForm")}
       >
@@ -308,7 +309,7 @@ export default function PatientsSidebar() {
           style={{ color: "",marginRight: "5px"}}
         />
         Admission Form(IPD)
-      </h6>
+      </h6> */}
 
           <h6
             className="sidebarItem"
@@ -335,7 +336,8 @@ export default function PatientsSidebar() {
           </h6>
           <h6
             className="sidebarItem"
-            onClick={() => window.location.assign("/patientsettings")}
+            // onClick={() => window.location.assign("/patientsettings")}
+            onClick={() => window.location.assign("/patientprofile")}
           >
             {" "}
             <FontAwesomeIcon

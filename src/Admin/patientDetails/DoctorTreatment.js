@@ -2,7 +2,21 @@ import React from "react";
 import { Button, Table } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
 
-const DoctorTreatment = () => {
+const DoctorTreatment = ({DoctTreatmentChat,patientdetail}) => {
+
+  const dobString = patientdetail?.DOB;
+  const dob = new Date(dobString);
+  const currentDate = new Date();
+  const differenceMs = currentDate - dob;
+  const ageYears = Math.floor(differenceMs / (1000 * 60 * 60 * 24 * 365.25));
+
+  let ageOutput;
+  if (ageYears < 1) {
+    const ageMonths = Math.floor(ageYears * 12);
+    ageOutput = `${ageMonths} months`;
+  } else {
+    ageOutput = `${ageYears} years`;
+  }
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">
@@ -41,7 +55,7 @@ const DoctorTreatment = () => {
             border: "2px solid #20958C",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1700px",
+          
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -100,7 +114,7 @@ const DoctorTreatment = () => {
                     colSpan={3}
                     style={{ width: "50%", border: "2px  solid #20958C" }}
                   >
-                    Name:{" "}
+                    Name: {`${patientdetail?.Firstname}${patientdetail?.Lastname}`}
                   </td>
                   <td
                     colSpan={3}
@@ -112,13 +126,13 @@ const DoctorTreatment = () => {
                     colSpan={2}
                     style={{ width: "33%", border: "2px  solid #20958C" }}
                   >
-                    Age
+                    Age : {ageOutput}
                   </td>
                   <td
                     colSpan={2}
                     style={{ width: "33%", border: "2px  solid #20958C" }}
                   >
-                    IP No:{" "}
+                    IP No: {patientdetail?.PatientId}
                   </td>
                   <td
                     colSpan={2}
@@ -129,32 +143,70 @@ const DoctorTreatment = () => {
                 </tr>
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={5}
                     style={{ width: "100%", border: "2px  solid #20958C" }}
                   >
                     Doctor Incharge:{" "}
                   </td>
                 </tr>
-                <tr>
-                  <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    Treatment Given:{" "}
-                  </td>
-                  <td
-                    style={{ width: "16%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "16%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "16%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "16%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "16%", border: "2px  solid #20958C" }}
-                  ></td>
-                </tr>
+                {DoctTreatmentChat?.map((item)=>{
+                  return(<>
+                   {item?.DoctorsTreatment?.map((ele, subIndex) => {
+                return (
+                  <tr key={subIndex}>
+                    <td style={{ width: "20%", border: "2px solid #20958C" }}>
+                      Treatment Given: 
+                    </td>
+                    <td style={{ width: "16%", border: "2px solid #20958C" }}>
+                    {ele.DTdate}
+                    </td>
+                    <td style={{ width: "16%", border: "2px solid #20958C" }}>
+                    {ele.DTTime}
+                    </td>
+                    <td style={{ width: "16%", border: "2px solid #20958C" }}>
+                    {ele.DTNotes}
+                    </td>
+                    <td style={{ width: "16%", border: "2px solid #20958C" }}>
+                      {/* Additional data from `ele` */}
+                    </td>
+                  </tr>
+                );
+              })}
+
+
+                  </>)
+                })}
+                {/* {DoctTreatmentChat?.map((item)=>{                             
+                  return(
+                    <> */}
+                    {/* {item?.DoctorsTreatment?.map((ele)=>{
+                      return(
+                        <tr>
+                              <td style={{ width: "20%", border: "2px  solid #20958C" }}>
+                                Treatment Given:{" "}
+                              </td>
+                              <td
+                                 style={{ width: "16%", border: "2px  solid #20958C" }}
+                              ></td>
+                             <td
+                               style={{ width: "16%", border: "2px  solid #20958C" }}
+                               ></td>
+                             
+                              <td
+                                style={{ width: "16%", border: "2px  solid #20958C" }}
+                              ></td>
+                               <td
+                                 style={{ width: "16%", border: "2px  solid #20958C" }}
+                               ></td>
+                             </tr>
+                      )
+                    })} */}
+                    {/* <p>hello</p>
+                    </>
+                  )
+                  
+                )} */}
+               
               </tbody>
             </Table>
           </div>

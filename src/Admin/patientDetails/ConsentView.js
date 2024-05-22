@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import GeneralConsent from "./GeneralConsent";
 import EstimatedCharge from "./EstimatedCharge";
@@ -6,7 +6,36 @@ import InformedConsent from "./InformedConsent";
 import AnesthesiaConsent from "./AnesthesiaConsent";
 import Badge from "react-badges";
 
-const ConsentView = () => {
+const ConsentView = ({SelectCause}) => {
+let generalcform = "GeneralConsentForms";
+let Hospitalizedcform = "HospitalizedConsentForms";
+let Highriskcform = "HighriskConsentForms";
+let Anesthesiacform = "AnesthesiaConsentForms";
+const [GeneralCForm, setGeneralCForm] = useState([])
+console.log("GeneralCForm",GeneralCForm);
+const [HospitalizedCForm, setHospitalizedCForm] = useState([])
+const [HighRiskCForm, setHighRiskCForm] = useState([])
+const [AnesthesiaCForm, setAnesthesiaCForm] = useState([])
+useEffect(() => {
+  if(SelectCause){
+    const generalCFLen = SelectCause?.consentform?.filter((ele)=>ele.formname == generalcform)
+    setGeneralCForm(generalCFLen)
+
+
+    const HospitalizedCFLen = SelectCause?.consentform?.filter((ele)=>ele.formname == Hospitalizedcform)
+    setHospitalizedCForm(HospitalizedCFLen)
+
+    const HighRiskCFLen = SelectCause?.consentform?.filter((ele)=>ele.formname == Highriskcform)
+    setHighRiskCForm(HighRiskCFLen)
+
+    const AnesthesiaCFLen = SelectCause?.consentform?.filter((ele)=>ele.formname == Anesthesiacform)
+    setAnesthesiaCForm(AnesthesiaCFLen)
+   
+  }
+
+}, [SelectCause])
+
+
   const [generalConsent, setGeneralConsent] = useState(false);
   const [hospitalizedConsent, setHospitalizedConsent] = useState(false);
   const [informedConsent, setInformedConsent] = useState(false);
@@ -32,7 +61,7 @@ const ConsentView = () => {
           >
             General Consent Forms{" "}
             <Badge className="m-3" overlap="circle">
-              5
+           {GeneralCForm?.length} 
             </Badge>
           </button>
           <button
@@ -52,7 +81,7 @@ const ConsentView = () => {
           >
             Hospitalized Estimated Charge Sheet Cum Consent Form{"  "}
             <Badge className="m-3" overlap="circle">
-              5
+             {HospitalizedCForm?.length}
             </Badge>
           </button>
           <button
@@ -72,7 +101,7 @@ const ConsentView = () => {
           >
             Informed Consent for High risk Procedure{" "}
             <Badge className="m-3" overlap="circle">
-              5
+              {HighRiskCForm?.length}
             </Badge>
           </button>
           <button
@@ -92,19 +121,20 @@ const ConsentView = () => {
           >
             Consent For Anesthesia / Sedation{" "}
             <Badge className="m-3" overlap="circle">
-              5
+             {AnesthesiaCForm?.length}
             </Badge>
           </button>
         </div>
       </div>
       {generalConsent ? (
-        <GeneralConsent />
+       
+        <GeneralConsent viewGeneralConsentform = {GeneralCForm}/>
       ) : hospitalizedConsent ? (
-        <EstimatedCharge />
+        <EstimatedCharge  HospitalizedCForm = {HospitalizedCForm}/>
       ) : informedConsent ? (
-        <InformedConsent />
+        <InformedConsent HighRiskCForm = {HighRiskCForm}/>
       ) : anesthesiaConsent ? (
-        <AnesthesiaConsent />
+        <AnesthesiaConsent AnesthesiaCForm = {AnesthesiaCForm} />
       ) : (
         <></>
       )}

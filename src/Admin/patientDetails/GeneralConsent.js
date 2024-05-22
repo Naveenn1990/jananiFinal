@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import moment from "moment";
+import React from "react";
 
-import { Button, Form, Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 
 import { FiDownload } from "react-icons/fi";
 
-const GeneralConsent = () => {
+const GeneralConsent = ({viewGeneralConsentform}) => {
+
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">
@@ -82,7 +84,7 @@ const GeneralConsent = () => {
             <p style={{ fontSize: "18px" }}>
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; I, Want to get
               myself/ my relative{" "}
-              <span style={{ fontWeight: "bold" }}>Mannu</span> Admitted and
+              <span style={{ fontWeight: "bold" }}>{viewGeneralConsentform[0]?.patientname}</span> Admitted and
               treated in this hospital. The decision of coming here is purely on
               my discretion.
             </p>
@@ -136,10 +138,10 @@ const GeneralConsent = () => {
                 <tr>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
                     Name:{" "}
-                    <span style={{ fontWeight: "bold" }}>Dr. Strange</span>{" "}
+                    <span style={{ fontWeight: "bold" }}>Dr. {viewGeneralConsentform[0]?.ConDoctorName}</span>{" "}
                   </td>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
-                    Name: <span style={{ fontWeight: "bold" }}>Mr. Bolt</span>{" "}
+                    Name: <span style={{ fontWeight: "bold" }}>Mr. {viewGeneralConsentform[0]?.RealivesName}</span>{" "}
                   </td>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
                     Sign: <span style={{ fontWeight: "bold" }}></span>{" "}
@@ -152,7 +154,7 @@ const GeneralConsent = () => {
                   </td>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
                     Relationship:{" "}
-                    <span style={{ fontWeight: "bold" }}>Uncle</span>{" "}
+                    <span style={{ fontWeight: "bold" }}>{viewGeneralConsentform[0]?.PatientRelation}</span>{" "}
                   </td>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
                     <span style={{ fontWeight: "bold" }}></span>
@@ -163,48 +165,10 @@ const GeneralConsent = () => {
 
             <p style={{ fontSize: "18px", marginTop: "20px" }}>
               Date/Time:{" "}
-              <span style={{ fontWeight: "bold" }}>05/05/2024 - 16:50</span>{" "}
+              <span style={{ fontWeight: "bold" }}>{moment(viewGeneralConsentform[0]?.createdAt)?.format("DD/MM/YYYY - HH:MM")}</span>{" "}
             </p>
           </div>
-          {/* <div className="text-center mt-1">
-                {" "}
-                <h6
-                  className="fw-bold mt-2"
-                  style={{ color: "#20958C", fontSize: "30px" }}
-                >
-                  ಸಾಮಾನ್ಯ ಒಪ್ಪಿಗೆ ಪತ್ರ
-                </h6>
-              </div>
-              <div
-                style={{
-                  paddingLeft: "42px",
-                  paddingRight: "42px",
-                  textAlign: "justify",
-                }}
-              >
-                <p style={{ fontSize: "18px" }}>
-                  ಕೇಳಿಗಿನ ಸಹಿ ಮಾಡಿದ ನಾನು / ನನ್ನ ಸಂಬಂಧಿ{" "}
-                  <span style={{ borderBottom: "1px solid black" }}>
-                    <input
-                      type="text"
-                      className="vi_0"
-                      style={{ width: "490px" }}
-                      value={userdetail?.Firstname}
-                      readOnly
-                    />
-                  </span>{" "}
-                  ಗೆ ಆಸ್ಪತ್ರೆಯಲ್ಲಿ ದಾಖಲಿಸಲು ಅನುಮತಿ ಕೊಟ್ಟಿದ್ದೇನೆ.
-                </p>
-                <p style={{ fontSize: "18px" }}>
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ನಾನು ಸ್ವೈಚ್
-                  ಇಂದ ಈ ಆಸ್ಪತ್ರೆಗೆ ಬಂದಿದ್ದೇನೆ ಮತ್ತು ಆಸ್ಪತ್ರೆಯಲ್ಲಿ ಲಭ್ಯವಿರುವ
-                  ವಿಶೇಷತೆಗಳ ಬಗ್ಗೆ ನನಗೆ ತಿಳಿಯಿಲ್ಲ ಮತ್ತು ನಾನು ತಿಳಿದಿಲ್ಲ. ಆಸ್ಪತ್ರೆಯ
-                  ನಿಯಮಗಳನ್ನು ಸರಿಯಾಗಿ ಪಾಲಿಸುತ್ತೇನೆ ಮತ್ತು ನನ್ನಿಂದ ವೈದ್ಯರು,
-                  ಆಸ್ಪತ್ರೆಯ ಸಿಬ್ಬಂದಿಗಳು ಮತ್ತು ಇತರ ರೋಗಿಗಳಿಗೆ ಯಾವ ತೊಂದರೆಯೂ
-                  ಇಲ್ಲದಂತೆ ನನ್ನ ಸಹಾಯವನ್ನು ಒದಗಿಸುತ್ತೇನೆ. ಆಸ್ಪತ್ರೆಯಲ್ಲಿ ನಡೆಯುವ
-                  ಸೇವೆಗಳ ಬಿಲಗಳನ್ನು ಪವತಿಸುತ್ತೇನೆ.{" "}
-                </p>
-              </div> */}
+          
         </div>
       </div>
     </>

@@ -15,7 +15,8 @@ import NursingAssessment from "./NursingAssessment";
 import AnaesthesiaRecord from "./AnaesthesiaRecord";
 import SafetyCheckList from "./SafetyCheckList";
 
-const PatientView = () => {
+const PatientView = ({ SelectCause,patientdetail }) => {
+
   const [IPBilling, setIPBilling] = useState(false);
   const [DocTreatmentChart, setDocTreatmentChart] = useState(false);
   const [DocNotes, setDocNotes] = useState(false);
@@ -92,7 +93,7 @@ const PatientView = () => {
                 setSafetyCheck(false);
               }}
             >
-              Doctor Treatment Chart
+              Doctor Treatment Chart ({SelectCause?.doctorstreatment?.length})
             </button>
             <button
               style={{
@@ -119,7 +120,7 @@ const PatientView = () => {
                 setSafetyCheck(false);
               }}
             >
-              Doctors Notes
+              Doctors Notes ({SelectCause?.doctorsnotes?.length})
             </button>
             <button
               style={{
@@ -146,7 +147,7 @@ const PatientView = () => {
                 setSafetyCheck(false);
               }}
             >
-              Medication Chart
+              Medication Chart ({SelectCause?.drug?.length})
             </button>
             <button
               style={{
@@ -173,7 +174,7 @@ const PatientView = () => {
                 setSafetyCheck(false);
               }}
             >
-              Nursing Assessment On Admission
+              Nursing Assessment On Admission ({SelectCause?.nursingassessment?.length})
             </button>
             <button
               style={{
@@ -200,7 +201,7 @@ const PatientView = () => {
                 setSafetyCheck(false);
               }}
             >
-              Nurse Notes
+              Nurse Notes ({SelectCause?.nursenote?.length})
             </button>
             <button
               style={{
@@ -227,7 +228,7 @@ const PatientView = () => {
                 setSafetyCheck(false);
               }}
             >
-              Hously Observation Chart
+              Hously Observation Chart ({SelectCause?.hourlynote?.length})
             </button>
           </div>
           <div
@@ -259,7 +260,7 @@ const PatientView = () => {
                 setSafetyCheck(false);
               }}
             >
-              INTAKE/ OUTPUT Chart
+              INTAKE/ OUTPUT Chart ({SelectCause?.intakeout?.length})
             </button>
             <button
               style={{
@@ -286,7 +287,7 @@ const PatientView = () => {
                 setSafetyCheck(false);
               }}
             >
-              Pre-Observation checklist
+              Pre-Observation checklist ({SelectCause?.preoperativelist?.length})
             </button>
             <button
               style={{
@@ -313,7 +314,7 @@ const PatientView = () => {
                 setSafetyCheck(false);
               }}
             >
-              Pre-Anesthesia Assessment
+              Pre-Anesthesia Assessment ({SelectCause?.preanesthetica?.length})
             </button>
             <button
               style={{
@@ -399,7 +400,7 @@ const PatientView = () => {
                 setSafetyCheck(false);
               }}
             >
-              Post surgical monitoring chart
+              Post surgical monitoring chart ({SelectCause?.postsurgicalmonitor?.length})
             </button>
             <button
               style={{
@@ -426,7 +427,7 @@ const PatientView = () => {
                 setSafetyCheck(false);
               }}
             >
-              Surgery Report
+              Surgery Report ({SelectCause?.surgeryreport?.length})
             </button>
           </div>
         </div>
@@ -434,9 +435,9 @@ const PatientView = () => {
         {IPBilling ? (
           <IpBillingSheet />
         ) : DocTreatmentChart ? (
-          <DoctorTreatment />
+          <DoctorTreatment DoctTreatmentChat = {SelectCause?.doctorstreatment} patientdetail={patientdetail} />
         ) : DocNotes ? (
-          <DoctorNotes />
+          <DoctorNotes DoctorsNotes = {SelectCause?.doctorsnotes} patientdetail={patientdetail} />
         ) : medication ? (
           <MedicationChart />
         ) : NursesNotes ? (
@@ -450,7 +451,7 @@ const PatientView = () => {
         ) : IntakeOutput ? (
           <IntakeOutputChart />
         ) : preOperative ? (
-          <PreOperative />
+          <PreOperative CHECKLIST = {SelectCause?.preoperativelist} patientdetail={patientdetail} />
         ) : surgicalCount ? (
           <SurgicalCount />
         ) : postSurgeryChary ? (
