@@ -55,6 +55,11 @@ export default function AddProductInvetory() {
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
 
+  const [show3, setShow3] = useState(false);
+
+  const handleClose3 = () => setShow3(false);
+  const handleShow3 = () => setShow3(true);
+
   const [catid, setcatid] = useState("");
   const [subcatid, setsubcatid] = useState("");
   const [categoryList, setcategoryList] = useState([]);
@@ -69,6 +74,33 @@ export default function AddProductInvetory() {
   const [productImgs, setproductImgs] = useState([]);
   const [showproductImgs, setshowproductImgs] = useState([]);
   const [productInfo, setproductInfo] = useState([]);
+
+  // Edit product information:
+  const [editProdName, seteditProdName] = useState("");
+  const [editProdPrice, seteditProdPrice] = useState();
+  const [editDiscount, seteditDiscount] = useState();
+  const [editcatid, seteditcatid] = useState("");
+  const [editsubcatid, seteditsubcatid] = useState("");
+  const [editstock, seteditstock] = useState();
+  const [editproductType, seteditproductType] = useState("");
+  const [editproductSize, seteditproductSize] = useState("");
+  const [editpackSize, seteditpackSize] = useState("");
+  const [editmanufacturingDate, seteditmanufacturingDate] = useState("");
+  const [editExpiryDate, seteditExpiryDate] = useState("");
+  const [editcolour, seteditcolour] = useState("");
+  const [editflavour, seteditflavour] = useState("");
+  const [editfragrance, seteditfragrance] = useState("");
+  const [editvariant, seteditvariant] = useState("");
+  const [editbrand, seteditbrand] = useState("");
+  const [editcountryOfOrigin, seteditcountryOfOrigin] = useState("");
+  const [editManufacturercompanyname, seteditManufacturercompanyname] =
+    useState("");
+  const [editManufactureraddress, seteditManufactureraddress] = useState("");
+  const [editproductImgs, seteditproductImgs] = useState([]);
+  const [editshowproductImgs, seteditshowproductImgs] = useState([]);
+  const [editMinAlertStock, seteditMinAlertStock] = useState("");
+  const [editmaxOrderlimit, seteditmaxOrderlimit] = useState("");
+  const [editdescription, seteditdescription] = useState("");
   const getAllCategory = async () => {
     try {
       const res = await axios.get(
@@ -176,6 +208,60 @@ export default function AddProductInvetory() {
     } catch (error) {
       console.log(error);
       return alert("Error: Product is not added to the inventory!!!");
+    }
+  }
+
+  // ======================= Edit product info from the INventory============
+  async function EditInventory() {
+    try {
+      const obj = {
+        inventoryid: productInfo?._id,
+        productName: editProdName,
+        productPrice: editProdPrice,
+        discount: editDiscount,
+        categoryid: editcatid,
+        subcategoryid: editsubcatid,
+        stock: editstock,
+        productType: editproductType,
+        productSize: editproductSize,
+        packSize: editpackSize,
+        manufacturingDate: editmanufacturingDate,
+        expiryDate: editExpiryDate,
+        colour: editcolour,
+        flavour: editflavour,
+        fragrance: editfragrance,
+        variant: editvariant,
+        brand: editbrand,
+        countryOfOrigin: editcountryOfOrigin,
+        manufacturercompanyname: editManufacturercompanyname,
+        manufactureraddress: editManufactureraddress,
+        productImgs: editproductImgs,
+        minstock: editMinAlertStock,
+        maxOrderlimit: editmaxOrderlimit,
+        description: editdescription,
+      };
+      const config = {
+        url: "/admin/editInventory",
+        method: "put",
+        headers: { "content-type": "multipart/form-data" },
+        baseURL: "http://localhost:8521/api",
+        data: obj,
+      };
+      await axios(config)
+        .then((res) => {
+          if (res.status === 201 || res.status === 200) {
+            alert(res.data.success);
+            getInventoryList();
+            handleClose3();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          return alert(err.response.data.error);
+        });
+    } catch (error) {
+      console.log(error);
+      return alert("Error: Product is not edited in the inventory!!!");
     }
   }
 
@@ -1233,6 +1319,816 @@ export default function AddProductInvetory() {
           </Modal.Footer>
         </Modal>
 
+        <Modal size="lg" show={show3} onHide={handleClose3}>
+          <Modal.Header>
+            <Modal.Title>Edit Product Info</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="row">
+              {/* <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  Vendor:
+                </label>
+                <span
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  #{productInfo?.vendorId?.vendorId}{" "}
+                  {productInfo?.vendorId?.fname} {productInfo?.vendorId?.lname}
+                </span>
+              </div> */}
+              {/* <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  Category:
+                </label>
+                <span
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  {productInfo?.categoryid?.categoryName}
+                </span>
+              </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  Subcategory:
+                </label>
+                <span
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  {productInfo?.subcategoryid?.subcategoryName}
+                </span>
+              </div> */}
+              {/* <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  Total Amount:
+                </label>
+                <span
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  {productInfo?.totalPaidPrice}
+                </span>
+              </div> */}
+              {/* <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  Payment Option:
+                </label>
+                <span
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  {productInfo?.paymentOption}
+                </span>
+              </div> */}
+              {/* <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  Order Status:
+                </label>
+                <span
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  {productInfo?.orderStatus}
+                </span>
+              </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                  }}
+                >
+                  Order Payment:
+                </label>
+                <span
+                  style={{
+                    fontWeight: "600",
+                    color: "aliceblue",
+                    fontSize: "20px",
+                    marginRight: "5px",
+                    color:
+                      productInfo.orderPayment === "PENDING" ? "red" : "green",
+                  }}
+                >
+                  {productInfo?.orderPayment}
+                </span>
+              </div> */}
+              <div style={{ padding: "13px 13px" }}>
+                <div
+                  className="col-lg-12 col-sm-12 mt-2 "
+                  style={{
+                    border: "1px solid #ebebeb",
+                    padding: "8px 20px",
+                    backgroundColor: "#ebebeb",
+                  }}
+                >
+                  <div className="row">
+                    <div className="col-md-6">
+                      <label>
+                        <b>Product Name: </b>
+                      </label>
+                      <input
+                        type="text"
+                        value={editProdName}
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid black",
+                          backgroundColor: "#ebebeb",
+                        }}
+                        placeholder={productInfo?.productName}
+                        onChange={(e) => seteditProdName(e.target.value)}
+                      ></input>
+                    </div>
+                    <div className="col-md-6">
+                      <label>
+                        <b>Product Price: </b>
+                      </label>
+                      <input
+                        type="Number"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid black",
+                          backgroundColor: "#ebebeb",
+                        }}
+                        placeholder={productInfo?.productPrice}
+                        value={editProdPrice}
+                        onChange={(e) => seteditProdPrice(e.target.value)}
+                      ></input>
+                    </div>
+                    <div className="col-md-6">
+                      <label>
+                        <b>Discount %: </b>
+                      </label>
+                      <input
+                        type="Number"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid black",
+                          backgroundColor: "#ebebeb",
+                        }}
+                        placeholder={productInfo?.discount}
+                        value={editDiscount}
+                        onChange={(e) => seteditDiscount(e.target.value)}
+                      ></input>
+                    </div>
+                    <div className="col-md-6">
+                      <label>
+                        <b>Discounted Price: </b>
+                      </label>
+                      <input
+                        disabled
+                        type="Number"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid black",
+                          backgroundColor: "#ebebeb",
+                        }}
+                        placeholder={(
+                          productInfo?.productPrice -
+                          (productInfo?.productPrice * productInfo?.discount) /
+                            100
+                        ).toFixed(1)}
+                      ></input>
+                    </div>
+                  </div>
+
+                  {/* <div
+                    style={{
+                      color: "#4A4A4D",
+                      fontWeight: "600",
+                    }}
+                  >
+                    ₹
+                    {(
+                      productInfo?.productPrice -
+                      (productInfo?.productPrice * productInfo?.discount) / 100
+                    ).toFixed(1)}{" "}
+                    <span
+                      style={{
+                        color: "#4A4A4D",
+                        fontWeight: "600",
+                        textDecoration: "line-through",
+                      }}
+                    >
+                      ₹{productInfo?.productPrice}
+                    </span>{" "}
+                    <span>{productInfo?.discount}% off</span>
+                    <FontAwesomeIcon
+                      icon={faTag}
+                      shake
+                      style={{ color: "#f24318", paddingLeft: "6px" }}
+                    />
+                  </div> */}
+                  <div className="row">
+                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                      <label>
+                        <b>Category: {productInfo?.categoryid?.categoryName}</b>
+                      </label>
+
+                      <select
+                        style={{
+                          width: "100%",
+                          backgroundColor: "#EBEBEB",
+                          padding: "8px 20px",
+                          border: "1px solid #EBEBEB",
+                        }}
+                        onChange={(e) => seteditcatid(e.target.value)}
+                      >
+                        <option>Choose Category</option>
+                        {categoryList?.map((item) => {
+                          return (
+                            <option value={item._id}>
+                              {item?.categoryName}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                      <label>
+                        <b>
+                          Subcategory:{" "}
+                          {productInfo?.subcategoryid?.subcategoryName}
+                        </b>
+                      </label>
+
+                      <select
+                        style={{
+                          width: "100%",
+                          backgroundColor: "#EBEBEB",
+                          padding: "8px 20px",
+                          border: "1px solid #EBEBEB",
+                        }}
+                        onChange={(e) => seteditsubcatid(e.target.value)}
+                      >
+                        <option>Choose Subategory</option>
+                        {subcategoryList
+                          .filter((val) => val.categoryid._id === editcatid)
+                          ?.map((item) => {
+                            return (
+                              <option value={item._id}>
+                                {item?.subcategoryName}
+                              </option>
+                            );
+                          })}
+                      </select>
+                    </div>
+                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                      <label>
+                        <b>Stock: </b>
+                      </label>
+                      <input
+                        type="Number"
+                        value={editstock}
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid black",
+                          backgroundColor: "#ebebeb",
+                        }}
+                        placeholder={productInfo?.stock}
+                        onChange={(e) => seteditstock(e.target.value)}
+                      ></input>
+                    </div>
+                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                      <label>
+                        <b>Minimum alert stock: </b>
+                      </label>
+                      <input
+                        type="Number"
+                        value={editMinAlertStock}
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid black",
+                          backgroundColor: "#ebebeb",
+                        }}
+                        placeholder={productInfo?.minstock}
+                        onChange={(e) => seteditMinAlertStock(e.target.value)}
+                      ></input>
+                    </div>
+                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                      <label>
+                        <b>Maximum Order limit: </b>
+                      </label>
+                      <input
+                        type="Number"
+                        value={editmaxOrderlimit}
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid black",
+                          backgroundColor: "#ebebeb",
+                        }}
+                        placeholder={productInfo?.maxOrderlimit}
+                        onChange={(e) => seteditmaxOrderlimit(e.target.value)}
+                      ></input>
+                    </div>
+                    {productInfo?.productType ? (
+                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                        <label>
+                          <b>Product Type: </b>
+                        </label>
+                        <input
+                          type="text"
+                          value={editproductType}
+                          style={{
+                            width: "100%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid black",
+                            backgroundColor: "#ebebeb",
+                          }}
+                          placeholder={productInfo?.productType}
+                          onChange={(e) => seteditproductType(e.target.value)}
+                        ></input>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    {productInfo?.productSize ? (
+                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                        <label>
+                          <b> Product Size: </b>
+                        </label>
+                        <input
+                          type="text"
+                          value={editproductSize}
+                          style={{
+                            width: "100%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid black",
+                            backgroundColor: "#ebebeb",
+                          }}
+                          placeholder={productInfo?.productSize}
+                          onChange={(e) => seteditproductSize(e.target.value)}
+                        ></input>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    {productInfo?.packSize ? (
+                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                        <label>
+                          <b> Pack Size: </b>
+                        </label>
+                        <input
+                          type="text"
+                          value={editpackSize}
+                          style={{
+                            width: "100%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid black",
+                            backgroundColor: "#ebebeb",
+                          }}
+                          placeholder={productInfo?.packSize}
+                          onChange={(e) => seteditpackSize(e.target.value)}
+                        ></input>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                      <label>
+                        <b>
+                          Manufacturing Date:
+                          {moment(productInfo?.manufacturingDate).format(
+                            "DD-MM-YYYY"
+                          )}
+                        </b>
+                      </label>
+                      <input
+                        type="date"
+                        value={editmanufacturingDate}
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid black",
+                          backgroundColor: "#ebebeb",
+                        }}
+                        onChange={(e) =>
+                          seteditmanufacturingDate(e.target.value)
+                        }
+                      ></input>
+                    </div>
+                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                      <label>
+                        <b>
+                          Expiry Date:{" "}
+                          {moment(productInfo?.expiryDate).format("DD-MM-YYYY")}
+                        </b>
+                      </label>
+                      <input
+                        type="date"
+                        value={editExpiryDate}
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid black",
+                          backgroundColor: "#ebebeb",
+                        }}
+                        onChange={(e) => seteditExpiryDate(e.target.value)}
+                      ></input>
+                    </div>
+                    {productInfo?.colour ? (
+                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                        <label>
+                          <b> Colour:</b>
+                        </label>
+                        <input
+                          type="text"
+                          value={editcolour}
+                          style={{
+                            width: "100%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid black",
+                            backgroundColor: "#ebebeb",
+                          }}
+                          placeholder={productInfo?.colour}
+                          onChange={(e) => seteditcolour(e.target.value)}
+                        ></input>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    {productInfo?.flavour ? (
+                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                        <label>
+                          <b> Flavour: </b>
+                        </label>
+                        <input
+                          type="text"
+                          value={editflavour}
+                          style={{
+                            width: "100%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid black",
+                            backgroundColor: "#ebebeb",
+                          }}
+                          placeholder={productInfo?.flavour}
+                          onChange={(e) => seteditflavour(e.target.value)}
+                        ></input>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    {productInfo?.fragrance ? (
+                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                        <label>
+                          <b> Fragrance:</b>
+                        </label>
+                        <input
+                          type="text"
+                          value={editfragrance}
+                          style={{
+                            width: "100%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid black",
+                            backgroundColor: "#ebebeb",
+                          }}
+                          placeholder={productInfo?.fragrance}
+                          onChange={(e) => seteditfragrance(e.target.value)}
+                        ></input>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    {productInfo?.variant ? (
+                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                        <label>
+                          <b> Variant:</b>
+                        </label>
+                        <input
+                          type="text"
+                          value={editvariant}
+                          style={{
+                            width: "100%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid black",
+                            backgroundColor: "#ebebeb",
+                          }}
+                          placeholder={productInfo?.variant}
+                          onChange={(e) => seteditvariant(e.target.value)}
+                        ></input>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    {productInfo?.brand ? (
+                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                        <label>
+                          <b> Brand:</b>
+                        </label>
+                        <input
+                          type="text"
+                          value={editbrand}
+                          style={{
+                            width: "100%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid black",
+                            backgroundColor: "#ebebeb",
+                          }}
+                          placeholder={productInfo?.brand}
+                          onChange={(e) => seteditbrand(e.target.value)}
+                        ></input>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    {productInfo?.countryOfOrigin ? (
+                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                        <label>
+                          <b> Country Of Origin:</b>
+                        </label>
+                        <input
+                          type="text"
+                          value={editcountryOfOrigin}
+                          style={{
+                            width: "100%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid black",
+                            backgroundColor: "#ebebeb",
+                          }}
+                          placeholder={productInfo?.countryOfOrigin}
+                          onChange={(e) =>
+                            seteditcountryOfOrigin(e.target.value)
+                          }
+                        ></input>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    {productInfo?.manufacturercompanyname ? (
+                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                        <label>
+                          <b> Manufacturer Company:</b>
+                        </label>
+                        <input
+                          type="text"
+                          value={editManufacturercompanyname}
+                          style={{
+                            width: "100%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid black",
+                            backgroundColor: "#ebebeb",
+                          }}
+                          placeholder={productInfo?.manufacturercompanyname}
+                          onChange={(e) =>
+                            seteditManufacturercompanyname(e.target.value)
+                          }
+                        ></input>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    {productInfo?.manufactureraddress ? (
+                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                        <label>
+                          <b> Manufacturer Address:</b>
+                        </label>
+                        <input
+                          type="text"
+                          value={editManufactureraddress}
+                          style={{
+                            width: "100%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid black",
+                            backgroundColor: "#ebebeb",
+                          }}
+                          placeholder={productInfo?.manufactureraddress}
+                          onChange={(e) =>
+                            seteditManufactureraddress(e.target.value)
+                          }
+                        ></input>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <div className="col-lg-12 col-sm-12 mt-2 CZ">
+                    <label>
+                      <b>Description: </b>
+                    </label>
+                    <input
+                      type="text"
+                      value={editdescription}
+                      style={{
+                        width: "100%",
+                        padding: "8px 20px",
+                        borderRadius: "0px",
+                        border: "1px solid black",
+                        backgroundColor: "#ebebeb",
+                      }}
+                      placeholder={productInfo?.description}
+                      onChange={(e) => seteditdescription(e.target.value)}
+                    ></input>
+                  </div>
+                  <div className="mt-3">
+                    <Carousel responsive={responsive}>
+                      {productInfo?.productImgs?.map((imgName) => {
+                        return (
+                          <div>
+                            <img
+                              src={`http://localhost:8521/AdminInventory/${imgName}`}
+                              alt=""
+                              style={{
+                                width: "200px",
+                                height: "200px",
+                              }}
+                            />
+                          </div>
+                        );
+                      })}
+                    </Carousel>
+                  </div>
+                  <div className="mt-3">
+                    <span
+                      style={{
+                        fontWeight: "500",
+                        color: "#20958c",
+                      }}
+                    >
+                      Upload Images:{" "}
+                    </span>
+                    <input
+                      type="file"
+                      id="editfileInput"
+                      accept="image/*"
+                      hidden
+                      multiple
+                      onChange={(e) => {
+                        seteditshowproductImgs([...e.target.files]);
+                        seteditproductImgs(e.target.files);
+                      }}
+                    />
+                    <label for="editfileInput">
+                      <FontAwesomeIcon
+                        icon={faUpload}
+                        type="file"
+                        style={{
+                          color: "#20958c",
+                          fontSize: "25px",
+                          border: "0px solid #20958c",
+                          // borderRadius: "15px",
+                        }}
+                      />
+                    </label>
+                  </div>
+                  {editshowproductImgs.length ? (
+                    <div className="mt-3">
+                      <Carousel responsive={responsive}>
+                        {editshowproductImgs?.map((obj) => {
+                          return (
+                            <div>
+                              <img
+                                src={URL.createObjectURL(obj)}
+                                alt=""
+                                style={{
+                                  width: "200px",
+                                  height: "200px",
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
+                      </Carousel>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <div style={{ display: "flex" }}>
+              <button
+                style={{
+                  backgroundColor: "grey",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  fontWeight: "600",
+                  marginRight: "20px",
+                  padding: "4px 10px",
+                  border: "1px solid white",
+                }}
+                onClick={() => setShow3(false)}
+              >
+                CANCEL
+              </button>
+              <button
+                style={{
+                  backgroundColor: "orange",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  fontWeight: "600",
+                  border: "1px solid white",
+                  padding: "4px 10px",
+                }}
+                onClick={() => {
+                  EditInventory();
+                }}
+              >
+                SUBMIT
+              </button>
+            </div>
+          </Modal.Footer>
+        </Modal>
+
         <Table responsive="md" style={{ marginTop: "1%" }}>
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
@@ -1292,7 +2188,10 @@ export default function AddProductInvetory() {
                             fontSize: "25px",
                             marginRight: "1%",
                           }}
-                          onClick={() => setShow1(true)}
+                          onClick={() => {
+                            setproductInfo(details);
+                            handleShow3();
+                          }}
                         />
                         <AiFillDelete
                           style={{ color: "red", fontSize: "25px" }}

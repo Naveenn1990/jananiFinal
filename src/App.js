@@ -238,6 +238,8 @@ import { PatientBillInvoice } from "./Admin/PatientBillInvoice";
 import { AppointmentList } from "./DoctorsPortal/AppointmentList";
 import DoctorsAppointment from "./Admin/Doctorsappointment";
 import { StaffAttendance } from "./Admin/StaffAttendance";
+import ReportsList from "./PatientsPortal/ReportsList";
+import MedicationChartAdd from "./Admin/PatientAdmitForms/MedicationChartAdd";
 
 function App() {
   return (
@@ -684,6 +686,18 @@ function App() {
                   children={
                     <>
                       <PatientDashboard />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/reportslist"
+              element={
+                <PatientsCommanDashboard
+                  children={
+                    <>
+                      <ReportsList />
                     </>
                   }
                 />
@@ -2365,6 +2379,16 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<MedicationChart />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/medicationchartadd"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<MedicationChartAdd />} />{" "}
                 </>
               }
             ></Route>

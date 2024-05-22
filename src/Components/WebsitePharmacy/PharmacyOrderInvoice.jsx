@@ -110,7 +110,7 @@ export const PharmacyOrderInvoice = () => {
               <div className="d-flex justify-content-between mb-5">
                 <div className="">
                   <span className="fw-bold text-dark">BILL TO:</span> <br />
-                  <span>Ganesh Kalal</span>
+                  <span>Bishwajit AD</span>
                   <br />
                   <span>+1991227831</span>
                   <br />

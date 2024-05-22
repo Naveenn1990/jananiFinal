@@ -6,9 +6,12 @@ import Button from "react-bootstrap/Button";
 import LabCard from "./labCard";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Select from "react-select";
 
 export const Diagnostic = () => {
   const navigate = useNavigate();
+
+  const labUserDetails = sessionStorage.getItem("labUser");
 
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
@@ -38,13 +41,18 @@ export const Diagnostic = () => {
   };
 
   const [HospitalLabList, setHospitalLabList] = useState([]);
-  const HospitallabList = () => {
+  const getHospitallabList = () => {
     axios
       .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
       .then(function (response) {
         // handle success
         if (response.status === 200) {
           const data = response.data.HospitalLabTests;
+          data.forEach((item) => {
+            item.label = item.testName;
+            item.value = item.testName;
+          });
+
           setHospitalLabList(data);
         }
       })
@@ -57,14 +65,98 @@ export const Diagnostic = () => {
 
   useEffect(() => {
     HospitallabCategories();
-    HospitallabList();
+    getHospitallabList();
   }, []);
 
   const [patientname, setpatientname] = useState("");
   const [Phoneno, setPhoneno] = useState("");
   const [email, setemail] = useState("");
-  // const [email, setemail] = useState("");
   const [testDate, settestDate] = useState("");
+  const [causeid, setcauseid] = useState("");
+  const [Labtests, setLabtests] = useState([]);
+
+  const [testid, settestid] = useState("");
+  const [testName, settestName] = useState("");
+  const [priceNonInsurance, setpriceNonInsurance] = useState("");
+  const [priceInsurance, setpriceInsurance] = useState("");
+  const [unit, setunit] = useState("");
+  const [beforeFoodRefVal, setbeforeFoodRefVal] = useState("");
+  const [afterFoodRefVal, setafterFoodRefVal] = useState("");
+  const [generalRefVal, setgeneralRefVal] = useState("");
+  const [patientReportVal, setpatientReportVal] = useState("");
+  let [selectedOptions, setSelectedOptions] = useState([]);
+  const AddLabTest = (Labtests) => {
+    setSelectedOptions(
+      Labtests?.map((val) => {
+        return {
+          testid: val._id,
+          testName: val.testName,
+          priceNonInsurance: val.priceNonInsurance,
+          priceInsurance: val.priceInsurance,
+          unit: val.unit,
+          // beforeFoodRefVal: val.beforeFoodRefVal,
+          // afterFoodRefVal: val.afterFoodRefVal,
+          generalRefVal: val.generalRefVal,
+        };
+      })
+    );
+    setLabtests(Labtests);
+  };
+
+  const bookLabTest = async () => {
+    let obj;
+    if (
+      labUserDetails &&
+      JSON.parse(labUserDetails)?.registrationType === "IPD"
+    ) {
+      obj = {
+        causeid: causeid,
+        patientid: JSON.parse(labUserDetails)?._id,
+        patientname: patientname,
+        Phoneno: Phoneno,
+        email: email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+      };
+    } else if (
+      labUserDetails &&
+      JSON.parse(labUserDetails)?.registrationType === "OPD"
+    ) {
+      obj = {
+        patientid: JSON.parse(labUserDetails)?._id,
+        patientname: patientname,
+        Phoneno: Phoneno,
+        email: email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+      };
+    } else if (!labUserDetails) {
+      obj = {
+        patientname: patientname,
+        Phoneno: Phoneno,
+        email: email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+      };
+    }
+    try {
+      const config = {
+        url: "/user/bookHospitalLabTest",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: obj,
+      };
+      let res = await axios(config);
+      if (res.status === 200 || res.status === 201) {
+        alert("Lab test booked");
+        thankyouShow();
+      }
+    } catch (error) {
+      console.log(error);
+      return alert(error.response.data.error);
+    }
+  };
 
   return (
     <div>
@@ -569,16 +661,16 @@ export const Diagnostic = () => {
 
       {/* ==================================================== */}
 
-      {/* BOOK APPOINTMENT MODAL */}
+      {/* BOOK TEST MODAL */}
       <Modal
         show={show}
         onHide={handleClose}
         // backdrop="static"
         keyboard={false}
-        //    size='lg'
+        size="lg"
       >
         <Modal.Header closeButton>
-          <Modal.Title style={{ color: "#208b8c", fontWeight: "bold" }}>
+          <Modal.Title style={{ color: "white", fontWeight: "bold" }}>
             Book Your Test
           </Modal.Title>
         </Modal.Header>
@@ -589,7 +681,12 @@ export const Diagnostic = () => {
               controlId="floatingName"
               label="Name"
             >
-              <Form.Control type="text" placeholder="Name" />
+              <Form.Control
+                type="text"
+                value={patientname}
+                placeholder="Name"
+                onChange={(e) => setpatientname(e.target.value)}
+              />
             </FloatingLabel>
 
             <FloatingLabel
@@ -597,7 +694,12 @@ export const Diagnostic = () => {
               controlId="floatingMobile"
               label="Mobile"
             >
-              <Form.Control type="number" placeholder="Mobile" />
+              <Form.Control
+                type="number"
+                value={Phoneno}
+                placeholder="Mobile"
+                onChange={(e) => setPhoneno(e.target.value)}
+              />
             </FloatingLabel>
           </Row>
           <Row>
@@ -606,16 +708,25 @@ export const Diagnostic = () => {
               controlId="floatingEmail"
               label="Email"
             >
-              <Form.Control type="email" placeholder="Email" />
+              <Form.Control
+                type="email"
+                value={email}
+                placeholder="Email"
+                onChange={(e) => setemail(e.target.value)}
+              />
             </FloatingLabel>
 
             <FloatingLabel className="col-md-6 p-1" controlId="floatingName">
-              <Form.Select type="text">
-                <option>Select Your Test</option>
-                {HospitalLabList?.map((val) => {
-                  return <option value="">{val?.testName}</option>;
-                })}
-              </Form.Select>
+              <Select
+                // defaultValue={[colourOptions[2], colourOptions[3]]}
+                isMulti
+                name="colors"
+                options={HospitalLabList}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                value={Labtests}
+                onChange={AddLabTest}
+              />
             </FloatingLabel>
           </Row>
           <Row className="d-flex mt-2 justify-content-center mb-3">
@@ -624,14 +735,46 @@ export const Diagnostic = () => {
               controlId="floatingEmail"
               label=""
             >
-              <Form.Control type="date" placeholder="" />
+              <Form.Control
+                type="date"
+                placeholder=""
+                value={testDate}
+                onChange={(e) => settestDate(e.target.value)}
+              />
             </FloatingLabel>
+            {labUserDetails &&
+            JSON.parse(labUserDetails)?.registrationType === "IPD" ? (
+              <FloatingLabel
+                className="col-md-6 p-2"
+                controlId="floatingCause"
+                label="Cause"
+              >
+                <Form.Select
+                  type="text"
+                  value={causeid}
+                  placeholder="Cause"
+                  onChange={(e) => setcauseid(e.target.value)}
+                >
+                  <option>Open this select menu</option>
+                  {JSON.parse(labUserDetails)?.cause?.map((itemdata) => {
+                    return (
+                      <option value={itemdata?._id}>
+                        {itemdata?.CauseName}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </FloatingLabel>
+            ) : (
+              <></>
+            )}
           </Row>
 
           <Button
-            onClick={thankyouShow}
+            onClick={bookLabTest}
             onHide={handleClose}
-            className="all-bg-green col-md-12"
+            className="col-md-12"
+            style={{ backgroundColor: "white", color: "#20958C" }}
           >
             Submit
           </Button>
