@@ -21,9 +21,7 @@ const IPDConsentFroms = () => {
   let [patientAllergies, setpatientAllergies] = useState([]);
   const [clickedAddAllergyBtn, setclickedAddAllergyBtn] = useState("");
 
-
   const [HServicesList, setHServicesList] = useState([]);
-
   const getHospitalServiceList = async () => {
     try {
       let response = await axios.get(
@@ -348,6 +346,45 @@ const IPDConsentFroms = () => {
     }
   };
 
+
+  const dobString = userdetail?.DOB;
+  const dob = new Date(dobString);
+  const currentDate = new Date();
+  const differenceMs = currentDate - dob;
+  const ageYears = Math.floor(differenceMs / (1000 * 60 * 60 * 24 * 365.25));
+
+  let ageOutput;
+  if (ageYears < 1) {
+    const ageMonths = Math.floor(ageYears * 12);
+    ageOutput = `${ageMonths} months`;
+  } else {
+    ageOutput = `${ageYears} years`;
+  }
+
+  // Doctors List 
+
+  const [Doctors, setDoctors] = useState([]);
+  const getDoctors = () => {
+    axios
+      .get("http://localhost:8521/api/Doctor/getDoctorsList")
+      .then(function (response) {
+        setDoctors(
+          response.data.DoctorsInfo?.filter(
+            (data) => data.DoctorType === "hospital"
+          )
+        );
+      })
+      .catch(function (error) {
+        console.log(error);
+        setDoctors(error.response.data.DoctorsInfo);
+      });
+  };
+  console.log("Doctors",Doctors);
+  
+  useEffect(() => {
+    getDoctors();
+  }, []);
+
   return (
     <div>
       <div
@@ -432,6 +469,7 @@ const IPDConsentFroms = () => {
               setbtn2(false);
               setbtn3(false);
               setbtn4(true);
+              setConsentFormName("AnesthesiaConsentForms");
             }}
           >
             Consent For Anesthesia / Sedation
@@ -1527,12 +1565,7 @@ const IPDConsentFroms = () => {
                           style={{ width: "270px" }}
                           value={RealivesName}
                           onChange={(e)=>setRealivesName(e.target.value)}
-                        />
-                        <input
-                          type="text"
-                          className="vi_0"
-                          style={{ width: "270px" }}
-                        />
+                        />                     
                       </span>
                     </p>
 
@@ -1740,14 +1773,7 @@ const IPDConsentFroms = () => {
                               >
                                 Age:{" "}
                                 <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "274px" }}
-                                    placeholder="enter age"
-                                    value={Patientage}
-                                    onChange={(e)=>setPatientage(e.target.validity)}
-                                  />
+                                 {ageOutput}
                                 </span>
                               </div>
                             </div>
@@ -1763,14 +1789,15 @@ const IPDConsentFroms = () => {
                               >
                                 OP No:{" "}
                                 <span>
-                                  <input
+                                  {/* <input
                                     type="text"
                                     className="vi_0"
                                     style={{ width: "252px" }}
                                     placeholder="enter op number"
                                     value={OpNumber}
                                     onChange={(e)=>setOpNumber(e.target.value)}
-                                  />
+                                  /> */}
+                                  24DSF2
                                 </span>
                               </div>
                               <div
@@ -1784,14 +1811,15 @@ const IPDConsentFroms = () => {
                               >
                                 IP No:{" "}
                                 <span>
-                                  <input
+                                  {/* <input
                                     type="text"
                                     placeholder="enter ip umber"
                                     className="vi_0"
                                     style={{ width: "262px" }}
                                     value={IpNumber}
                                     onChange={(e)=>setIpNumber(e.target.value)}
-                                  />
+                                  /> */}
+                                  45FGF3
                                 </span>
                               </div>
                               <div
@@ -1829,34 +1857,62 @@ const IPDConsentFroms = () => {
                                       type="text"
                                       className="vi_0"
                                       style={{ width: "301px" }}
-                                      // value={StaffName}
+                                      value={StaffName}
                                       onClick={(e)=>setStaffName(e.target.value)}
                                     />
                                   </span>
                                   have been explained about the medical
                                   condition and the prospered surgery by Dr.
                                   <span>
-                                    <input
+                                    {/* <input
                                       type="text"
                                       className="vi_0"
                                       style={{ width: "680px" }}
                                       placeholder="doctor name"
                                       value={ConDoctorName}
                                       onChange={(e)=>setConDoctorName(e.target.value)}
-                                    />
+                                    /> */}
+                                      <Form.Select
+                                      className="vi_0"
+                                      value={ConDoctorName}
+                                      onChange={(e)=>setConDoctorName(e.target.value)}
+                                      >
+                                          <option>Select Doctors</option>
+                                          {Doctors?.map((item)=>{
+                                            return(
+                                              <option value={`${item?.Firstname} ${item?.Lastname}`}>{`${item?.Firstname} ${item?.Lastname}`}</option>
+                                            )
+                                          })                                           
+                                          }                                          
+                                     </Form.Select>
                                     <br />
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                                     &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                                     &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
                                     &nbsp;Dr.
-                                    <input
+                                    {/* <input
                                       type="text"
                                       className="vi_0"
                                       style={{ width: "680px" }}
                                       placeholder="doctor name"
                                       value={ConDoctorName2}
                                       onChange={(e)=>setConDoctorName2(e.target.value)}
-                                    />
+                                    /> */}
+
+                                  <Form.Select
+                                      className="vi_0"
+                                      value={ConDoctorName2}
+                                      onChange={(e)=>setConDoctorName2(e.target.value)}
+                                      >
+                                          <option>Select Doctors</option>
+                                          {Doctors?.map((item)=>{
+                                            return(
+                                              <option value={`${item?.Firstname} ${item?.Lastname}`}>{`${item?.Firstname} ${item?.Lastname}`}</option>
+                                            )
+                                          })                                           
+                                          }                                          
+                                     </Form.Select>
+
                                   </span>
                                 </p>
 
@@ -2360,714 +2416,7 @@ const IPDConsentFroms = () => {
               <Button onClick={() => GeneralConsentForm()}>Submit</Button>
             </div>
                   </div>
-                  {/* kannada */}
-                  {/* <div className="mt-2 d-dlex text-end gap-2">
-                    <button
-                      style={{
-                        padding: "6px",
-                        border: "none",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        borderRadius: "0px",
-                      }}
-                      onClick={createPDF3}
-                    >
-                      Print <FiDownload />
-                    </button>
-                  </div>
-                  <div
-                    id="pdf"
-                    style={{
-                      padding: "15px",
-                      overflow: "hidden",
-                      overflowX: "scroll",
-                    }}
-                  >
-                    <div
-                      style={{
-                        padding: "5px",
-                        border: "2px solid #20958C",
-                        width: "1073px",
-                        margin: "auto",
-                        borderRadius: "20px",
-                        height: "1700px",
-                      }}
-                    >
-                      <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
-                        <div className="d-flex align-items-center">
-                          <img
-                            src="/Images/logo.jpg"
-                            alt=""
-                            style={{ width: "100px" }}
-                          />
-                        </div>
-                        <div className="text-center">
-                          <h4 className="fw-bold" style={{ fontSize: "25px" }}>
-                            ಜನನಿ ಬಹು ವಿಶೇಷತೆಯ ಆಸ್ಪತ್ರೆ ಮತ್ತು ಸಂಶೋಧನಾ ಕೇಂದ್ರ
-                          </h4>
-                          <h6 className="fw-bold" style={{ fontSize: "19px" }}>
-                            "ಕನರಾ ಬ್ಯಾಂಕ್ ಪಕ್ಕ, ಜಾಲನಗರ್ ಮುಖ್ಯ ರಸ್ತೆ, ಕೆ.ಕೆ.
-                            ಕಾಲೋನಿ, ವಿಜಯಪುರ-586109
-                          </h6>
-                          <h6 style={{ fontSize: "16px" }}>
-                            ದೂರವಾಣಿ: 08352-277077, ಮೊಬೈಲ್: 9606031158,
-                            7090831204 ಇಮೇಲ್: jananihospital2018@gmail.com
-                          </h6>
-                        </div>
-                      </div>
-                      <div
-                        className="text-center"
-                        style={{
-                          borderBottom: "1px solid #20958C",
-                          width: "100%",
-                          textAlign: "center",
-                        }}
-                      ></div>
-                      <div className="text-center mt-1">
-                        {" "}
-                        <h6
-                          className="fw-bold mt-2"
-                          style={{ color: "#20958C", fontSize: "30px" }}
-                        >
-                          ಅತಿದೊಡ್ಡ ಅಪಾಯದ ಕ್ರಮಕ್ಕಾಗಿ ತತ್ವಸೂಚನಾತ್ಮಕ ಒಪ್ಪಿಗೆ
-                        </h6>
-                      </div>
-                      <div
-                        style={{
-                          paddingLeft: "42px",
-                          paddingRight: "42px",
-                          textAlign: "justify",
-                        }}
-                      >
-                        <p style={{ fontSize: "20px" }}>
-                          <div className="container">
-                            <div
-                              className="row"
-                              style={{ border: "1px solid #20958C" }}
-                            >
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ರೋಗಿಯ ಹೆಸರು:{" "}
-                                <span>
-                                  <input
-                                    type="text"
-                                    name=""
-                                    id=""
-                                    className="vi_0"
-                                    style={{ width: "163px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ದಿನಾಂಕ:{" "}
-                                <span>
-                                  <input
-                                    type="text"
-                                    name=""
-                                    id=""
-                                    className="vi_0"
-                                    style={{ width: "236px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ವಯಸ್ಸು:{" "}
-                                <span>
-                                  <input
-                                    type="text"
-                                    name=""
-                                    id=""
-                                    className="vi_0"
-                                    style={{ width: "230px" }}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ಓಪಿ ಸಂಖ್ಯೆ:{" "}
-                                <span>
-                                  <input
-                                    type="text"
-                                    name=""
-                                    id=""
-                                    className="vi_0"
-                                    style={{ width: "215px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ಐಪಿ ಸಂಖ್ಯೆ:{" "}
-                                <span>
-                                  <input
-                                    type="text"
-                                    name=""
-                                    id=""
-                                    className="vi_0"
-                                    style={{ width: "214px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ಲಿಂಗ :&nbsp;&nbsp;&nbsp;{" "}
-                                <span>
-                                  <input
-                                    type="radio"
-                                    name=""
-                                    id=""
-                                    className="vi_0"
-                                  />
-                                  ಪುರುಷ &nbsp;&nbsp;&nbsp;
-                                  <input
-                                    type="radio"
-                                    name=""
-                                    id=""
-                                    className="vi_0"
-                                  />
-                                  ಸ್ತ್ರೀ{" "}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-12"
-                                style={{
-                                  padding: "20px",
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <p style={{ fontSize: "18px" }}>
-                                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                  &nbsp; ನಾನು/ನಾವು{" "}
-                                  <span
-                                    style={{ borderBottom: "1px solid black" }}
-                                  >
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "301px" }}
-                                    />
-                                  </span>
-                                  ವೈದ್ಯಕೀಯ ಸ್ಥಿತಿಯ ಬಗ್ಗೆ ನನಗೆ/ನಮಗೆ ವಿವರಿಸಲಾಗಿದೆ
-                                  ಮತ್ತು ನಿಗದಿತ ಶಸ್ತ್ರಚಿಕಿತ್ಸೆ ಡಾ.
-                                  <span>
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "680px" }}
-                                    />
-                                    <br />
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                    &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                    &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
-                                    &nbsp;ಡಾ.
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "680px" }}
-                                    />
-                                  </span>{" "}
-                                </p>
-
-                                <p style={{ fontSize: "18px" }}>
-                                  ವೈದ್ಯಕೀಯ ಸ್ಥಿತಿ/ರೋಗನಿದಾನ :
-                                  <span>
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "670px" }}
-                                    />
-                                  </span>
-                                  "ಪ್ರಸ್ತಾಪಿತ ಶಸ್ತ್ರಚಿಕಿತ್ಸಾ ಕ್ರಮ:
-                                  <span>
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "684px" }}
-                                    />
-                                  </span>{" "}
-                                </p>
-                                <p style={{ fontSize: "18px" }}>
-                                  ನಾನು/ನಾವು, (ನಾತಿ/ಕಾನೂನು ಸಂರಕ್ಷಕ)
-                                  ಶ್ರಿ./ಶ್ರಿಮತಿ, ಅವರು ವಾಸ್ತವ್ಯಕ್ಕೆ ಬರುವ ದಿನಾಂಕ
-                                  <span>
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "200px" }}
-                                    />
-                                  </span>
-                                  ಅವರು ಪ್ರವೇಶಗೊಂಡ{" "}
-                                  <span>
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "200px" }}
-                                    />
-                                  </span>
-                                  ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ ಭಾಷೆಯಲ್ಲಿ, ಶಸ್ತ್ರಚಿಕಿತ್ಸೆಯ
-                                  ಪ್ರಯೋಜನಗಳು ಮತ್ತು ಹಾನಿಗಳು ಮತ್ತು ಶಸ್ತ್ರಚಿಕಿತ್ಸೆಯ
-                                  ಸಮಯದಲ್ಲಿ ಮತ್ತು ನಂತರ ಉಂಟಾಗುವ ಅಪಾಯಗಳ ಬಗ್ಗೆ
-                                  ವಿವರಿಸಲಾಗಿದೆ, ಮತ್ತು ಈ ಕ್ರಮವು ಸಾಮಾನ್ಯ
-                                  ಪ್ರಕರಣಗಳಿಗಿಂತ ಹೆಚ್ಚು ಅಪಾಯವನ್ನು ಹೊಂದಿದೆ.
-                                  <br />
-                                  <br />
-                                  ನಾವು ಶಸ್ತ್ರಚಿಕಿತ್ಸೆಯ/ಕ್ರಮದ ಸ್ವರೂಪ, ಸಾಧ್ಯವಾಗುವ
-                                  ಪ್ರಯೋಜನಗಳು ಮತ್ತು ಸಂಕೀರ್ಣತೆಗಳ ಬಗ್ಗೆ ವಿವರವಾಗಿ
-                                  ವಿವರಿಸಲಾಗಿದೆ. ಈ ಪ್ರಕರಣವು ಸಾಮಾನ್ಯವಕ್ಕಿಂತ ಹೆಚ್ಚು
-                                  ಅಪಾಯವನ್ನು ಹೊಂದಿದೆ ಮತ್ತು ಅದಕ್ಕೆ ಕಾರಣಗಳನ್ನೂ
-                                  ವಿವರಿಸಲಾಗಿದೆ. ಶಸ್ತ್ರಚಿಕಿತ್ಸಾ ಕ್ರಮದ ಅವಧಿಯಲ್ಲಿ,
-                                  ಯೋಜಿತ ಕ್ರಮವನ್ನು ಸ್ಥಗಿತಗೊಳಿಸಲು ಅಥವಾ ವಿಸ್ತರಿಸಲು
-                                  ಅಥವಾ ಬದಲ್ಮಾರ್ಗ ಶಸ್ತ್ರಚಿಕಿತ್ಸೆಯನ್ನು ನೆರವೇರಿಸಲು
-                                  ಅಗತ್ಯವಿರುವ ಪರಿಸ್ಥಿತಿಗಳು ಅಥವಾ ಸ್ಥಿತಿಯನ್ನು
-                                  ಕಂಡುಹಿಡಿಯಬಹುದು.
-                                  <br />
-                                  <br />
-                                  ನಾವು ವೈದ್ಯಕೀಯ ಕ್ರಮಗಳಲ್ಲಿ ನಡೆಯಬಹುದಾದ ಹೆಚ್ಚಿನ
-                                  ಅಪಾಯಗಳ ಬಗ್ಗೆ ಮಾಹಿತಿ ನೀಡಲಾಗಿದೆ, ಇದು
-                                  ICU/NICU/ಮೆಕಾನಿಕಲ್ ವೆಂಟಿಲೇಶನ್/ಎಂಡೋಟ್ರಾಕಿಯಲ್
-                                  ಇಂಟ್ಯೂಬೇಷನ್, ಲಂಬಾರ್ ಪುಂಕ್ಚರ್/ಎಲುಬಿನ ಮಜ್ಜಿಗೆಯ
-                                  ಆಕಾಂಕ್ಷೆ, ಇಂಟರ್ಕೋಸ್ಟಲ್ ಡ್ರೈನೆಜ್, ಅರೆರಿಯಲ್
-                                  ಸೆಂಟ್ರಲ್ ಡಯಾಲಿಸಿಸ್, ಎಕ್ಸ್‌ಚೇಂಜ್
-                                  ಟ್ರಾನ್ಸ್ಫ್ಯೂಷನ್, FNAC ಬಯೋಪ್ಸಿ ಮುಂತಾದವುಗಳಿಗೆ
-                                  ಪ್ರವೇಶವನ್ನು ಅಗತ್ಯಗೊಳಿಸಬಹುದು.
-                                  <br />
-                                  <br />
-                                  ನಾವು ತಿಳಿಸಲಾಗಿದೆ ಎಂಬ ಕಾರಣದಿಂದ ಈ
-                                  ಶಸ್ತ್ರಚಿಕಿತ್ಸೆ(ಗಳು)/ಕ್ರಮ(ಗಳು) ಅಸಾಧ್ಯ ಫಲಿತಾಂಶ,
-                                  ಸಂಕೀರ್ಣತೆ, ತಾತ್ಕಾಲಿಕ ಅಥವಾ ಶಾಶ್ವತ ಗಾಯ ಅಥವಾ
-                                  ಅಂಗವಿಕಲತೆ ಮತ್ತು ಅಜ್ಞಾತ ಅಥವಾ ಅಪ್ರತೀಕ್ಷಿತ
-                                  ಕಾರಣಗಳಿಂದ ದಾರುಣಾವಳಿ ಸೇರಿದಂತೆ ಅಪಾಯವನ್ನು
-                                  ಹೊಂದಿದೆ. ಶಸ್ತ್ರಚಿಕಿತ್ಸೆ ಅಥವಾ ಚಿಕಿತ್ಸೆಯ
-                                  ಫಲಿತಾಂಶಗಳ ಬಗ್ಗೆ ಯಾವುದೇ ಖಾತರಿಯಿಲ್ಲ ಅಥವಾ
-                                  ನಮ್ಮಿಗೆ/ನಮಗೆ ಭರವಸೆ ನೀಡಿಲ್ಲ.
-                                  <br />
-                                  <br />
-                                  ನಾನು/ನಾವು, ಈ ಶಸ್ತ್ರಚಿಕಿತ್ಸೆ/ಶಸ್ತ್ರವೈದ್ಯಕೀಯ
-                                  ಕ್ರಮಕ್ಕಾಗಿ ಒಪ್ಪಿಗೆಯನ್ನು ನಿರಾಕರಿಸಲು ಹಕ್ಕು
-                                  ಹೊಂದಿದ್ದೇವೆ. ನಾನು/ನಾವು, ಎರಡನೇ ಅಭಿಪ್ರಾಯವನ್ನು
-                                  ಪಡೆಯಲು, ಬೇರೆ ಕೇಂದ್ರಕ್ಕೆ ವರ್ಗಾವಣೆಗೊಳ್ಳಲು ಮತ್ತು
-                                  ಅಂತಹ ನಿರ್ಣಯದಲ್ಲಿ ತೊಡಗಿರುವ ಅಪಾಯವನ್ನು
-                                  ಹೊಂದಿದ್ದೇವೆ ಎಂಬುದನ್ನು ಕೂಡ ಅರ್ಥಮಾಡಿಕೊಂಡಿದ್ದೇವೆ.
-                                  <br />
-                                  "ಎಲ್ಲಾ ಮೇಲ್ಕಂಡ ವಿಷಯಗಳನ್ನು ತಿಳಿದು, ನಾವು ಮೇಲ್ಕಂಡ
-                                  ಶಸ್ತ್ರಚಿಕಿತ್ಸೆ/ಕ್ರಮಕ್ಕಾಗಿ ಅಪಾಯದ ಒಪ್ಪಿಗೆ
-                                  ನೀಡುತ್ತೇವೆ.
-                                  <br />
-                                  <br />
-                                  ನಾವು, ಶಸ್ತ್ರಚಿಕಿತ್ಸೆಯಿಂದ ಉಂಟಾಗುವ ಯಾವುದೇ
-                                  ಹಾನಿಕಾರಕ ಪರಿಣಾಮಗಳ ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಆಸ್ಪತ್ರೆ,
-                                  ಸಂಬಂಧಿತ ವೈದ್ಯರು ಮತ್ತು ಆಸ್ಪತ್ರೆ ಸಿಬ್ಬಂದಿಯನ್ನು
-                                  ರಕ್ಷಿಸಲು ಸಮ್ಮತಿಸುತ್ತೇವೆ..
-                                </p>
-                                <p style={{ fontSize: "18px" }}>
-                                  <div className="container"></div>
-                                </p>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              ></div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ಹೆಸರು
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ಹಸ್ತಾಕ್ಷರ
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ದಿನಾಂಕ
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ಸಮಯ
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ರೋಗಿ/ರೋಗಿಯ ಪ್ರತಿನಿಧಿ
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ಸಾಕ್ಷಿ
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                ಡಾಕ್ಟರ್
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "16px",
-                                }}
-                              >
-                                ನಾತಿ/ಕಾನೂನು ಸಂರಕ್ಷಕ (ರೋಗಿಯೊಂದಿಗೆ ಸಂಬಂಧ)
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </p>
-                      </div>
-                    </div>
-                  </div> */}
+                 
                 </>
               ) : (
                 <>

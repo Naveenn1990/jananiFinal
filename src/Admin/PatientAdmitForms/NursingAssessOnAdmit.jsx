@@ -933,13 +933,13 @@ const NursingAssessOnAdmit = () => {
                       >
                         &lt; 3 Secs
                         <Checkbox 
-                         onChange={(e)=>setCapillaryrefill(e.target.checked ? "3 Secs":"")}
-                         checked={Capillaryrefill==="3 Secs "}
+                         onChange={(e)=>setCapillaryrefill(e.target.checked ? "< 3 Secs":"")}
+                         checked={Capillaryrefill==="< 3 Secs"}
                         />
                         <br /> &gt;3 Secs 
                         <Checkbox 
-                         onChange={(e)=>setCapillaryrefill(e.target.checked ? "3 Secs":"")}
-                         checked={Capillaryrefill==="3 Secs "}
+                         onChange={(e)=>setCapillaryrefill(e.target.checked ? ">3 Secs":"")}
+                         checked={Capillaryrefill===">3 Secs"}
                         />
                       </td>
                     </tr>
@@ -1418,7 +1418,7 @@ const NursingAssessOnAdmit = () => {
                   <th>
                     <div className="d-flex align-items-center">
                       <div style={{ width: "40%" }}>Date : </div>
-                      <input type="text" className="vi_0" 
+                      <input type="date" className="vi_0" 
                       onChange={(e)=>setFormfillDate(e.target.value)}
                       value={FormfillDate}
                       />
@@ -1427,7 +1427,7 @@ const NursingAssessOnAdmit = () => {
                   <th>
                     <div className="d-flex align-items-center">
                       <div style={{ width: "40%" }}>Time : </div>
-                      <input type="text" className="vi_0" 
+                      <input type="time" className="vi_0" 
                       onChange={(e)=>setformfillTime(e.target.value)}
                       value={formfillTime}
                       />
@@ -1439,343 +1439,11 @@ const NursingAssessOnAdmit = () => {
           </div>
         </div>
       </div>
-      {/* <div
-        id="pdf"
-        style={{
-          padding: "15px",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            padding: "5px",
-            border: "2px solid #20958C",
-            width: "1073px",
-            margin: "auto",
-            borderRadius: "20px",
-            height: "1700px",
-          }}
-        >
-         
-          <div className="text-center mt-1">
-            {" "}
-            <h6
-              className="fw-bold mt-2"
-              style={{
-                color: "#20958C",
-                fontSize: "30px",
-              }}
-            >
-              Patient History
-            </h6>
-          </div>
-          <div
-            style={{
-              paddingLeft: "42px",
-              paddingRight: "42px",
-              textAlign: "justify",
-            }}
-          >
-            <p style={{ fontSize: "17px" }}>
-              <div className="container">
-                <div
-                  className="row"
-                  style={{
-                    border: "1px solid #20958C",
-                  }}
-                >
-                  <div
-                    className="col-md-12"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    Patient Name:{" "}
-                    <span>
-                      <input
-                        type="text"
-                        name=""
-                        id=""
-                        className="vi_0"
-                        style={{ width: "859px" }}
-                      />
-                    </span>
-                  </div>
-                </div>
-                <div
-                  className="row"
-                  style={{
-                    border: "1px solid #20958C",
-                  }}
-                >
-                   <div
-                        className="col-md-3"
-                        style={{
-                          border: "1px solid #20958C",
-                          paddingLeft: "unset",
-                          paddingRight: "unset",
-                          fontSize: "17px",
-                        }}
-                      >
-                        Age:{" "}
-                        <span>
-                          <input
-                            type="text"
-                            name=""
-                            id=""
-                            className="vi_0"
-                            style={{ width: "201px" }}
-                          />
-                        </span>
-                      </div>
-                      <div
-                        className="col-md-3"
-                        style={{
-                          border: "1px solid #20958C",
-                          paddingLeft: "unset",
-                          paddingRight: "unset",
-                          fontSize: "17px",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        Sex:{" "}
-                        <span>
-                          <input
-                            type="checkbox"
-                            name=""
-                            id=""
-                          />
-                          Male &nbsp;&nbsp;&nbsp;
-                          <input
-                            type="checkbox"
-                            name=""
-                            id=""
-                          />
-                          Female{" "}
-                        </span>
-                      </div>
-                      <div
-                        className="col-md-3"
-                        style={{
-                          border: "1px solid #20958C",
-                          paddingLeft: "unset",
-                          paddingRight: "unset",
-                          fontSize: "17px",
-                        }}
-                      >
-                        DOA:{" "}
-                        <span>
-                          <input
-                            type="text"
-                            name=""
-                            id=""
-                            className="vi_0"
-                            style={{ width: "192px" }}
-                          />
-                        </span>
-                      </div>
-                      <div
-                        className="col-md-3"
-                        style={{
-                          border: "1px solid #20958C",
-                          paddingLeft: "unset",
-                          paddingRight: "unset",
-                          fontSize: "17px",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        IP No:{" "}
-                        <span>
-                          <input
-                            type="text"
-                            name=""
-                            id=""
-                            className="vi_0"
-                            style={{width:"195px"}}
-                          />
-                        </span>
-                      </div>
-                </div>
-                <div
-                  className="row"
-                  style={{
-                    border: "1px solid #20958C",
-                  }}
-                >
-                  <div
-                    className="col-md-12"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    Vital Signs:{" "}
-                    <span>
-                      <input
-                        type="text"
-                        name=""
-                        id=""
-                        className="vi_0"
-                        style={{ width: "859px" }}
-                      />
-                    </span>
-                  </div>
-                </div>
-                <div
-                  className="row"
-                  style={{
-                    border: "1px solid #20958C",
-                  }}
-                >
-                  <div
-                    className="col-md-12"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    Chief Complaints:{" "}
-                    <br />
-                      <textarea name="" id="" cols="108" rows="6"></textarea>
-                  </div>
-                </div>
-                <div
-                  className="row"
-                  style={{
-                    border: "1px solid #20958C",
-                  }}
-                >
-                  <div
-                    className="col-md-12"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                   History of Present Liness:{" "}
-                    <br />
-                      <textarea name="" id="" cols="108" rows="6"></textarea>
-                  </div>
-                </div>
-                <div
-                  className="row"
-                  style={{
-                    border: "1px solid #20958C",
-                  }}
-                >
-                  <div
-                    className="col-md-12"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    PAst medical History:{" "}
-                    <br />
-                      <textarea name="" id="" cols="108" rows="6"></textarea>
-                  </div>
-                </div>
-                <div
-                  className="row"
-                  style={{
-                    border: "1px solid #20958C",
-                  }}
-                >
-                  <div
-                    className="col-md-12"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    Past Surgical History:{" "}
-                    <br />
-                      <textarea name="" id="" cols="108" rows="6"></textarea>
-                  </div>
-
-                </div>
-                <div
-                  className="row"
-                  style={{
-                    border: "1px solid #20958C",
-                  }}
-                >
-                  <div
-                    className="col-md-12"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    Past Medication History:{" "}
-                    <br />
-                      <textarea name="" id="" cols="108" rows="6"></textarea>
-                  </div>
-                </div>
-                <div
-                  className="row"
-                  style={{
-                    border: "1px solid #20958C",
-                  }}
-                >
-                  <div
-                    className="col-md-12"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    Drug Allergy:{" "}
-                    <br />
-                      <textarea name="" id="" cols="108" rows="6"></textarea>
-                  </div>
-                </div>
-                <div
-                  className="row"
-                  style={{
-                    border: "1px solid #20958C",
-                  }}
-                >
-                  <div
-                    className="col-md-12"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                   Family History:{" "}
-                    <br />
-                      <textarea name="" id="" cols="108" rows="6"></textarea>
-                  </div>
-                </div>
-              </div>
-            </p>
-          </div>
-        </div>
-      </div> */}
       <div className="text-center mt-2 mb-2">
-        <button className="btn btn-success">Submit</button>
+        <button 
+        className="btn btn-success"
+        onClick={()=>submitNursingAssesment()}
+        >Submit</button>
       </div>
     </div>
   );

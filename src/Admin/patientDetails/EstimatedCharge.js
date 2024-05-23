@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 
-import { Table, Modal, ProgressBar, Button, Form } from "react-bootstrap";
+import { Table} from "react-bootstrap";
 
-import { FiDownload, FiThumbsUp } from "react-icons/fi";
+import { FiDownload } from "react-icons/fi";
 
-const EstimatedCharge = () => {
+const EstimatedCharge = ({HospitalizedCForm}) => {
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">
@@ -97,7 +97,7 @@ const EstimatedCharge = () => {
                       style={{ width: "33%", border: "1.5px  solid #20958C" }}
                     >
                       <span style={{ fontWeight: "bold" }}>
-                        ----------------
+                        {HospitalizedCForm[0]?.WardRoomCharges}
                       </span>{" "}
                     </td>
                     <td
@@ -112,7 +112,7 @@ const EstimatedCharge = () => {
                     >
                       Remark:{" "}
                       <span style={{ fontWeight: "bold" }}>
-                        Vary professional
+                      {HospitalizedCForm[0]?.WardRemark}
                       </span>
                     </td>
                   </tr>
@@ -121,7 +121,7 @@ const EstimatedCharge = () => {
                       colSpan={3}
                       style={{ width: "100%", border: "1.5px  solid #20958C" }}
                     >
-                      ---------------
+                     {HospitalizedCForm[0]?.WardText1}
                     </td>
                   </tr>
                   <tr>
@@ -129,7 +129,7 @@ const EstimatedCharge = () => {
                       colSpan={3}
                       style={{ width: "100%", border: "1.5px  solid #20958C" }}
                     >
-                      ---------------
+                      {HospitalizedCForm[0]?.WardText2}
                     </td>
                   </tr>
                 </tbody>
@@ -165,23 +165,28 @@ const EstimatedCharge = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
+                {HospitalizedCForm[0]?.SurgeryPackages?.map((item)=>{
+                  return(
+                    <tr>
                     <td
                       style={{ width: "33%", border: "1.5px  solid #20958C" }}
                     >
-                      ..procedure ...
+                     {item?.NameOfSurgery}
                     </td>
                     <td
                       style={{ width: "33%", border: "1.5px  solid #20958C" }}
                     >
-                      10,000
+                     {item?.SurgeryEstimatePrice[0]}
                     </td>
                     <td
                       style={{ width: "33%", border: "1.5px  solid #20958C" }}
                     >
-                      Comfortable
+                      {item?.SurgeryRemark}
                     </td>
                   </tr>
+                  )
+                })}
+                 
                 </tbody>
               </Table>
             </p>
@@ -215,23 +220,28 @@ const EstimatedCharge = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td
-                      style={{ width: "33%", border: "1.5px  solid #20958C" }}
-                    >
-                      ..procedure ...
-                    </td>
-                    <td
-                      style={{ width: "33%", border: "1.5px  solid #20958C" }}
-                    >
-                      10,000
-                    </td>
-                    <td
-                      style={{ width: "33%", border: "1.5px  solid #20958C" }}
-                    >
-                      Comfortable
-                    </td>
-                  </tr>
+                  {HospitalizedCForm[0]?.ProcedureDetails?.map((item)=>{
+                    return(
+                      <tr>
+                      <td
+                        style={{ width: "33%", border: "1.5px  solid #20958C" }}
+                      >
+                        {item?.NameofProcedure}
+                      </td>
+                      <td
+                        style={{ width: "33%", border: "1.5px  solid #20958C" }}
+                      >
+                          {item?.ProcedureCost}
+                      </td>
+                      <td
+                        style={{ width: "33%", border: "1.5px  solid #20958C" }}
+                      >
+                        {item?.ProcedurRemark}
+                      </td>
+                    </tr>
+                    )
+                  })}
+                 
                 </tbody>
               </Table>
             </p>
@@ -265,23 +275,28 @@ const EstimatedCharge = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td
-                      style={{ width: "33%", border: "1.5px  solid #20958C" }}
-                    >
-                      ..procedure ...
-                    </td>
-                    <td
-                      style={{ width: "33%", border: "1.5px  solid #20958C" }}
-                    >
-                      10,000
-                    </td>
-                    <td
-                      style={{ width: "33%", border: "1.5px  solid #20958C" }}
-                    >
-                      Comfortable
-                    </td>
-                  </tr>
+                  {HospitalizedCForm[0]?.InvestigationChargeList?.map((item)=>{
+                    return(
+                      <tr>
+                      <td
+                        style={{ width: "33%", border: "1.5px  solid #20958C" }}
+                      >
+                        {item?.InvestigationName}
+                      </td>
+                      <td
+                        style={{ width: "33%", border: "1.5px  solid #20958C" }}
+                      >
+                        {item?.InvestigationCost}
+                      </td>
+                      <td
+                        style={{ width: "33%", border: "1.5px  solid #20958C" }}
+                      >
+                        {item?.InvestigationRemark}
+                      </td>
+                    </tr>
+                    )
+                  })}
+                 
                 </tbody>
               </Table>
             </p>
@@ -312,13 +327,13 @@ const EstimatedCharge = () => {
             </p>
             <p style={{ fontSize: "18px" }}>
               &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; I,{" "}
-              <span style={{ fontWeight: "bold" }}>Mannu Kumar</span> have been
+              <span style={{ fontWeight: "bold" }}>{HospitalizedCForm[0]?.patientname}</span> have been
               explained in detail the above mentioned charges in a language that
               I understand.
               <br />
               <br />
               Patient/ Patient Relative Name & Signature :{" "}
-              <span style={{ fontWeight: "bold" }}>Mannu</span>{" "}
+              <span style={{ fontWeight: "bold" }}>{HospitalizedCForm[0]?.RealivesName}</span>{" "}
             </p>
 
             <Table
@@ -332,21 +347,21 @@ const EstimatedCharge = () => {
                 <tr>
                   <td style={{ border: "1px  solid #20958C" }}>
                     Withness-1/Relative-1 :{" "}
-                    <span style={{ fontWeight: "bold" }}>Hela</span>{" "}
+                    <span style={{ fontWeight: "bold" }}>{HospitalizedCForm[0]?.Witness1}</span>{" "}
                   </td>
                   <td style={{ border: "1px  solid #20958C" }}>
                     Withness-2/Relative-2:{" "}
-                    <span style={{ fontWeight: "bold" }}>Loki</span>{" "}
+                    <span style={{ fontWeight: "bold" }}>{HospitalizedCForm[0]?.Witness2}</span>{" "}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ border: "1px  solid #20958C" }}>
                     Phone No:{" "}
-                    <span style={{ fontWeight: "bold" }}>9125438700</span>{" "}
+                    <span style={{ fontWeight: "bold" }}>{HospitalizedCForm[0]?.Witness1Number}</span>{" "}
                   </td>
                   <td style={{ border: "1px  solid #20958C" }}>
                     Phone No:{" "}
-                    <span style={{ fontWeight: "bold" }}>6364004511</span>{" "}
+                    <span style={{ fontWeight: "bold" }}>{HospitalizedCForm[0]?.Witness2Number}</span>{" "}
                   </td>
                 </tr>
               </tbody>

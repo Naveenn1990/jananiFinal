@@ -38,20 +38,7 @@ export const YourAppointment = () => {
       });
   };
 
-  const [Doctors, setDoctors] = useState([]);
-  const getDoctors = () => {
-    axios
-      .get("http://localhost:8521/api/Doctor/getDoctorsList")
-      .then(function (response) {
-        // handle success
-        setDoctors(response.data.DoctorsInfo);
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
-  };
-  console.log("Doctors", Doctors);
+
 
   const [AppointmentId, setAppointmentId] = useState({});
   const [Time, setTime] = useState("");
@@ -86,6 +73,7 @@ export const YourAppointment = () => {
     getAppointmentList();
   }, []);
 
+  console.log("AppointmentList",AppointmentList);
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mt-2">
