@@ -95,6 +95,9 @@ export const HeaderDiagnostic = () => {
                   {/* <Dropdown.Item href="/diagnostictrackorder">
                     My Order
                   </Dropdown.Item> */}
+                  <Dropdown.Item href="/diagnosticmyReports">
+                    Reports
+                  </Dropdown.Item>
                   <Dropdown.Item href="/diagnosticmyprofile">
                     Profile
                   </Dropdown.Item>

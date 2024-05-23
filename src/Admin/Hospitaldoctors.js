@@ -110,7 +110,7 @@ export default function Hospitaldoctors() {
   const [DOB, setDOB] = useState("");
   const [email, setemail] = useState("");
   const [mobileno, setmobileno] = useState();
-  const [Designation, setDesignation] = useState();
+  // const [Designation, setDesignation] = useState();
   const [Address1, setAddress1] = useState();
   const [Department, setDepartment] = useState();
 
@@ -168,7 +168,7 @@ export default function Hospitaldoctors() {
       formdata.set("DOB", DOB);
       formdata.set("PhoneNumber", mobileno);
       formdata.set("Email", email);
-      formdata.set("Designation", Designation);
+      // formdata.set("Designation", Designation);
       formdata.set("Department", Department);
       formdata.set("Address1", Address1);
       formdata.set("Education", Education);
@@ -489,7 +489,14 @@ export default function Hospitaldoctors() {
               borderRadius: "0px",
             }}
           />
-          <div style={{ display: "flex", justifyContent: "space-between", position:'relative', zIndex:'999' }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              position: "relative",
+              zIndex: "999",
+            }}
+          >
             <FaUserMd className="AddIcon1" onClick={() => setShow(true)} />
           </div>
         </div>
@@ -572,7 +579,7 @@ export default function Hospitaldoctors() {
                 ></input>
               </div>
 
-              <div className="col-lg-6">
+              {/* <div className="col-lg-6">
                 <input
                   placeholder="Designation"
                   style={{
@@ -585,7 +592,7 @@ export default function Hospitaldoctors() {
                   }}
                   onChange={(e) => setDesignation(e.target.value)}
                 ></input>
-              </div>
+              </div> */}
 
               <div className="col-lg-6">
                 <select
@@ -602,7 +609,9 @@ export default function Hospitaldoctors() {
                   <option>Select Department</option>
                   {GetDepartmentData?.map((item) => (
                     <>
-                      <option value={item?.DepartmentName}>{item?.DepartmentName}</option>
+                      <option value={item?.DepartmentName}>
+                        {item?.DepartmentName}
+                      </option>
                     </>
                   ))}
                 </select>
@@ -867,7 +876,7 @@ export default function Hospitaldoctors() {
                 ></input>
               </div>
 
-              <div className="col-lg-6">
+              {/* <div className="col-lg-6">
                 <input
                   placeholder="Designation"
                   style={{
@@ -879,7 +888,7 @@ export default function Hospitaldoctors() {
                     marginTop: "4%",
                   }}
                 ></input>
-              </div>
+              </div> */}
 
               <div className="col-lg-6">
                 <select
@@ -1281,7 +1290,7 @@ export default function Hospitaldoctors() {
                   <h4>
                     Dr. {View?.Firstname} {View?.Lastname}
                   </h4>
-                  <h5>{View?.Designation}</h5>
+                  {/* <h5>{View?.Designation}</h5> */}
                   <h6>
                     {View?.Education}({View?.Department})
                   </h6>
@@ -2319,58 +2328,58 @@ export default function Hospitaldoctors() {
             </div>
           </Modal.Body>
         </Modal>
-   <div style={{overflow:"hidden",overflowX:"scroll"}}>
-        <Table  style={{ marginTop: "1%" }}>
-          <thead>
-            <tr style={{ fontSize: "15px", textAlign: "center" }}>
-              <th>Sl.No</th>
-              <th>Profile</th>
-              <th> Name</th>
-              <th>Email-Id</th>
-              <th>Designation</th>
-              <th>Department</th>
-              <th>Contact</th>
-              <th>D-O-B</th>
-              <th>Document</th>
-              <th>Schedule</th>
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Doctors?.map((item, index) => {
-              return (
-                <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                  <td>{++index}</td>
-                  <td>
-                    <img
-                      src={`http://localhost:8521/Doctor/${item?.ProfileImg}`}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        borderRadius: "50%",
-                      }}
-                    />
-                  </td>
-                  <td>
-                    {item?.Firstname} {item?.Lastname}
-                  </td>
-                  <td>{item?.Email}</td>
-                  <td>{item?.Designation}</td>
-                  <td>{item?.Department}</td>
-                  <td>{item?.PhoneNumber}</td>
-                  <td>{item?.DOB}</td>
-                  <td>
-                    <a>
-                      <HiDocumentText
-                        onClick={() => {
-                          setView(item);
-                          handleShow8();
+        <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+          <Table style={{ marginTop: "1%" }}>
+            <thead>
+              <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                <th>Sl.No</th>
+                <th>Profile</th>
+                <th> Name</th>
+                <th>Email-Id</th>
+                {/* <th>Designation</th> */}
+                <th>Department</th>
+                <th>Contact</th>
+                <th>D-O-B</th>
+                <th>Document</th>
+                <th>Schedule</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Doctors?.map((item, index) => {
+                return (
+                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                    <td>{++index}</td>
+                    <td>
+                      <img
+                        src={`http://localhost:8521/Doctor/${item?.ProfileImg}`}
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          borderRadius: "50%",
                         }}
-                        style={{ color: "#20958c", fontSize: "28px" }}
                       />
-                    </a>
-                  </td>
-                  {/* <td>
+                    </td>
+                    <td>
+                      {item?.Firstname} {item?.Lastname}
+                    </td>
+                    <td>{item?.Email}</td>
+                    {/* <td>{item?.Designation}</td> */}
+                    <td>{item?.Department}</td>
+                    <td>{item?.PhoneNumber}</td>
+                    <td>{item?.DOB}</td>
+                    <td>
+                      <a>
+                        <HiDocumentText
+                          onClick={() => {
+                            setView(item);
+                            handleShow8();
+                          }}
+                          style={{ color: "#20958c", fontSize: "28px" }}
+                        />
+                      </a>
+                    </td>
+                    {/* <td>
                 <div
                   style={{
                     display: "flex",
@@ -2399,141 +2408,162 @@ export default function Hospitaldoctors() {
                 </button>
               </td> */}
 
-                  <td
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <BsFillCalendar2PlusFill
+                    <td
                       style={{
-                        color: "#20958c",
-                        fontSize: "24px",
-                        cursor: "pointer",
+                        display: "flex",
+                        justifyContent: "space-between",
                       }}
-                      onClick={() => {
-                        setView(item);
-                        setShow6(true);
-                      }}
-                    />
-                    <BsFillCalendarCheckFill
-                      style={{
-                        color: "#20958c",
-                        fontSize: "24px",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {
-                        setView(item);
-                        setShow7(true);
-                      }}
-                    />
-                  </td>
-
-                  <td>
-                    <div class="btn-group pull-right">
-                      <button
-                        class="btn deepPink-bgcolor btn-circle btn-outline dropdown-toggle"
-                        data-bs-toggle="dropdown"
-                        style={{ backgroundColor: "#20958c", color: "white" }}
-                      >
-                        View
-                        {/* <i class="fa fa-angle-down"style={{marginRight:"2%"}}></i> */}
-                      </button>
-                      <ul
-                        class="dropdown-menu pull-right"
+                    >
+                      <BsFillCalendar2PlusFill
                         style={{
-                          textAlign: "left",
-                          padding: "14%",
-                          fontSize: "14px",
-                          fontWeight: "600",
                           color: "#20958c",
+                          fontSize: "24px",
+                          cursor: "pointer",
                         }}
-                      >
-                        <li>
-                          <a
-                            href="javascript:;"
-                            style={{ textDecoration: "none", color: "#20958c" }}
-                            onClick={() => {
-                              getDoctorsAllAppointment(item);
-                              setView(item);
-                              setShow5(true);
-                            }}
-                          >
-                            <i
-                              class="fa fa-user-circle"
-                              style={{ marginRight: "2%" }}
-                            ></i>
-                            View Profile{" "}
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="javascript:;"
-                            style={{ textDecoration: "none", color: "#20958c" }}
-                            onClick={() => {
-                              setView(item);
-                              setShow2(true);
-                            }}
-                          >
-                            <i
-                              class=" fa fa-database"
-                              style={{ marginRight: "2%" }}
-                            ></i>{" "}
-                            Add Charge{" "}
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="javascript:;"
-                            style={{ textDecoration: "none", color: "#20958c" }}
-                            onClick={() => {
-                              setView(item);
-                              setShow1(true);
-                            }}
-                          >
-                            <i
-                              class="fa fa-university"
-                              style={{ marginRight: "2%" }}
-                            ></i>{" "}
-                            Add Salary{" "}
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="javascript:;"
-                            style={{ textDecoration: "none", color: "#20958c" }}
-                            onClick={() => setShow4(true)}
-                          >
-                            <i
-                              class="fa fa-pencil-square-o"
-                              style={{ marginRight: "2%" }}
-                            ></i>{" "}
-                            Edit{" "}
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="javascript:;"
-                            style={{ textDecoration: "none", color: "#20958c" }}
-                          >
-                            <i
-                              class="fa fa-trash-o"
-                              style={{ marginRight: "2%" }}
-                            ></i>{" "}
-                            Delete{" "}
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="javascript:;"
-                            style={{ textDecoration: "none", color: "#20958c" }}
-                          >
-                            <i
-                              class=" fa fa-unlock"
-                              style={{ marginRight: "2%" }}
-                            ></i>{" "}
-                            Block{" "}
-                          </a>
-                        </li>
+                        onClick={() => {
+                          setView(item);
+                          setShow6(true);
+                        }}
+                      />
+                      <BsFillCalendarCheckFill
+                        style={{
+                          color: "#20958c",
+                          fontSize: "24px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          setView(item);
+                          setShow7(true);
+                        }}
+                      />
+                    </td>
 
-                        {/* <li>
+                    <td>
+                      <div class="btn-group pull-right">
+                        <button
+                          class="btn deepPink-bgcolor btn-circle btn-outline dropdown-toggle"
+                          data-bs-toggle="dropdown"
+                          style={{ backgroundColor: "#20958c", color: "white" }}
+                        >
+                          View
+                          {/* <i class="fa fa-angle-down"style={{marginRight:"2%"}}></i> */}
+                        </button>
+                        <ul
+                          class="dropdown-menu pull-right"
+                          style={{
+                            textAlign: "left",
+                            padding: "14%",
+                            fontSize: "14px",
+                            fontWeight: "600",
+                            color: "#20958c",
+                          }}
+                        >
+                          <li>
+                            <a
+                              href="javascript:;"
+                              style={{
+                                textDecoration: "none",
+                                color: "#20958c",
+                              }}
+                              onClick={() => {
+                                getDoctorsAllAppointment(item);
+                                setView(item);
+                                setShow5(true);
+                              }}
+                            >
+                              <i
+                                class="fa fa-user-circle"
+                                style={{ marginRight: "2%" }}
+                              ></i>
+                              View Profile{" "}
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              href="javascript:;"
+                              style={{
+                                textDecoration: "none",
+                                color: "#20958c",
+                              }}
+                              onClick={() => {
+                                setView(item);
+                                setShow2(true);
+                              }}
+                            >
+                              <i
+                                class=" fa fa-database"
+                                style={{ marginRight: "2%" }}
+                              ></i>{" "}
+                              Add Charge{" "}
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              href="javascript:;"
+                              style={{
+                                textDecoration: "none",
+                                color: "#20958c",
+                              }}
+                              onClick={() => {
+                                setView(item);
+                                setShow1(true);
+                              }}
+                            >
+                              <i
+                                class="fa fa-university"
+                                style={{ marginRight: "2%" }}
+                              ></i>{" "}
+                              Add Salary{" "}
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              href="javascript:;"
+                              style={{
+                                textDecoration: "none",
+                                color: "#20958c",
+                              }}
+                              onClick={() => setShow4(true)}
+                            >
+                              <i
+                                class="fa fa-pencil-square-o"
+                                style={{ marginRight: "2%" }}
+                              ></i>{" "}
+                              Edit{" "}
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              href="javascript:;"
+                              style={{
+                                textDecoration: "none",
+                                color: "#20958c",
+                              }}
+                            >
+                              <i
+                                class="fa fa-trash-o"
+                                style={{ marginRight: "2%" }}
+                              ></i>{" "}
+                              Delete{" "}
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              href="javascript:;"
+                              style={{
+                                textDecoration: "none",
+                                color: "#20958c",
+                              }}
+                            >
+                              <i
+                                class=" fa fa-unlock"
+                                style={{ marginRight: "2%" }}
+                              ></i>{" "}
+                              Block{" "}
+                            </a>
+                          </li>
+
+                          {/* <li>
                       <a
                         href="javascript:;"
                         style={{ textDecoration: "none", color: "#20958c" }}
@@ -2541,14 +2571,14 @@ export default function Hospitaldoctors() {
                         <i class="fa fa-file-excel-o"style={{marginRight:"2%"}}></i> Export to Excel{" "}
                       </a>
                     </li> */}
-                      </ul>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
         </div>
       </div>
     </div>
