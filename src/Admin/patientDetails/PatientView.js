@@ -445,7 +445,7 @@ const PatientView = ({ SelectCause,patientdetail }) => {
         ) : HouslyObservChart ? (
           <HourlyObservChart />
         ) : NursingAssessmentOnAdmisssion ? (
-          <NursingAssessment />
+          <NursingAssessment NursingAssessments = {SelectCause?.nursingassessment} patientdetail={patientdetail} />
         ) : surgery ? (
           <SurgeryReport />
         ) : IntakeOutput ? (

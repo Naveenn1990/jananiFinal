@@ -1,8 +1,11 @@
+import moment from "moment";
 import React from "react";
 import { Button, Table } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
 
-const NursingAssessment = () => {
+const NursingAssessment = ({NursingAssessments,patientdetail}) => {
+  console.log("NursingAssessments",NursingAssessments);
+  console.log("patientdetail",patientdetail);
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">
@@ -96,19 +99,19 @@ const NursingAssessment = () => {
               <tbody>
                 <tr>
                   <td colSpan={3} style={{ border: "2px  solid #20958C" }}>
-                    Patient Name:{" "}
+                    Patient Name:{`${patientdetail?.Firstname} ${patientdetail?.Lastname}`}
                   </td>
 
                   <td colSpan={2} style={{ border: "2px  solid #20958C" }}>
-                    UHID No :
+                    UHID No :{patientdetail?.PatientId}
                   </td>
                 </tr>
                 <tr>
                   <td colSpan={3} style={{ border: "2px  solid #20958C" }}>
-                    Date & Time of Nursing Initial Assessment:{" "}
+                    Date & Time of Nursing Initial Assessment:{moment(patientdetail?.DTNursingInitialAssesment).format("DD-MM-YYYY HH:MM")}
                   </td>
                   <td colSpan={2} style={{ border: "2px  solid #20958C" }}>
-                    General Consent Signed: yes/No. :
+                    General Consent Signed: {NursingAssessments[0]?.ConsentSign}
                   </td>
                 </tr>
 
@@ -117,41 +120,43 @@ const NursingAssessment = () => {
                     Vital Signs
                   </th>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    Temp
+                    Temp : {NursingAssessments[0]?.VSTemp}
                   </td>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    Pulse ../Min
+                    Pulse {NursingAssessments[0]?.VSPulse}/Min
                   </td>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    Resp: ../Min
+                    Resp: {NursingAssessments[0]?.Resp}/Min
                   </td>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    BP:
+                    BP:{NursingAssessments[0]?.BP}
                   </td>
                 </tr>
 
                 <tr style={{ textAlign: "center" }}>
                   <th style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    Height
+                    Height : 
                   </th>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    Weight
+                    Weight: {NursingAssessments[0]?.Weight}
                   </td>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    Blood Group
+                    Blood Group:{NursingAssessments[0]?.BloodGroup}
                   </td>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    Spo2(if required)
+                    Spo2(if required) {NursingAssessments[0]?.Spo2}
                   </td>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    GRBS(if required)
+                    GRBS(if required) {NursingAssessments[0]?.GRBS}
                   </td>
                 </tr>
                 <tr style={{ textAlign: "center" }}>
                   <th style={{ border: "2px  solid #20958C" }}>
                     Complaints during admission and it's duration
                   </th>
-                  <td colSpan={4} style={{ border: "2px  solid #20958C" }}></td>
+                  <td colSpan={4} style={{ border: "2px  solid #20958C" }}>
+                  {NursingAssessments[0]?.Complaints}
+                  </td>
                 </tr>
                 <tr style={{ textAlign: "center" }}>
                   <th style={{ border: "2px  solid #20958C" }}>Neurological</th>
@@ -160,52 +165,51 @@ const NursingAssessment = () => {
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        Oriented : yes/no
+                        Oriented : {NursingAssessments[0]?.Oriented}
                       </td>
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        Speech: Clear / Slurred
+                        Speech: {NursingAssessments[0]?.Speech1}
                       </td>
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        Speech: Clear / Slurred{" "}
-                      </td>
-                    </tr>
-                    <tr style={{ textAlign: "left" }}>
-                      <td
-                        style={{ width: "33%", border: ".5px  solid #20958C" }}
-                      >
-                        Level of Consciousness (Conscious / Semiconscious /
-                        Unconscious)
-                      </td>
-                      <td
-                        style={{ width: "33%", border: ".5px  solid #20958C" }}
-                      >
-                        Visual Impairment None / Wear Spectacles /BLind -L-R{" "}
-                      </td>
-                      <td
-                        style={{ width: "33%", border: ".5px  solid #20958C" }}
-                      >
-                        Extremity strength Equal / Unequal
+                        Speech: {NursingAssessments[0]?.Speech2}
                       </td>
                     </tr>
                     <tr style={{ textAlign: "left" }}>
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        Pupils Equal / Unqual / Reactive / Sluggish
+                        Level of Consciousness ({NursingAssessments[0]?.Consciousness})
                       </td>
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        Hearing Impairment None/ Uses Aids / Deaf-L-R
+                        Visual Impairment {NursingAssessments[0]?.Impairment}
                       </td>
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        Pain : Yes / No. <br /> Location:
+                        Extremity strength {NursingAssessments[0]?.Extremity}
+                      </td>
+                    </tr>
+                    <tr style={{ textAlign: "left" }}>
+                      <td
+                        style={{ width: "33%", border: ".5px  solid #20958C" }}
+                      >
+                        Pupils {NursingAssessments[0]?.Pupils}
+                      </td>
+                      <td
+                        style={{ width: "33%", border: ".5px  solid #20958C" }}
+                      >
+                        Hearing Impairment {NursingAssessments[0]?.HearingImpairment}
+                      </td>
+                      <td
+                        style={{ width: "33%", border: ".5px  solid #20958C" }}
+                      >
+                        Pain : {NursingAssessments[0]?.Pain} <br /> Location:
                       </td>
                     </tr>
                   </td>
