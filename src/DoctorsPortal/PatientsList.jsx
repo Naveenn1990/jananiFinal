@@ -167,6 +167,20 @@ export const PatientsList = () => {
                             >
                               Details+
                             </button>
+                            {FilterPatientType === "IPD" ? (
+                              <button
+                                title="Daily Doctor report"
+                                className="table-details-btn"
+                                onClick={() => {
+                                  setchosenPatient(item._id);
+                                  medHistoryShow1();
+                                }}
+                              >
+                                DDR
+                              </button>
+                            ) : (
+                              <></>
+                            )}
                           </div>
                         </div>
                         <div>
