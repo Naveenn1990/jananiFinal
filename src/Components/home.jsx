@@ -28,6 +28,17 @@ export const Home = () => {
         slidesToShow: 1,
         slidesToScroll: 1
     }
+    // minimum date logic
+    const [minDate, setMinDate] = useState(getTodayDate());
+
+    function getTodayDate() {
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const yyyy = today.getFullYear();
+        return `${yyyy}-${mm}-${dd}`;
+      }
+    
 
     useEffect(() => {
         AOS.init({ duration: 2500 })
@@ -296,7 +307,8 @@ export const Home = () => {
                                     <label className='mb-1 text-light' for="name" >Patient Name</label><br />
                                     <input className='home-input mb-2' type="text" placeholder='Name' /><br />
                                     <label className='mb-1 text-light' for="date">Choose Date</label>
-                                    <input className='home-input mb-2' type="date" />
+                                    <input className='home-input mb-2' type="date" min={minDate} onChange={(e) => setMinDate(e.target.value)}/>
+                            {/* date logic implemented  */}
                                     
                                 </form>
                             </div>
