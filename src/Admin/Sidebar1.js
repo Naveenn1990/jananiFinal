@@ -27,6 +27,10 @@ export default function Sidebar1() {
     sessionStorage.removeItem("Subadmin");
     navigate("/subadmin-login");
   }
+  function logoutAdmin() {
+    sessionStorage.removeItem("adminDetails");
+    navigate("/admin");
+  }
 
   return (
     <div
@@ -332,6 +336,13 @@ export default function Sidebar1() {
             onClick={() => window.location.assign("/admin/Enquiry")}
           >
             Enquiries & Complaints
+          </h6>
+
+          <h6
+            className="sidebarItem"
+            onClick={() =>logoutAdmin()}
+          >
+            Logout 
           </h6>
         </>
       ) : (
