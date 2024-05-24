@@ -42,6 +42,8 @@ import AddIcon from '@mui/icons-material/Add';
 
 const VendorAddedProducts = () => {
 
+
+  // the function handling increment decrement
     const [value, setValue] = useState(0);
 
     const handleIncrement = () => {
@@ -53,7 +55,7 @@ const VendorAddedProducts = () => {
         setValue(value - 1);
       }
     }
-
+// the function handling increment an decrement
     
     const navigate = useNavigate();
 
