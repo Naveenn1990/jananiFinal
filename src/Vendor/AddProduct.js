@@ -13,7 +13,6 @@ export const AddProduct = () => {
 
   const NormalValuesClose = () => setShow(false);
   const NormalValuesShow = () => setShow(true);
-
   const MandatoryValueClose = () => setShow1(false);
   const MandatoryValueShow = () => setShow1(true);
 
@@ -50,31 +49,7 @@ export const AddProduct = () => {
   const [GstDocument, setGstDocument] = useState("");
 
   const AddProduct = async (e) => {
-    console.log(productImgs, "klklklklklklk");
-    e.preventDefault();
-    // formdata.append("productName", productName);
-    // formdata.append("productPrice", productPrice);
-    // formdata.append("productType", productType);
-    // formdata.append("manufacturingDate", manufacturingDate);
-    // formdata.append("expiryDate", expiryDate);
-    // formdata.append("discount", discount);
-    // formdata.append("productSize", productSize);
-    // formdata.append("packSize", packSize);
-    // formdata.append("colour", colour);
-    // formdata.append("flavour", flavour);
-    // formdata.append("fragrance", fragrance);
-    // formdata.append("variant", variant);
-    // formdata.append("description", description);
-    // formdata.append("brand", brand);
-    // formdata.append("countryOfOrigin", countryOfOrigin);
-    // formdata.append("manufacturercompanyname", manufacturercompanyname);
-    // formdata.append("manufactureraddress", manufactureraddress);
-    // formdata.append("stock", stock);
-    // formdata.append("currencyFormat", currencyFormat);
-    // formdata.append("productImgs", productImgs);
-
-    // console.log(formdata, "rwrree");
-
+    e.preventDefault();    
     let obj1 = {
       vendorid: Vendor?._id,
       productName: productName,
@@ -119,6 +94,7 @@ export const AddProduct = () => {
           console.log(res.data);
           console.log(res.data.success);
           alert("Product Added");
+          window.location.assign("/VendorAddProducts")
         }
       
     } catch (error) {
@@ -158,10 +134,19 @@ export const AddProduct = () => {
       setsubcategoryList(error.response.data.allsubcategory);
     }
   };
-
+  const [productTypes, setProductTypes] = useState([]);
+  const getAllData = async()=>{
+    try {
+      const res = await axios.get("http://localhost:8521/api/vendor/producttype")
+      setProductTypes(res.data.success)
+    } catch (error) {
+      console.error(error);
+    }
+  }
   useEffect(() => {
     getAllCategory();
     getAllSubCategory();
+    getAllData();
   }, []);
 
   return (
@@ -220,20 +205,21 @@ export const AddProduct = () => {
               onChange={(e) => setproductType(e.target.value)}
             >
               <option>Select Product Sub-Category</option>
-              {subcategoryList?.map((item) => {
+              {productTypes?.map((item) => {
                 return (
-                  <option value={item?._id}>{item?.subcategoryName}</option>
+                  <option value={item?._id}>{item?.Producttype}</option>
                 );
               })}
             </Form.Select>
           </div>
 
           {/* <div className="col-lg-3">
-            <label className="fw-bold text-dark">Product Type*</label>
+            <label className="fw-bold text-dark">Product Type Descprition*</label>
+            <span></span>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
-                placeholder="Product Type"
+                placeholder="description"
                 aria-describedby="basic-addon1"
                 onChange={(e) => setproductType(e.target.value)}
               />

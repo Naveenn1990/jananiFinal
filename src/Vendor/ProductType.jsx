@@ -1,32 +1,61 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form'; // Import Form and Form.Label
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-
 import './ProductType.css';
+import axios from 'axios';
 
 const ProductType = () => {
-  const [show, setShow] = useState(false); //for madal to hide and show 
-  const [productTypes, setProductTypes] = useState([]);
-  const [newProductType, setNewProductType] = useState('');  //takes the enter the product type data 
-
-  const handleClose = () => {
-    setShow(false);
-    setNewProductType('');
-  };
-
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const handleAddProductType = () => {
-    if (newProductType.trim() !== '') {
-      setProductTypes([...productTypes, newProductType.trim()]);
-      handleClose();
-    }
-  };
 
+  const Vendor = JSON.parse(sessionStorage.getItem("VendorDetails"));
+
+const [producttype, setproducttype] = useState("")
+  const handleAddProductType = async() => {
+    let obj1 = {
+      vendorid:Vendor?._id,
+      Producttype:producttype
+    };
+   try {
+    const config = {
+      url: "/vendor/Addproducttype",
+      method: "post",
+      baseURL: "http://localhost:8521/api",
+      headers: { "content-type": "application/json" },
+      data: obj1,
+    };
+    let res = await axios(config);
+    if (res.status === 201) {
+      alert(res.data.success)
+      setproducttype("")
+      handleClose()
+      getAllData()
+      
+    }
+   } catch (error) {
+    console.log(error);
+   }
+  };
+  const [productTypes, setProductTypes] = useState([]);
+  const getAllData = async()=>{
+    try {
+      const res = await axios.get("http://localhost:8521/api/vendor/producttype")
+      setProductTypes(res.data.success)
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    getAllData()
+  }, [])
+  
   return (
     <>
       <div className='p-4 fw-bold h3'>Product Type</div>
@@ -44,10 +73,10 @@ const ProductType = () => {
             </tr>
           </thead>
           <tbody>
-            {productTypes.map((type, index) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{type}</td>
+            {productTypes?.map((item, i) => (
+              <tr>
+                <td>{i + 1}</td>
+                <td>{item?.Producttype}</td>
                 <td>
                   <FaEdit className="edit-icon" />
                   <MdDelete className="delete-icon" />
@@ -68,14 +97,14 @@ const ProductType = () => {
             type="text"
             className="form-control"
             placeholder="Enter Product Type"
-            value={newProductType}
-            onChange={(e) => setNewProductType(e.target.value)}
+            value={producttype}
+            onChange={(e) => setproducttype(e.target.value)}
             autoFocus
           />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>Close</Button>
-          <Button variant="primary" onClick={handleAddProductType}>Save</Button>
+          <Button variant="primary" onClick={handleAddProductType}>Submit</Button>
         </Modal.Footer>
       </Modal>
     </>

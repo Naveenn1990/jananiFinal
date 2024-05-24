@@ -6,20 +6,9 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IoMdHeart } from "react-icons/io";
 import { IoMdHeartEmpty } from "react-icons/io";
-import {
-  faSliders,
-  faHospital,
-  faPrescriptionBottleMedical,
-  faHouseMedical,
-  faCapsules,
-  faAnglesRight,
-  faStethoscope,
-  faBars,
-  faArrowRight,
-} from "@fortawesome/free-solid-svg-icons";
-import { AiOutlineHeart } from "react-icons/ai";
+import { faHospital, faHouseMedical, faCapsules, faStethoscope, faBars, faArrowRight} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Headerpharmacy } from "./headerpharmacy";
 
 export const Pharmacy = () => {
