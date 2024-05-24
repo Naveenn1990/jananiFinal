@@ -264,7 +264,7 @@ export const Home = () => {
 
                 {/* <Nav variant="underline" defaultActiveKey="/home"> */}
                 <div className='row justify-content-evenly '>
-                    <div className='col-lg-3' style={{borderRight:"1px solid white"}}>
+                    <div className='col-lg-3' style={{backgroundColor:"#307d7e",padding:"20px",borderRadius:"20px"}}>
                         {/* <Nav.Item>
                                 <Nav.Link href="/home">Active</Nav.Link> */}
                         <h4 className='fw-bold mb-4 text-light appointment-header text-center' >CHECK SCHEDULES</h4>
@@ -296,7 +296,7 @@ export const Home = () => {
 
 
 
-                    <div className='col-lg-8' >
+                    <div className='col-lg-8' style={{backgroundColor:"#307d7e",padding:"20px", borderRadius:"20px"}}>
                         {/* <Nav.Item>
                                 <Nav.Link eventKey="link-1">Option 2</Nav.Link> */}
                         <div className='row text-center'>

@@ -15,7 +15,7 @@ export const VendorCommanDashboard = (props) => {
 
           <div className="col-md-10 p-0 right-h ">
             <VendorHeader />
-            {props.children}
+            {props.children}   {/*<VendorOrders />is beign passed as props to it  */}
           </div>
         </div>
       </div>
