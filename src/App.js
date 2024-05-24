@@ -240,6 +240,7 @@ import DoctorsAppointment from "./Admin/Doctorsappointment";
 import { StaffAttendance } from "./Admin/StaffAttendance";
 import ReportsList from "./PatientsPortal/ReportsList";
 import MedicationChartAdd from "./Admin/PatientAdmitForms/MedicationChartAdd";
+import ProductType from "./Vendor/ProductType";
 import DiagnosticMyReport from "./Components/Diagnostic/DiagnosticMyReport";
 
 function App() {
@@ -1378,6 +1379,20 @@ function App() {
                 />
               }
             />
+{/* Product types */}
+<Route
+              path="/vendorproducttype"
+              element={
+                <VendorCommanDashboard
+                  children={
+                    <>
+                      <ProductType/>
+                    </>
+                  }
+                />
+              }
+            />
+{/* Product types */}
 
             <Route
               path="/vendorsettings"

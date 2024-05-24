@@ -4,6 +4,7 @@ import { RxDashboard } from "react-icons/rx";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import "../Admin/Adminpanel.css";
 import {
   faBook,
   faCalendarDays,
@@ -24,8 +25,10 @@ import {
   faUserCircle,
   faVialVirus,
 } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 export default function VendorSidebar() {
+  const navigate = useNavigate();
   // const [DoctorM, setDoctorM] = useState(false);
   // const [PatientM, setPatientM] = useState(false);
   const [LabM, setLabM] = useState(false);
@@ -35,6 +38,7 @@ export default function VendorSidebar() {
 
   // const [SelectedItem, setSelectedItem] = useState(1);
 
+  const [Product, setProduct] = useState(false);
   return (
     <div className="sidebar">
       <Navbar.Brand>
@@ -81,9 +85,11 @@ export default function VendorSidebar() {
         </p>
       </div>
       {/* </a> */}
+
+      
       <h6
         className="sidebarItem"
-        onClick={() => window.location.assign("/vendordashboard")}
+        onClick={(e) => window.location.assign("/vendordashboard")}
       >
         {" "}
         <FontAwesomeIcon
@@ -92,7 +98,37 @@ export default function VendorSidebar() {
         />
         Vendor Dashboard
       </h6>
-      <h6
+
+{/* product  */}
+
+<h6
+  className="sidebarItem"
+  onClick={() => setProduct(!Product)}
+  
+>
+  <FontAwesomeIcon
+    icon={faFileInvoice}
+    style={{ marginRight: "5px", fontSize: "15px" }}
+  />
+  Products
+  {Product? <IoIosArrowUp /> : <IoIosArrowDown />}
+</h6>
+
+
+<div 
+ style={{
+  display: Product ? "block" : "none",
+  backgroundColor: "#d0f7f4",
+}}
+>
+  <h6  className="sidebarItem1" onClick={() => navigate("/vendorproducttype")}>Product Type</h6>
+  <h6  className="sidebarItem1" onClick={() => navigate("/VendorAddProducts")}>Add Product</h6>
+</div>
+
+{/* one tab ends */}
+
+{/* one tab starts */}
+      {/* <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/VendorAddProducts")}
       >
@@ -101,7 +137,8 @@ export default function VendorSidebar() {
           style={{ marginRight: "5px", fontSize: "15px" }}
         />
         Add Products
-      </h6>
+      </h6> */}
+{/* one tab ends */}
       <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/vendorOrders")}
