@@ -43,10 +43,11 @@ export const AddProduct = () => {
   const [manufacturercompanyname, setmanufacturercompanyname] = useState();
   const [manufactureraddress, setmanufactureraddress] = useState();
   const [stock, setstock] = useState();
-  const [minstock, setminstock] = useState();
+  // const [minstock, setminstock] = useState();
   const [currencyFormat, setcurrencyFormat] = useState();
   const [productImgs, setproductImgs] = useState([]);
   const [safetyDoc, setsafetyDoc] = useState("");
+  const [GstDocument, setGstDocument] = useState("");
 
   const AddProduct = async (e) => {
     console.log(productImgs, "klklklklklklk");
@@ -98,14 +99,14 @@ export const AddProduct = () => {
       manufacturercompanyname: manufacturercompanyname,
       manufactureraddress: manufactureraddress,
       stock: stock,
-      minstock: minstock,
+      // minstock: minstock,
       currencyFormat: currencyFormat,
       productImgs: productImgs,
       safetyDoc: safetyDoc,
+      GstDocument:GstDocument,
     };
 
-    try {
-      {
+    try {      
         const config = {
           url: "/vendor/addProduct",
           method: "post",
@@ -119,7 +120,7 @@ export const AddProduct = () => {
           console.log(res.data.success);
           alert("Product Added");
         }
-      }
+      
     } catch (error) {
       console.log(error.response);
       if (error.response) {
@@ -213,6 +214,22 @@ export const AddProduct = () => {
 
           <div className="col-lg-3">
             <label className="fw-bold text-dark">Product Type*</label>
+            <Form.Select
+              aria-label="Default select example"
+              value={productType}
+              onChange={(e) => setproductType(e.target.value)}
+            >
+              <option>Select Product Sub-Category</option>
+              {subcategoryList?.map((item) => {
+                return (
+                  <option value={item?._id}>{item?.subcategoryName}</option>
+                );
+              })}
+            </Form.Select>
+          </div>
+
+          {/* <div className="col-lg-3">
+            <label className="fw-bold text-dark">Product Type*</label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
@@ -221,7 +238,7 @@ export const AddProduct = () => {
                 onChange={(e) => setproductType(e.target.value)}
               />
             </InputGroup>
-          </div>
+          </div> */}
 
           <div className="col-lg-3">
             <label className="fw-bold text-dark">Product Price*</label>
@@ -272,7 +289,7 @@ export const AddProduct = () => {
             </InputGroup>
           </div>
 
-          <div className="col-lg-3">
+          {/* <div className="col-lg-3">
             <label className="fw-bold text-dark">Min stock*</label>
             <InputGroup className="mb-3">
               <Form.Control
@@ -282,7 +299,7 @@ export const AddProduct = () => {
                 onChange={(e) => setminstock(e.target.value)}
               />
             </InputGroup>
-          </div>
+          </div> */}
         </div>
 
         <div className="row">
@@ -466,6 +483,17 @@ export const AddProduct = () => {
                 id="files"
                 name="files"
                 onChange={(e) => setsafetyDoc(e.target.files[0])}
+              />
+            </InputGroup>
+          </div>
+          <div className="col-lg-3">
+            <label className="fw-bold text-dark">Gst Document*</label>
+            <InputGroup className="mb-3">
+              <input
+                type="file"
+                id="files"
+                name="files"
+                onChange={(e) => setGstDocument(e.target.files[0])}
               />
             </InputGroup>
           </div>

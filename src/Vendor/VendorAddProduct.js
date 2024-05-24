@@ -1,16 +1,8 @@
 import {
-  faAngleLeft,
-  faAngleRight,
   faCancel,
-  faCheck,
   faDownload,
-  faEllipsis,
-  faEye,
   faFilter,
-  faHouseUser,
-  faPenToSquare,
   faPlus,
-  faTrash,
   faUpload,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,13 +12,10 @@ import {
   Button,
   Container,
   Dropdown,
-  FloatingLabel,
   Form,
-  FormLabel,
   Modal,
   Table,
 } from "react-bootstrap";
-import { TfiRuler } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
 
 export const VendorAddProducts = () => {
