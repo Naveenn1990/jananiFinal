@@ -18,16 +18,25 @@ export const PharmacyCart = () => {
   let pharmacyUser = JSON.parse(sessionStorage.getItem("pharmacyUser"));
   const navigate = useNavigate();
   const [sampleCartDetails, setsampleCartDetails] = useState({});
-  const incrementCount = (index) => {
+  const incrementCount = (index, productitem) => {
     //debouncing logic
-
+    let value =
+      productitem?.productid?.maxOrderlimit <
+      sampleCartDetails["cartItems"][index]["quantity"] + 1;
+    if (value) {
+      return alert("Maximum Order limit exceeds");
+    }
     sampleCartDetails["cartItems"][index]["quantity"] += 1;
     setsampleCartDetails(JSON.parse(JSON.stringify(sampleCartDetails)));
 
     updateQuantityWithDebounce();
   };
 
-  function CartItemCountChange(index, value) {
+  function CartItemCountChange(index, value, productitem) {
+    let data = productitem?.productid?.maxOrderlimit < value;
+    if (data) {
+      return alert("Maximum Order limit exceeds");
+    }
     sampleCartDetails["cartItems"][index]["quantity"] = value;
     setsampleCartDetails(JSON.parse(JSON.stringify(sampleCartDetails)));
 
@@ -217,13 +226,15 @@ export const PharmacyCart = () => {
                             style={{ width: "40px", textAlign: "center" }}
                             value={item?.quantity}
                             onChange={(e) =>
-                              CartItemCountChange(index, e.target.value)
+                              CartItemCountChange(index, e.target.value, item)
                             }
                           />
                           <FontAwesomeIcon
                             style={{ cursor: "pointer" }}
                             icon={faPlus}
-                            onClick={() => incrementCount(index)}
+                            onClick={() => {
+                              incrementCount(index, item);
+                            }}
                           />
                         </div>
                       </td>

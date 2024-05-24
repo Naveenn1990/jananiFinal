@@ -39,6 +39,10 @@ function BookedLabTest() {
   const handleClose5 = () => setShow5(false);
   const handleShow5 = () => setShow5(true);
 
+  const [show6, setShow6] = useState(false);
+  const handleClose6 = () => setShow6(false);
+  const handleShow6 = () => setShow6(true);
+
   const componentRef = useRef();
   const handleprint = useReactToPrint({
     content: () => componentRef.current,
@@ -111,6 +115,8 @@ function BookedLabTest() {
   const [TestId, setTestId] = useState("");
   const [TestDetails, setTestDetails] = useState({});
 
+  const [Bookingid, setBookingid] = useState("");
+
   // Handle selection change
   const handleTestChange = (e) => {
     const selectedId = e.target.value;
@@ -134,6 +140,28 @@ function BookedLabTest() {
           hospitallabtestid: Labtests?._id,
           labtestid: TestId,
           patientReportVal: Labreport,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        handleClose5();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
+  const makePaymentDone = async () => {
+    try {
+      const config = {
+        url: "/updatePaymentStatus",
+        method: "put",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "application/json" },
+        data: {
+          bookingid: Bookingid,
+          paymentStatus: "PAID",
         },
       };
       let res = await axios(config);
@@ -265,6 +293,7 @@ function BookedLabTest() {
                 <th>Add Report</th>
                 <th>Invoice</th>
                 <th>View Report</th>
+                <th>Payment</th>
               </tr>
             </thead>
             <tbody>
@@ -382,6 +411,26 @@ function BookedLabTest() {
                         <b style={{ color: "red" }}>
                           Reports are not generated
                         </b>
+                      )}
+                    </td>
+                    <td>
+                      {item?.paymentStatus === "PAID" ? (
+                        <span style={{ color: "green" }}>
+                          <b>PAID</b>
+                        </span>
+                      ) : item?.Labtests?.length ===
+                        item?.Labtests?.filter((val) => val.patientReportVal)
+                          ?.length ? (
+                        <Button
+                          onClick={() => {
+                            setBookingid(item?._id);
+                            handleShow6();
+                          }}
+                        >
+                          Done
+                        </Button>
+                      ) : (
+                        <>--/--</>
                       )}
                     </td>
                   </tr>
@@ -866,7 +915,7 @@ function BookedLabTest() {
           </Modal.Header>
           <Modal.Body>
             <Row>
-              <FloatingLabel
+              {/* <FloatingLabel
                 className="col-md-6 p-2"
                 controlId="floatingName"
                 label="Name"
@@ -886,7 +935,7 @@ function BookedLabTest() {
                     );
                   })}
                 </Form.Select>
-              </FloatingLabel>
+              </FloatingLabel> */}
 
               <FloatingLabel
                 className="col-md-6 p-2"
@@ -900,8 +949,6 @@ function BookedLabTest() {
                   // onChange={(e) => setpatientname(e.target.value)}
                 />
               </FloatingLabel>
-            </Row>
-            <Row>
               <FloatingLabel
                 className="  col-md-6 p-2"
                 controlId="floatingMobile"
@@ -914,6 +961,8 @@ function BookedLabTest() {
                   // onChange={(e) => setPhoneno(e.target.value)}
                 />
               </FloatingLabel>
+            </Row>
+            <Row>
               <FloatingLabel
                 className="col-md-6 p-2"
                 controlId="floatingEmail"
@@ -926,8 +975,6 @@ function BookedLabTest() {
                   // onChange={(e) => setemail(e.target.value)}
                 />
               </FloatingLabel>
-            </Row>
-            <Row className="d-flex mt-2 justify-content-center mb-3">
               <FloatingLabel className="col-md-6 p-1" controlId="floatingName">
                 <Select
                   // defaultValue={[colourOptions[2], colourOptions[3]]}
@@ -940,6 +987,8 @@ function BookedLabTest() {
                   // onChange={AddLabTest}
                 />
               </FloatingLabel>
+            </Row>
+            <Row className="d-flex mt-2 justify-content-center mb-3">
               <FloatingLabel
                 className="col-md-6 "
                 controlId="floatingEmail"
@@ -983,7 +1032,10 @@ function BookedLabTest() {
             </Row> */}
 
             <Button
-              // onClick={bookLabTest}
+              onClick={() => {
+                alert("LAB Test Booked");
+                handleClose();
+              }}
               onHide={handleClose}
               className="col-md-12"
               style={{ backgroundColor: "white", color: "#20958C" }}
@@ -1156,6 +1208,54 @@ function BookedLabTest() {
                 }}
               >
                 SUBMIT
+              </button>
+            </div>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal size="md" show={show6} onHide={handleClose6}>
+          <Modal.Header>
+            <Modal.Title>Payment status</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <b>
+              Are you sure! Payment is{" "}
+              <span style={{ color: "green" }}>Done</span>
+            </b>
+          </Modal.Body>
+          <Modal.Footer>
+            <div style={{ display: "flex" }}>
+              <button
+                style={{
+                  backgroundColor: "grey",
+                  color: "white",
+                  // border: "none",
+                  borderRadius: "4px",
+                  border: "1px solid white",
+                  fontWeight: "600",
+                  marginRight: "20px",
+                  padding: "4px 10px",
+                }}
+                onClick={() => handleClose6()}
+              >
+                CANCEL
+              </button>
+
+              <button
+                style={{
+                  backgroundColor: "green",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  fontWeight: "600",
+                  border: "1px solid white",
+                  padding: "4px 10px",
+                }}
+                onClick={() => {
+                  makePaymentDone();
+                }}
+              >
+                DONE
               </button>
             </div>
           </Modal.Footer>

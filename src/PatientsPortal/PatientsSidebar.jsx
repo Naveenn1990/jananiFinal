@@ -29,8 +29,7 @@ import { faBell, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
 export default function PatientsSidebar() {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [DoctorM, setDoctorM] = useState(false);
   //  const [PatientM, setPatientM] = useState(false);
   //  const [LabM, setLabM] = useState(false);
@@ -69,17 +68,13 @@ export default function PatientsSidebar() {
         </div>
       )}
       {acc ? (
-        <div className="mobile-res" style={{overflowX:"scroll"}}>
+        <div className="mobile-res" style={{ overflowX: "scroll" }}>
           <div className="Patient-sidebar-page">
-          
-
             <div
               className={`Patient-sidebar  ${
                 acc ? "Patient-sidebar--open" : ""
               }`}
             >
-          
-
               <div
                 className="Patient-sidebar-position patient-sidebarItem"
                 onClick={() => window.location.assign("/patientdashboard")}
@@ -96,12 +91,19 @@ export default function PatientsSidebar() {
                 <span className="">Book Appointment</span>
               </div>
 
-              <div
+              {/* <div
                 className="Patient-sidebar-position patient-sidebarItem"
                 onClick={() => window.location.assign("/todayappointment")}
               >
                 <FontAwesomeIcon icon={faTable} />
                 <span>Todays Appointment</span>
+              </div> */}
+              <div
+                className="Patient-sidebar-position patient-sidebarItem"
+                onClick={() => window.location.assign("/yourappointment")}
+              >
+                <FontAwesomeIcon icon={faTable} />
+                <span>Your Appointment</span>
               </div>
 
               <div
@@ -120,13 +122,13 @@ export default function PatientsSidebar() {
                 <span>Medical Record</span>
               </div>
 
-              <div
+              {/* <div
                 className="Patient-sidebar-position patient-sidebarItem"
                 onClick={() => window.location.assign("/yourappointment")}
               >
                 <FontAwesomeIcon icon={faCalendarCheck} />
                 <span>Your Appointments</span>
-              </div>
+              </div> */}
 
               <div
                 className="Patient-sidebar-position patient-sidebarItem"
@@ -135,7 +137,7 @@ export default function PatientsSidebar() {
                 <FontAwesomeIcon icon={faFileInvoice} />
                 <span>Billings</span>
               </div>
-               <div
+              <div
                 className="Patient-sidebar-position patient-sidebarItem"
                 onClick={() => window.location.assign("/patientchat")}
               >
@@ -166,10 +168,7 @@ export default function PatientsSidebar() {
         <></>
       )}
 
-   
-
       <>
-       
         <div className="sidebar patient-mobile">
           <img
             className="d-flex m-auto"
@@ -185,7 +184,6 @@ export default function PatientsSidebar() {
           />
 
           <p
-         
             className="side-profile-name text-center"
             style={{
               fontSize: "25px",
@@ -193,7 +191,6 @@ export default function PatientsSidebar() {
               // fontFamily: "cursive",
               marginTop: "10px",
               color: "rgb(32 139 140)",
-             
             }}
           >
             {patientDetails.Firstname} {patientDetails.Lastname}
@@ -231,11 +228,17 @@ export default function PatientsSidebar() {
             >
               Book Appointment
             </h6>
-            <h6
+            {/* <h6
               className="sidebarItem1"
               onClick={() => window.location.assign("/todayappointment")}
             >
               Todays Appointment
+            </h6> */}
+            <h6
+              className="sidebarItem1"
+              onClick={() => window.location.assign("/yourappointment")}
+            >
+              Your Appointment
             </h6>
           </div>
 
@@ -263,7 +266,7 @@ export default function PatientsSidebar() {
             Medical Record
           </h6>
 
-          <h6
+          {/* <h6
             className="sidebarItem"
             onClick={() => window.location.assign("/yourappointment")}
           >
@@ -273,7 +276,7 @@ export default function PatientsSidebar() {
               style={{ marginRight: "5px", fontSize: "15px" }}
             />
             Your Appointments
-          </h6>
+          </h6> */}
 
           <h6
             className="sidebarItem"
@@ -363,4 +366,3 @@ export default function PatientsSidebar() {
     </div>
   );
 }
-

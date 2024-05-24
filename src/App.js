@@ -241,6 +241,7 @@ import { StaffAttendance } from "./Admin/StaffAttendance";
 import ReportsList from "./PatientsPortal/ReportsList";
 import MedicationChartAdd from "./Admin/PatientAdmitForms/MedicationChartAdd";
 import ProductType from "./Vendor/ProductType";
+import DiagnosticMyReport from "./Components/Diagnostic/DiagnosticMyReport";
 
 function App() {
   return (
@@ -658,6 +659,16 @@ function App() {
                 <>
                   <HeaderDiagnostic />
                   <DiagnosticMyProfile />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/diagnosticmyReports"
+              element={
+                <>
+                  <HeaderDiagnostic />
+                  <DiagnosticMyReport />
                   <Footer />
                 </>
               }
@@ -1936,14 +1947,14 @@ function App() {
             />
 
             <Route
-            path="/admin/StaffAttendance"
-            element={
-              <>
-                <PageLoaderA />
-                <Adminpanel children={<StaffAttendance />} />{" "}
-              </>
-            }
-          />
+              path="/admin/StaffAttendance"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<StaffAttendance />} />{" "}
+                </>
+              }
+            />
 
             <Route
               path="/admin/Inpatientlist"
@@ -1993,14 +2004,14 @@ function App() {
             ></Route>
 
             <Route
-            path="/admin/DoctorsAppointment"
-            element={
-              <>
-                <PageLoaderA />
-                <Adminpanel children={<DoctorsAppointment />} />{" "}
-              </>
-            }
-          ></Route>
+              path="/admin/DoctorsAppointment"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<DoctorsAppointment />} />{" "}
+                </>
+              }
+            ></Route>
 
             <Route
               path="/admin/Hospitallab"
@@ -2073,14 +2084,14 @@ function App() {
             ></Route>
 
             <Route
-            path="/admin/patientbillinvoice"
-            element={
-              <>
-                <PageLoaderA />
-                <Adminpanel children={<PatientBillInvoice />} />{" "}
-              </>
-            }
-          ></Route>
+              path="/admin/patientbillinvoice"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<PatientBillInvoice />} />{" "}
+                </>
+              }
+            ></Route>
 
             {/* <Route
             path="/admin/opdMedicineInvoice"
@@ -2131,14 +2142,14 @@ function App() {
             ></Route>
 
             <Route
-            path="/admin/addinventory"
-            element={
-              <>
-                <PageLoaderA />
-                <Adminpanel children={<AddProductInvetory />} />{" "}
-              </>
-            }
-          ></Route>
+              path="/admin/addinventory"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AddProductInvetory />} />{" "}
+                </>
+              }
+            ></Route>
 
             <Route
               path="/admin/ProductOrders"
@@ -2258,8 +2269,6 @@ function App() {
               }
             ></Route>
 
-           
-
             <Route
               path="/admin/Packages"
               element={
@@ -2310,8 +2319,7 @@ function App() {
             }
           ></Route> */}
 
-            
-          {/* <Route
+            {/* <Route
             path="/admin/AddManufacturerReturn"
             element={
               <>
