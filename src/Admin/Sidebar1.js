@@ -4,7 +4,7 @@ import "./Adminpanel.css";
 import { RxDashboard } from "react-icons/rx";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 
 export default function Sidebar1() {
   const navigate = useNavigate();
@@ -181,7 +181,17 @@ export default function Sidebar1() {
             >
               Add Vendor
             </h6>
-
+    {/* v6 */}
+    <Link to="/admin/VendorAddedProduct">
+    <h6
+              className="sidebarItem1"
+              // onClick={() => window.location.assign("/admin/VendorAddedProduct")}
+            >
+              Vendor Added Products
+            </h6>
+    </Link>
+            
+   {/* v6 */}
             <h6
               className="sidebarItem1"
               onClick={() => window.location.assign("/admin/ProductOrders")}

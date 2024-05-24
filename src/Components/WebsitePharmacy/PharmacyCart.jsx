@@ -207,6 +207,7 @@ export const PharmacyCart = () => {
                         />
                       </td>
                       <td>{item?.productid?.productName}</td>
+{/* the input quan box */}
                       <td>
                         <div
                           className="d-flex gap-3 align-items-center justify-content-evenly fs-6"
@@ -238,6 +239,7 @@ export const PharmacyCart = () => {
                           />
                         </div>
                       </td>
+{/* the input quan box ends */}
                       <td>
                         {(
                           (Number(item?.totalPrice) /
