@@ -437,6 +437,8 @@ export const PatientsList = () => {
             </button>
           </div>
         </Modal.Footer> */}
+
+        
       </Modal>
       <Modal size="lg" show={show1} onHide={medHistoryClose1}>
         <Modal.Header className="all-bg-green text-light">

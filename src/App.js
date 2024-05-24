@@ -242,6 +242,8 @@ import ReportsList from "./PatientsPortal/ReportsList";
 import MedicationChartAdd from "./Admin/PatientAdmitForms/MedicationChartAdd";
 import ProductType from "./Vendor/ProductType";
 import DiagnosticMyReport from "./Components/Diagnostic/DiagnosticMyReport";
+import VendorAddedProducts from "./Admin/VendorAddedProducts";
+import VendorAddedProductCart from "./Admin/VendorAddedProductCart";
 
 function App() {
   return (
@@ -2141,6 +2143,28 @@ function App() {
               }
             ></Route>
 
+        {/* v6 */}
+        <Route
+              path="/admin/VendorAddedProduct"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<VendorAddedProducts />} />{" "}
+                </>
+              }
+            ></Route>
+        {/* v6 */}
+           {/* v6 */}
+           <Route
+              path="/admin/VendorAddedProductCart"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<VendorAddedProductCart />} />{" "}
+                </>
+              }
+            ></Route>
+        {/* v6 */}
             <Route
               path="/admin/addinventory"
               element={
