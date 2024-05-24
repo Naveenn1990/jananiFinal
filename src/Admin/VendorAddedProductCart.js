@@ -17,6 +17,17 @@ const VendorAddedProductCart = () => {
 
     const [ProductList, setProductList] = useState([]);
 
+    // date filter 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  // Adding 1 to month because getMonth() returns zero-based month (0 = January)
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+// date filter
+
     const getProductList = () => {
         axios
           .get("http://localhost:8521/api/vendor/productList")
@@ -37,6 +48,9 @@ const VendorAddedProductCart = () => {
 
   return (
     <div className='p-5'>
+       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
+        Vendor Products Cart
+      </h4>
         <div className='Table-container'>
         <Table className="table " responsive style={{ width: "1500px" }}>
           <thead>
@@ -69,8 +83,9 @@ const VendorAddedProductCart = () => {
                   <td>{item?.productPrice}</td>
                   {/* <td>{item?.currencyFormat}</td>
                   <td>{item?.productType}</td> */}
-                  <td>{item?.manufacturingDate}</td>
-                  <td>{item?.expiryDate}</td>
+                 <td>{formatDate(item?.manufacturingDate)}</td>
+                 <td>{formatDate(item?.expiryDate)}</td>
+
                   <td>{item?.discount}</td>
                   {/* <td>{item?.packSize}</td>
                   <td>{item?.colour}</td>
