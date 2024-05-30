@@ -1,55 +1,45 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Table } from "react-bootstrap";
-import { AiFillDelete, AiOutlineCheckCircle } from "react-icons/ai";
+import { Button, Form, Modal, Table } from "react-bootstrap";
+import { AiOutlineCheckCircle } from "react-icons/ai";
 import {
   BsFillCalendar2PlusFill,
   BsFillCalendarCheckFill,
-  BsFillEyeFill,
 } from "react-icons/bs";
-import { MdEdit, MdOutlineCancel } from "react-icons/md";
+import { MdDelete, MdOutlineCancel } from "react-icons/md";
 import { FaUserMd } from "react-icons/fa";
-import { GrDocument, GrDocumentText } from "react-icons/gr";
 import { HiCurrencyRupee, HiDocumentText } from "react-icons/hi";
 import { TbBrandBooking } from "react-icons/tb";
 import { GiToken } from "react-icons/gi";
-import { IoMdCalendar } from "react-icons/io";
 import axios from "axios";
 import moment from "moment/moment";
 
 export default function Hospitaldoctors() {
   const [View, setView] = useState({});
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const [show1, setShow1] = useState(false);
-
   const handleClose1 = () => setShow1(false);
   const handleShow1 = () => setShow1(true);
 
   const [show2, setShow2] = useState(false);
-
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
 
   const [show4, setShow4] = useState(false);
-
   const handleClose4 = () => setShow4(false);
   const handleShow4 = () => setShow4(true);
 
   const [show5, setShow5] = useState(false);
-
   const handleClose5 = () => setShow5(false);
   const handleShow5 = () => setShow5(true);
 
   const [show6, setShow6] = useState(false);
-
   const handleClose6 = () => setShow6(false);
   const handleShow6 = () => setShow6(true);
 
   const [show7, setShow7] = useState(false);
-
   const handleClose7 = () => setShow7(false);
   const handleShow7 = () => setShow7(true);
 
@@ -102,8 +92,6 @@ export default function Hospitaldoctors() {
     }
   }
 
-  const [medications, setmedications] = useState();
-
   const [doctorfirstname, setdoctorfirstname] = useState("");
   const [doctorlastname, setdoctorlastname] = useState("");
   const [gender, setgender] = useState("");
@@ -122,37 +110,6 @@ export default function Hospitaldoctors() {
   const [password, setpassword] = useState("");
   const [conpassword, setconpassword] = useState("");
   const formdata = new FormData();
-
-  //  const addbanner = async (e) => {
-  //   e.preventDefault();
-  //   if (!Advertiseimg) {
-  //     alert("Please Select Advertise Image");
-  //   } else {
-  //     formdata.append("Advertiseimage", Advertiseimg);
-  //     formdata.append("Link", AdvertiseLink);
-  //     formdata.append("Text", AdvertiseText);
-
-  //     formdata.append("category", category);
-  //     try {
-  //       const config = {
-  //         url: "/addAdvertise",
-  //         method: "post",
-  //         baseURL: "https://nalaa.mobi/api/admin",
-  //         data: formdata,
-  //       };
-  //       await axios(config).then(function (res) {
-  //         if ((res.status = 200)) {
-  //           console.log("success");
-  //           alert("Advertise Added");
-  //           window.location.reload();
-  //         }
-  //       });
-  //     } catch (error) {
-  //       console.log(error);
-  //       alert("Advertise not added");
-  //     }
-  //   }
-  // };
 
   const signup = async () => {
     if (
@@ -203,7 +160,6 @@ export default function Hospitaldoctors() {
   };
 
   const [Doctors, setDoctors] = useState([]);
-
   const getDoctors = () => {
     axios
       .get("http://localhost:8521/api/Doctor/getDoctorsList")
@@ -222,6 +178,7 @@ export default function Hospitaldoctors() {
       });
   };
 
+  console.log("check", Doctors);
   // ======================================================
 
   const [mondayweekoff, setmondayweekoff] = useState("false");
@@ -379,6 +336,31 @@ export default function Hospitaldoctors() {
     }
   };
 
+  const addAppoinbtmentSchedule = async (e) => {
+    e.preventDefault();
+    try {
+      const config = {
+        url: `/Doctor/addappointmentschedule/${View?._id}`,
+        method: "put",
+        baseURL: "http://localhost:8521/api",
+        headers: { "Content-Type": "application/json" },
+        data: {
+          scheduleList: scheduleList,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        getDoctors();
+        setShow6(false);
+        alert(res.data.success);
+        setScheduleList("");
+      }
+    } catch (error) {
+      console.log(error);
+      alert(error.response.data.message);
+    }
+  };
+
   const addAppointmentCharge = async (e) => {
     e.preventDefault();
     try {
@@ -468,6 +450,41 @@ export default function Hospitaldoctors() {
     GetDepartment();
   }, []);
 
+  const [scheduleDate, setScheduleDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+
+  const handleTimeChange = (e, setTime) => {
+    const [hours, minutes] = e.target.value.split(":");
+    const period = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 || 12;
+    const formattedTime = `${String(formattedHours).padStart(
+      2,
+      "0"
+    )}:${minutes} ${period}`;
+    setTime(formattedTime);
+    console.log(formattedTime); // Here you can send the formatted time to your database
+  };
+  const [scheduleList, setScheduleList] = useState([]);
+  const AddSchedule = () => {
+    const newSchedule = {
+      scheduleDate,
+      startTime,
+      endTime,
+      bookingstatus: "Vacancy",
+    };
+    setScheduleList([...scheduleList, newSchedule]);
+    // setScheduleDate('');
+    // setStartTime('');
+    // setEndTime('');
+  };
+  console.log("SeheduleList", scheduleList);
+  const deleteSchedule = (indexToDelete) => {
+    const updatedScheduleList = scheduleList.filter(
+      (_, index) => index !== indexToDelete
+    );
+    setScheduleList(updatedScheduleList);
+  };
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -1361,7 +1378,7 @@ export default function Hospitaldoctors() {
             <Modal.Title>Add Doctor Schedule</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Table responsive="md" style={{ marginTop: "1%" }}>
+            {/* <Table responsive="md" style={{ marginTop: "1%" }}>
               <thead>
                 <tr style={{ fontSize: "15px", textAlign: "center" }}>
                   <th>WeekOff</th>
@@ -1477,7 +1494,6 @@ export default function Hospitaldoctors() {
                   <td>
                     <input
                       type="checkbox"
-                      // checked={View?.wednesdayweekoff}
                       checked={
                         wednesdayweekstatus
                           ? wednesdayweekoff
@@ -1527,7 +1543,6 @@ export default function Hospitaldoctors() {
                   <td>
                     <input
                       type="checkbox"
-                      // checked={View?.thrusdayweekoff}
                       checked={
                         thrusdayweekstatus
                           ? thrusdayweekoff
@@ -1577,7 +1592,6 @@ export default function Hospitaldoctors() {
                   <td>
                     <input
                       type="checkbox"
-                      // checked={View?.fridayweekoff}
                       checked={
                         fridayweekstatus ? fridayweekoff : View?.fridayweekoff
                       }
@@ -1625,7 +1639,6 @@ export default function Hospitaldoctors() {
                   <td>
                     <input
                       type="checkbox"
-                      // checked={View?.saturdayweekoff}
                       checked={
                         saturdayweekstatus
                           ? saturdayweekoff
@@ -1675,7 +1688,6 @@ export default function Hospitaldoctors() {
                   <td>
                     <input
                       type="checkbox"
-                      // checked={View?.sundayweekoff}
                       checked={
                         sundayweekstatus ? sundayweekoff : View?.sundayweekoff
                       }
@@ -1714,6 +1726,64 @@ export default function Hospitaldoctors() {
                   </td>
                 </tr>
               </tbody>
+            </Table> */}
+            <Table bordered>
+              <thead>
+                <th> Date </th>
+                <th> Start Time </th>
+                <th> End Time </th>
+                <th> Action </th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <Form.Group className="mb-3">
+                      <Form.Control
+                        onChange={(e) => setScheduleDate(e.target.value)}
+                        className="vi_0"
+                        type="date"
+                        min={new Date().toISOString().split("T")[0]}
+                      />
+                    </Form.Group>
+                  </td>
+                  <td>
+                    <Form.Group className="mb-3">
+                      <Form.Control
+                        className="vi_0"
+                        type="time"
+                        onChange={(e) => handleTimeChange(e, setStartTime)}
+                      />
+                    </Form.Group>
+                  </td>
+                  <td>
+                    <Form.Group className="mb-3">
+                      <Form.Control
+                        className="vi_0"
+                        type="time"
+                        onChange={(e) => handleTimeChange(e, setEndTime)}
+                      />
+                    </Form.Group>
+                  </td>
+                  <td>
+                    <Button onClick={AddSchedule}>Add</Button>
+                  </td>
+                </tr>
+                {scheduleList?.map((item, i) => {
+                  return (
+                    <tr>
+                      <td>{item?.scheduleDate}</td>
+                      <td>{item?.startTime}</td>
+                      <td>{item?.endTime}</td>
+                      <td>
+                        <MdDelete
+                          onClick={() => deleteSchedule(i)}
+                          style={{ color: "red" }}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
             </Table>
           </Modal.Body>
           <Modal.Footer>
@@ -1722,7 +1792,6 @@ export default function Hospitaldoctors() {
                 style={{
                   backgroundColor: "grey",
                   color: "white",
-                  border: "none",
                   borderRadius: "4px",
                   fontWeight: "600",
                   marginRight: "20px",
@@ -1740,14 +1809,13 @@ export default function Hospitaldoctors() {
                 style={{
                   backgroundColor: "orange",
                   color: "white",
-                  border: "none",
                   borderRadius: "4px",
                   border: "1px solid white",
                   fontWeight: "600",
                   padding: "4px 10px",
                 }}
                 onClick={(e) => {
-                  addSchedule(e);
+                  addAppoinbtmentSchedule(e);
                 }}
               >
                 SUBMIT
@@ -1761,7 +1829,7 @@ export default function Hospitaldoctors() {
             <Modal.Title>Doctor Schedule</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Table responsive="md" style={{ marginTop: "1%" }}>
+            {/* <Table responsive="md" style={{ marginTop: "1%" }}>
               <thead>
                 <tr style={{ fontSize: "15px", textAlign: "center" }}>
                   <th>WeekOff</th>
@@ -2302,8 +2370,44 @@ export default function Hospitaldoctors() {
                   }
                 )}
               </tbody>
+            </Table> */}
+            <Table style={{backgroundColor:"white"}} bordered>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Start Time </th>
+                  <th>End Time</th>
+                  <th>Schedule</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {View?.scheduleList?.map((item, i) => {
+                  return (
+                    <tr>
+                      <td>{item?.scheduleDate}</td>
+                      <td>{item?.startTime}</td>
+                      <td>{item?.endTime}</td>
+                      <td>
+                        {item?.bookingstatus === "Vacancy" ? (<>
+                        <b style={{color:"green"}}>{item?.bookingstatus}</b>
+                        </>):(<>
+                          <b style={{color:"red",fontSize:"20px"}}>{item?.bookingstatus}</b>
+                        </>)}
+                        
+                        </td>
+                      <td><MdDelete style={{color:"red"}}/></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
             </Table>
           </Modal.Body>
+          <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose7}>
+            Close
+          </Button>         
+        </Modal.Footer>
         </Modal>
 
         <Modal show={show8} onHide={handleClose8}>

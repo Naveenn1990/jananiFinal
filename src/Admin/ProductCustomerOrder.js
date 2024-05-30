@@ -1,10 +1,11 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Container, Table, Button, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo, faTag } from "@fortawesome/free-solid-svg-icons";
 import Carousel from "react-multi-carousel";
 import moment from "moment/moment";
+import { useReactToPrint } from "react-to-print";
 
 export default function ProductCustomerOrder() {
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
@@ -36,9 +37,19 @@ export default function ProductCustomerOrder() {
   const [orders, setOrders] = useState([]);
 
   const [show1, setShow1] = useState(false);
-
   const handleClose1 = () => setShow1(false);
   const handleShow1 = () => setShow1(true);
+
+  const [show2, setShow2] = useState(false);
+  const handleClose2 = () => setShow2(false);
+  const handleShow2 = () => setShow2(true);
+  const componentRef = useRef();
+  const handleprint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: "PharmacyOrderInvoice",
+    // onAfterPrint: () => alert("print successfully"),
+  });
+
   const orderList = async () => {
     try {
       const res = await axios.get(
@@ -53,7 +64,7 @@ export default function ProductCustomerOrder() {
   };
   console.log("orders: ", orders);
 
-  //   change order status...
+  //   change order status...For Delivery
   const changeorderStatus = async (orderid, orderStatus) => {
     try {
       const config = {
@@ -68,6 +79,7 @@ export default function ProductCustomerOrder() {
       };
       const res = await axios(config);
       if (res.status === 200) {
+        // setOrders(res.data.updateStatus);
         orderList();
         alert(res.data.success);
       }
@@ -85,7 +97,8 @@ export default function ProductCustomerOrder() {
       orderList();
     }
   }, []);
-
+  const [Invoice, setInvoice] = useState({});
+  console.log("Invoice", Invoice);
   return (
     <div>
       <Container className="p-3">
@@ -161,7 +174,7 @@ export default function ProductCustomerOrder() {
           </div>
         </div>
         <div>
-          <Table responsive>
+          <Table responsive bordered>
             <thead>
               <th>OrderId</th>
               <th>Customer</th>
@@ -214,7 +227,6 @@ export default function ProductCustomerOrder() {
                           }}
                         />
                       </td>
-
                       <td>
                         {details?.orderStatus === "PLACED_ORDER" ? (
                           <div>
@@ -264,9 +276,16 @@ export default function ProductCustomerOrder() {
                           >
                             Delivered
                           </Button>
-                        ) : (
-                          <></>
-                        )}
+                        ) : details?.orderStatus === "DELIVERED" ? (
+                          <Button
+                            onClick={() => {
+                              handleShow2();
+                              setInvoice(details);
+                            }}
+                          >
+                            Invoice
+                          </Button>
+                        ) : null}
                       </td>
                     </tr>
                   );
@@ -274,8 +293,6 @@ export default function ProductCustomerOrder() {
             </tbody>
           </Table>
 
-          {/* This below model is remaining after adding the order from customer I will integrate this model */}
-          {/* information of specific Order */}
           <Modal size="lg" show={show1} onHide={handleClose1}>
             <Modal.Header>
               <Modal.Title>Order Info</Modal.Title>
@@ -493,6 +510,162 @@ export default function ProductCustomerOrder() {
                 SUBMIT
               </button> */}
               </div>
+            </Modal.Footer>
+          </Modal>
+          <Modal show={show2} onHide={handleClose2} size="lg">
+            <Modal.Header closeButton>
+              <Modal.Title>Modal heading</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div ref={componentRef}>
+                <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+                  <div
+                    className="invoice-rspns"
+                    style={{
+                      boxShadow: " 0px 8px 32px 0px rgba(19, 19, 20, 0.37)",
+                      background: "#f5f6fa",
+                      backdropFilter: "blur(4px)",
+                      padding: "50px",
+                    }}
+                  >
+                    <div className="">
+                      <div className="mb-5">
+                        <img
+                          style={{ width: "40px", height: "40px" }}
+                          className="logo me-2 "
+                          src="/img/logo.jpg"
+                          alt="Logo"
+                        />{" "}
+                        <br />
+                        <span
+                          className="fw-bold fs-4"
+                          style={{ color: "rgb(32 139 140)" }}
+                        >
+                          JANANI
+                        </span>
+                        <br />
+                        <span>JananiPharmacy@gmail.com</span>
+                        <br />
+                        <span>+91 9921299334</span>
+                        <br />
+                        <span>Singapur Layout, Banglore</span>
+                        <br />
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-between mb-5">
+                      <div className="">
+                        <span className="fw-bold text-dark">BILL TO:</span>{" "}
+                        <br />
+                        <span>{Invoice?.name}</span>
+                        <br />
+                        <span>{Invoice?.number}</span>
+                        <br />
+                        <span>
+                          {Invoice?.shippingAddress},{Invoice?.city},
+                          {Invoice?.zipcode}
+                        </span>
+                      </div>
+
+                      <div className="">
+                        <span className="fw-bold text-dark">
+                          Order Details:
+                        </span>
+                        <br />
+                        <p>
+                          <span className="fw-bold">INVOICE DATE : </span>{" "}
+                          {moment(Invoice?.updatedAt).format("DD/MM/YYYY")}
+                        </p>
+                        <p>
+                          <span className="fw-bold">INVOICE NUMBER : </span>
+                          {Invoice?._id}
+                        </p>
+                      </div>
+                    </div>
+
+                    <table className="table table-bordered border-dark">
+                      <thead>
+                        <tr className="admin-table-head">
+                          <th className="fw-bold">SL No</th>
+                          <th className="fw-bold">Item</th>
+                          <th className="fw-bold">Price</th>
+                          <th className="fw-bold">Quantity</th>
+                          <th className="fw-bold">Amount</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {Invoice?.orderedItems?.map((item, i) => {
+                          return (
+                            <tr>
+                              <td>{i+1}</td>
+                              <td>{item?.productid?.productName}</td>
+                              <td>&#8377;{item?.productid?.productPrice}</td>
+                              <td>{item?.quantity}</td>
+                              <td>₹5025</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+
+                    <div className=" d-flex justify-content-end">
+                      <table
+                        className="table table-borderless"
+                        style={{ width: "200px" }}
+                      >
+                        <tbody>
+                          <tr>
+                            <td className="fw-bold p-0 text-start">
+                              Total Quantity :
+                            </td>
+                            <td className="p-0 text-end">{Invoice?.totalOrderedItems}</td>
+                          </tr>
+                          <tr>
+                            <td className="fw-bold p-0 text-start">Total :</td>
+                            <td className="p-0 text-end">&#8377;{Invoice?.totalOrderedPrice}</td>
+                          </tr>
+                          {/* <tr>
+                            <td className="fw-bold p-0 text-start">
+                              Discount :
+                            </td>
+                            <td className="p-0 text-end">&#8377;20</td>
+                          </tr> */}
+                          {/* <tr>
+                            <td className="fw-bold p-0 text-start">Gst :</td>
+                            <td className="p-0 text-end">&#8377;20</td>
+                          </tr> */}
+                          {/* <tr>
+                            <td className="fw-bold p-0 text-start">
+                              Grand Total:
+                            </td>
+                            <td className="p-0 text-end">&#8377;2020</td>
+                          </tr> */}
+                          {/* <tr>
+                            <td className="fw-bold p-0 text-start">Status :</td>
+                            <td className="p-0 text-end">Paid</td>
+                          </tr> */}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div className="text-center text-dark ">
+                      <p>Thanks For Shoping. </p>
+                      <p>
+                        Sales Invoice Generated By: Janani Hospital, Contact :
+                        JananiHospital@gamil.com{" "}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose2}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={handleprint}>
+                Print
+              </Button>
             </Modal.Footer>
           </Modal>
         </div>

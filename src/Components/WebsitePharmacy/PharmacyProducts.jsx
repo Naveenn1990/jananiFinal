@@ -46,6 +46,7 @@ const PharmacyProducts = ({min, max}) => {
         setcategoryList(error.response.data.allcategory);
       }
     };
+
     const [ProductList, setProductList] = useState([]);
     const getAllProducts = async () => {
       try {
@@ -60,6 +61,7 @@ const PharmacyProducts = ({min, max}) => {
         setProductList(error.response.data.inventoryList);
       }
     };
+    console.log("ProductList",ProductList);
     const [wishlistData, setWishlistData] = useState({});
     const getWishlist = async () => {
       try {

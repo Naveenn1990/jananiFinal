@@ -7,8 +7,7 @@ import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { CiBarcode } from "react-icons/ci";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+
 import { useReactToPrint } from "react-to-print";
 import { GrView } from "react-icons/gr";
 import moment from "moment";

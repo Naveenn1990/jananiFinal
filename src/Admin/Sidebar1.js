@@ -4,7 +4,7 @@ import "./Adminpanel.css";
 import { RxDashboard } from "react-icons/rx";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Sidebar1() {
   const navigate = useNavigate();
@@ -181,23 +181,34 @@ export default function Sidebar1() {
             >
               Add Vendor
             </h6>
-    {/* v6 */}
-    <Link to="/admin/VendorAddedProduct">
-    <h6
-              className="sidebarItem1"
-              // onClick={() => window.location.assign("/admin/VendorAddedProduct")}
-            >
-              Vendor Added Products
-            </h6>
-    </Link>
-            
-   {/* v6 */}
+            {/* v6 */}
+            <Link to="/admin/VendorAddedProduct">
+              <h6
+                className="sidebarItem1"
+                // onClick={() => window.location.assign("/admin/VendorAddedProduct")}
+              >
+                Vendor Added Products
+              </h6>
+            </Link>
+
+            {/* v6 */}
+            <Link to={"/admin/VendorAddedProductsStatus"}>
             <h6
+              className="sidebarItem1"
+              // onClick={() =>
+              //   window.location.assign("/admin/VendorAddedProductsStatus")
+              // }
+            >
+              Order History
+            </h6>
+            </Link>
+           
+            {/* <h6
               className="sidebarItem1"
               onClick={() => window.location.assign("/admin/ProductOrders")}
             >
               Order History
-            </h6>
+            </h6> */}
             <h6
               className="sidebarItem1"
               onClick={() =>
@@ -348,11 +359,8 @@ export default function Sidebar1() {
             Enquiries & Complaints
           </h6>
 
-          <h6
-            className="sidebarItem"
-            onClick={() =>logoutAdmin()}
-          >
-            Logout 
+          <h6 className="sidebarItem" onClick={() => logoutAdmin()}>
+            Logout
           </h6>
         </>
       ) : (

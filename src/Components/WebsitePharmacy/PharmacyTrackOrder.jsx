@@ -1,9 +1,5 @@
-import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { Button, Container, Table, Modal } from "react-bootstrap";
-import { BsDot } from "react-icons/bs";
-import { FaSlack } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Headerpharmacy } from "./headerpharmacy";
 import axios from "axios";

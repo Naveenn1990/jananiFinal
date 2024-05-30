@@ -1,44 +1,24 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
   faTimes,
-  faCogs,
   faTable,
-  faList,
-  faUser,
   faHouse,
   faBook,
-  faCalendarCheck,
   faCommentMedical,
   faFileInvoice,
   faFileMedical,
-  faGears,
   faNotesMedical,
   faPowerOff,
   faHospitalUser,
   faPenToSquare,
 } from "@fortawesome/free-solid-svg-icons";
-
-import { Dropdown } from "react-bootstrap";
-import { RxDashboard } from "react-icons/rx";
-import { MdAdminPanelSettings } from "react-icons/md";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { faBell, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function PatientsSidebar() {
-  const navigate = useNavigate();
   const [DoctorM, setDoctorM] = useState(false);
-  //  const [PatientM, setPatientM] = useState(false);
-  //  const [LabM, setLabM] = useState(false);
-  //  const [SerM, setSerM] = useState(false);
-  //  const [PharM, setPharM] = useState(false);
-  //  const [HosM, setHosM] = useState(false);
-  //  const [SelectedItem, setSelectedItem] = useState(1);
-  //  const [sideshow, setsideshow] = useState(false)
-
   let patientDetails = JSON.parse(sessionStorage.getItem("PatientUser"));
 
   const [isOpen, setIsOpen] = useState(false);
@@ -82,29 +62,25 @@ export default function PatientsSidebar() {
                 <FontAwesomeIcon icon={faHouse} />
                 <span>Dashboard</span>
               </div>
+              <Link to={"/bookappointment"}>
+                <div
+                  className="Patient-sidebar-position patient-sidebarItem"
+                  // onClick={() => window.location.assign("/bookappointment")}
+                >
+                  <FontAwesomeIcon icon={faHospitalUser} />
+                  <span className="">Book Appointment</span>
+                </div>
+              </Link>
 
-              <div
-                className="Patient-sidebar-position patient-sidebarItem"
-                onClick={() => window.location.assign("/bookappointment")}
-              >
-                <FontAwesomeIcon icon={faHospitalUser} />
-                <span className="">Book Appointment</span>
-              </div>
-
-              {/* <div
-                className="Patient-sidebar-position patient-sidebarItem"
-                onClick={() => window.location.assign("/todayappointment")}
-              >
-                <FontAwesomeIcon icon={faTable} />
-                <span>Todays Appointment</span>
-              </div> */}
-              <div
-                className="Patient-sidebar-position patient-sidebarItem"
-                onClick={() => window.location.assign("/yourappointment")}
-              >
-                <FontAwesomeIcon icon={faTable} />
-                <span>Your Appointment</span>
-              </div>
+              <Link to={"/yourappointment"}>
+                <div
+                  className="Patient-sidebar-position patient-sidebarItem"
+                  // onClick={() => window.location.assign("/yourappointment")}
+                >
+                  <FontAwesomeIcon icon={faTable} />
+                  <span>Your Appointment</span>
+                </div>
+              </Link>
 
               <div
                 className="Patient-sidebar-position patient-sidebarItem"
@@ -193,7 +169,8 @@ export default function PatientsSidebar() {
               color: "rgb(32 139 140)",
             }}
           >
-            {patientDetails.Firstname} {patientDetails.Lastname}
+            {patientDetails?.Firstname} {patientDetails?.Lastname} (
+            {patientDetails?.registrationType})
           </p>
 
           <hr />
@@ -222,49 +199,57 @@ export default function PatientsSidebar() {
               backgroundColor: "#d0f7f4",
             }}
           >
-            <h6
-              className="sidebarItem1"
-              onClick={() => window.location.assign("/bookappointment")}
-            >
-              Book Appointment
-            </h6>
+            <Link to={"/bookappointment"}>
+              <h6
+                className="sidebarItem1"
+                // onClick={() => window.location.assign("/bookappointment")}
+              >
+                Book Appointment
+              </h6>
+            </Link>
+
             {/* <h6
               className="sidebarItem1"
               onClick={() => window.location.assign("/todayappointment")}
             >
               Todays Appointment
             </h6> */}
-            <h6
-              className="sidebarItem1"
-              onClick={() => window.location.assign("/yourappointment")}
-            >
-              Your Appointment
-            </h6>
+            <Link to={"/yourappointment"}>
+              <h6
+                className="sidebarItem1"
+                // onClick={() => window.location.assign("/yourappointment")}
+              >
+                Your Appointment
+              </h6>
+            </Link>
           </div>
+          <Link to={"/prescription"}>
+            <h6
+              className="sidebarItem"
+              // onClick={() => window.location.assign("/prescription")}
+            >
+              {" "}
+              <FontAwesomeIcon
+                icon={faFileMedical}
+                style={{ marginRight: "5px", fontSize: "15px" }}
+              />
+              Prescription
+            </h6>
+          </Link>
 
-          <h6
-            className="sidebarItem"
-            onClick={() => window.location.assign("/prescription")}
-          >
-            {" "}
-            <FontAwesomeIcon
-              icon={faFileMedical}
-              style={{ marginRight: "5px", fontSize: "15px" }}
-            />
-            Prescription
-          </h6>
-
-          <h6
-            className="sidebarItem"
-            onClick={() => window.location.assign("/patientmedicalrecord")}
-          >
-            {" "}
-            <FontAwesomeIcon
-              icon={faNotesMedical}
-              style={{ marginRight: "5px", fontSize: "15px" }}
-            />
-            Medical Record
-          </h6>
+          <Link to={"/patientmedicalrecord"}>
+            <h6
+              className="sidebarItem"
+              // onClick={() => window.location.assign("/patientmedicalrecord")}
+            >
+              {" "}
+              <FontAwesomeIcon
+                icon={faNotesMedical}
+                style={{ marginRight: "5px", fontSize: "15px" }}
+              />
+              Past medical Observation
+            </h6>
+          </Link>
 
           {/* <h6
             className="sidebarItem"
@@ -313,18 +298,20 @@ export default function PatientsSidebar() {
         />
         Admission Form(IPD)
       </h6> */}
-
-          <h6
-            className="sidebarItem"
-            onClick={() => window.location.assign("/patientConsentForms")}
-          >
-            {" "}
-            <FontAwesomeIcon
-              icon={faFileInvoice}
-              style={{ marginRight: "5px", fontSize: "15px" }}
-            />
-            Consent Forms
-          </h6>
+          {patientDetails?.registrationType === "IPD" ? (
+            <Link to={"/patientConsentForms"}>
+              <h6 className="sidebarItem">
+                {" "}
+                <FontAwesomeIcon
+                  icon={faFileInvoice}
+                  style={{ marginRight: "5px", fontSize: "15px" }}
+                />
+                Consent Forms
+              </h6>
+            </Link>
+          ) : (
+            ""
+          )}
 
           <h6
             className="sidebarItem"
@@ -352,7 +339,7 @@ export default function PatientsSidebar() {
 
           <h6
             className="sidebarItem"
-            onClick={() => window.location.assign("/")}
+            onClick={() => window.location.assign("/home")}
           >
             {" "}
             <FontAwesomeIcon

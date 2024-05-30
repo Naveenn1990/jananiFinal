@@ -5,10 +5,7 @@ import {
     AiFillFileExcel,
     AiOutlinePlusCircle,
 } from "react-icons/ai";
-import { BsFillEyeFill } from "react-icons/bs";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { FaUserMd } from "react-icons/fa";
-import { ImLab } from "react-icons/im";
 
 export default function LabourWard() {
     const [show, setShow] = useState(false);

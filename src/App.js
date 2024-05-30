@@ -244,6 +244,8 @@ import ProductType from "./Vendor/ProductType";
 import DiagnosticMyReport from "./Components/Diagnostic/DiagnosticMyReport";
 import VendorAddedProducts from "./Admin/VendorAddedProducts";
 import VendorAddedProductCart from "./Admin/VendorAddedProductCart";
+import ProductStatus from "./Vendor/ProductStatus";
+import VendorAddedProductsStatus from "./Admin/VendorAddedProductsStatus";
 
 function App() {
   return (
@@ -1381,20 +1383,32 @@ function App() {
                 />
               }
             />
-{/* Product types */}
-<Route
-              path="/vendorproducttype"
+            <Route
+              path="/productstatus"
               element={
                 <VendorCommanDashboard
                   children={
                     <>
-                      <ProductType/>
+                      <ProductStatus />
                     </>
                   }
                 />
               }
             />
-{/* Product types */}
+            {/* Product types */}
+            <Route
+              path="/vendorproducttype"
+              element={
+                <VendorCommanDashboard
+                  children={
+                    <>
+                      <ProductType />
+                    </>
+                  }
+                />
+              }
+            />
+            {/* Product types */}
 
             <Route
               path="/vendorsettings"
@@ -2143,8 +2157,8 @@ function App() {
               }
             ></Route>
 
-        {/* v6 */}
-        <Route
+            {/* v6 */}
+            <Route
               path="/admin/VendorAddedProduct"
               element={
                 <>
@@ -2153,9 +2167,18 @@ function App() {
                 </>
               }
             ></Route>
-        {/* v6 */}
-           {/* v6 */}
-           <Route
+            <Route
+              path="/admin/VendorAddedProductsStatus"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<VendorAddedProductsStatus />} />{" "}
+                </>
+              }
+            ></Route>
+            {/* v6 */}
+            {/* v6 */}
+            <Route
               path="/admin/VendorAddedProductCart"
               element={
                 <>
@@ -2164,7 +2187,7 @@ function App() {
                 </>
               }
             ></Route>
-        {/* v6 */}
+            {/* v6 */}
             <Route
               path="/admin/addinventory"
               element={

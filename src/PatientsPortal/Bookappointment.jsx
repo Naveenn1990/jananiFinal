@@ -1,16 +1,9 @@
-import { faEye } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Label from "react-bootstrap/FormLabel";
 import React, { useEffect, useState } from "react";
 import { Button, Container, FloatingLabel, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export const Bookappointment = () => {
   const user = JSON.parse(sessionStorage.getItem("PatientUser"));
-
-  const navigate = useNavigate();
-
   const [patientfirstname, setpatientfirstname] = useState("");
   const [patientlastname, setpatientlastname] = useState("");
   const [gender, setgender] = useState("");
@@ -21,12 +14,12 @@ export const Bookappointment = () => {
   const [ConsultantDr, setConsultantDr] = useState();
   const [ConsultantDrInfo, setConsultantDrInfo] = useState();
   const [DateofApp, setDateofApp] = useState();
-  const [Time, setTime] = useState();
+  const [StatrtTime, setStatrtTime] = useState("");
+  const [EndTime, setEndTime] = useState("");
   const [Condition, setCondition] = useState();
   const [Note, setNote] = useState();
   const [Document, setDocument] = useState();
   const [medicalReason, setmedicalReason] = useState();
-
   const [Others, setOthers] = useState(false);
 
   function selectedDocOck(val) {
@@ -34,20 +27,23 @@ export const Bookappointment = () => {
     setConsultantDrInfo(docInfo);
   }
 
-  const formdata = new FormData();
+  console.log("ConsultantDr", ConsultantDr);
+  console.log("ConsultantDrInfo", ConsultantDrInfo);
 
+
+  const formdata = new FormData();
   const generateRandomNumber = () => {
     // Generate a random number between 1000 and 9999
     const randomNumber = Math.floor(Math.random() * 9000) + 1000;
     return randomNumber;
   };
-
-  const prefix = 'JAN';
+  const prefix = "JAN";
   const randomNumber = generateRandomNumber();
-
+const [BookingStatus, setBookingStatus] = useState("")
+console.log("BookingStatus",BookingStatus);
   const BookAppointment = async (e) => {
     e.preventDefault();
-    formdata.append("token",prefix + randomNumber)
+    formdata.append("token", prefix + randomNumber);
     formdata.append("PatientId", user?._id);
     formdata.append("Firstname", Others ? patientfirstname : user?.Firstname);
     formdata.append("Lastname", Others ? patientlastname : user?.Lastname);
@@ -58,29 +54,29 @@ export const Bookappointment = () => {
     formdata.append("Address1", Others ? Address : user?.Address1);
     formdata.append("ConsultantDoctor", ConsultantDr);
     formdata.append("Dateofappointment", DateofApp);
-    formdata.append("Time", Time);
+    formdata.append("starttime", StatrtTime);
+    // formdata.append("endtime", EndTime);
     formdata.append("Condition", Condition);
     formdata.append("Note", Note);
     formdata.append("Document", Document);
     formdata.append("medicalReason", medicalReason);
+    formdata.append("bookingstatus", BookingStatus);
 
     try {
-     
-        const config = {
-          url: "/user/addappointment",
-          method: "post",
-          baseURL: "http://localhost:8521/api",
-          headers: { "content-type": "multipart/form-data" },
-          data: formdata,
-        };
-        let res = await axios(config);
-        if (res.status === 200) {
-          console.log(res.data);
-          console.log(res.data.success);
-          alert("Appointment Added");
-          window.location.assign("/yourappointment");
-        }
-    
+      const config = {
+        url: "/user/addappointment",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "multipart/form-data" },
+        data: formdata,
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        console.log(res.data);
+        console.log(res.data.success);
+        alert("Appointment Added");
+        window.location.assign("/yourappointment");
+      }
     } catch (error) {
       console.log(error.response);
       if (error.response) {
@@ -102,7 +98,7 @@ export const Bookappointment = () => {
         console.log(error);
       });
   };
-console.log("Doctors", Doctors);
+  console.log("Doctors", Doctors);
 
   useEffect(() => {
     getDoctors();
@@ -241,14 +237,18 @@ console.log("Doctors", Doctors);
                 <div>
                   <Form.Select
                     className="width-respns"
-                    style={{ width: "400px", marginBottom: "10px", height: '50px' }}
+                    style={{
+                      width: "400px",
+                      marginBottom: "10px",
+                      height: "50px",
+                    }}
                     aria-label="Default select example"
                     onChange={(e) => {
                       setConsultantDr(e.target.value);
                       selectedDocOck(e.target.value);
                     }}
                   >
-                     <option value="">Select Consulting Doctor</option>
+                    <option value="">Select Consulting Doctor</option>
                     {Doctors?.map((item) => {
                       return (
                         <option value={item?._id}>
@@ -257,6 +257,31 @@ console.log("Doctors", Doctors);
                       );
                     })}
                   </Form.Select>
+                  <div>
+                    <h6>Date of Appointment</h6>
+                    <Form.Select
+                      className="width-respns width-respns-768px"
+                      style={{ width: "400px", marginBottom: "20px" }}                     
+                      onChange={(e) => {
+                        const [date, status] = e.target.value.split(' ');
+                        setDateofApp(date);
+                        setBookingStatus(status)
+                      }}
+                    >
+                      <option>Select the date</option>
+                      {Doctors?.filter((ele) => ele?._id === ConsultantDr)?.map(
+                        (doctor) =>
+                          doctor?.scheduleList?.map((scheduleItem, index) => (
+                            <option
+                              key={index}
+                              value={`${scheduleItem?.scheduleDate} ${scheduleItem?.bookingstatus}`}
+                            >
+                              {scheduleItem?.scheduleDate}
+                            </option>
+                          ))
+                      )}
+                    </Form.Select>
+                  </div>
 
                   <div>
                     <h6>Time of Appointment</h6>
@@ -264,20 +289,29 @@ console.log("Doctors", Doctors);
                       className="width-respns width-respns-768px"
                       style={{ width: "400px", marginBottom: "20px" }}
                       aria-label="Default select example"
-                      onChange={(e) => setTime(e.target.value)}
+                      onChange={(e) => 
+                       { 
+                        // const [stime, etime] = e.target.value.split(' ');
+                        setStatrtTime(e.target.value);
+                        // setEndTime(etime);
+                      }
+                      }
                     >
-                      <option>Time</option>
-                      <option value="10:30 - 11:00">10:30 - 11:00</option>
-                      <option value="11:00 - 11:30">11:00 - 11:30</option>
-                      <option value="11:30 - 12:00">11:30 - 12:00</option>
-                      <option value="12:00 - 12:30">12:00 - 12:30</option>
-                      <option value="12:30 - 01:00">12:30 - 01:00</option>
-                      <option value="03:30 - 4:00">03:30 - 4:00</option>
-                      <option value="04:00 - 4:30">04:00 - 4:30</option>
-                      <option value="04:30 - 5:00">04:30 - 5:00</option>
+                      <option>Select Time</option>
+                      {Doctors?.filter((ele) => ele?._id === ConsultantDr)?.map(
+                        (doctor) =>
+                          doctor?.scheduleList?.map((scheduleItem, index) => (
+                            <option
+                              key={index}
+                              value={scheduleItem?.startTime}
+                            >
+                              {`${scheduleItem.startTime} to ${scheduleItem.endTime}`}
+                            </option>
+                          ))
+                      )}
                     </Form.Select>
                   </div>
-                  <FloatingLabel
+                  {/* <FloatingLabel
                     className="width-respns"
                     style={{ width: "400px" }}
                     controlId="floatingDate"
@@ -285,34 +319,45 @@ console.log("Doctors", Doctors);
                   >
                     <Form.Control
                       type="date"
-                     min={new Date().toISOString().split('T')[0]} 
+                      min={new Date().toISOString().split("T")[0]}
                       placeholder="Date of Appointment"
                       onChange={(e) => setDateofApp(e.target.value)}
                     />
-                  </FloatingLabel>
+                  </FloatingLabel> */}
                 </div>
 
-
-                {ConsultantDr && ConsultantDr !== "" &&  (
+                {ConsultantDr && ConsultantDr !== "" && (
                   <div
                     style={{
                       border: "1px solid",
                       borderRadius: "10px",
                       padding: "8px",
-                      background: '#008b8b'
+                      background: "#008b8b",
                     }}
                   >
                     <div className="lord">
                       <div className="lord-image">
                         <img
-                          style={{ width: '178px', height: '140px', imageRendering: 'pixelated' }}
+                          style={{
+                            width: "178px",
+                            height: "140px",
+                            imageRendering: "pixelated",
+                          }}
                           src={`http://localhost:8521/Doctor/${ConsultantDrInfo?.ProfileImg}`}
                           alt=""
                         />
                       </div>
-                      <div className="wategory"> <span>Name:</span> {ConsultantDrInfo?.Firstname} </div>
-                      <div className="wategory"> <span>Id:</span> {ConsultantDrInfo?.DoctorId} </div>
-                      <div className="wategory"><span>Specialist:</span> {ConsultantDrInfo?.Department}</div>
+                      <div className="wategory">
+                        {" "}
+                        <span>Name:</span> {ConsultantDrInfo?.Firstname}{" "}
+                      </div>
+                      <div className="wategory">
+                        {" "}
+                        <span>Id:</span> {ConsultantDrInfo?.DoctorId}{" "}
+                      </div>
+                      <div className="wategory">
+                        <span>Specialist:</span> {ConsultantDrInfo?.Department}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -334,7 +379,6 @@ console.log("Doctors", Doctors);
                     <div class="heading_0"><span>Specialist:</span> {ConsultantDrInfo?.Department}</div>
                   </div>
                 </div> */}
-
               </div>
 
               <FloatingLabel className="mb-3" label="Medical-Reason/Disease">

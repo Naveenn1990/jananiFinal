@@ -1,43 +1,24 @@
-import React, { useState } from "react";
-import { Dropdown, Navbar } from "react-bootstrap";
-import { RxDashboard } from "react-icons/rx";
-import { MdAdminPanelSettings } from "react-icons/md";
+import React, { useEffect, useState } from "react";
+import { Navbar } from "react-bootstrap";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../Admin/Adminpanel.css";
 import {
-  faBook,
-  faCalendarDays,
-  faChartBar,
-  faClipboard,
-  faClipboardList,
-  faContactBook,
   faFileInvoice,
-  faFilePdf,
   faGear,
   faHouse,
-  faList,
-  faMicroscope,
-  faNotesMedical,
-  faPenToSquare,
-  faPlus,
   faPowerOff,
-  faUserCircle,
-  faVialVirus,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function VendorSidebar() {
+  const VendorDetails = JSON.parse(sessionStorage.getItem("VendorDetails"));
+  console.log("VendorDetails", VendorDetails);
+  const Logout = () => {
+    sessionStorage.removeItem("VendorDetails");
+    window.location.href = "/loginforeveryone";
+  };
   const navigate = useNavigate();
-  // const [DoctorM, setDoctorM] = useState(false);
-  // const [PatientM, setPatientM] = useState(false);
-  const [LabM, setLabM] = useState(false);
-  // const [SerM, setSerM] = useState(false);
-  const [PharM, setPharM] = useState(false);
-  // const [HosM, setHosM] = useState(false);
-
-  // const [SelectedItem, setSelectedItem] = useState(1);
-
   const [Product, setProduct] = useState(false);
   return (
     <div className="sidebar">
@@ -52,10 +33,6 @@ export default function VendorSidebar() {
           JANANI
         </span>
       </Navbar.Brand>
-      {/* <a
-                href="#"
-                className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
-            > */}
       <div className=" text-center m-3 ms-4">
         <img
           src="./img/admin-doctors-list-3.jpg"
@@ -63,7 +40,7 @@ export default function VendorSidebar() {
           style={{ width: "70px", height: "70px", borderRadius: "30%" }}
         />
         <p className="fs-4 fw-bold" style={{ color: "rgb(32 139 140)" }}>
-          Ganesh
+          {`${VendorDetails?.fname} ${VendorDetails?.lname}`}
         </p>
         <p
           style={{
@@ -81,12 +58,10 @@ export default function VendorSidebar() {
             color: "rgb(32 139 140)",
           }}
         >
-          ID : #gk52446
+          ID : {VendorDetails?.vendorId}
         </p>
       </div>
-      {/* </a> */}
 
-      
       <h6
         className="sidebarItem"
         onClick={(e) => window.location.assign("/vendordashboard")}
@@ -99,56 +74,59 @@ export default function VendorSidebar() {
         Vendor Dashboard
       </h6>
 
-{/* product  */}
+      {/* product  */}
 
-<h6
-  className="sidebarItem"
-  onClick={() => setProduct(!Product)}
-  
->
-  <FontAwesomeIcon
-    icon={faFileInvoice}
-    style={{ marginRight: "5px", fontSize: "15px" }}
-  />
-  Products
-  {Product? <IoIosArrowUp /> : <IoIosArrowDown />}
-</h6>
-
-
-<div 
- style={{
-  display: Product ? "block" : "none",
-  backgroundColor: "#d0f7f4",
-}}
->
-  <h6  className="sidebarItem1" onClick={() => navigate("/vendorproducttype")}>Product Type</h6>
-  <h6  className="sidebarItem1" onClick={() => navigate("/VendorAddProducts")}>Add Product</h6>
-</div>
-
-{/* one tab ends */}
-
-{/* one tab starts */}
-      {/* <h6
-        className="sidebarItem"
-        onClick={() => window.location.assign("/VendorAddProducts")}
-      >
+      <h6 className="sidebarItem" onClick={() => setProduct(!Product)}>
         <FontAwesomeIcon
           icon={faFileInvoice}
           style={{ marginRight: "5px", fontSize: "15px" }}
         />
-        Add Products
-      </h6> */}
-{/* one tab ends */}
-      <h6
-        className="sidebarItem"
-        onClick={() => window.location.assign("/vendorOrders")}
-      >
-        <FontAwesomeIcon
-          icon={faFileInvoice}
-          style={{ marginRight: "5px", fontSize: "15px" }}
-        />
-        Orders
+        Products
+        {Product ? <IoIosArrowUp /> : <IoIosArrowDown />}
       </h6>
+
+      <div
+        style={{
+          display: Product ? "block" : "none",
+          backgroundColor: "#d0f7f4",
+        }}
+      >
+        <h6
+          className="sidebarItem1"
+          onClick={() => navigate("/vendorproducttype")}
+        >
+          Product Type
+        </h6>
+        <h6
+          className="sidebarItem1"
+          onClick={() => navigate("/VendorAddProducts")}
+        >
+          Add Product
+        </h6>
+      </div>
+      <Link to={"/vendorOrders"}>
+        <h6
+          className="sidebarItem"
+          // onClick={() => window.location.assign("/vendorOrders")}
+        >
+          <FontAwesomeIcon
+            icon={faFileInvoice}
+            style={{ marginRight: "5px", fontSize: "15px" }}
+          />
+          Admin Ordered List
+        </h6>
+      </Link>
+
+      <Link to={"/productstatus"}>
+        <h6 className="sidebarItem">
+          <FontAwesomeIcon
+            icon={faFileInvoice}
+            style={{ marginRight: "5px", fontSize: "15px" }}
+          />
+          Product Status
+        </h6>
+      </Link>
+
       <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/vendorsettings")}
@@ -163,7 +141,8 @@ export default function VendorSidebar() {
 
       <h6
         className="sidebarItem"
-        onClick={() => window.location.assign("/loginforeveryone")}
+        // onClick={() => window.location.assign("/loginforeveryone")}
+        onClick={() => Logout()}
       >
         {" "}
         <FontAwesomeIcon

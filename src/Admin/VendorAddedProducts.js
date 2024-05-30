@@ -1,63 +1,41 @@
-import {
-  faAngleLeft,
-  faAngleRight,
-  faCancel,
-  faCheck,
-  faDownload,
-  faEllipsis,
-  faEye,
-  faFilter,
-  faHouseUser,
-  faPenToSquare,
-  faPlus,
-  faTrash,
-  faUpload,
-  faSearchPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-
 import {
   Button,
   Container,
   Dropdown,
-  FloatingLabel,
   Form,
-  FormLabel,
   Modal,
   Table,
-  ProgressBar,
+  Row,
+  Col,
 } from "react-bootstrap";
-import { TfiRuler } from "react-icons/tfi";
-import { useNavigate, Link } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 import Badge from "@material-ui/core/Badge";
 import { withStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
-import InfoIcon from "@mui/icons-material/Info"; //information icon in description
-import RemoveIcon from "@mui/icons-material/Remove";
-import AddIcon from "@mui/icons-material/Add";
+import InfoIcon from "@mui/icons-material/Info";
 import moment from "moment";
 
 const VendorAddedProducts = () => {
-  const [value, setValue] = useState(0);
+  const StyledBadge = withStyles((theme) => ({
+    badge: {
+      right: -3,
+      top: 13,
+      border: `2px solid ${theme.palette.background.paper}`,
+      padding: "0 4px",
+    },
+  }))(Badge);
 
-  const handleIncrement = () => {
-    setValue(value + 1);
-  };
-
-  const handleDecrement = () => {
-    if (value > 0) {
-      setValue(value - 1);
-    }
-  };
-
-  const navigate = useNavigate();
-
+  const [SelectedProduct, setSelectedProduct] = useState({});
   const [show, setShow] = useState(false);
-  const ReadMoreClose = () => setShow(true);
+  const ReadMoreClose = (item) => {
+    setShow(true);
+    setSelectedProduct(item);
+  };
   const handleClose = () => setShow(false);
 
   const [ProductList, setProductList] = useState([]);
@@ -76,17 +54,62 @@ const VendorAddedProducts = () => {
     getProductList();
   }, []);
 
-  const StyledBadge = withStyles((theme) => ({
-    badge: {
-      right: -3,
-      top: 13,
-      border: `2px solid ${theme.palette.background.paper}`,
-      padding: "0 4px",
-    },
-  }))(Badge);
+  const [qnty, setqnty] = useState(1);
 
- 
-  // date filter
+  function addqantity() {
+    setqnty(qnty + 1);
+  }
+
+  function subqantity() {
+    if (qnty > 1) {
+      setqnty(qnty - 1);
+    }
+  }
+
+  const AddToCart = async (item) => {
+    try {
+      const config = {
+        url: "/vendor/adminaddtocart",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          productid: item?._id,
+          quantity: 1,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        getProductList();
+        getaddtocart();
+        alert(res.data.success);
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
+  const [getAddtocart, setgetAddtocart] = useState([]);
+  const getaddtocart = () => {
+    axios
+      .get("http://localhost:8521/api/vendor/getaddtocartdata")
+      .then(function (response) {
+        setgetAddtocart(response.data.addtocart);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getProductList();
+    getaddtocart();
+  }, []);
+
+  console.log("SelectedProduct", SelectedProduct);
   return (
     <div className="Vatsal">
       <div>
@@ -120,10 +143,13 @@ const VendorAddedProducts = () => {
 
               <Button className="all-bg-green">Search Product</Button>
 
-              <div className="cart-badge holder col-lg-8 d-flex gap-2  justify-content-end px-2">
+              <div className="cart-badge holder col-lg-2 d-flex gap-2  justify-content-end px-2">
                 <Link to="../admin/VendorAddedProductCart">
                   <IconButton aria-label="cart">
-                    <StyledBadge badgeContent={4} color="secondary">
+                    <StyledBadge
+                      badgeContent={getAddtocart?.length}
+                      color="secondary"
+                    >
                       <ShoppingCartIcon />
                     </StyledBadge>
                   </IconButton>
@@ -140,37 +166,16 @@ const VendorAddedProducts = () => {
           >
             <thead>
               <tr className="admin-table-head">
-                <th className="fw-bold" >
-                 <div style={{width:"20%"}}>productName</div> 
+                <th className="fw-bold">
+                  <div style={{ width: "20%" }}>productName</div>
                 </th>
-                <th className="fw-bold" >
-                  manufacturingDate
-                </th>
-                
-                <th className="fw-bold" >
-                  expiryDate
-                </th>
-                <th className="fw-bold" >
-                  Quantity(Stock)
-                </th>
-                <th className="fw-bold" >
-                  productPrice
-                </th>               
-                <th className="fw-bold" >
-                  Selling Price
-                </th>
-                <th className="fw-bold" >
-                  Admin Price{" "}
-                </th>
-                <th className="fw-bold" >
-                  Quantity{" "}
-                </th>
-                <th className="fw-bold" >
-                  Admin Final Price{" "}
-                </th>
-                <th className="fw-bold" >
-                  Add To Cart{" "}
-                </th>
+                <th className="fw-bold">manufacturingDate</th>
+
+                <th className="fw-bold">expiryDate</th>
+                <th className="fw-bold">Quantity(Stock)</th>
+                <th className="fw-bold">productPrice</th>
+                <th className="fw-bold">Selling Price</th>
+                <th className="fw-bold">Add To Cart </th>
                 <th className="fw-bold">description </th>
               </tr>
             </thead>
@@ -179,59 +184,42 @@ const VendorAddedProducts = () => {
               {ProductList?.map((item) => {
                 return (
                   <tr className="admin-table-row">
-                    <td><div style={{width:""}}>{item?.productName}</div></td>
-                    <td>{moment(item?.manufacturingDate).format("DD/MM/YYYY")}</td>
+                    <td>
+                      <div style={{ width: "" }}>{item?.productName}</div>
+                    </td>
+                    <td>
+                      {moment(item?.manufacturingDate).format("DD/MM/YYYY")}
+                    </td>
                     <td>{moment(item?.expiryDate).format("DD/MM/YYYY")}</td>
                     <td>{item?.stock}</td>
                     <td>
-                      <div style={{width:"110px"}}>
-                      <p>A.Price = ₹{item?.productPrice} </p> 
-                    <p>Discount = {item?.discount}% </p> 
-                      </div>                                       
-                      </td>
-                   
-                    <td>  <p>
-                    ₹ {Number(item?.productPrice) - (Number(item?.productPrice) * Number(item?.discount) / 100)}
-                      </p> </td> 
-
-                      <td >
-                        <div style={{width:"141px"}}>
-                      <input
-                          className="vi_0"
-                            type="number"
-                            placeholder="Enter Your Price"
-                            // style={{ width: "40%", textAlign: "center" }}
-                          />
-                          </div>
-                      </td>
-                    
-                    <td>
-                      <td className="d-flex rounded-pill border border-dark p-2 m-2">
-                        <RemoveIcon onClick={handleDecrement} />
-                        <Form.Group
-                          className="mb-1"
-                          controlId="exampleForm.ControlInput1"
-                        >
-                          <input
-                            type="text"
-                            placeholder="Price"
-                            value={value}
-                            style={{ width: "30px", textAlign: "center" }}
-                            onChange={(e) => setValue(e.target.value)}
-                          />
-                        </Form.Group>
-                        <AddIcon onClick={handleIncrement} />
-                      </td>
+                      <div style={{ width: "110px" }}>
+                        <p>A.Price = ₹{item?.productPrice} </p>
+                        <p>Discount = {item?.discount}% </p>
+                      </div>
                     </td>
-                    <td>3000</td>
+
+                    <td>
+                      <p>
+                        ₹{" "}
+                        {Number(item?.productPrice) -
+                          (Number(item?.productPrice) *
+                            Number(item?.discount)) /
+                            100}
+                      </p>
+                    </td>
                     <td>
                       <div className="p-2">
-                        {" "}
-                        <Button variant="success">Add to Cart</Button>
+                        <Button
+                          variant="success"
+                          onClick={() => AddToCart(item)}
+                        >
+                          Add to Cart
+                        </Button>
                       </div>
                     </td>
                     <td>
-                      <div className="p-2" onClick={ReadMoreClose}>
+                      <div className="p-2" onClick={() => ReadMoreClose(item)}>
                         <InfoIcon />
                       </div>
                     </td>
@@ -245,7 +233,7 @@ const VendorAddedProducts = () => {
         {/* INfo icon modal */}
         <Modal size="lg" show={show} onHide={ReadMoreClose}>
           <Modal.Header className="all-bg-green text-light">
-            <Modal.Title>Patient Profile</Modal.Title>
+            <Modal.Title>Product Details</Modal.Title>
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
@@ -254,8 +242,9 @@ const VendorAddedProducts = () => {
             <div className="row" style={{ color: "white" }}>
               <div className="col-lg-4">
                 <img
-                  src="./img/department-img-1.jpg"
-                  style={{ width: "100%" }}
+                  alt=""
+                  src={`http://localhost:8521/Vendor/${SelectedProduct?.vendorid?.profilePic}`}
+                  style={{ width: "50%" }}
                 />
                 <div style={{ border: "1px solid lightgrey" }}>
                   <h6
@@ -265,7 +254,7 @@ const VendorAddedProducts = () => {
                       backgroundColor: "lightblue",
                     }}
                   >
-                    ABOUT PATIENT
+                    ABOUT VENDOR
                   </h6>
 
                   <h6
@@ -275,7 +264,8 @@ const VendorAddedProducts = () => {
                       marginTop: "2%",
                     }}
                   >
-                    <b>NAME</b> : John
+                    <b>NAME</b> :{SelectedProduct?.vendorid?.fname}&nbsp;
+                    {SelectedProduct?.vendorid?.lname}
                   </h6>
                   <h6
                     style={{
@@ -284,7 +274,7 @@ const VendorAddedProducts = () => {
                       marginTop: "2%",
                     }}
                   >
-                    <b>EmailID</b> : John@gmail.com
+                    <b>EmailID</b> : {SelectedProduct?.vendorid?.email}
                   </h6>
                   <h6
                     style={{
@@ -293,7 +283,7 @@ const VendorAddedProducts = () => {
                       marginTop: "2%",
                     }}
                   >
-                    <b>Mobile</b> : 9563256325
+                    <b>Mobile</b> : {SelectedProduct?.vendorid?.phone}
                   </h6>
                   <h6
                     style={{
@@ -302,102 +292,178 @@ const VendorAddedProducts = () => {
                       marginTop: "2%",
                     }}
                   >
-                    <b>Occupation</b> : Engineer
+                    <b>vendor Id</b> : {SelectedProduct?.vendorid?.vendorId}
+                  </h6>
+                  <h6
+                    style={{
+                      paddingLeft: "4%",
+                      fontSize: "14px",
+                      marginTop: "2%",
+                    }}
+                  >
+                    <b>Address</b> : {SelectedProduct?.vendorid?.address1},
+                    {SelectedProduct?.vendorid?.city} -{" "}
+                    {SelectedProduct?.vendorid?.pincode}
                   </h6>
                 </div>
               </div>
               <div className="col-lg-8">
                 <div style={{ border: "1px solid lightgrey", padding: "2%" }}>
-                  <span style={{ fontSize: "14px", textAlign: "justify" }}>
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s,
-                  </span>
+                  <Row>
+                    {SelectedProduct?.productImgs?.length > 0 ? (
+                      <Col md={2}>
+                        <img
+                          alt=""
+                          src={`http://localhost:8521/VendorProduct/${SelectedProduct?.productImgs[0]}`}
+                          style={{ width: "100%" }}
+                        />
+                      </Col>
+                    ) : (
+                      ""
+                    )}
+                    <Col md={10}>
+                      <p
+                        style={{
+                          fontSize: "14px",
+                          textAlign: "justify",
+                          fontWeight: "600",
+                        }}
+                      >
+                        {SelectedProduct?.productName}
+                      </p>
+                      <p>
+                        ({SelectedProduct?.categoryid?.categoryName} -{" "}
+                        {SelectedProduct?.subcategoryid?.subcategoryName})
+                      </p>
+                    </Col>
+                  </Row>
+
                   <hr></hr>
-                  <h6>General Report</h6>
-                  <hr></hr>
-                  <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                    Heart Beat
-                  </span>
-                  <ProgressBar
-                    variant="success"
-                    style={{ height: "6px" }}
-                    now={40}
-                  />
+                  <p style={{ textAlign: "justify" }}>
+                    {SelectedProduct?.description}
+                  </p>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Manufacturer company name :
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.manufacturercompanyname}</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Manufacturer company Address :
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.manufactureraddress}</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Manufacturing Date :
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.manufacturingDate}</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Brand:
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.brand}</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Colour :
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.colour}</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Country Of Origin :
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.countryOfOrigin}</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Flavour :
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.flavour}</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Fragrance :
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.fragrance}</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Colour :
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.colour}</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Colour :
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.colour}</Col>
+                  </Row>
 
-                  <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                    Blood Pressure
-                  </span>
-                  <ProgressBar
-                    variant="info"
-                    style={{ height: "6px" }}
-                    now={60}
-                  />
-
-                  <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                    Sugar
-                  </span>
-                  <ProgressBar
-                    variant="warning"
-                    style={{ height: "6px" }}
-                    now={60}
-                  />
-
-                  <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                    Haemoglobin
-                  </span>
-                  <ProgressBar
-                    variant="danger"
-                    style={{ height: "6px" }}
-                    now={60}
-                  />
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Colour :
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.colour}</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <Row>
+                        <Col md={6}>
+                          <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                            Product Price :
+                          </span>
+                        </Col>
+                        <Col md={6}>
+                          {SelectedProduct?.productPrice} &nbsp;
+                          {SelectedProduct?.currencyFormat}
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col md={6}>
+                      <Row>
+                        <Col md={6}>
+                          <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                            Discount :
+                          </span>
+                        </Col>
+                        <Col md={6}>
+                          {SelectedProduct?.discount}&nbsp;
+                          {SelectedProduct?.currencyFormat}
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
                 </div>
               </div>
             </div>
           </Modal.Body>
-          {/* <Modal.Footer>
-          <div style={{ display: "flex" }}>
-            <button
-              style={{
-                backgroundColor: "grey",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                fontWeight: "600",
-                marginRight: "20px",
-                padding: "4px 10px",
-              }}
-              onClick={() => {
-                setShow(false);
-              }}
-            >
-              CANCEL
-            </button>
-
-            <button
-              style={{
-                backgroundColor: "orange",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                fontWeight: "600",
-                padding: "4px 10px",
-              }}
-              onClick={() => {
-                setShow(false);
-                alert("Doctor Added");
-              }}
-            >
-              SUBMIT
-            </button>
-          </div>
-        </Modal.Footer> */}
         </Modal>
-        {/* info icon modal */}
-
-        {/* VIEW MODAL */}
-
-        {/* Delete Modal */}
       </div>
     </div>
   );

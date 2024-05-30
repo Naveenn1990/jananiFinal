@@ -15,6 +15,7 @@ import {
   faPowerOff,
   faUserCircle,
 } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 export default function DoctorsSidebar() {
   let doctorDetails = JSON.parse(sessionStorage.getItem("DoctorDetails"));
@@ -49,14 +50,12 @@ export default function DoctorsSidebar() {
         </span>
       </Navbar.Brand>
 
-      <a
-        href="#"
+      <div      
         className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
       >
         <div className=" text-center m-3 ms-5">
           <img
-            src={`http://localhost:8521/Doctor/${doctorDetails.ProfileImg}`}
-            // src=""
+            src={`http://localhost:8521/Doctor/${doctorDetails.ProfileImg}`}            
             alt=""
             style={{ width: "70px", height: "70px" }}
           />
@@ -75,7 +74,7 @@ export default function DoctorsSidebar() {
             Doctor
           </p>
         </div>
-      </a>
+      </div>
 
       <h6
         className="sidebarItem"
@@ -126,17 +125,7 @@ export default function DoctorsSidebar() {
         Patients
       </h6>
 
-      <h6
-        className="sidebarItem"
-        onClick={() => window.location.assign("/doctorssettings")}
-      >
-        {" "}
-        <FontAwesomeIcon
-          icon={faUserCircle}
-          style={{ color: "", marginRight: "5px" }}
-        />
-        Settings
-      </h6>
+    
 
       <h6
         className="sidebarItem"
@@ -186,7 +175,20 @@ export default function DoctorsSidebar() {
         Patient Reports
       </h6>
 
-     
+     <Link to={"/doctorssettings"}>
+     <h6
+        className="sidebarItem"
+        // onClick={() => window.location.assign("/doctorssettings")}
+      >
+        {" "}
+        <FontAwesomeIcon
+          icon={faUserCircle}
+          style={{ color: "", marginRight: "5px" }}
+        />
+        Settings
+      </h6>
+     </Link>
+    
 
       <h6
         className="sidebarItem"

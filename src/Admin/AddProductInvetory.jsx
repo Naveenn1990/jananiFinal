@@ -378,7 +378,7 @@ export default function AddProductInvetory() {
                   <option>Choose Category</option>
                   {categoryList?.map((item) => {
                     return (
-                      <option value={item._id}>{item?.categoryName}</option>
+                      <option value={item?._id}>{item?.categoryName}</option>
                     );
                   })}
                 </select>
@@ -395,10 +395,10 @@ export default function AddProductInvetory() {
                 >
                   <option>Choose Subategory</option>
                   {subcategoryList
-                    .filter((val) => val.categoryid._id === catid)
+                    .filter((val) => val.categoryid?._id === catid)
                     ?.map((item) => {
                       return (
-                        <option value={item._id}>
+                        <option value={item?._id}>
                           {item?.subcategoryName}
                         </option>
                       );
@@ -415,7 +415,7 @@ export default function AddProductInvetory() {
                   }}
                   onChange={(e) => {
                     setChosenProd(JSON.parse(e.target.value));
-                    setprodid(JSON.parse(e.target.value)._id);
+                    setprodid(JSON.parse(e.target.value)?._id);
                   }}
                 >
                   <option>Choose Products</option>
@@ -423,8 +423,8 @@ export default function AddProductInvetory() {
                     .filter(
                       (val) =>
                         // val.vendorid._id === venid &&
-                        val.categoryid._id === catid &&
-                        val.subcategoryid._id === subcatid
+                        val.categoryid?._id === catid &&
+                        val.subcategoryid?._id === subcatid
                     )
                     ?.map((item) => {
                       return (
@@ -561,7 +561,7 @@ export default function AddProductInvetory() {
               {prodid ? (
                 <div>
                   {orderedProductsList
-                    .filter((item) => item._id === prodid)
+                    .filter((item) => item?._id === prodid)
                     .map((val) => {
                       return (
                         <div style={{ padding: "13px 13px" }}>
@@ -1614,7 +1614,7 @@ export default function AddProductInvetory() {
                         <option>Choose Category</option>
                         {categoryList?.map((item) => {
                           return (
-                            <option value={item._id}>
+                            <option value={item?._id}>
                               {item?.categoryName}
                             </option>
                           );
@@ -1640,10 +1640,10 @@ export default function AddProductInvetory() {
                       >
                         <option>Choose Subategory</option>
                         {subcategoryList
-                          .filter((val) => val.categoryid._id === editcatid)
+                          .filter((val) => val.categoryid?._id === editcatid)
                           ?.map((item) => {
                             return (
-                              <option value={item._id}>
+                              <option value={item?._id}>
                                 {item?.subcategoryName}
                               </option>
                             );

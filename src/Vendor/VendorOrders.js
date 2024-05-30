@@ -1,71 +1,27 @@
-import {
-  faAngleLeft,
-  faAngleRight,
-  faCancel,
-  faCheck,
-  faDownload,
-  faEllipsis,
-  faEye,
-  faFilter,
-  faHouseUser,
-  faPenToSquare,
-  faPlus,
-  faTrash,
-  faUpload,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
   Button,
   Container,
-  Dropdown,
-  FloatingLabel,
-  Form,
-  FormLabel,
   Modal,
   Table,
 } from "react-bootstrap";
-import { TfiRuler } from "react-icons/tfi";
 import { BsFillPatchCheckFill } from "react-icons/bs";
 import { MdCancel } from "react-icons/md";
 
-import { useNavigate } from "react-router-dom";
-
 export const VendorOrders = () => {
-  const navigate = useNavigate();
   const Vendor = JSON.parse(sessionStorage.getItem("VendorDetails"));
 
   const [show, setShow] = useState(false);
-  // const [show1, setShow1] = useState(false);
-  const [show2, setShow2] = useState(false);
-
   const viewClose = () => setShow(false);
   const viewShow = () => setShow(true);
 
-  // const handleClose = () => setShow1(false);
-  // const handleShow = () => setShow1(true);
 
   const deleteBtnClose = () => {
     setShow(false);
     setPayment();
   };
-  const deleteBtnShow = () => setShow2(true);
 
-  const [ProductList, setProductList] = useState([]);
-
-  const getProductList = () => {
-    axios
-      .get("http://localhost:8521/api/vendor/productList")
-      .then(function (response) {
-        // handle success
-        setProductList(response.data.allProducts);
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
-  };
 
   const [OrderList, setOrderList] = useState([]);
 
@@ -82,10 +38,9 @@ export const VendorOrders = () => {
       });
   };
 
-  console.log(OrderList, "jnjnjnjnjnjnj");
+  console.log(OrderList, "OrderList");
 
   useEffect(() => {
-    getProductList();
     getOrderList();
   }, []);
 
@@ -101,6 +56,37 @@ export const VendorOrders = () => {
             orderid: data?._id,
             vendorId: data?.vendorId,
             orderStatus: "OUT_FOR_DELIVERY",
+            orderPayment: "PENDING",
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          console.log(res.data);
+          console.log(res.data.success);
+          alert("Order Accepted");
+          getOrderList();
+        }
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
+  const CANCELLEDORDER = async (data) => {
+    try {
+      {
+        const config = {
+          url: "/vendor/UpdateOrderInfo",
+          method: "put",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            orderid: data?._id,
+            vendorId: data?.vendorId,
+            orderStatus: "CANCELLED_ORDER",
             orderPayment: "PENDING",
           },
         };
@@ -293,14 +279,14 @@ export const VendorOrders = () => {
         >
           <thead>
             <tr className="admin-table-head">
-              <th className="fw-bold" style={{}}>
-                productName
-              </th>
-              <th className="fw-bold">productPrice</th>
-              <th className="fw-bold">currencyFormat</th>
-              <th className="fw-bold">productType</th>
-
+              <th className="fw-bold">Product Id</th>
+              <th className="fw-bold">Product Name</th>
+              <th className="fw-bold">Product Type</th>
+              <th className="fw-bold">Currency Format</th>
+              <th className="fw-bold">Vendor Price</th>
+              <th className="fw-bold">Admin Price</th>
               <th className="fw-bold">Quantity </th>
+              <th className="fw-bold">Total Price </th>
               <th className="fw-bold">Action </th>
             </tr>
           </thead>
@@ -311,26 +297,44 @@ export const VendorOrders = () => {
             )?.map((item) => {
               return (
                 <tr className="admin-table-row">
-                  <td>{item?.productName}</td>
-                  <td>{item?.productPrice}</td>
-                  <td>{item?.currencyFormat}</td>
-                  <td>{item?.productType}</td>
-
-                  <td>{item?.stock}</td>
+                  <td>{item?.productId?._id}</td>
+                  <td>{item?.productId?.productName}</td>
+                  <td>{item?.productId?.productType}</td>
+                  <td>{item?.productId?.currencyFormat}</td>
+                  <td>{item?.VendorPrice}</td>
+                  <td>{item?.AdminPrice}</td>
+                  <td>{item?.quantity}</td>
+                  <td>{item?.totalPrice}</td>
                   <td>
-                    <button
-                      onClick={() => {
-                        AcceptOrder(item);
-                      }}
-                      style={{
-                        backgroundColor: "green",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "20px",
-                      }}
-                    >
-                      ACCEPT
-                    </button>
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <button
+                        onClick={() => {
+                          AcceptOrder(item);
+                        }}
+                        style={{
+                          backgroundColor: "green",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "20px",
+                        }}
+                      >
+                        ACCEPT
+                      </button>{" "}
+                      /
+                      <button
+                        onClick={() => {
+                          CANCELLEDORDER(item);
+                        }}
+                        style={{
+                          backgroundColor: "#d32728",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "20px",
+                        }}
+                      >
+                        Reject
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );
@@ -346,14 +350,16 @@ export const VendorOrders = () => {
             display: ViewOutForDelivery ? "block" : "none",
           }}
         >
-          {" "}
           <thead>
             <tr className="admin-table-head">
-              <th className="fw-bold">productName</th>
-              <th className="fw-bold">productPrice</th>
-              <th className="fw-bold">currencyFormat</th>
-              <th className="fw-bold">productType</th>
+              <th className="fw-bold">Product Id</th>
+              <th className="fw-bold">Product Name</th>
+              <th className="fw-bold">Product Type</th>
+              <th className="fw-bold">Currency Format</th>
+              <th className="fw-bold">Vendor Price</th>
+              <th className="fw-bold">Admin Price</th>
               <th className="fw-bold">Quantity </th>
+              <th className="fw-bold">Total Price </th>
               <th className="fw-bold">Action </th>
             </tr>
           </thead>
@@ -363,12 +369,14 @@ export const VendorOrders = () => {
             )?.map((item) => {
               return (
                 <tr className="admin-table-row">
-                  <td>{item?.productName}</td>
-                  <td>{item?.productPrice}</td>
-                  <td>{item?.currencyFormat}</td>
-                  <td>{item?.productType}</td>
-
-                  <td>{item?.stock}</td>
+                  <td>{item?.productId?._id}</td>
+                  <td>{item?.productId?.productName}</td>
+                  <td>{item?.productId?.productType}</td>
+                  <td>{item?.productId?.currencyFormat}</td>
+                  <td>{item?.VendorPrice}</td>
+                  <td>{item?.AdminPrice}</td>
+                  <td>{item?.quantity}</td>
+                  <td>{item?.totalPrice}</td>
                   <td>
                     <button
                       onClick={() => {
@@ -400,15 +408,15 @@ export const VendorOrders = () => {
           {" "}
           <thead>
             <tr className="admin-table-head">
-              <th className="fw-bold" style={{}}>
-                productName
-              </th>
-              <th className="fw-bold">productPrice</th>
-              <th className="fw-bold">currencyFormat</th>
-              <th className="fw-bold">productType</th>
-
+              <th className="fw-bold">Product Id</th>
+              <th className="fw-bold">Product Name</th>
+              <th className="fw-bold">Product Type</th>
+              <th className="fw-bold">Currency Format</th>
+              <th className="fw-bold">Vendor Price</th>
+              <th className="fw-bold">Admin Price</th>
               <th className="fw-bold">Quantity </th>
-              <th className="fw-bold">Payment </th>
+              <th className="fw-bold">Total Price </th>
+              <th className="fw-bold">Action </th>
             </tr>
           </thead>
           <tbody>
@@ -416,12 +424,14 @@ export const VendorOrders = () => {
               (item) => {
                 return (
                   <tr className="admin-table-row">
-                    <td>{item?.productName}</td>
-                    <td>{item?.productPrice}</td>
-                    <td>{item?.currencyFormat}</td>
-                    <td>{item?.productType}</td>
-
-                    <td>{item?.stock}</td>
+                    <td>{item?.productId?._id}</td>
+                    <td>{item?.productId?.productName}</td>
+                    <td>{item?.productId?.productType}</td>
+                    <td>{item?.productId?.currencyFormat}</td>
+                    <td>{item?.VendorPrice}</td>
+                    <td>{item?.AdminPrice}</td>
+                    <td>{item?.quantity}</td>
+                    <td>{item?.totalPrice}</td>
                     <td>
                       {item?.orderPayment == "DONE" ? (
                         <button

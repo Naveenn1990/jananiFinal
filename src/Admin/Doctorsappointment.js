@@ -1,24 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, FloatingLabel, Form, Modal, Table } from "react-bootstrap";
-import { AiFillDelete } from "react-icons/ai";
-import { BsFillEyeFill } from "react-icons/bs";
 import { FaEdit } from "react-icons/fa";
-import { GiAmbulance } from "react-icons/gi";
-import { MdEdit } from "react-icons/md";
 import { RiStethoscopeLine } from "react-icons/ri";
-import { Audio, Hearts, Puff } from "react-loading-icons";
 export default function DoctorsAppointment() {
-  const data = [
-    {
-      name: "john",
-      email: "john@gmail.com",
-      designation: "cardiologists",
-      department: "cardiology",
-      contact: 9878987899,
-      dob: "12/2/1998",
-    },
-  ];
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -39,7 +24,6 @@ export default function DoctorsAppointment() {
 
   const prefix = "JAN";
   const randomNumber = generateRandomNumber();
-
   const [patientfirstname, setpatientfirstname] = useState("");
   const [patientlastname, setpatientlastname] = useState("");
   const [gender, setgender] = useState("");
@@ -100,37 +84,30 @@ export default function DoctorsAppointment() {
   };
 
   const [AppointmentList, setAppointmentList] = useState([]);
-
   const getAppointmentList = () => {
     axios
       .get("http://localhost:8521/api/user/getlist")
       .then(function (response) {
-        // handle success
         setAppointmentList(response.data.Info);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       });
   };
   console.log("AppointmentList", AppointmentList);
   const [Doctors, setDoctors] = useState([]);
-
   const getDoctors = () => {
     axios
       .get("http://localhost:8521/api/Doctor/getDoctorsList")
       .then(function (response) {
-        // handle success
         setDoctors(response.data.DoctorsInfo);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       });
   };
 
   const [AppointmentId, setAppointmentId] = useState({});
-
   const UpdateBookingAppointment = async () => {
     try {
       const config = {
@@ -703,7 +680,7 @@ export default function DoctorsAppointment() {
         <div 
      style={{overflow:"hidden",overflowX:"scroll"}}
         >
-          <Table responsive="md" style={{ marginTop: "1%" }}>
+          <Table responsive="md" style={{ marginTop: "1%" }} bordered>
             <thead>
               <tr style={{ fontSize: "15px", textAlign: "center" }}>
                 {/* <th>Profile</th> */}
