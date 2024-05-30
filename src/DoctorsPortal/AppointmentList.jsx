@@ -1,23 +1,16 @@
 import React, { useEffect } from "react";
-import { Container, Dropdown, Navbar, Table } from "react-bootstrap";
+import { Container, Navbar, Table } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Nav from "react-bootstrap/Nav";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import { BsFileEarmarkPdf } from "react-icons/bs";
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import {
   faCalendarDays,
-  faEllipsisVertical,
   faEnvelope,
-  faEye,
   faLocationDot,
   faPhoneVolume,
   faBandage,
   faCheck,
-  faAngleRight,
-  faAngleLeft,
   faCancel,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,35 +18,26 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export const AppointmentList = () => {
-  const navigate = useNavigate();
-
   const doctor = JSON.parse(sessionStorage.getItem("DoctorDetails"));
 
-  console.log(doctor, "lklklkl");
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const [AppointmentList, setAppointmentList] = useState([]);
-
   const getAppointmentList = () => {
     axios
       .get("http://localhost:8521/api/user/getlist")
       .then(function (response) {
-        // handle success
         const data = response.data.Info.filter(
           (item) => item?.ConsultantDoctor?._id == doctor?._id
         );
         setAppointmentList(data);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       });
   };
-
-  console.log(AppointmentList, doctor?._id, "klklklklkl");
 
   useEffect(() => {
     getAppointmentList();
@@ -64,6 +48,8 @@ export const AppointmentList = () => {
     window.location.assign("/doctorscasestudy");
   };
 
+  const [DateFilter, setDateFilter] = useState("")
+
   return (
     <div>
       <Navbar expand="lg" style={{ backgroundColor: "#dae1f3" }}>
@@ -73,23 +59,24 @@ export const AppointmentList = () => {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
-            <Form className="d-flex">
-              <Form.Control
-                type="search"
-                placeholder="Search"
-                className="me-2"
-                aria-label="Search"
-              />
-              <Button variant="outline-primary">Search</Button>
-            </Form>
-            <a className="ms-auto" href="#">
-              {" "}
-              <img
-                style={{ width: "40px", height: "40px" }}
-                src="./img/xl-img.png"
-                alt="xl-img"
-              />
-            </a>
+            <div className="d-flex gap-5">
+              <Form className="d-flex">
+                <Form.Control
+                  type="search"
+                  placeholder="Search"
+                  className="me-2"
+                  aria-label="Search"
+                />
+                <Button variant="outline-primary">Search</Button>
+              </Form>
+              <div className="d-flex gap-3">
+                <label style={{width:"63%"}}>Select Date : </label>
+                <Form.Control
+                  type="date"
+                  className="me-2"                 
+                />
+              </div>
+            </div>
           </Navbar.Collapse>
         </Container>
       </Navbar>
@@ -98,12 +85,6 @@ export const AppointmentList = () => {
         <Table responsive className="table">
           <thead>
             <tr className="admin-table-head">
-              <th className="fw-bold">
-                <input
-                  style={{ width: "20px", height: "20px" }}
-                  type="checkbox"
-                />
-              </th>
               <th className="fw-bold">Patient Name</th>
               <th className="fw-bold">Date & Time</th>
               <th className="fw-bold">Email</th>
@@ -116,21 +97,6 @@ export const AppointmentList = () => {
             {AppointmentList?.map((item) => {
               return (
                 <tr className="admin-table-row">
-                  <td>
-                    <input
-                      style={{ width: "20px", height: "20px" }}
-                      type="checkbox"
-                    />
-                  </td>
-
-                  {/* <td className=" me-2">
-                                    <img
-                                        style={{ width: "30px", height: "30px", borderRadius: "5px" }}
-                                        src="./img/Our-doctors-img-1.jpg"
-                                        alt=""
-                                    />
-                                </td> */}
-
                   <td>
                     {item?.Firstname}&nbsp;{item?.Lastname}
                   </td>
@@ -162,18 +128,6 @@ export const AppointmentList = () => {
             })}
           </tbody>
         </Table>
-
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12 ">
-              <span className="pagination" style={{ float: "right" }}>
-                <button className="btn2">Previous</button>
-                <button className="btn1">1</button>
-                <button className="btn3">Next</button>
-              </span>
-            </div>
-          </div>
-        </div>
       </Container>
 
       <Modal
