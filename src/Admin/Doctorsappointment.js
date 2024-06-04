@@ -26,9 +26,14 @@ export default function DoctorsAppointment() {
   const randomNumber = generateRandomNumber();
   const [patientfirstname, setpatientfirstname] = useState("");
   const [patientlastname, setpatientlastname] = useState("");
+
   const [gender, setgender] = useState("");
   const [DOB, setDOB] = useState("");
   const [email, setemail] = useState("");
+  const [DocDept, setDocDept] = useState("");
+  const [ConsultantDrInfo, setConsultantDrInfo] = useState();
+  const [StatrtTime, setStatrtTime] = useState(null);
+
   const [mobileno, setmobileno] = useState();
   const [Address, setAddress] = useState();
   const [ConsultantDr, setConsultantDr] = useState();
@@ -39,6 +44,17 @@ export default function DoctorsAppointment() {
   const [Document, setDocument] = useState();
   const [medicalReason, setmedicalReason] = useState();
 
+  function selectedDocOck(val) {
+    let docInfo = Doctors.find((item) => item?._id === val);
+    setConsultantDrInfo(docInfo);
+  }
+  const [SelectedTime, setSelectedTime] = useState({})
+  useEffect(() => {
+    if(StatrtTime){
+      setSelectedTime(JSON?.parse(StatrtTime))
+    }
+    
+  }, [StatrtTime])
   const formdata = new FormData();
 
   const BookAppointment = async (e) => {
@@ -47,19 +63,19 @@ export default function DoctorsAppointment() {
     formdata.append("PatientId", "Admin");
     formdata.append("Firstname", patientfirstname);
     formdata.append("Lastname", patientlastname);
-    formdata.append("Gender", gender);
-    formdata.append("DOB", DOB);
-    formdata.append("PhoneNumber", mobileno);
     formdata.append("Email", email);
-    formdata.append("Address1", Address);
+    formdata.append("DOB", DOB);
+    formdata.append("Gender", gender);
+    formdata.append("PhoneNumber", mobileno);
     formdata.append("ConsultantDoctor", ConsultantDr);
     formdata.append("Dateofappointment", DateofApp);
-    formdata.append("Time", Time);
+    formdata.append("starttime", SelectedTime?.startTime);
+    formdata.append("endtime", SelectedTime?.endTime);
+    formdata.append("medicalReason", medicalReason);
     formdata.append("Condition", Condition);
     formdata.append("Note", Note);
+    formdata.append("Address1", Address);
     formdata.append("Document", Document);
-    formdata.append("medicalReason", medicalReason);
-
     try {
       const config = {
         url: "/user/addappointment",
@@ -175,6 +191,7 @@ export default function DoctorsAppointment() {
             <div className="row">
               <div className="col-lg-6">
                 <input
+                  type="text"
                   placeholder="First Name"
                   style={{
                     width: "100%",
@@ -188,6 +205,7 @@ export default function DoctorsAppointment() {
               </div>
               <div className="col-lg-6">
                 <input
+                  type="text"
                   placeholder="Last Name"
                   style={{
                     width: "100%",
@@ -201,6 +219,7 @@ export default function DoctorsAppointment() {
               </div>
               <div className="col-lg-6">
                 <input
+                  type="email"
                   placeholder="Email"
                   style={{
                     width: "100%",
@@ -213,10 +232,10 @@ export default function DoctorsAppointment() {
                   onChange={(e) => setemail(e.target.value)}
                 ></input>
               </div>
-
               <div className="col-lg-6">
                 <input
-                  placeholder="Email"
+                  type="date"
+                  placeholder="DOB"
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -240,99 +259,27 @@ export default function DoctorsAppointment() {
                   }}
                   onChange={(e) => setgender(e.target.value)}
                 >
-                  <option>select gender</option>
+                  <option>Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
-
-              <div className="col-lg-6">
-                <div className="row" style={{ justifyContent: "center" }}>
-                  <div className="col-lg-6">
-                    <h6 style={{ marginTop: "20px", color: "white" }}>
-                      Date of Appointment :
-                    </h6>
-                  </div>
-                  <div className="col-lg-6">
-                    {" "}
-                    <input
-                      type="date"
-                      style={{
-                        width: "100%",
-                        padding: "8px 20px",
-                        borderRadius: "0px",
-                        border: "1px solid #ebebeb",
-                        backgroundColor: "#ebebeb",
-                        marginTop: "4%",
-                      }}
-                      onChange={(e) => setDateofApp(e.target.value)}
-                    ></input>
-                  </div>
-                </div>
-              </div>
-
               <div className="col-lg-6">
                 <input
                   placeholder="Mobile"
+                  type="number"
                   style={{
                     width: "100%",
                     padding: "8px 20px",
                     borderRadius: "0px",
                     border: "1px solid #ebebeb",
                     backgroundColor: "#ebebeb",
-                    marginTop: "4%",
+                    marginTop: "2%",
                   }}
                   onChange={(e) => setmobileno(e.target.value)}
                 ></input>
               </div>
-
-              <div className="col-lg-6">
-                <div className="row" style={{ justifyContent: "center" }}>
-                  <div className="col-lg-6">
-                    <h6 style={{ marginTop: "20px", color: "white" }}>
-                      Appointment Time :
-                    </h6>
-                  </div>
-                  <div className="col-lg-6">
-                    {" "}
-                    <input
-                      type="time"
-                      style={{
-                        width: "100%",
-                        padding: "8px 20px",
-                        borderRadius: "0px",
-                        border: "1px solid #ebebeb",
-                        backgroundColor: "#ebebeb",
-                        marginTop: "4%",
-                      }}
-                      onChange={(e) => setTime(e.target.value)}
-                    ></input>
-                  </div>
-                </div>
-              </div>
-
-              {/* <div className="col-lg-6">
-                <div className="row" style={{ justifyContent: "center" }}>
-                  <div className="col-lg-6">
-                    <h6 style={{ marginTop: "20px", color: "white" }}>
-                      Appointment To :
-                    </h6>
-                  </div>
-                  <div className="col-lg-6">
-                    {" "}
-                    <input
-                      type="time"
-                      style={{
-                        width: "100%",
-                        padding: "8px 20px",
-                        borderRadius: "0px",
-                        border: "1px solid #ebebeb",
-                        backgroundColor: "#ebebeb",
-                        marginTop: "4%",
-                      }}
-                    ></input>
-                  </div>
-                </div>
-              </div> */}
-
               <div className="col-lg-6">
                 <select
                   style={{
@@ -341,21 +288,124 @@ export default function DoctorsAppointment() {
                     borderRadius: "0px",
                     border: "1px solid #ebebeb",
                     backgroundColor: "#ebebeb",
-                    marginTop: "4%",
+                    marginTop: "2%",
                   }}
-                  onChange={(e) => setConsultantDr(e.target.value)}
+                  onChange={(e) => setDocDept(e.target.value)}
                 >
-                  <option>Consulting Doctor</option>
-                  {Doctors?.map((item) => {
-                    return (
-                      <option value={item?._id}>
-                        {item?.Firstname}&nbsp;{item?.Lastname}
+                  <option>Select Deparment</option>
+                  {[...new Set(Doctors?.map((item) => item?.Department))]?.map(
+                    (department) => (
+                      <option key={department} value={department}>
+                        {department}
                       </option>
-                    );
-                  })}
+                    )
+                  )}
                 </select>
               </div>
-
+              <div className="col-lg-6">
+                <select
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                    marginTop: "2%",
+                  }}
+                  onChange={(e) => {
+                    setConsultantDr(e.target.value);
+                    selectedDocOck(e.target.value);
+                  }}
+                >
+                  <option>Select Consulting Doctor</option>
+                  {Doctors?.filter((ele) => ele.Department === DocDept)?.map(
+                    (item) => {
+                      return (
+                        <option value={item?._id}>
+                          {item?.Firstname}&nbsp;{item?.Lastname}
+                        </option>
+                      );
+                    }
+                  )}
+                </select>
+              </div>
+              <div className="col-lg-6">
+                <select
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                    marginTop: "2%",
+                  }}
+                  onChange={(e) => {
+                    setDateofApp(e.target.value);
+                  }}
+                >
+                  <option>Date of Appointment</option>
+                  {[
+                    ...new Set(
+                      Doctors.filter(
+                        (ele) => ele?._id === ConsultantDr
+                      ).flatMap((doctor) =>
+                        doctor?.scheduleList?.map(
+                          (scheduleItem) => scheduleItem?.scheduleDate
+                        )
+                      )
+                    ),
+                  ].map((uniqueDate, index) => (
+                    <option key={index} value={uniqueDate}>
+                      {uniqueDate}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-lg-6">
+                <select
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                    marginTop: "2%",
+                  }}
+                  onChange={(e) => {
+                    setStatrtTime(e.target.value);
+                  }}
+                >
+                  <option>Select Time</option>
+                  {Doctors?.filter((ele) => ele?._id === ConsultantDr)?.flatMap(
+                    (doctor) =>
+                      doctor?.scheduleList
+                        ?.filter((ele) => ele.scheduleDate === DateofApp)
+                        ?.map((scheduleItem, index) => (
+                          <option
+                            key={index}
+                            // value={scheduleItem?.startTime}
+                            value={JSON.stringify(scheduleItem)}
+                          >
+                            {`${scheduleItem?.startTime} to ${scheduleItem?.endTime}`}
+                          </option>
+                        ))
+                  )}
+                </select>
+              </div>
+              <div className="col-lg-6">
+                <input
+                  placeholder="Medical-Reason/Disease"
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                    marginTop: "4%",
+                  }}
+                  onChange={(e) => setmedicalReason(e.target.value)}
+                ></input>
+              </div>
               <div className="col-lg-6">
                 <input
                   placeholder="Injury/Condition"
@@ -370,10 +420,10 @@ export default function DoctorsAppointment() {
                   onChange={(e) => setCondition(e.target.value)}
                 ></input>
               </div>
-
               <div className="col-lg-6">
-                <input
-                  placeholder="medicalReason"
+                <textarea
+                  placeholder="Note"
+                  cols={7}
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -382,10 +432,9 @@ export default function DoctorsAppointment() {
                     backgroundColor: "#ebebeb",
                     marginTop: "4%",
                   }}
-                  onChange={(e) => setmedicalReason(e.target.value)}
-                ></input>
+                  onChange={(e) => setNote(e.target.value)}
+                ></textarea>
               </div>
-
               <div className="col-lg-6">
                 <input
                   placeholder="Address"
@@ -402,28 +451,12 @@ export default function DoctorsAppointment() {
               </div>
 
               <div className="col-lg-6">
-                <textarea
-                  placeholder="Note"
-                  cols={7}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                  onChange={(e) => setAddress(e.target.value)}
-                ></textarea>
-              </div>
-
-              <div className="col-lg-6">
                 <label
                   style={{ fontWeight: "500", marginTop: "4%", color: "white" }}
                 >
                   Document
                 </label>
-                <br></br>
+                <br/>
                 <input
                   type="file"
                   style={{
@@ -677,9 +710,7 @@ export default function DoctorsAppointment() {
             </div>
           </Modal.Footer>
         </Modal> */}
-        <div 
-     style={{overflow:"hidden",overflowX:"scroll"}}
-        >
+        <div style={{ overflow: "hidden", overflowX: "scroll" }}>
           <Table responsive="md" style={{ marginTop: "1%" }} bordered>
             <thead>
               <tr style={{ fontSize: "15px", textAlign: "center" }}>
@@ -692,6 +723,7 @@ export default function DoctorsAppointment() {
                 <th>Mobile</th>
                 <th>Injury/Condition</th>
                 <th>Token</th>
+                <th>Status</th>
                 <th>Reschedule</th>
               </tr>
             </thead>
@@ -710,6 +742,10 @@ export default function DoctorsAppointment() {
 
                     <td>{item?.medicalReason}</td>
                     <td>{item?.token}</td>
+                    <td>
+                      <Button>Payment</Button>
+                      <p>UnPaid</p>
+                    </td>
                     <td>
                       {" "}
                       <p
@@ -746,7 +782,7 @@ export default function DoctorsAppointment() {
               className="width-respns width-respns-768px"
               style={{ width: "400px", marginBottom: "20px" }}
               aria-label="Default select example"
-              onChange={(e) => setTime(e.target.value)}
+              // onChange={(e) => setTime(e.target.value)}
             >
               <option>Time</option>
               <option value="10:30 - 11:00">10:30 - 11:00</option>
