@@ -1,12 +1,11 @@
 import React from 'react'
-import { Container, Dropdown, Navbar } from 'react-bootstrap'
+import { Container, Navbar } from 'react-bootstrap'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
-import Label from 'react-bootstrap/FormLabel';
 import { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import { faCalendarDays, faEllipsisVertical, faEnvelope, faEye, faLocationDot, faPhoneVolume, faBandage, faCheck, faAngleRight, faAngleLeft, faCancel, faCirclePlus, faArrowsRotate, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarDays, faEnvelope, faEye, faLocationDot, faPhoneVolume, faCheck, faAngleRight, faAngleLeft, faCirclePlus, faArrowsRotate, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 

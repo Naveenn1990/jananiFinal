@@ -176,10 +176,8 @@ export const Prescription = () => {
                 return (
                   <tr className="admin-table-row">
                     <td>{index + 1}</td>
-
                     <td className=" me-2">{item?.medicineType}</td>
                     {/* <td>{item?.medicineName}</td> */}
-
                     <td>{item?.genericName}</td>
                     <td>{item?.dosage} </td>
 

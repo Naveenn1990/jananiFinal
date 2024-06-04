@@ -6,17 +6,19 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Container, Modal, ProgressBar, Table } from "react-bootstrap";
+import { Button, Container, Form, Modal } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
-import { FaClipboardUser, FaUserTag } from "react-icons/fa";
+import { FaUserTag } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export const PatientsList = () => {
   const doctorData = JSON.parse(sessionStorage.getItem("DoctorDetails"));
-
+  const navigate = useNavigate();
   const [show, setShow] = useState();
   const ReadMoreClose = () => setShow(false);
   const ReadMoreShow = () => setShow(true);
+  const [ShowPatientData, setShowPatientData] = useState("");
 
   const [show1, setShow1] = useState();
   const medHistoryClose1 = () => setShow1(false);
@@ -25,6 +27,10 @@ export const PatientsList = () => {
   const [show2, setShow2] = useState();
   const medHistoryClose2 = () => setShow2(false);
   const medHistoryShow2 = () => setShow2(true);
+
+  const [show3, setShow3] = useState(false);
+  const handleClose3 = () => setShow3(false);
+  const handleShow3 = () => setShow3(true);
 
   const [Topic, setTopic] = useState("");
   const [description, setdescription] = useState("");
@@ -107,7 +113,9 @@ export const PatientsList = () => {
   }, []);
 
   console.log("patientlist: ", patientlist);
-
+  const [selectedcauseid, setselectedcauseid] = useState("");
+  const [Patientcauseid, setPatientcauseid] = useState("");
+  console.log("selectedcauseid", selectedcauseid);
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
@@ -165,22 +173,8 @@ export const PatientsList = () => {
                                 medHistoryShow1();
                               }}
                             >
-                              Details+
+                              past medical observation
                             </button>
-                            {FilterPatientType === "IPD" ? (
-                              <button
-                                title="Daily Doctor report"
-                                className="table-details-btn"
-                                onClick={() => {
-                                  setchosenPatient(item._id);
-                                  medHistoryShow1();
-                                }}
-                              >
-                                DDR
-                              </button>
-                            ) : (
-                              <></>
-                            )}
                           </div>
                         </div>
                         <div>
@@ -191,20 +185,58 @@ export const PatientsList = () => {
                     </Card.Header>
 
                     <ListGroup variant="flush">
-                      <ListGroup.Item>
-                        <p>
-                          {" "}
-                          <FontAwesomeIcon
-                            icon={faLocationDot}
-                            className="me-3 "
-                          />
-                          {item?.Address1}{" "}
-                        </p>
-                        <p>
-                          {" "}
-                          <FontAwesomeIcon icon={faPhoneVolume} /> +
-                          {item?.PhoneNumber}
-                        </p>
+                      <ListGroup.Item className="d-flex">
+                        <div style={{ width: "82%" }}>
+                          <p>
+                            {" "}
+                            <FontAwesomeIcon
+                              icon={faLocationDot}
+                              className="me-3 "
+                            />
+                            {item?.Address1}{" "}
+                          </p>
+                          <p>
+                            {" "}
+                            <FontAwesomeIcon icon={faPhoneVolume} /> +
+                            {item?.PhoneNumber}
+                          </p>
+                        </div>
+                        <div>
+                          {FilterPatientType === "IPD" ? (
+                            <button
+                              title="Daily Doctor report"
+                              className="table-details-btn mb-2"
+                              // onClick={() => {
+                              //   setchosenPatient(item._id);
+                              //   medHistoryShow1();
+                              // }}
+                              // onClick={() => navigate(`/doctorforms`, { state: { item, causeId: selectedcauseid } })}
+                              onClick={() => {
+                                handleShow3();
+                                setselectedcauseid(item);
+                              }}
+                            >
+                              DDR
+                            </button>
+                          ) : (
+                            <></>
+                          )}
+
+                          {FilterPatientType === "IPD" ? (
+                            <button
+                              title="Daily Doctor report"
+                              className="table-details-btn"
+                              // onClick={() => {
+                              //   setchosenPatient(item._id);
+                              //   medHistoryShow1();
+                              // }}
+                            >
+                              Other Reports
+                            </button>
+                          ) : (
+                            <></>
+                          )}
+                        </div>
                       </ListGroup.Item>
                       <ListGroup.Item>
                         {/* <p>Blood Group: O+</p> */}
@@ -234,7 +266,10 @@ export const PatientsList = () => {
                       </ListGroup.Item>
                       <ListGroup.Item className="text-center">
                         <button
-                          onClick={ReadMoreShow}
+                          onClick={() => {
+                            ReadMoreShow();
+                            setShowPatientData(item);
+                          }}
                           className="table-details-btn"
                         >
                           Read More
@@ -248,14 +283,19 @@ export const PatientsList = () => {
         </div>
       </Container>
       {/* Read More Modal */}
-      <Modal size="lg" show={show} onHide={ReadMoreClose}>
-        <Modal.Header className="all-bg-green text-light">
+      <Modal show={show} onHide={ReadMoreClose}>
+        <Modal.Header className="all-bg-green text-light" closeButton>
           <Modal.Title>Patient Profile</Modal.Title>
         </Modal.Header>
         <Modal.Body className="all-bg-green ">
           <div className="row" style={{ color: "white" }}>
-            <div className="col-lg-4">
-              <img src="./img/department-img-1.jpg" style={{ width: "100%" }} />
+            <div className="">
+              <img
+                alt=""
+                // src="./img/department-img-1.jpg"
+                src={`http://localhost:8521/PatientREG/${ShowPatientData?.profilepic}`}
+                style={{ width: "100%",height:"300px" }}
+              />
               <div style={{ border: "1px solid lightgrey" }}>
                 <h6
                   style={{
@@ -274,7 +314,8 @@ export const PatientsList = () => {
                     marginTop: "2%",
                   }}
                 >
-                  <b>NAME</b> : John
+                  <b>NAME</b> :{" "}
+                  {`${ShowPatientData?.Firstname} ${ShowPatientData?.Lastname}`}
                 </h6>
                 <h6
                   style={{
@@ -283,7 +324,7 @@ export const PatientsList = () => {
                     marginTop: "2%",
                   }}
                 >
-                  <b>EmailID</b> : John@gmail.com
+                  <b>EmailID</b> : {ShowPatientData?.Email}
                 </h6>
                 <h6
                   style={{
@@ -292,9 +333,9 @@ export const PatientsList = () => {
                     marginTop: "2%",
                   }}
                 >
-                  <b>Mobile</b> : 9563256325
+                  <b>Mobile</b> : {ShowPatientData?.PhoneNumber}
                 </h6>
-                <h6
+                {/* <h6
                   style={{
                     paddingLeft: "4%",
                     fontSize: "14px",
@@ -302,10 +343,10 @@ export const PatientsList = () => {
                   }}
                 >
                   <b>Occupation</b> : Engineer
-                </h6>
+                </h6> */}
               </div>
             </div>
-            <div className="col-lg-8">
+            {/* <div className="col-lg-8">
               <div style={{ border: "1px solid lightgrey", padding: "2%" }}>
                 <span style={{ fontSize: "14px", textAlign: "justify" }}>
                   Lorem Ipsum is simply dummy text of the printing and
@@ -351,12 +392,12 @@ export const PatientsList = () => {
                   now={60}
                 />
               </div>
-            </div>
+            </div> */}
           </div>
-          <h6 style={{ marginTop: "4%", color: "white" }}>
+          {/* <h6 style={{ marginTop: "4%", color: "white" }}>
             Past Visit History
-          </h6>
-          <Table
+          </h6> */}
+          {/* <Table
             className="table-bordered border-secondary"
             responsive="md"
             style={{ marginTop: "1%", backgroundColor: "#F2EFFB" }}
@@ -384,21 +425,11 @@ export const PatientsList = () => {
                 </td>
                 <td>
                   $500
-                  {/* {" "}
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            textAlign: "center",
-                                            justifyContent: "space-evenly",
-                                        }}
-                                    >
-                                        <MdEdit style={{ color: "#20958c", marginRight: "1%" }} />
-                                        <AiFillDelete style={{ color: "red" }} />
-                                    </div> */}
+                 
                 </td>
               </tr>
             </tbody>
-          </Table>
+          </Table> */}
         </Modal.Body>
         {/* <Modal.Footer>
           <div style={{ display: "flex" }}>
@@ -437,8 +468,6 @@ export const PatientsList = () => {
             </button>
           </div>
         </Modal.Footer> */}
-
-        
       </Modal>
       <Modal size="lg" show={show1} onHide={medHistoryClose1}>
         <Modal.Header className="all-bg-green text-light">
@@ -527,6 +556,41 @@ export const PatientsList = () => {
           <button onClick={getDocReqFromOPDtoIPD} className="table-details-btn">
             Done
           </button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={show3} onHide={handleClose3}>
+        <Modal.Header closeButton>
+          <Modal.Title>Select Cause</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Select
+            onChange={(e) => setPatientcauseid(e.target.value)}
+            aria-label="Default select example"
+          >
+            <option>select cause</option>
+            {selectedcauseid?.cause?.map((item) => {
+              return <option value={item?._id}>{item?.CauseName}</option>;
+            })}
+          </Form.Select>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose3}>
+            Close
+          </Button>
+          {selectedcauseid?.cause?.length > 0 ? (
+            <Button
+              variant="primary"
+              onClick={() =>
+                navigate(`/doctorforms`, {
+                  state: { item: selectedcauseid, causeId: Patientcauseid },
+                })
+              }
+            >
+              Submit
+            </Button>
+          ) : (
+            ""
+          )}
         </Modal.Footer>
       </Modal>
     </div>

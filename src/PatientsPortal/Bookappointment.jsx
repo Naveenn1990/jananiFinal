@@ -14,13 +14,25 @@ export const Bookappointment = () => {
   const [ConsultantDr, setConsultantDr] = useState();
   const [ConsultantDrInfo, setConsultantDrInfo] = useState();
   const [DateofApp, setDateofApp] = useState();
-  const [StatrtTime, setStatrtTime] = useState("");
+  const [StatrtTime, setStatrtTime] = useState(null);
   const [EndTime, setEndTime] = useState("");
   const [Condition, setCondition] = useState();
   const [Note, setNote] = useState();
   const [Document, setDocument] = useState();
   const [medicalReason, setmedicalReason] = useState();
   const [Others, setOthers] = useState(false);
+const [SelectedTime, setSelectedTime] = useState({})
+console.log("SelectedTime",SelectedTime);
+useEffect(() => {
+  if(StatrtTime){
+    setSelectedTime(JSON?.parse(StatrtTime))
+  }
+  
+}, [StatrtTime])
+
+
+  console.log("DateofApp",DateofApp);
+  console.log("StatrtTime",StatrtTime);
 
   function selectedDocOck(val) {
     let docInfo = Doctors.find((item) => item?._id === val);
@@ -30,7 +42,6 @@ export const Bookappointment = () => {
   console.log("ConsultantDr", ConsultantDr);
   console.log("ConsultantDrInfo", ConsultantDrInfo);
 
-
   const formdata = new FormData();
   const generateRandomNumber = () => {
     // Generate a random number between 1000 and 9999
@@ -39,8 +50,10 @@ export const Bookappointment = () => {
   };
   const prefix = "JAN";
   const randomNumber = generateRandomNumber();
-const [BookingStatus, setBookingStatus] = useState("")
-console.log("BookingStatus",BookingStatus);
+  const [BookingStatus, setBookingStatus] = useState("");
+  const [DocDept, setDocDept] = useState("");
+  console.log("BookingStatus", BookingStatus);
+  console.log("ConsultantDr", ConsultantDr);
   const BookAppointment = async (e) => {
     e.preventDefault();
     formdata.append("token", prefix + randomNumber);
@@ -54,13 +67,13 @@ console.log("BookingStatus",BookingStatus);
     formdata.append("Address1", Others ? Address : user?.Address1);
     formdata.append("ConsultantDoctor", ConsultantDr);
     formdata.append("Dateofappointment", DateofApp);
-    formdata.append("starttime", StatrtTime);
-    // formdata.append("endtime", EndTime);
+    formdata.append("starttime", SelectedTime?.startTime);
+    formdata.append("endtime", SelectedTime?.endTime);
     formdata.append("Condition", Condition);
     formdata.append("Note", Note);
     formdata.append("Document", Document);
     formdata.append("medicalReason", medicalReason);
-    formdata.append("bookingstatus", BookingStatus);
+    formdata.append("bookingstatus", SelectedTime?.bookingstatus);
 
     try {
       const config = {
@@ -103,6 +116,7 @@ console.log("BookingStatus",BookingStatus);
   useEffect(() => {
     getDoctors();
   }, []);
+
 
   return (
     <div>
@@ -243,33 +257,62 @@ console.log("BookingStatus",BookingStatus);
                       height: "50px",
                     }}
                     aria-label="Default select example"
+                    onChange={(e) => setDocDept(e.target.value)}
+                  >
+                    <option value="">Select department</option>
+                    {/* {Doctors?.map((item) => {
+                      return (
+                        <option value={item?.Department}>
+                          {item?.Department}
+                        </option>
+                      );
+                    })} */}
+                    {[
+                      ...new Set(Doctors?.map((item) => item?.Department)),
+                    ]?.map((department) => (
+                      <option key={department} value={department}>
+                        {department}
+                      </option>
+                    ))}
+                  </Form.Select>
+
+                  <Form.Select
+                    className="width-respns"
+                    style={{
+                      width: "400px",
+                      marginBottom: "10px",
+                      height: "50px",
+                    }}
+                    aria-label="Default select example"
                     onChange={(e) => {
                       setConsultantDr(e.target.value);
                       selectedDocOck(e.target.value);
                     }}
                   >
                     <option value="">Select Consulting Doctor</option>
-                    {Doctors?.map((item) => {
-                      return (
-                        <option value={item?._id}>
-                          {item?.Firstname}&nbsp;{item?.Lastname}
-                        </option>
-                      );
-                    })}
+                    {Doctors?.filter((ele) => ele.Department === DocDept)?.map(
+                      (item) => {
+                        return (
+                          <option value={item?._id}>
+                            {item?.Firstname}&nbsp;{item?.Lastname}
+                          </option>
+                        );
+                      }
+                    )}
                   </Form.Select>
                   <div>
                     <h6>Date of Appointment</h6>
                     <Form.Select
                       className="width-respns width-respns-768px"
-                      style={{ width: "400px", marginBottom: "20px" }}                     
+                      style={{ width: "400px", marginBottom: "20px" }}
                       onChange={(e) => {
-                        const [date, status] = e.target.value.split(' ');
-                        setDateofApp(date);
-                        setBookingStatus(status)
+                        
+                        setDateofApp(e.target.value);
+                       
                       }}
                     >
                       <option>Select the date</option>
-                      {Doctors?.filter((ele) => ele?._id === ConsultantDr)?.map(
+                      {/* {Doctors?.filter((ele) => ele?._id === ConsultantDr)?.map(
                         (doctor) =>
                           doctor?.scheduleList?.map((scheduleItem, index) => (
                             <option
@@ -279,37 +322,70 @@ console.log("BookingStatus",BookingStatus);
                               {scheduleItem?.scheduleDate}
                             </option>
                           ))
-                      )}
+                      )} */}
+
+                      {[
+                        ...new Set(
+                          Doctors.filter(
+                            (ele) => ele?._id === ConsultantDr
+                          ).flatMap((doctor) =>
+                            doctor?.scheduleList?.map(
+                              (scheduleItem) => scheduleItem?.scheduleDate
+                            )
+                          )
+                        ),
+                      ].map((uniqueDate, index) => (
+                        <option key={index} value={uniqueDate}>
+                          {uniqueDate}
+                        </option>
+                      ))}
                     </Form.Select>
                   </div>
 
                   <div>
                     <h6>Time of Appointment</h6>
-                    <Form.Select
+                    {/* <Form.Select
                       className="width-respns width-respns-768px"
                       style={{ width: "400px", marginBottom: "20px" }}
                       aria-label="Default select example"
-                      onChange={(e) => 
-                       { 
-                        // const [stime, etime] = e.target.value.split(' ');
+                      onChange={(e) => {
+                      
                         setStatrtTime(e.target.value);
-                        // setEndTime(etime);
-                      }
-                      }
+
+                      }}
                     >
                       <option>Select Time</option>
                       {Doctors?.filter((ele) => ele?._id === ConsultantDr)?.map(
                         (doctor) =>
-                          doctor?.scheduleList?.map((scheduleItem, index) => (
-                            <option
-                              key={index}
-                              value={scheduleItem?.startTime}
-                            >
-                              {`${scheduleItem.startTime} to ${scheduleItem.endTime}`}
+                          doctor?.scheduleList?.filter((ele)=>ele.scheduleDate === DateofApp)?.map((scheduleItem, index) => (
+                            <option key={index} value={scheduleItem?.startTime}>
+                              {`${scheduleItem?.startTime} to ${scheduleItem?.endTime}`}
                             </option>
                           ))
                       )}
-                    </Form.Select>
+                    </Form.Select> */}
+                      <Form.Select
+        className="width-respns width-respns-768px"
+        style={{ width: "400px", marginBottom: "20px" }}
+        aria-label="Default select example"
+        onChange={(e) => {
+          setStatrtTime(e.target.value);
+        }}
+      >
+        <option>Select Time</option>
+        {Doctors?.filter((ele) => ele?._id === ConsultantDr)?.flatMap((doctor) =>
+          doctor?.scheduleList
+            ?.filter((ele) => ele.scheduleDate === DateofApp)
+            ?.map((scheduleItem, index) => (
+              <option key={index} 
+              // value={scheduleItem?.startTime}
+              value={JSON.stringify(scheduleItem)}
+              >
+                {`${scheduleItem?.startTime} to ${scheduleItem?.endTime}`}
+              </option>
+            ))
+        )}
+      </Form.Select>
                   </div>
                   {/* <FloatingLabel
                     className="width-respns"

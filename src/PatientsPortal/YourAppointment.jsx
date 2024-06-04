@@ -4,12 +4,9 @@ import React, { useEffect, useState } from "react";
 import { Button, Container, FloatingLabel, Form, Modal } from "react-bootstrap";
 import { FaEdit } from "react-icons/fa";
 export const YourAppointment = () => {
-  const patientMedicalRecordObj = JSON.parse(
-    sessionStorage.getItem("PatientUser")
-  );
 
+  const user = JSON.parse(sessionStorage.getItem("PatientUser"));
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = (item) => {
     setShow(true);
@@ -17,19 +14,19 @@ export const YourAppointment = () => {
   };
 
   const [AppointmentList, setAppointmentList] = useState([]);
-
   const getAppointmentList = () => {
     axios
       .get("http://localhost:8521/api/user/getlist")
       .then(function (response) {
         // handle success
         setAppointmentList(
-          response.data.Info?.filter(
-            (item) =>
-              item?.PatientId === patientMedicalRecordObj?._id &&
-              moment(item?.Dateofappointment).format("DD-MM-YYYY") >=
-                moment(new Date()).format("DD-MM-YYYY")
-          )
+          // response.data.Info?.filter(
+          //   (item) =>
+          //     item?.PatientId === patientMedicalRecordObj?._id &&
+          //     moment(item?.Dateofappointment).format("DD-MM-YYYY") >=
+          //       moment(new Date()).format("DD-MM-YYYY")
+          // )
+          response.data.Info
         );
       })
       .catch(function (error) {
@@ -82,9 +79,9 @@ export const YourAppointment = () => {
 
       <Container>
         <div className="row">
-          {AppointmentList?.map((item) => {
+          {AppointmentList?.filter((ele)=>ele.PatientId === user?._id)?.map((item) => {
             return (
-              <div className="col-lg-6">
+              <div className="col-lg-6 mt-3">
                 <div
                   className="d-flex your-appointment-respns"
                   style={{
@@ -101,7 +98,11 @@ export const YourAppointment = () => {
                     />
                     <div>
                       <p className="mb-2 fw-bold">
-                        {item?.Firstname} {item?.Dateofappointment} {item?.Time}
+                        {item?.Firstname} {item?.Dateofappointment} 
+                        
+                      </p>
+                      <p className="mb-2 fw-bold">                        
+                     Time:    {item?.starttime} to {item?.endtime}
                       </p>
                       <p className="mb-2 fw-bold">Hospital service</p>
                       <p className="mb-2 fw-bold">Token No : {item?.token}</p>
@@ -131,7 +132,7 @@ export const YourAppointment = () => {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Modal title</Modal.Title>
+          <Modal.Title>Update Appointment</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div>
@@ -170,7 +171,9 @@ export const YourAppointment = () => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button onClick={UpdateBookingAppointment} variant="primary">
+          <Button 
+          // onClick={UpdateBookingAppointment} 
+          variant="primary">
             Understood
           </Button>
         </Modal.Footer>

@@ -246,6 +246,9 @@ import VendorAddedProducts from "./Admin/VendorAddedProducts";
 import VendorAddedProductCart from "./Admin/VendorAddedProductCart";
 import ProductStatus from "./Vendor/ProductStatus";
 import VendorAddedProductsStatus from "./Admin/VendorAddedProductsStatus";
+import AdminBookProduct from "./Admin/AdminBookProduct";
+import AdminBookProductCart from "./Admin/AdminBookProductCart";
+import Adminorder from "./Admin/Adminorder";
 
 function App() {
   return (
@@ -2194,6 +2197,33 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<AddProductInvetory />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/AdminBookProduct"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AdminBookProduct />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/AdminBookProductCart"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<AdminBookProductCart />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/Adminorder"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Adminorder />} />{" "}
                 </>
               }
             ></Route>

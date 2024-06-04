@@ -52,12 +52,15 @@ export const AppointmentList = () => {
 
   return (
     <div>
+      {/* <div style={{ backgroundColor: "#dae1f3" }}>
+        <h2>Appointment List</h2>
+      </div> */}
       <Navbar expand="lg" style={{ backgroundColor: "#dae1f3" }}>
         <Container fluid>
           <Navbar.Brand className="fw-bold" href="#">
             Appointment
           </Navbar.Brand>
-          <Navbar.Toggle aria-controls="navbarScroll" />
+         
           <Navbar.Collapse id="navbarScroll">
             <div className="d-flex gap-5">
               <Form className="d-flex">
@@ -69,12 +72,17 @@ export const AppointmentList = () => {
                 />
                 <Button variant="outline-primary">Search</Button>
               </Form>
-              <div className="d-flex gap-3">
-                <label style={{width:"63%"}}>Select Date : </label>
+              <div className="d-flex gap-3 align-items-center">
+                <label style={{width:"68%"}}>Select Date : </label>
                 <Form.Control
                   type="date"
-                  className="me-2"                 
+                  className="me-2" 
+                  onChange={(e)=>setDateFilter(e.target.value)}                
                 />
+                <Button
+                onClick={()=>setDateFilter("")}
+                variant="danger"
+                >Clear</Button>
               </div>
             </div>
           </Navbar.Collapse>
@@ -94,7 +102,9 @@ export const AppointmentList = () => {
             </tr>
           </thead>
           <tbody>
-            {AppointmentList?.map((item) => {
+            {AppointmentList
+             ?.filter((item) => !DateFilter || item?.Dateofappointment === DateFilter)
+            ?.map((item) => {
               return (
                 <tr className="admin-table-row">
                   <td>

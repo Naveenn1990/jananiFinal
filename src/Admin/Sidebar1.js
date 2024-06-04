@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import { Dropdown } from "react-bootstrap";
 import "./Adminpanel.css";
-import { RxDashboard } from "react-icons/rx";
-import { MdAdminPanelSettings } from "react-icons/md";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -11,17 +8,12 @@ export default function Sidebar1() {
   const Subadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
   const admin = JSON.parse(sessionStorage.getItem("adminDetails"));
 
-  console.log(Subadmin, "klklklklklkl");
-
   const [DoctorM, setDoctorM] = useState(false);
   const [PatientM, setPatientM] = useState(false);
   const [LabM, setLabM] = useState(false);
   const [SerM, setSerM] = useState(false);
   const [PharM, setPharM] = useState(false);
   const [HosM, setHosM] = useState(false);
-  const [BedM, setBedM] = useState(false);
-
-  const [SelectedItem, setSelectedItem] = useState(1);
 
   function logoutFn() {
     sessionStorage.removeItem("Subadmin");
@@ -223,6 +215,16 @@ export default function Sidebar1() {
             >
               Inventory
             </h6>
+            <Link to={"/admin/AdminBookProduct"}>
+            <h6 className="sidebarItem1" >
+              Admin Book Product
+            </h6>
+            </Link>
+            <Link to={"/admin/Adminorder"}>
+            <h6 className="sidebarItem1" >
+              Admin Order
+            </h6>
+            </Link>
 
             {/* <h6
           className="sidebarItem1"

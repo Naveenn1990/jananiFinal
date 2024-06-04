@@ -151,7 +151,7 @@ export default function DoctorsSidebar() {
         Calendar
       </h6>
 
-      <h6
+      {/* <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/doctorscontact")}
       >
@@ -161,7 +161,7 @@ export default function DoctorsSidebar() {
           style={{ color: "", marginRight: "5px" }}
         />
         Contacts
-      </h6>
+      </h6> */}
 
       <h6
         className="sidebarItem"

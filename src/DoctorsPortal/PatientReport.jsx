@@ -3,8 +3,6 @@ import { Container, Navbar, Table } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
-import { MdEdit } from "react-icons/md";
-import { AiFillDelete } from "react-icons/ai";
 import axios from "axios";
 import { FaEye } from "react-icons/fa";
 const PatientReport = () => {

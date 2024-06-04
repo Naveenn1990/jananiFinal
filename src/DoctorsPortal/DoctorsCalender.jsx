@@ -11,6 +11,7 @@ import {
   InputGroup,
   Modal,
 } from "react-bootstrap";
+import axios from "axios";
 
 const styles = {
   wrap: {
@@ -25,8 +26,8 @@ const styles = {
 };
 
 export const DoctorsCalender = () => {
+  const doctor = JSON.parse(sessionStorage.getItem("DoctorDetails"));
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -62,6 +63,27 @@ export const DoctorsCalender = () => {
     // },
   });
 
+  const [AppointmentList, setAppointmentList] = useState([]);
+  const getAppointmentList = () => {
+    axios
+      .get("http://localhost:8521/api/user/getlist")
+      .then(function (response) {
+        const data = response.data.Info.filter(
+          (item) => item?.ConsultantDoctor?._id == doctor?._id
+        );
+        setAppointmentList(data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getAppointmentList();
+  }, []);
+
+  console.log("AppointmentList",AppointmentList);
+
   useEffect(() => {
     const events = [
       {
@@ -93,7 +115,7 @@ export const DoctorsCalender = () => {
       },
     ];
 
-    const startDate = "2023-10-02";
+    const startDate = "2024-10-02";
 
     calendarRef.current.control.update({ startDate, events });
   }, []);
@@ -106,8 +128,8 @@ export const DoctorsCalender = () => {
           showMonths={3}
           skipMonths={3}
           onClick={handleShow}
-          startDate={"2023-10-02"}
-          selectionDay={"2023-10-02"}
+          startDate={"2024-06-02"}
+          selectionDay={"2024-06-02"}
           onTimeRangeSelected={(args) => {
             calendarRef.current.control.update({
               startDate: args.day,

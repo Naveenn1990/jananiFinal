@@ -353,7 +353,7 @@ export default function Hospitaldoctors() {
         getDoctors();
         setShow6(false);
         alert(res.data.success);
-        setScheduleList("");
+        // setScheduleList("");
       }
     } catch (error) {
       console.log(error);

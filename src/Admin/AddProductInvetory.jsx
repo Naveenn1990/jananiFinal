@@ -5,10 +5,7 @@ import {
   AiFillFileExcel,
   AiOutlinePlusCircle,
 } from "react-icons/ai";
-import { BsFillEyeFill } from "react-icons/bs";
-import { MdEdit } from "react-icons/md";
-import { FaUserMd } from "react-icons/fa";
-import { ImLab } from "react-icons/im";
+import { MdEdit } from "react-icons/md"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleInfo,
