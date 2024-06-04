@@ -266,7 +266,7 @@ export default function Adminheader() {
             <FaUserShield style={{ fontSize: "40px", marginTop: "10px" }} />
           </div>
         </div>
-        {/* modals */}
+  
         <Modal
           show={show}
           size="lg"

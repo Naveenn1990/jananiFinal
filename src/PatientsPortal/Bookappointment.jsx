@@ -305,10 +305,8 @@ useEffect(() => {
                     <Form.Select
                       className="width-respns width-respns-768px"
                       style={{ width: "400px", marginBottom: "20px" }}
-                      onChange={(e) => {
-                        
-                        setDateofApp(e.target.value);
-                       
+                      onChange={(e) => {                        
+                        setDateofApp(e.target.value);                       
                       }}
                     >
                       <option>Select the date</option>
