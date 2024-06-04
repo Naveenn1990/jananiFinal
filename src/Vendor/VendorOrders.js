@@ -1,27 +1,21 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Container,
-  Modal,
-  Table,
-} from "react-bootstrap";
+import { Button, Container, Modal, Table } from "react-bootstrap";
 import { BsFillPatchCheckFill } from "react-icons/bs";
 import { MdCancel } from "react-icons/md";
-
+import { FaFileInvoiceDollar } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 export const VendorOrders = () => {
   const Vendor = JSON.parse(sessionStorage.getItem("VendorDetails"));
-
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const viewClose = () => setShow(false);
   const viewShow = () => setShow(true);
-
 
   const deleteBtnClose = () => {
     setShow(false);
     setPayment();
   };
-
 
   const [OrderList, setOrderList] = useState([]);
 
@@ -38,7 +32,7 @@ export const VendorOrders = () => {
       });
   };
 
-  console.log(OrderList, "OrderList");
+  console.log(OrderList, "OrderListMY");
 
   useEffect(() => {
     getOrderList();
@@ -407,7 +401,7 @@ export const VendorOrders = () => {
         >
           {" "}
           <thead>
-            <tr className="admin-table-head">
+            <tr className="admin-table-head text-center">
               <th className="fw-bold">Product Id</th>
               <th className="fw-bold">Product Name</th>
               <th className="fw-bold">Product Type</th>
@@ -417,13 +411,14 @@ export const VendorOrders = () => {
               <th className="fw-bold">Quantity </th>
               <th className="fw-bold">Total Price </th>
               <th className="fw-bold">Action </th>
+              <th className="fw-bold">Invoice </th>
             </tr>
           </thead>
           <tbody>
             {OrderList?.filter((data) => data.orderStatus == "DELIVERED")?.map(
               (item) => {
                 return (
-                  <tr className="admin-table-row">
+                  <tr className="admin-table-row text-center">
                     <td>{item?.productId?._id}</td>
                     <td>{item?.productId?.productName}</td>
                     <td>{item?.productId?.productType}</td>
@@ -459,6 +454,18 @@ export const VendorOrders = () => {
                           PENDING
                         </button>
                       )}
+                    </td>
+                    <td>
+                      <FaFileInvoiceDollar
+                        style={{ fontSize: "30px", color: "#20958C" }}
+                        onClick={() =>
+                          navigate("/Vendor-admin-invoice", {
+                            state: {
+                              ProductDetails: item,
+                            },
+                          })
+                        }
+                      />
                     </td>
                   </tr>
                 );

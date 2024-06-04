@@ -10,8 +10,11 @@ import { faCircleInfo, faTag } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import Carousel from "react-multi-carousel";
 import moment from "moment/moment";
+import { FaFileInvoiceDollar } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 export default function VendorAddedProductsStatus() {
+  const navigate = useNavigate();
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
   const responsive = {
     superLargeDesktop: {
@@ -85,7 +88,7 @@ export default function VendorAddedProductsStatus() {
 
   // console.log("orderedProductsList", orderedProductsList);
   // console.log("SelectedProduct", SelectedProduct);
-
+  console.log("adminInvoice44: ", orderedProductsList);
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -133,6 +136,7 @@ export default function VendorAddedProductsStatus() {
               <th>Payment Detils</th>
               <th>Status</th>
               <th>Details</th>
+              <th>Invoice</th>
 
               {/* <th>Contact</th>
 
@@ -172,6 +176,22 @@ export default function VendorAddedProductsStatus() {
                           }}
                         />
                       </td>
+                      <td>
+                        {val.orderStatus === "DELIVERED" ? (
+                          <FaFileInvoiceDollar
+                            style={{ fontSize: "30px", color: "#20958C" }}
+                            onClick={() =>
+                              navigate("/admin/Vendor-Admin-Inv", {
+                                state: {
+                                  ProductDetails: val,
+                                },
+                              })
+                            }
+                          />
+                        ) : (
+                          <></>
+                        )}
+                      </td>
                       {/* <td>{val.totalPaidPrice}</td> */}
                     </tr>
                   );
@@ -206,6 +226,22 @@ export default function VendorAddedProductsStatus() {
                             setSelectedProduct(val);
                           }}
                         />
+                      </td>
+                      <td>
+                        {val.orderStatus === "DELIVERED" ? (
+                          <FaFileInvoiceDollar
+                            style={{ fontSize: "30px", color: "#20958C" }}
+                            onClick={() =>
+                              navigate("/admin/Vendor-Admin-Inv", {
+                                state: {
+                                  ProductDetails: val,
+                                },
+                              })
+                            }
+                          />
+                        ) : (
+                          <></>
+                        )}
                       </td>
                       {/* <td>{val.totalPaidPrice}</td> */}
                     </tr>
