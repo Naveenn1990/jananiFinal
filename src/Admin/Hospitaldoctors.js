@@ -468,7 +468,7 @@ export default function Hospitaldoctors() {
       scheduleDate,
       startTime,
       endTime,
-      bookingstatus: "Vacancy",
+      bookingstatus: "Vacant",
     };
     setScheduleList([...scheduleList, newSchedule]);
     // setScheduleDate('');
@@ -2385,7 +2385,7 @@ export default function Hospitaldoctors() {
                       <td>{item?.startTime}</td>
                       <td>{item?.endTime}</td>
                       <td>
-                        {item?.bookingstatus === "Vacancy" ? (<>
+                        {item?.bookingstatus === "Vacant" ? (<>
                         <b style={{color:"green"}}>{item?.bookingstatus}</b>
                         </>):(<>
                           <b style={{color:"red",fontSize:"20px"}}>{item?.bookingstatus}</b>

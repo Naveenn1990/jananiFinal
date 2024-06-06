@@ -163,7 +163,7 @@ export default function DoctorsSidebar() {
         Contacts
       </h6> */}
 
-      <h6
+      {/* <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/patientreports")}
       >
@@ -173,7 +173,7 @@ export default function DoctorsSidebar() {
           style={{ color: "", marginRight: "5px" }}
         />
         Patient Reports
-      </h6>
+      </h6> */}
 
      <Link to={"/doctorssettings"}>
      <h6
