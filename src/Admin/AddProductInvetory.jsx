@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Table } from "react-bootstrap";
+import { Button, Modal, Table } from "react-bootstrap";
 import {
   AiFillDelete,
   AiFillFileExcel,
   AiOutlinePlusCircle,
 } from "react-icons/ai";
-import { MdEdit } from "react-icons/md"
+import { BsFillEyeFill } from "react-icons/bs";
+import { MdEdit } from "react-icons/md";
+import { FaUserMd } from "react-icons/fa";
+import { ImLab } from "react-icons/im";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleInfo,
@@ -57,6 +60,14 @@ export default function AddProductInvetory() {
   const handleClose3 = () => setShow3(false);
   const handleShow3 = () => setShow3(true);
 
+  const [show4, setShow4] = useState(false);
+  const [pdfdata, setpdfdata] = useState({});
+  const handleClose4 = () => setShow4(false);
+  const handleShow4 = (data) => {
+    setShow4(true);
+    setpdfdata(data);
+  };
+
   const [catid, setcatid] = useState("");
   const [subcatid, setsubcatid] = useState("");
   const [categoryList, setcategoryList] = useState([]);
@@ -67,10 +78,14 @@ export default function AddProductInvetory() {
   const [maxOrderlimit, setmaxOrderlimit] = useState(null);
   const [price, setprice] = useState(0);
   const [discount, setdiscount] = useState(0);
+  const [InvoiceNumber, setInvoiceNumber] = useState("");
+  const [Invoicedate, setInvoicedate] = useState("");
+  const [InvoiceDoc, setInvoiceDoc] = useState("");
+
   const [afterDiscountPrice, setafterDiscountPrice] = useState(0);
   const [productImgs, setproductImgs] = useState([]);
   const [showproductImgs, setshowproductImgs] = useState([]);
-  const [productInfo, setproductInfo] = useState([]);
+  const [productInfo, setproductInfo] = useState({});
 
   // Edit product information:
   const [editProdName, seteditProdName] = useState("");
@@ -133,15 +148,15 @@ export default function AddProductInvetory() {
         `http://localhost:8521/api/vendor/getAllAdminOrders/${adminDetails?._id}`
       );
       if (res.status === 200) {
-        let seen = {};
+        // let seen = {};
         setorderedProductsList(
           res.data.allAdminOrders.filter((obj) => {
             if (
-              !seen[obj.productId] &&
+              // !seen[obj.productId] &&
               obj.orderStatus === "DELIVERED" &&
               obj.orderPayment === "DONE"
             ) {
-              seen[obj.productId] = true;
+              // seen[obj.productId] = true;
               return true;
             }
             return false;
@@ -165,26 +180,30 @@ export default function AddProductInvetory() {
         maxOrderlimit: maxOrderlimit,
         productPrice: price,
         discount: discount,
-        productImgs: productImgs,
-        vendorIdProductId: ChosenProd.productId,
-        productName: ChosenProd.productName,
-        currencyFormat: ChosenProd.currencyFormat,
-        productType: ChosenProd.productType,
-        manufacturingDate: ChosenProd.manufacturingDate,
-        expiryDate: ChosenProd.expiryDate,
-        shortexpiryDate: ChosenProd.shortexpiryDate,
-        description: ChosenProd.description,
-        brand: ChosenProd.brand,
-        productSize: ChosenProd.productSize,
-        packSize: ChosenProd.packSize,
-        colour: ChosenProd.colour,
-        flavour: ChosenProd.flavour,
-        fragrance: ChosenProd.fragrance,
-        variant: ChosenProd.variant,
-        countryOfOrigin: ChosenProd.countryOfOrigin,
-        manufacturercompanyname: ChosenProd.manufacturercompanyname,
-        manufactureraddress: ChosenProd.manufactureraddress,
+        InvoiceNumber: InvoiceNumber,
+        Invoicedate: Invoicedate,
+        InvoiceDoc: InvoiceDoc,
+        // productImgs: productImgs,
+        vendorIdProductId: ChosenProd?.productId?._id,
+        productName: ChosenProd?.productId?.productName,
+        currencyFormat: ChosenProd?.productId?.currencyFormat,
+        productType: ChosenProd?.productId?.productType,
+        manufacturingDate: ChosenProd?.productId?.manufacturingDate,
+        expiryDate: ChosenProd?.productId?.expiryDate,
+        shortexpiryDate: ChosenProd?.productId?.shortexpiryDate,
+        description: ChosenProd?.productId?.description,
+        brand: ChosenProd?.productId?.brand,
+        productSize: ChosenProd?.productId?.productSize,
+        packSize: ChosenProd?.productId?.packSize,
+        colour: ChosenProd?.productId?.colour,
+        flavour: ChosenProd?.productId?.flavour,
+        fragrance: ChosenProd?.productId?.fragrance,
+        variant: ChosenProd?.productId?.variant,
+        countryOfOrigin: ChosenProd?.productId?.countryOfOrigin,
+        manufacturercompanyname: ChosenProd?.productId?.manufacturercompanyname,
+        manufactureraddress: ChosenProd?.productId?.manufactureraddress,
       };
+      console.log("obj", obj);
       const config = {
         url: "/admin/addToInventory",
         method: "post",
@@ -196,6 +215,7 @@ export default function AddProductInvetory() {
         .then((res) => {
           if (res.status === 201 || res.status === 200) {
             alert(res.data.success);
+            window.location.reload();
           }
         })
         .catch((err) => {
@@ -218,7 +238,7 @@ export default function AddProductInvetory() {
         discount: editDiscount,
         categoryid: editcatid,
         subcategoryid: editsubcatid,
-        stock: editstock,
+        // stock: editstock,
         productType: editproductType,
         productSize: editproductSize,
         packSize: editpackSize,
@@ -276,6 +296,24 @@ export default function AddProductInvetory() {
     }
   }
 
+  const deleteInventory = async (id) => {
+    try {
+      const config = {
+        url: "/admin/deleteInventory/" + id,
+        baseURL: "http://localhost:8521/api",
+        method: "delete",
+        header: { "Content-Type": "application/json" },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        getInventoryList();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
   useEffect(() => {
     adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
     if (!adminDetails) {
@@ -295,6 +333,29 @@ export default function AddProductInvetory() {
       Number((price - (price * discount) / 100).toFixed(1))
     );
   }, [price, discount]);
+
+  const removeDuplicates = (orderedProductsList) => {
+    const productIdMap = new Map();
+
+    return orderedProductsList.filter((item) => {
+      const productId = item.productId._id;
+      if (!productIdMap.has(productId)) {
+        productIdMap.set(productId, true);
+        return true;
+      }
+      return false;
+    });
+  };
+
+  const newarray = removeDuplicates(orderedProductsList);
+
+  // console.log("orderedProductsList555555: ", orderedProductsList);
+  // console.log("newarray", newarray);
+  // console.log("InvoiceDoc", InvoiceDoc);
+  // console.log("ChosenProd", ChosenProd);
+  console.log("inventoryList", inventoryList);
+  console.log("productInfo", productInfo);
+  console.log("newarray", newarray);
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -342,27 +403,7 @@ export default function AddProductInvetory() {
           </Modal.Header>
           <Modal.Body>
             <div className="row">
-              {/* <div className="col-lg-6 col-sm-12 mt-2">
-                <select
-                  style={{
-                    width: "100%",
-                    backgroundColor: "#EBEBEB",
-                    padding: "8px 20px",
-                    border: "1px solid #EBEBEB",
-                  }}
-                  onChange={(e) => setvenid(e.target.value)}
-                >
-                  <option>Choose Vendors</option>
-                  {VendorList?.map((details) => {
-                    return (
-                      <option value={details._id}>
-                        #{details?.vendorId} {details?.fname} {details?.lname}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div> */}
-              <div className="col-lg-6 col-sm-12 mt-2">
+              <div className="col-lg-4 col-sm-12 mt-2">
                 <select
                   style={{
                     width: "100%",
@@ -380,7 +421,7 @@ export default function AddProductInvetory() {
                   })}
                 </select>
               </div>
-              <div className="col-lg-6 col-sm-12 mt-2">
+              <div className="col-lg-4 col-sm-12 mt-2">
                 <select
                   style={{
                     width: "100%",
@@ -392,7 +433,7 @@ export default function AddProductInvetory() {
                 >
                   <option>Choose Subategory</option>
                   {subcategoryList
-                    .filter((val) => val.categoryid?._id === catid)
+                    .filter((val) => val?.categoryid?._id === catid)
                     ?.map((item) => {
                       return (
                         <option value={item?._id}>
@@ -402,7 +443,7 @@ export default function AddProductInvetory() {
                     })}
                 </select>
               </div>
-              <div className="col-lg-6 col-sm-12 mt-2">
+              <div className="col-lg-4 col-sm-12 mt-2">
                 <select
                   style={{
                     width: "100%",
@@ -412,40 +453,29 @@ export default function AddProductInvetory() {
                   }}
                   onChange={(e) => {
                     setChosenProd(JSON.parse(e.target.value));
-                    setprodid(JSON.parse(e.target.value)?._id);
+                    setprodid(JSON.parse(e.target.value)._id);
                   }}
                 >
                   <option>Choose Products</option>
-                  {orderedProductsList
-                    .filter(
+                  {newarray
+                    ?.filter(
                       (val) =>
                         // val.vendorid._id === venid &&
-                        val.categoryid?._id === catid &&
-                        val.subcategoryid?._id === subcatid
+                        val?.productId?.categoryid?.toString() ===
+                          catid?.toString() &&
+                        val?.productId?.subcategoryid?.toString() ===
+                          subcatid?.toString()
                     )
                     ?.map((item) => {
                       return (
                         <option value={JSON.stringify(item)}>
-                          {item?.productName}
+                          {item?.productId?.productName}
                         </option>
                       );
                     })}
                 </select>
               </div>
-              <div className="col-lg-6 col-sm-12 mt-2">
-                <input
-                  placeholder="Stocks Available"
-                  value={stock}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                  onChange={(event) => setstock(event.target.value)}
-                ></input>
-              </div>
+
               <div className="col-lg-6 col-sm-12 mt-2">
                 <label
                   style={{
@@ -453,7 +483,7 @@ export default function AddProductInvetory() {
                     color: "#ebebeb",
                   }}
                 >
-                  Price
+                  Selling Price
                 </label>
                 <input
                   placeholder="Price"
@@ -475,7 +505,7 @@ export default function AddProductInvetory() {
                     color: "#ebebeb",
                   }}
                 >
-                  Discount
+                  Discount (%)
                 </label>
                 <input
                   placeholder="Discount"
@@ -555,9 +585,123 @@ export default function AddProductInvetory() {
                   onChange={(event) => setmaxOrderlimit(event.target.value)}
                 ></input>
               </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "500",
+                    color: "#ebebeb",
+                  }}
+                >
+                  Stocks Available
+                </label>
+                <input
+                  placeholder="Stocks Available"
+                  value={stock}
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                  onChange={(event) => setstock(event.target.value)}
+                ></input>
+              </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "500",
+                    color: "#ebebeb",
+                  }}
+                >
+                  Invoice Number
+                </label>
+                <input
+                  placeholder="Invoice Number"
+                  value={InvoiceNumber}
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                  onChange={(event) => setInvoiceNumber(event.target.value)}
+                ></input>
+              </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "500",
+                    color: "#ebebeb",
+                  }}
+                >
+                  Invoice Date
+                </label>
+                <input
+                  type="date"
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                  onChange={(event) => setInvoicedate(event.target.value)}
+                ></input>
+              </div>
+              {!InvoiceDoc ? (
+                <div className="mt-3">
+                  <span
+                    style={{
+                      fontWeight: "500",
+                      color: "#ebebeb",
+                    }}
+                  >
+                    Upload Invoice:{" "}
+                  </span>
+                  <input
+                    type="file"
+                    id="fileInput"
+                    accept="application/pdf"
+                    hidden
+                    multiple
+                    onChange={(e) => {
+                      setInvoiceDoc(e.target.files[0]);
+                    }}
+                  />
+                  <label for="fileInput">
+                    <FontAwesomeIcon
+                      icon={faUpload}
+                      type="file"
+                      style={{
+                        color: "#ebebeb",
+                        fontSize: "25px",
+                        border: "0px solid #ebebeb",
+                        // borderRadius: "15px",
+                      }}
+                    />
+                  </label>
+                </div>
+              ) : (
+                <div className="mt-3">
+                  <img
+                    src={
+                      "https://cdn-icons-png.flaticon.com/128/202/202298.png"
+                    }
+                    alt="avathar"
+                    style={{
+                      width: "80px",
+                      height: "80px",
+                      borderRadius: "50px",
+                    }}
+                    // onClick={() => handleShow4(InvoiceDoc)}
+                  />
+                </div>
+              )}
               {prodid ? (
                 <div>
-                  {orderedProductsList
+                  {newarray
                     .filter((item) => item?._id === prodid)
                     .map((val) => {
                       return (
@@ -577,186 +721,115 @@ export default function AddProductInvetory() {
                                 marginBottom: "0px",
                               }}
                             >
-                              {val?.productName}
+                              {val?.productId?.productName}
                             </p>
-
-                            {/* <div
-                              style={{
-                                color: "#4A4A4D",
-                                fontWeight: "600",
-                              }}
-                            >
-                              ₹
-                              {(
-                                val?.productPrice -
-                                (val?.productPrice * val?.discount) / 100
-                              ).toFixed(1)}{" "}
-                              <span
-                                style={{
-                                  color: "#4A4A4D",
-                                  fontWeight: "600",
-                                  textDecoration: "line-through",
-                                }}
-                              >
-                                ₹{val?.productPrice}
-                              </span>{" "}
-                              <span>{val?.discount}% off</span>
-                              <FontAwesomeIcon
-                                icon={faTag}
-                                shake
-                                style={{ color: "#f24318", paddingLeft: "6px" }}
-                              />
-                            </div> */}
+                          
                             <div className="row">
-                              {/* <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                Stock: {val?.stock}
-                              </div> */}
-                              {val?.productType ? (
+                              {val?.productId?.productType ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                  Product Type: {val?.productType}
+                                 <span style={{fontWeight:"bold"}}>Product Type:</span>  {val?.productId?.productType}
                                 </div>
                               ) : (
                                 <></>
                               )}
-                              {val?.productSize ? (
+                              {val?.AdminPrice ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                  Product Size: {val?.productSize}
+                                 <span style={{fontWeight:"bold"}}>Buying Price:</span> ₹ {val?.AdminPrice} /-
                                 </div>
                               ) : (
                                 <></>
                               )}
-                              {val?.packSize ? (
+                              {val?.quantity ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                  Pack Size: {val?.packSize}
+                                 <span style={{fontWeight:"bold"}}>Quantity:</span>  {val?.quantity} 
+                                </div>
+                              ) : (
+                                <></>
+                              )}
+                              {val?.productId?.productSize ? (
+                                <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                                 <span style={{fontWeight:"bold"}}>Product Size :</span>  {val?.productId?.productSize}
+                                </div>
+                              ) : (
+                                <></>
+                              )}
+                              {val?.productId?.packSize ? (
+                                <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                                 <span style={{fontWeight:"bold"}}>Pack Size :</span>  {val?.productId?.packSize}
                                 </div>
                               ) : (
                                 <></>
                               )}
                               <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                Manufacturing Date:{" "}
+                               <span style={{fontWeight:"bold"}}>Manufacturing Date :{" "}</span> 
                                 {moment(val?.manufacturingDate).format(
                                   "DD-MM-YYYY"
                                 )}
                               </div>
                               <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                Expiry Date:{" "}
+                                <span style={{fontWeight:"bold"}}>Expiry Date :{" "}</span>
                                 {moment(val?.expiryDate).format("DD-MM-YYYY")}
                               </div>
-                              {val?.colour ? (
+                              {val?.productId?.colour ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                  Colour: {val?.colour}
+                                 <span style={{fontWeight:"bold"}}>Colour :</span>  {val?.productId?.colour}
                                 </div>
                               ) : (
                                 <></>
                               )}
-                              {val?.flavour ? (
+                              {val?.productId?.flavour ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                  Flavour: {val?.flavour}
+                                 <span style={{fontWeight:"bold"}}> Flavour :</span> {val?.productId?.flavour}
                                 </div>
                               ) : (
                                 <></>
                               )}
-                              {val?.fragrance ? (
+                              {val?.productId?.fragrance ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                  Fragrance: {val?.fragrance}
+                                 <span style={{fontWeight:"bold"}}> Fragrance :</span> {val?.productId?.fragrance}
                                 </div>
                               ) : (
                                 <></>
                               )}
-                              {val?.variant ? (
+                              {val?.productId?.variant ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                  Varient: {val?.variant}
+                                 <span style={{fontWeight:"bold"}}>Varient :</span>  {val?.productId?.variant}
                                 </div>
                               ) : (
                                 <></>
                               )}
-                              {val?.brand ? (
+                              {val?.productId?.brand ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                  Brand: {val?.brand}
+                                 <span style={{fontWeight:"bold"}}>Brand :</span>  {val?.productId?.brand}
                                 </div>
                               ) : (
                                 <></>
                               )}
-                              {val?.countryOfOrigin ? (
+                              {val?.productId?.countryOfOrigin ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                  Country Of Origin: {val?.countryOfOrigin}
+                                 <span style={{fontWeight:"bold"}}>Country Of Origin :</span> 
+                                  {val?.productId?.countryOfOrigin}
                                 </div>
                               ) : (
                                 <></>
                               )}
-                              {val?.manufacturercompanyname ? (
+                              {val?.productId?.manufacturercompanyname ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                  Manufacturer Company:{" "}
-                                  {val?.manufacturercompanyname}
+                                 <span style={{fontWeight:"bold"}}>Manufacturer Company :</span> 
+                                  {val?.productId?.manufacturercompanyname}
                                 </div>
                               ) : (
                                 <></>
                               )}
-                              {val?.manufactureraddress ? (
+                              {val?.productId?.manufactureraddress ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                  Manufacturer Address:{" "}
-                                  {val?.manufactureraddress}
+                                 <span style={{fontWeight:"bold"}}>Manufacturer Address :</span> 
+                                  {val?.productId?.manufactureraddress}
                                 </div>
                               ) : (
                                 <></>
                               )}
                             </div>
-
-                            <div className="mt-3">
-                              <span
-                                style={{
-                                  fontWeight: "500",
-                                  color: "#20958c",
-                                }}
-                              >
-                                Upload Images:{" "}
-                              </span>
-                              <input
-                                type="file"
-                                id="fileInput"
-                                accept="image/*"
-                                hidden
-                                multiple
-                                onChange={(e) => {
-                                  setshowproductImgs([...e.target.files]);
-                                  setproductImgs(e.target.files);
-                                }}
-                              />
-                              <label for="fileInput">
-                                <FontAwesomeIcon
-                                  icon={faUpload}
-                                  type="file"
-                                  style={{
-                                    color: "#20958c",
-                                    fontSize: "25px",
-                                    border: "0px solid #20958c",
-                                    // borderRadius: "15px",
-                                  }}
-                                />
-                              </label>
-                            </div>
-                            {showproductImgs.length ? (
-                              <div className="mt-3">
-                                <Carousel responsive={responsive}>
-                                  {showproductImgs?.map((obj) => {
-                                    return (
-                                      <div>
-                                        <img
-                                          src={URL.createObjectURL(obj)}
-                                          alt=""
-                                          style={{
-                                            width: "200px",
-                                            height: "200px",
-                                          }}
-                                        />
-                                      </div>
-                                    );
-                                  })}
-                                </Carousel>
-                              </div>
-                            ) : (
-                              <></>
-                            )}
                           </div>
                         </div>
                       );
@@ -1256,6 +1329,54 @@ export default function AddProductInvetory() {
                       <></>
                     )}
                   </div>
+                  <div>
+                    <Table responsive="md" style={{ marginTop: "1%" }}>
+                      <thead>
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                          <th>Invoice Number</th>
+                          <th>Invoice Date</th>
+                          <th>Invoice Document</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {productInfo?.InvoiceArray?.map((details) => {
+                          return (
+                            <tr
+                              style={{
+                                fontSize: "15px",
+                                textAlign: "center",
+                              }}
+                            >
+                              <td>{details?.InvoiceNumber}</td>
+
+                              <td style={{ textAlign: "center" }}>
+                                {details?.Invoicedate}
+                              </td>
+
+                              <td style={{ textAlign: "center" }}>
+                                <img
+                                  src={
+                                    "https://cdn-icons-png.flaticon.com/128/202/202298.png"
+                                  }
+                                  alt="avathar"
+                                  style={{
+                                    width: "35px",
+                                    height: "35px",
+                                    borderRadius: "50px",
+                                  }}
+                                  onClick={() =>
+                                    window.open(
+                                      `http://localhost:8521/AdminInventory/${details?.InvoiceDoc}`
+                                    )
+                                  }
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </Table>
+                  </div>
                   <div className="mt-3">
                     <Carousel responsive={responsive}>
                       {productInfo?.productImgs?.map((imgName) => {
@@ -1611,7 +1732,7 @@ export default function AddProductInvetory() {
                         <option>Choose Category</option>
                         {categoryList?.map((item) => {
                           return (
-                            <option value={item?._id}>
+                            <option value={item._id}>
                               {item?.categoryName}
                             </option>
                           );
@@ -1637,10 +1758,10 @@ export default function AddProductInvetory() {
                       >
                         <option>Choose Subategory</option>
                         {subcategoryList
-                          .filter((val) => val.categoryid?._id === editcatid)
+                          .filter((val) => val.categoryid._id === editcatid)
                           ?.map((item) => {
                             return (
-                              <option value={item?._id}>
+                              <option value={item._id}>
                                 {item?.subcategoryName}
                               </option>
                             );
@@ -1653,7 +1774,7 @@ export default function AddProductInvetory() {
                       </label>
                       <input
                         type="Number"
-                        value={editstock}
+                        value={productInfo?.stock}
                         style={{
                           width: "100%",
                           padding: "8px 20px",
@@ -1662,7 +1783,7 @@ export default function AddProductInvetory() {
                           backgroundColor: "#ebebeb",
                         }}
                         placeholder={productInfo?.stock}
-                        onChange={(e) => seteditstock(e.target.value)}
+                        // onChange={(e) => seteditstock(e.target.value)}
                       ></input>
                     </div>
                     <div className="col-lg-6 col-sm-12 mt-2 CZ">
@@ -2012,7 +2133,7 @@ export default function AddProductInvetory() {
                       onChange={(e) => seteditdescription(e.target.value)}
                     ></input>
                   </div>
-                  <div className="mt-3">
+                  {/* <div className="mt-3">
                     <Carousel responsive={responsive}>
                       {productInfo?.productImgs?.map((imgName) => {
                         return (
@@ -2029,8 +2150,8 @@ export default function AddProductInvetory() {
                         );
                       })}
                     </Carousel>
-                  </div>
-                  <div className="mt-3">
+                  </div> */}
+                  {/* <div className="mt-3">
                     <span
                       style={{
                         fontWeight: "500",
@@ -2062,8 +2183,8 @@ export default function AddProductInvetory() {
                         }}
                       />
                     </label>
-                  </div>
-                  {editshowproductImgs.length ? (
+                  </div> */}
+                  {/* {editshowproductImgs.length ? (
                     <div className="mt-3">
                       <Carousel responsive={responsive}>
                         {editshowproductImgs?.map((obj) => {
@@ -2084,7 +2205,7 @@ export default function AddProductInvetory() {
                     </div>
                   ) : (
                     <></>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
@@ -2123,6 +2244,30 @@ export default function AddProductInvetory() {
                 SUBMIT
               </button>
             </div>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal show={show4} onHide={handleClose4} className="pdfmodal">
+          <Modal.Header closeButton>
+            <Modal.Title>Invoice</Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={{ overflow: "hidden" }}>
+            <div>
+              {/* {pdfdata ? (
+                <iframe
+                  src={pdfdata ? URL.createObjectURL(pdfdata) : ""}
+                  width="100%"
+                  height="500px"
+                />
+              ) : (
+                ""
+              )} */}
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose4}>
+              Ok
+            </Button>
           </Modal.Footer>
         </Modal>
 
@@ -2192,6 +2337,7 @@ export default function AddProductInvetory() {
                         />
                         <AiFillDelete
                           style={{ color: "red", fontSize: "25px" }}
+                          onClick={() => deleteInventory(details?._id)}
                         />
                         {/* <button
                           style={{

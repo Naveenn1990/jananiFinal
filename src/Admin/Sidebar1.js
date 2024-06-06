@@ -171,7 +171,7 @@ export default function Sidebar1() {
               className="sidebarItem1"
               onClick={() => window.location.assign("/admin/AddVendor")}
             >
-              Add Vendor
+              Create Vendor
             </h6>
             {/* v6 */}
             <Link to="/admin/VendorAddedProduct">
@@ -534,7 +534,7 @@ export default function Sidebar1() {
               className="sidebarItem1"
               onClick={() => window.location.assign("/admin/AddVendor")}
             >
-              Add Vendor
+              Create Vendor
             </h6>
 
             <h6

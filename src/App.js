@@ -249,6 +249,7 @@ import VendorAddedProductsStatus from "./Admin/VendorAddedProductsStatus";
 import AdminBookProduct from "./Admin/AdminBookProduct";
 import AdminBookProductCart from "./Admin/AdminBookProductCart";
 import Adminorder from "./Admin/Adminorder";
+import PatientCaseStudy from "./DoctorsPortal/PatientCaseStudy";
 import VendorAdminInvoice from "./Vendor/VendorAdminInvoice";
 import VendorAdminInv from "./Admin/VendorAdminInv";
 
@@ -889,6 +890,18 @@ function App() {
                   children={
                     <>
                       <AppointmentList />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/patientcasestudy"
+              element={
+                <AdminDashboard
+                  children={
+                    <>
+                      <PatientCaseStudy />
                     </>
                   }
                 />

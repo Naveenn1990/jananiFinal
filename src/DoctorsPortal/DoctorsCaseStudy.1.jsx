@@ -25,7 +25,6 @@ import InputGroup from "react-bootstrap/InputGroup";
 // import { CkEditorComponent } from "../CkEditor/CkEditorComponent";
 import axios from "axios";
 import moment from "moment";
-import Select from "react-select";
 
 export const DoctorsCaseStudy = () => {
   const CaseStudy = sessionStorage.getItem("CaseStudy");
@@ -37,7 +36,6 @@ export const DoctorsCaseStudy = () => {
   console.log(CaseStudy, "shghsg");
 
   const [AppointmentList, setAppointmentList] = useState({});
-
   const getAppointmentList = () => {
     axios
       .get("http://localhost:8521/api/user/getlist")
@@ -76,7 +74,6 @@ export const DoctorsCaseStudy = () => {
     }
   };
 
-  console.log("ProductList88888", updatedProductList);
 
   useEffect(() => {
     getAllProducts();
@@ -84,11 +81,10 @@ export const DoctorsCaseStudy = () => {
   }, []);
 
   const [show, setShow] = useState(false);
-  const [show1, setShow1] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const [show1, setShow1] = useState(false);
   const deleteBtnClose = () => setShow1(false);
   const deleteBtnShow = () => setShow1(true);
 
@@ -107,7 +103,6 @@ export const DoctorsCaseStudy = () => {
   const [result, setresult] = useState();
   const [Quantity, setQuantity] = useState(1);
   const [advise, setadvise] = useState();
-
   const [DocselectedMedicine, setDocSelectedMedicine] = useState(null);
 
   const handleDocMedicineChange = (event, value) => {
@@ -115,7 +110,6 @@ export const DoctorsCaseStudy = () => {
     // Do something with the selected medicine value
   };
 
-  console.log("hihahihahiha: ", DocselectedMedicine);
   const Addmedicine = async (e) => {
     e.preventDefault();
     try {
@@ -702,9 +696,7 @@ export const DoctorsCaseStudy = () => {
                               <option value="OA">Only Afternoon</option>
                               <option value="1x">QD (Once a day)</option>
                               <option value="2x">BID (Twice a day)</option>
-                              <option value="3x">
-                                TID (Three times a day)
-                              </option>
+                              <option value="3x">TID (Three times a day)</option>
                               <option value="4x">QID (Four times a day)</option>
                               <option value="5x">FID (Five times a day)</option>
                               <option value="6x">Six times a day</option>
@@ -720,28 +712,18 @@ export const DoctorsCaseStudy = () => {
                               <option value="Q4H">Q4H (Every 4 hours)</option>
                               <option value="Q6H">Q6H (Every 6 hours)</option>
                               <option value="Q2H">Q2H (Every 2 hours)</option>
-                              <option value="QOD">
-                                QOD (Every other hour)
-                              </option>
+                              <option value="QOD"> QOD (Every other hour)</option>
                               <option value="QH">QH (Every hour)</option>
                               <option value="QAM">QAM (Every morning)</option>
                               <option value="QN">QN (Every night)</option>
                               <option value="QWK">QWK (Every week)</option>
-                              <option value="QWK2">
-                                QWK2 (Every two weeks)
-                              </option>
-                              <option value="BIS in 7d">
-                                BIS in 7d (Twice a week)
-                              </option>
-                              <option value="TIW">
-                                TIW (Three times a week)
-                              </option>
+                              <option value="QWK2">QWK2 (Every two weeks)</option>
+                              <option value="BIS in 7d"> BIS in 7d (Twice a week) </option>
+                              <option value="TIW">TIW (Three times a week)</option>
                               <option value="OM">OM (Once in a month)</option>
                               <option value="SOS">SOS (If Necessary)</option>
                               <option value="Frequently">Frequently</option>
-                              <option value="Dieb. Alt.">
-                                Dieb. Alt. (Alternate Days)
-                              </option>
+                              <option value="Dieb. Alt.">Dieb. Alt. (Alternate Days)</option>
                               <option value="STAT">STAT</option>
                             </select>
                           </td>

@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Modal, Table } from "react-bootstrap";
-import { AiOutlineCheckCircle } from "react-icons/ai";
 import {
   BsFillCalendar2PlusFill,
   BsFillCalendarCheckFill,
 } from "react-icons/bs";
-import { MdDelete, MdOutlineCancel } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 import { FaUserMd } from "react-icons/fa";
 import { HiCurrencyRupee, HiDocumentText } from "react-icons/hi";
 import { TbBrandBooking } from "react-icons/tb";
 import { GiToken } from "react-icons/gi";
 import axios from "axios";
-import moment from "moment/moment";
 
 export default function Hospitaldoctors() {
   const [View, setView] = useState({});
@@ -101,12 +99,10 @@ export default function Hospitaldoctors() {
   // const [Designation, setDesignation] = useState();
   const [Address1, setAddress1] = useState();
   const [Department, setDepartment] = useState();
-
   const [Education, setEducation] = useState();
   const [Description, setDescription] = useState();
   const [ProfileImg, setProfileImg] = useState();
   const [Docs, setDocs] = useState();
-
   const [password, setpassword] = useState("");
   const [conpassword, setconpassword] = useState("");
   const formdata = new FormData();
@@ -375,10 +371,11 @@ export default function Hospitaldoctors() {
       };
       let res = await axios(config);
       if (res.status === 200) {
+        alert(`Add Successfully ${appointmentcharge} Charges..`);
         setappointmentcharge("");
         getDoctors();
         setShow2(false);
-        alert(res.data.success);
+        
       }
     } catch (error) {
       console.log(error);
@@ -471,7 +468,7 @@ export default function Hospitaldoctors() {
       scheduleDate,
       startTime,
       endTime,
-      bookingstatus: "Vacancy",
+      bookingstatus: "Vacant",
     };
     setScheduleList([...scheduleList, newSchedule]);
     // setScheduleDate('');
@@ -1218,6 +1215,7 @@ export default function Hospitaldoctors() {
               <div className="col-lg-12">
                 <input
                   placeholder="Appoinment Charge"
+                  type="number"
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -1227,7 +1225,7 @@ export default function Hospitaldoctors() {
                     marginTop: "4%",
                   }}
                   onChange={(e) => setappointmentcharge(e.target.value)}
-                ></input>
+                />
               </div>
             </div>
           </Modal.Body>
@@ -1236,8 +1234,7 @@ export default function Hospitaldoctors() {
               <button
                 style={{
                   backgroundColor: "grey",
-                  color: "white",
-                  border: "none",
+                  color: "white",                 
                   borderRadius: "4px",
                   fontWeight: "600",
                   marginRight: "20px",
@@ -1254,8 +1251,7 @@ export default function Hospitaldoctors() {
               <button
                 style={{
                   backgroundColor: "orange",
-                  color: "white",
-                  border: "none",
+                  color: "white",                  
                   borderRadius: "4px",
                   border: "1px solid white",
                   fontWeight: "600",
@@ -2389,7 +2385,7 @@ export default function Hospitaldoctors() {
                       <td>{item?.startTime}</td>
                       <td>{item?.endTime}</td>
                       <td>
-                        {item?.bookingstatus === "Vacancy" ? (<>
+                        {item?.bookingstatus === "Vacant" ? (<>
                         <b style={{color:"green"}}>{item?.bookingstatus}</b>
                         </>):(<>
                           <b style={{color:"red",fontSize:"20px"}}>{item?.bookingstatus}</b>

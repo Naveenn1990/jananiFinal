@@ -14,12 +14,12 @@ import {
   faCancel,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const AppointmentList = () => {
   const doctor = JSON.parse(sessionStorage.getItem("DoctorDetails"));
-
+const navigate = useNavigate()
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -39,6 +39,7 @@ export const AppointmentList = () => {
       });
   };
 
+  console.log("AppointmentList",AppointmentList);
   useEffect(() => {
     getAppointmentList();
   }, []);
@@ -52,9 +53,7 @@ export const AppointmentList = () => {
 
   return (
     <div>
-      {/* <div style={{ backgroundColor: "#dae1f3" }}>
-        <h2>Appointment List</h2>
-      </div> */}
+    
       <Navbar expand="lg" style={{ backgroundColor: "#dae1f3" }}>
         <Container fluid>
           <Navbar.Brand className="fw-bold" href="#">
@@ -90,7 +89,7 @@ export const AppointmentList = () => {
       </Navbar>
 
       <Container className="mb-5">
-        <Table responsive className="table">
+        <Table responsive className="table" bordered>
           <thead>
             <tr className="admin-table-head">
               <th className="fw-bold">Patient Name</th>
@@ -99,6 +98,7 @@ export const AppointmentList = () => {
               <th className="fw-bold">Mobile</th>
               <th className="fw-bold">Disease</th>
               <th className="fw-bold">Actions </th>
+              <th className="fw-bold">View Reports </th>
             </tr>
           </thead>
           <tbody>
@@ -111,7 +111,9 @@ export const AppointmentList = () => {
                     {item?.Firstname}&nbsp;{item?.Lastname}
                   </td>
                   <td>
-                    {item?.Dateofappointment} <br /> {item?.Time}{" "}
+                    {item?.Dateofappointment} <br /> 
+                    {item?.starttime}{" "}
+                    {item?.endtime}{" "}
                   </td>
                   <td>{item?.Email}</td>
 
@@ -126,13 +128,23 @@ export const AppointmentList = () => {
                   </td>
 
                   <td>
-                    <button
+                    {item?.payment === "unpaid" ? (<>
+                    <p>Payment Pending</p>
+                    </>):(<>
+                      <button
                       className="table-details-btn"
                       onClick={() => CaseStudy(item?._id)}
                     >
                       Case Study
                     </button>
+                    </>)}
+                   
                   </td>
+                  <td>
+                    <div  onClick={()=>navigate('/patientcasestudy', { state: { item: item } }) }>
+                    <Button>View Reports</Button>
+                    </div>
+                    </td>
                 </tr>
               );
             })}

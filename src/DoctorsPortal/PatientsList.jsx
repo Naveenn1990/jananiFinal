@@ -5,12 +5,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Button, Container, Form, Modal } from "react-bootstrap";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Container, Form, Modal, Table } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import { FaUserTag } from "react-icons/fa";
+import { GrView } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 
 export const PatientsList = () => {
   const doctorData = JSON.parse(sessionStorage.getItem("DoctorDetails"));
@@ -31,6 +35,24 @@ export const PatientsList = () => {
   const [show3, setShow3] = useState(false);
   const handleClose3 = () => setShow3(false);
   const handleShow3 = () => setShow3(true);
+
+  const [show4, setShow4] = useState(false);
+  const handleClose4 = () => setShow4(false);
+  const handleShow4 = () => setShow4(true);
+
+  const [show5, setShow5] = useState(false);
+  const handleClose5 = () => setShow5(false);
+  const handleShow5 = () => setShow5(true);
+
+  const createPDF = async () => {
+    const input = document.getElementById("pdf");
+    const options = { scrollY: -window.scrollY };
+    const canvas = await html2canvas(input, options);
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "pt", [canvas.width, canvas.height]);
+    pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+    pdf.save("Prescription.pdf");
+  };
 
   const [Topic, setTopic] = useState("");
   const [description, setdescription] = useState("");
@@ -202,6 +224,21 @@ export const PatientsList = () => {
                           </p>
                         </div>
                         <div>
+                          {FilterPatientType === "OPD" ? (
+                            <button
+                              title="Daily Doctor report"
+                              className="table-details-btn mb-2"
+                              
+                              onClick={() => {
+                                handleShow4();
+                                setselectedcauseid(item);
+                              }}
+                            >
+                              Prescription 
+                            </button>
+                          ) : (
+                            <></>
+                          )}
                           {FilterPatientType === "IPD" ? (
                             <button
                               title="Daily Doctor report"
@@ -216,7 +253,26 @@ export const PatientsList = () => {
                                 setselectedcauseid(item);
                               }}
                             >
-                              DDR
+                              DDR +
+                            </button>
+                          ) : (
+                            <></>
+                          )}
+                          {FilterPatientType === "IPD" ? (
+                            <button
+                              title="Daily Doctor report"
+                              className="table-details-btn mb-2"
+                              // onClick={() => {
+                              //   setchosenPatient(item._id);
+                              //   medHistoryShow1();
+                              // }}
+                              // onClick={() => navigate(`/doctorforms`, { state: { item, causeId: selectedcauseid } })}
+                              onClick={() => {
+                                handleShow5();
+                                setselectedcauseid(item);
+                              }}
+                            >
+                              DDR <GrView />
                             </button>
                           ) : (
                             <></>
@@ -591,6 +647,224 @@ export const PatientsList = () => {
           ) : (
             ""
           )}
+        </Modal.Footer>
+      </Modal>
+      <Modal show={show5} onHide={handleClose5}>
+        <Modal.Header closeButton>
+          <Modal.Title>Select Cause</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Select
+            onChange={(e) => setPatientcauseid(e.target.value)}
+            aria-label="Default select example"
+          >
+            <option>select cause</option>
+            {selectedcauseid?.cause?.map((item) => {
+              return <option value={item?._id}>{item?.CauseName}</option>;
+            })}
+          </Form.Select>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose5}>
+            Close
+          </Button>
+          {selectedcauseid?.cause?.length > 0 ? (
+            <Button
+              variant="primary"
+              onClick={() =>
+                navigate(`/doctorsviewforms`, {
+                  state: { item: selectedcauseid, causeId: Patientcauseid },
+                })
+              }
+            >
+              Submit
+            </Button>
+          ) : (
+            ""
+          )}
+        </Modal.Footer>
+      </Modal>
+      <Modal size="lg" show={show4} onHide={handleClose4}>
+        <Modal.Header closeButton>
+          <Modal.Title>Patient Prescription </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <div id="pdf" className="container" style={{padding:"35px",backgroundColor:"white"}}>
+        <div className="row mt-3">
+          <div>
+            <h3>Prescription :</h3>
+          </div>
+          <Table bordered>
+            <thead>
+              <tr>
+                <th>Sl No</th>
+                <th>Medicine Type</th>
+                <th>Generic Name</th>
+                <th>Dosage</th>
+                <th>Duration</th>
+                <th>Instruction</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedcauseid?.medicineInfo?.map((item1,i)=>{
+                return(
+                  <tr>
+                  <td>{i+1}</td>
+                  <td>{item1?.medicineType}</td>
+                  <td>{item1?.genericName}</td>
+                  <td>
+                    <p>Morning: {item1?.morningDose}</p>
+                    <p>Afternoon: {item1?.noonDose}</p>
+                    <p>Night: {item1?.nightDose}</p>
+                  </td>
+                  <td>{item1?.duration}</td>
+                  <td>{item1?.medicineTakingTime}</td>
+                  <td>{item1?.result}</td>
+                </tr>
+                )
+              })}
+             
+            </tbody>
+          </Table>
+        </div>
+
+        <div className="row mt-3">
+          <div>
+            <h3>Investigation :</h3>
+          </div>
+          <Table bordered>
+            <thead>
+              <tr>
+                <th>Sl No</th>
+                <th>Invastigation Name</th>
+                <th>Description</th>
+                <th>Image(Investigation)</th>
+                <th>Remark</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedcauseid?.investigationList?.map((item2,i)=>{
+                return(
+                  <tr>
+                  <td>{i+1}</td>
+                  <td>{item2?.investigationName}</td>
+                  <td>{item2?.investigationDescription}</td>
+                  <td>                   
+                     <a
+                              href={`http://localhost:8521/Patient/${item2.investigationIncludeInReport}`}
+                              target="blank_"
+                            >
+                              View Documents
+                            </a>
+                  </td>
+                  <td>
+                   {item2?.notes}
+                  </td>
+                </tr>
+                )
+              })}
+             
+            </tbody>
+          </Table>
+        </div>
+        <div className="row mt-3">
+          <div>
+            <h3>Examination :</h3>
+          </div>
+          <Table bordered>
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Result</th>
+             
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Height(cm) :</td>
+                <td>{selectedcauseid?.height} cm</td>                
+              </tr>
+              <tr>
+                <td>Weight(kg) :</td>
+                <td>{selectedcauseid?.weight} kg</td>                
+              </tr>
+              <tr>
+                <td>BMI :</td>
+                <td>{selectedcauseid?.bmi}</td>                
+              </tr>
+              <tr>
+                <td>Temperature :</td>
+                <td>{selectedcauseid?.temperature} F</td>                
+              </tr>
+              <tr>
+                <td>Pulse Rate :</td>
+                <td>{selectedcauseid?.pulserate} </td>                
+              </tr>
+              <tr>
+                <td>Blood Pressure :</td>
+                <td>{selectedcauseid?.bp}</td>                
+              </tr>
+              <tr>
+                <td>Spo2(% at RA) :</td>
+                <td>{selectedcauseid?.spo2} </td>                
+              </tr>
+              <tr>
+                <td>Sugar(mg/dl) :</td>
+                <td>{selectedcauseid?.suger} </td>                
+              </tr>
+              <tr>
+                <td>Head Circumference(cm) :</td>
+                <td>{selectedcauseid?.headcircumference} </td>                
+              </tr>
+            </tbody>
+            <h4>Systemic Examination</h4>
+            <tbody>
+            <tr>
+                <td>RS :</td>
+                <td>{selectedcauseid?.rs} </td>                
+              </tr>
+            <tr>
+                <td>CVS :</td>
+                <td>{selectedcauseid?.cvs} </td>                
+              </tr>
+            <tr>
+                <td>CNS :</td>
+                <td>{selectedcauseid?.cns} </td>                
+              </tr>
+            <tr>
+                <td>PA :</td>
+                <td>{selectedcauseid?.pa} </td>                
+              </tr>
+            </tbody>
+            <h4>Examination</h4>
+            <tbody>
+                <tr>
+                    <td>General Examination :</td>
+                    <td>{selectedcauseid?.generalexamination}</td>
+                </tr>
+                <tr>
+                    <td>Local Examination :</td>
+                    <td>{selectedcauseid?.localexamination}</td>
+                </tr>
+            </tbody>
+          </Table>
+
+        </div>
+   
+      </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose4}>
+            Close
+          </Button>
+         
+            <Button
+              variant="primary" 
+              onClick={createPDF}          
+            >
+              Print
+            </Button>         
         </Modal.Footer>
       </Modal>
     </div>
