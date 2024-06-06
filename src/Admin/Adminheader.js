@@ -7,7 +7,7 @@ import {
   AiFillFileExcel,
   AiOutlinePlusCircle,
 } from "react-icons/ai";
-import Sidebar1 from "./Sidebar1";
+// import Sidebar1 from "./Sidebar1";
 import { Button, Modal, Table } from "react-bootstrap";
 import axios from "axios";
 import { MdEdit } from "react-icons/md";
@@ -185,6 +185,7 @@ export default function Adminheader() {
         <div className="row">
           <div className="col-lg-2 d-flex justify-content-center">
             <img
+              alt=""
               src="../Images/logo.png"
               style={{ width: "70%", height: "70px" }}
             />
@@ -207,7 +208,7 @@ export default function Adminheader() {
                   marginTop: "10%",
                   textAlign: "center",
                   borderRadius: "1px solid grey",
-                  borderRadius: "4px",
+                  // borderRadius: "4px",
                   backgroundColor: "transparent",
                 }}
                 onClick={() => {
@@ -236,7 +237,7 @@ export default function Adminheader() {
                   marginTop: "10%",
                   textAlign: "center",
                   borderRadius: "1px solid grey",
-                  borderRadius: "4px",
+                  // borderRadius: "4px",
                   backgroundColor: "transparent",
                 }}
                 onClick={() => {

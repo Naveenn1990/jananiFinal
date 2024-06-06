@@ -250,6 +250,8 @@ import AdminBookProduct from "./Admin/AdminBookProduct";
 import AdminBookProductCart from "./Admin/AdminBookProductCart";
 import Adminorder from "./Admin/Adminorder";
 import PatientCaseStudy from "./DoctorsPortal/PatientCaseStudy";
+import VendorAdminInvoice from "./Vendor/VendorAdminInvoice";
+import VendorAdminInv from "./Admin/VendorAdminInv";
 
 function App() {
   return (
@@ -1400,6 +1402,18 @@ function App() {
               }
             />
             <Route
+              path="/Vendor-admin-invoice"
+              element={
+                <VendorCommanDashboard
+                  children={
+                    <>
+                      <VendorAdminInvoice />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
               path="/productstatus"
               element={
                 <VendorCommanDashboard
@@ -2189,6 +2203,15 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<VendorAddedProductsStatus />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/Vendor-Admin-Inv"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<VendorAdminInv />} />{" "}
                 </>
               }
             ></Route>

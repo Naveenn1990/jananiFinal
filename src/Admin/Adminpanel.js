@@ -21,7 +21,16 @@ export default function Adminpanel({ children }) {
         >
           <Sidebar1 />
         </div>
-        <div style={{ width: "82%", height: "550px", overflow: "hidden", overflowY:"scroll" }}>{children}</div>
+        <div
+          style={{
+            width: "82%",
+            height: "550px",
+            overflow: "hidden",
+            overflowY: "scroll",
+          }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

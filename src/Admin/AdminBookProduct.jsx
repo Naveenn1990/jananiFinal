@@ -25,7 +25,7 @@ import { Link } from "react-router-dom";
 import { IconButton } from "@material-ui/core";
 
 function AdminBookProduct() {
-    let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
+  let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
   const responsive = {
     superLargeDesktop: {
       // the naming can be any, depends on you.
@@ -521,7 +521,7 @@ function AdminBookProduct() {
                 style={{
                   backgroundColor: "grey",
                   color: "white",
-                //   border: "none",
+                  //   border: "none",
                   borderRadius: "4px",
                   fontWeight: "600",
                   marginRight: "20px",
@@ -581,7 +581,7 @@ function AdminBookProduct() {
                       <tr style={{ fontSize: "15px", textAlign: "center" }}>
                         <td>
                           <img
-                          alt=""
+                            alt=""
                             src={`http://localhost:8521/AdminInventory/${details?.productImgs[0]}`}
                             style={{ width: "100px", height: "100px" }}
                           />
@@ -648,7 +648,7 @@ function AdminBookProduct() {
                       <tr style={{ fontSize: "15px", textAlign: "center" }}>
                         <td>
                           <img
-                          alt=""
+                            alt=""
                             src={`http://localhost:8521/AdminInventory/${details?.productImgs[0]}`}
                             style={{ width: "100px", height: "100px" }}
                           />
@@ -712,7 +712,7 @@ function AdminBookProduct() {
         </Table>
       </div>
     </div>
-  )
+  );
 }
 
-export default AdminBookProduct
+export default AdminBookProduct;
