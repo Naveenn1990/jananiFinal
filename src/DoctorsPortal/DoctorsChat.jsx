@@ -7,12 +7,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { Container, Form } from "react-bootstrap";
+import { ImAttachment } from "react-icons/im";
 
 export const DoctorsChat = () => {
   const doctordetails = sessionStorage.getItem("DoctorDetails");
   const [Patientlist, setPatientlist] = useState([]);
   const [SelectedPatient, setSelectedPatient] = useState({});
   const [chatinput, setchatinput] = useState("");
+  const [chatFile, setchatFile] = useState("");
 
   const chatEndRef = useRef(null);
   useEffect(() => {
@@ -43,7 +45,6 @@ export const DoctorsChat = () => {
 
   const [MessageDetails, setMessageDetails] = useState({});
   async function getMessages(patientid) {
-    console.log("patientid: ", patientid);
     try {
       const res = await axios.get(
         `http://localhost:8521/api/chat/getChatdata/${
@@ -61,21 +62,33 @@ export const DoctorsChat = () => {
   }
 
   async function sendMessage() {
+    let obj = {};
+    if (chatFile) {
+      obj = {
+        chatFile: chatFile,
+        doctorid: JSON.parse(doctordetails)?._id,
+        patientid: SelectedPatient?._id,
+        sender: "DOCTOR",
+        receiver: "PATIENT",
+      };
+    } else {
+      obj = {
+        chat: chatinput,
+        doctorid: JSON.parse(doctordetails)?._id,
+        patientid: SelectedPatient?._id,
+        sender: "DOCTOR",
+        receiver: "PATIENT",
+      };
+    }
     try {
       const config = {
         url: "/chat/addMessage",
         method: "post",
         baseURL: "http://localhost:8521/api",
         headers: {
-          "content-type": "application/json",
+          "content-type": "multipart/form-data",
         },
-        data: {
-          doctorid: JSON.parse(doctordetails)?._id,
-          patientid: SelectedPatient?._id,
-          chat: chatinput,
-          sender: "DOCTOR",
-          receiver: "PATIENT",
-        },
+        data: obj,
       };
       const res = await axios(config);
       if (res.status === 201 || res.status === 200) {
@@ -93,7 +106,6 @@ export const DoctorsChat = () => {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [MessageDetails]);
-  console.log("MessageDetails: ", MessageDetails);
 
   return (
     <div>
@@ -204,15 +216,80 @@ export const DoctorsChat = () => {
                           {val.sender === "DOCTOR" ? (
                             <div className="row justify-content-end">
                               <div className="col-7">
-                                {/* <p
-                        className="d-flex justify-content-end"
-                        style={{ marginBottom: "0px", fontWeight: "bold" }}
-                      >
-                        Maria
-                      </p> */}
+                                {val?.chat ? (
+                                  <p
+                                    style={{
+                                      backgroundColor: "#d9e7ea",
+                                      fontSize: "14px",
+                                      padding: "26px",
+                                      borderRadius: "10px",
+                                      margin: "10px",
+                                    }}
+                                  >
+                                    {val?.chat}
+                                  </p>
+                                ) : (
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "end",
+                                      padding: "10px",
+                                    }}
+                                  >
+                                    {val.chatFile?.match(
+                                      /\.(jpeg|jpg|gif|png)$/
+                                    ) ? (
+                                      <a
+                                        href={`http://localhost:8521/Chat/${val?.chatFile}`}
+                                        target="blank_"
+                                      >
+                                        <img
+                                          src={`http://localhost:8521/Chat/${val?.chatFile}`}
+                                          alt="no-img"
+                                          style={{
+                                            width: "235px",
+                                            height: "200px",
+                                            backgroundColor: "#D9E7EA",
+                                            padding: "5px",
+                                            borderRadius: "20px",
+                                          }}
+                                        />
+                                      </a>
+                                    ) : val.chatFile?.match(
+                                        /\.(mp4|mkv|avi|mov)$/
+                                      ) ? (
+                                      <a
+                                        href={`http://localhost:8521/Chat/${val?.chatFile}`}
+                                        target="blank_"
+                                      >
+                                        <iframe
+                                          width="235px"
+                                          height="200px"
+                                          src={`http://localhost:8521/Chat/${val?.chatFile}`}
+                                          title="YouTube video player"
+                                          frameborder="0"
+                                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                          allowfullscreen
+                                          style={{
+                                            backgroundColor: "#D9E7EA",
+                                            padding: "5px",
+                                            borderRadius: "20px",
+                                          }}
+                                        ></iframe>
+                                      </a>
+                                    ) : (
+                                      <></>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="col-7">
+                              {val?.chat ? (
                                 <p
                                   style={{
-                                    backgroundColor: "#d9e7ea",
+                                    backgroundColor: "#e8e8e8",
                                     fontSize: "14px",
                                     padding: "26px",
                                     borderRadius: "10px",
@@ -221,21 +298,60 @@ export const DoctorsChat = () => {
                                 >
                                   {val?.chat}
                                 </p>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="col-7">
-                              <p
-                                style={{
-                                  backgroundColor: "#e8e8e8",
-                                  fontSize: "14px",
-                                  padding: "26px",
-                                  borderRadius: "10px",
-                                  margin: "10px",
-                                }}
-                              >
-                                {val?.chat}
-                              </p>
+                              ) : (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "start",
+                                    padding: "10px",
+                                  }}
+                                >
+                                  {val.chatFile?.match(
+                                    /\.(jpeg|jpg|gif|png)$/
+                                  ) ? (
+                                    <a
+                                      href={`http://localhost:8521/Chat/${val?.chatFile}`}
+                                      target="blank_"
+                                    >
+                                      <img
+                                        src={`http://localhost:8521/Chat/${val?.chatFile}`}
+                                        alt="no-img"
+                                        style={{
+                                          width: "235px",
+                                          height: "200px",
+                                          backgroundColor: "#D9E7EA",
+                                          padding: "5px",
+                                          borderRadius: "20px",
+                                        }}
+                                      />
+                                    </a>
+                                  ) : val.chatFile?.match(
+                                      /\.(mp4|mkv|avi|mov)$/
+                                    ) ? (
+                                    <a
+                                      href={`http://localhost:8521/Chat/${val?.chatFile}`}
+                                      target="blank_"
+                                    >
+                                      <iframe
+                                        width="235px"
+                                        height="200px"
+                                        src={`http://localhost:8521/Chat/${val?.chatFile}`}
+                                        title="YouTube video player"
+                                        frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowfullscreen
+                                        style={{
+                                          backgroundColor: "#D9E7EA",
+                                          padding: "5px",
+                                          borderRadius: "20px",
+                                        }}
+                                      ></iframe>
+                                    </a>
+                                  ) : (
+                                    <></>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           )}
                         </>
@@ -245,6 +361,27 @@ export const DoctorsChat = () => {
                   </div>
                 </div>
                 <div className="d-flex">
+                  <label
+                    for="upload-file"
+                    style={{
+                      left: "534px",
+                      position: "absolute",
+                      bottom: "15px",
+                      borderRadius: "50px",
+                      border: "0px",
+                      fontSize: "20px",
+                    }}
+                  >
+                    <ImAttachment />
+                  </label>
+                  <input
+                    id="upload-file"
+                    type="file"
+                    accept="file/*"
+                    hidden
+                    onChange={(e) => setchatFile(e.target.files[0])}
+                  />
+
                   <input
                     type="text"
                     placeholder="Enter text here"
@@ -253,6 +390,7 @@ export const DoctorsChat = () => {
                       height: "60px",
                       padding: "10px",
                       marginRight: "10px",
+                      paddingLeft: "65px",
                     }}
                     onChange={(e) => setchatinput(e.target.value)}
                   />
