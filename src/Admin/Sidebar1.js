@@ -185,16 +185,16 @@ export default function Sidebar1() {
 
             {/* v6 */}
             <Link to={"/admin/VendorAddedProductsStatus"}>
-            <h6
-              className="sidebarItem1"
-              // onClick={() =>
-              //   window.location.assign("/admin/VendorAddedProductsStatus")
-              // }
-            >
-              Order History
-            </h6>
+              <h6
+                className="sidebarItem1"
+                // onClick={() =>
+                //   window.location.assign("/admin/VendorAddedProductsStatus")
+                // }
+              >
+                Create Purchase Order
+              </h6>
             </Link>
-           
+
             {/* <h6
               className="sidebarItem1"
               onClick={() => window.location.assign("/admin/ProductOrders")}
@@ -216,14 +216,10 @@ export default function Sidebar1() {
               Inventory
             </h6>
             <Link to={"/admin/AdminBookProduct"}>
-            <h6 className="sidebarItem1" >
-              Admin Book Product
-            </h6>
+              <h6 className="sidebarItem1">Admin Book Product</h6>
             </Link>
             <Link to={"/admin/Adminorder"}>
-            <h6 className="sidebarItem1" >
-              Admin Order
-            </h6>
+              <h6 className="sidebarItem1">Admin Order</h6>
             </Link>
 
             {/* <h6
