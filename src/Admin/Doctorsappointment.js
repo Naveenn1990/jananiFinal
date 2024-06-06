@@ -1,20 +1,37 @@
+import { Checkbox } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import moment from "moment";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, FloatingLabel, Form, Modal, Table } from "react-bootstrap";
 import { FaEdit } from "react-icons/fa";
 import { RiStethoscopeLine } from "react-icons/ri";
+import { useReactToPrint } from "react-to-print";
 export default function DoctorsAppointment() {
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [show1, setShow1] = useState(false);
 
+  const [show1, setShow1] = useState(false);
   const handleClose1 = () => setShow1(false);
   const handleShow1 = (item) => {
     setShow1(true);
     setAppointmentId(item);
   };
+
+  const [ShowAppointmentDetails, setShowAppointmentDetails] = useState({})
+  const [show2, setShow2] = useState(false);
+  const handleClose2 = () => setShow2(false);
+  const handleShow2 = () => setShow2(true);
+
+  const componentRef = useRef();
+  const handleprint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: "invoice",
+  });
+
+  const [show3, setShow3] = useState(false);
+  const handleClose3 = () => setShow3(false);
+  const handleShow3 = () => setShow3(true);
 
   const generateRandomNumber = () => {
     // Generate a random number between 1000 and 9999
@@ -110,7 +127,7 @@ export default function DoctorsAppointment() {
         console.log(error);
       });
   };
-  console.log("AppointmentList", AppointmentList);
+ console.log("AppointmentList",AppointmentList);
   const [Doctors, setDoctors] = useState([]);
   const getDoctors = () => {
     axios
@@ -148,6 +165,37 @@ export default function DoctorsAppointment() {
       alert(error.response.data.error);
     }
   };
+
+const [PaymentStatus, setPaymentStatus] = useState()
+ console.log("PaymentStatus",PaymentStatus);
+const PaymentUpdate = async()=>{
+  if(!PaymentStatus){
+    return alert("Please check the paid box")
+  }
+    try {
+      const config = {
+        url: "/user/payment",
+        method: "put",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          payment:PaymentStatus,
+          appointmentid:ShowAppointmentDetails?._id,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        setPaymentStatus("")
+        handleClose2()       
+        getAppointmentList()
+      }
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  }
 
   useEffect(() => {
     getDoctors();
@@ -719,11 +767,12 @@ export default function DoctorsAppointment() {
                 <th> Name</th>
                 <th>Email-Id</th>
                 <th>Date of Appointment</th>
-                <th>From / To</th>
+                <th>Time</th>
                 <th>Mobile</th>
                 <th>Injury/Condition</th>
                 <th>Token</th>
                 <th>Status</th>
+                <th>Invoice</th>
                 <th>Reschedule</th>
               </tr>
             </thead>
@@ -737,14 +786,39 @@ export default function DoctorsAppointment() {
                     </td>
                     <td>{item?.Email}</td>
                     <td>{item?.Dateofappointment}</td>
-                    <td>{item?.Time}</td>
+                    <td>{item?.starttime} to {item?.endtime}</td>
                     <td>{item?.PhoneNumber}</td>
 
                     <td>{item?.medicalReason}</td>
                     <td>{item?.token}</td>
                     <td>
-                      <Button>Payment</Button>
-                      <p>UnPaid</p>
+                      {item?.payment === "unpaid" ? (<>
+                        <Button
+                      onClick={()=>{
+                        handleShow2();
+                        setShowAppointmentDetails(item)
+                      }}
+                      >Payment</Button>
+                      <p>{item?.payment}</p>
+                      </>):(
+                        <p>Payment Done</p>
+                      )}
+                      
+                    </td>
+                    <td>
+                      {item?.payment === "unpaid" ? (
+                        <p>Payment is pending</p>
+                      ):(
+                        <Button
+                        onClick={()=>{
+                          handleShow3()
+                          setShowAppointmentDetails(item)
+                        }}
+                        >
+                          Invoice
+                        </Button>
+                      )}
+                     
                     </td>
                     <td>
                       {" "}
@@ -765,6 +839,171 @@ export default function DoctorsAppointment() {
           </Table>
         </div>
       </div>
+      <Modal show={show2} onHide={handleClose2}>
+        <Modal.Header closeButton>
+          <Modal.Title>Doctor Payment Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+         <div 
+         className="container" 
+         style={{backgroundColor:"white"}}>
+          <div className="d-flex align-items-center gap-4"> 
+            <b>Doctor Name : </b>
+            <p>{`${ShowAppointmentDetails?.ConsultantDoctor?.Firstname} ${ShowAppointmentDetails?.ConsultantDoctor?.Firstname} `}</p>
+          </div>
+          <div className="d-flex align-items-center gap-4"> 
+            <b> Consultation fee : </b>
+            <p>{ShowAppointmentDetails?.ConsultantDoctor?.appointmentcharge} /-</p>
+          </div>
+          <div className="d-flex align-items-center gap-4"> 
+            <b> Payment : </b>
+            <p>Paid 
+              <Checkbox 
+              onChange={(e)=>setPaymentStatus(e.target.checked ? "paid" : "")}
+              checked={PaymentStatus === "paid"}
+              />
+              </p>
+          </div>
+         </div>
+          </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose2}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={PaymentUpdate}>
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={show3} onHide={handleClose3} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>Invoice</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div ref={componentRef}>
+              <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+                <div
+                  className="invoice-rspns"
+                  style={{
+                    boxShadow: " 0px 8px 32px 0px rgba(19, 19, 20, 0.37)",
+                    background: "#f5f6fa",
+                    backdropFilter: "blur(4px)",
+                    padding: "20px",
+                  }}
+                >
+                  <div className="">
+                    <div className="mb-5">
+                      <img
+                        style={{ width: "40px", height: "40px" }}
+                        className="logo me-2 "
+                        src="/img/logo.png"
+                        alt="Logo"
+                      />{" "}
+                      <br />
+                      <span
+                        className="fw-bold fs-4"
+                        style={{ color: "rgb(32 139 140)" }}
+                      >
+                        JANANI
+                      </span>
+                      <br />
+                      <span>JananiPharmacy@gmail.com</span>
+                      <br />
+                      <span>+91 9989212993</span>
+                      <br />
+                      <span>Singapur Layout, Banglore</span>
+                      <br />
+                    </div>
+                  </div>
+
+                  <div
+                    className="row"
+                    style={{ border: "2px solid", padding: "0px" }}
+                  >
+                    <div className="col-sm-4">
+                      <div>
+                        <b>Patient Name : </b> {`${ShowAppointmentDetails?.Firstname} ${ShowAppointmentDetails?.Firstname}`}
+                      </div>
+                      <div>
+                        <b>Patient DOB : </b> {ShowAppointmentDetails?.DOB}
+                      </div>
+                    </div>
+                    <div className="col-sm-4">
+                     
+                      <div>
+                        <b>Gender : </b> {ShowAppointmentDetails?.Gender}
+                      </div>
+                      <div>
+                        <b>Time : </b> {ShowAppointmentDetails?.starttime}
+                        / {ShowAppointmentDetails?.endtime}
+                      </div>
+                    </div>
+                    <div className="col-sm-4">
+                      <div>
+                        <b>Register Date : </b>
+                        {moment(ShowAppointmentDetails?.createdAt).format("DD/MM/YYYY")}
+                      </div>
+                      <div>
+                        <b>Doctor  : </b> 
+                        {`${ShowAppointmentDetails?.ConsultantDoctor?.Firstname}
+                        ${ShowAppointmentDetails?.ConsultantDoctor?.Lastname}
+                        `}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row mt-2">
+                    <Table bordered>
+                      <thead>
+                        <tr>
+                          <th>Medical Reason</th>
+                          <th>Condition</th>
+                          <th>Note</th>
+                          <th>Address</th>
+                        </tr>
+                      </thead>
+                      <tbody>                      
+                            <tr>
+                              <td>{ShowAppointmentDetails?.medicalReason}</td>
+                              <td>{ShowAppointmentDetails?.Condition}</td>
+                              <td>{ShowAppointmentDetails?.Note}</td>
+                              <td>{ShowAppointmentDetails?.Address1} </td>
+                            </tr>                          
+                      </tbody>
+                    </Table>
+                  </div>
+                  <div>
+                    <p style={{ textAlign: "right" }}>
+                      Amount Paid : {ShowAppointmentDetails?.ConsultantDoctor?.appointmentcharge} /-
+                    </p>
+                    <p style={{ textAlign: "right" }}>
+                      Payment Status : {ShowAppointmentDetails?.payment}
+                    </p>
+                  </div>
+                  <div>
+                    <p style={{ textAlign: "center" }}>
+                      ---------The end of Report---------
+                    </p>
+                  </div>
+                  <hr />
+                  <div className="text-center text-dark ">
+                    <p>
+                       Invoice Generated By: Janani Hospital, Contact :
+                      JananiHospital@gamil.com{" "}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose3}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleprint}>
+              Print
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
       <Modal
         show={show1}
