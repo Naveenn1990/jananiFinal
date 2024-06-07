@@ -155,7 +155,7 @@ export default function Sidebar1() {
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+              onClick={() => window.location.assign("/admin/LaborderHistory")}
             >
               Purchase Order History
             </h6>

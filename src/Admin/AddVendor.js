@@ -38,7 +38,7 @@ export default function AddVendor() {
       formdata.set("profilePic", profilePic);
       formdata.set("identityCard", identityCard);
       formdata.set("medicalLicence", medicalLicence);
-      formdata.set("VendorType", "Pharmacy");
+      formdata.set("vendortype", "PHARMACY");
       const config = {
         url: "/vendor/addvendor",
         method: "post",

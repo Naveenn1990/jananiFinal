@@ -1,7 +1,6 @@
 import axios from "axios";
-import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { Button, Container, FloatingLabel, Form, Modal } from "react-bootstrap";
+import { Button, Container, Form, Modal } from "react-bootstrap";
 import { FaEdit } from "react-icons/fa";
 export const YourAppointment = () => {
 
@@ -35,12 +34,15 @@ export const YourAppointment = () => {
       });
   };
 
-
-
   const [AppointmentId, setAppointmentId] = useState({});
-  const [Time, setTime] = useState("");
   const [DateofApp, setDateofApp] = useState("");
-
+  const [StatrtTime, setStatrtTime] = useState(null);
+  const [SelectedTime, setSelectedTime] = useState({})
+  useEffect(() => {
+    if(StatrtTime){
+      setSelectedTime(JSON?.parse(StatrtTime))
+    }    
+  }, [StatrtTime])
   const UpdateBookingAppointment = async () => {
     try {
       const config = {
@@ -49,9 +51,11 @@ export const YourAppointment = () => {
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
         data: {
-          Id:AppointmentId?._id,
-          Time: Time,
+          Id: AppointmentId?._id,
+          doctorId:AppointmentId?.ConsultantDoctor?._id,         
           Dateofappointment: DateofApp,
+          starttime:SelectedTime?.startTime,
+          endtime:SelectedTime?.endTime,       
         },
       };
 
@@ -66,8 +70,21 @@ export const YourAppointment = () => {
     }
   };
 
+  const [Doctors, setDoctors] = useState([]);
+  const getDoctors = () => {
+    axios
+      .get("http://localhost:8521/api/Doctor/getDoctorsList")
+      .then(function (response) {
+        setDoctors(response.data.DoctorsInfo);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     getAppointmentList();
+    getDoctors();
   }, []);
 
   console.log("AppointmentList",AppointmentList);
@@ -79,7 +96,7 @@ export const YourAppointment = () => {
 
       <Container>
         <div className="row">
-          {AppointmentList?.filter((ele)=>ele.PatientId === user?._id)?.map((item) => {
+          {AppointmentList?.filter((ele)=>ele?.PatientId === user?._id)?.map((item) => {
             return (
               <div className="col-lg-6 mt-3">
                 <div
@@ -135,46 +152,66 @@ export const YourAppointment = () => {
           <Modal.Title>Update Appointment</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+        <div>
+            <h6>Date of Appointment</h6>
+            <Form.Select
+              className="width-respns width-respns-768px"
+              style={{ width: "400px", marginBottom: "20px" }}
+              aria-label="Default select example"
+              onChange={(e) => setDateofApp(e.target.value)}
+            >
+              <option>Date of Appointment</option>
+              {[
+                    ...new Set(
+                      Doctors.filter(
+                        (ele) => ele?._id === AppointmentId?.ConsultantDoctor?._id
+                      ).flatMap((doctor) =>
+                        doctor?.scheduleList?.map(
+                          (scheduleItem) => scheduleItem?.scheduleDate
+                        )
+                      )
+                    ),
+                  ].map((uniqueDate, index) => (
+                    <option key={index} value={uniqueDate}>
+                      {uniqueDate}
+                    </option>
+                  ))}
+            </Form.Select>
+          </div>
           <div>
             <h6>Time of Appointment</h6>
             <Form.Select
               className="width-respns width-respns-768px"
               style={{ width: "400px", marginBottom: "20px" }}
               aria-label="Default select example"
-              onChange={(e) => setTime(e.target.value)}
+              onChange={(e) => setStatrtTime(e.target.value)}
             >
-              <option>Time</option>
-              <option value="10:30 - 11:00">10:30 - 11:00</option>
-              <option value="11:00 - 11:30">11:00 - 11:30</option>
-              <option value="11:30 - 12:00">11:30 - 12:00</option>
-              <option value="12:00 - 12:30">12:00 - 12:30</option>
-              <option value="12:30 - 01:00">12:30 - 01:00</option>
-              <option value="03:30 - 4:00">03:30 - 4:00</option>
-              <option value="04:00 - 4:30">04:00 - 4:30</option>
-              <option value="04:30 - 5:00">04:30 - 5:00</option>
+              <option>Time of Appointment</option>
+              {Doctors?.filter((ele) => ele?._id === AppointmentId?.ConsultantDoctor?._id)?.flatMap(
+                    (doctor) =>
+                      doctor?.scheduleList
+                        ?.filter((ele) => ele.scheduleDate === DateofApp)
+                        ?.map((scheduleItem, index) => (
+                          <option
+                            key={index}
+                            // value={scheduleItem?.startTime}
+                            value={JSON.stringify(scheduleItem)}
+                          >
+                            {`${scheduleItem?.startTime} to ${scheduleItem?.endTime}`}
+                          </option>
+                        ))
+                  )}
             </Form.Select>
           </div>
-          <FloatingLabel
-            className="width-respns"
-            style={{ width: "400px" }}
-            controlId="floatingDate"
-            label="Date of Appointment"
-          >
-            <Form.Control
-              type="date"
-              placeholder="Date of Appointment"
-              onChange={(e) => setDateofApp(e.target.value)}
-            />
-          </FloatingLabel>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
           <Button 
-          // onClick={UpdateBookingAppointment} 
+          onClick={UpdateBookingAppointment} 
           variant="primary">
-            Understood
+            Submit
           </Button>
         </Modal.Footer>
       </Modal>
