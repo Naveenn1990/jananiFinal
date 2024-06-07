@@ -107,79 +107,83 @@ const VendorAddedProductCart = () => {
 
   const checkVendor = () => {
     const vendorId = getAddtocart[0]?.productid?.vendorid;
-    const result = getAddtocart?.map(
+    const result = getAddtocart?.filter(
       (cart) => cart.productid?.vendorid === vendorId
     );
+    console.log("result", result?.length, getAddtocart?.length, vendorId);
+    if (result?.length === getAddtocart?.length) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   const addBooking = async () => {
-    // checkVendor();
-    // if (!checkVendor) {
-    //   alert("Please select all products from single vendor");
-    // } else {
-    try {
-      const products = getAddtocart.map((item) => {
-        const vendorPrice =
-          Number(item?.productid?.productPrice) -
-          (Number(item?.productid?.productPrice) *
-            Number(item?.productid?.discount)) /
-            100;
-        const adminPrice = amounts[item?.productid?._id]
-          ? amounts[item?.productid?._id]
-          : 0;
-        const totalPrice =
-          (amounts[item?.productid?._id] || vendorPrice) * item?.quantity;
-
-        return {
-          adminId: adminDetails?._id,
-          vendorId: item?.productid?.vendorid,
-          productId: item?.productid?._id,
-          VendorPrice: vendorPrice,
-          AdminPrice: adminPrice,
-          quantity: item?.quantity,
-          totalPrice: totalPrice,
+    if (!checkVendor()) {
+      alert("Please select all products from single vendor");
+    } else {
+      try {
+        const products = getAddtocart.map((item) => {
+          const vendorPrice =
+            Number(item?.productid?.productPrice) -
+            (Number(item?.productid?.productPrice) *
+              Number(item?.productid?.discount)) /
+              100;
+          const adminPrice = amounts[item?.productid?._id]
+            ? amounts[item?.productid?._id]
+            : 0;
+          const totalPrice =
+            (amounts[item?.productid?._id] || vendorPrice) * item?.quantity;
+          return {
+            adminId: adminDetails?._id,
+            vendorId: item?.productid?.vendorid,
+            productId: item?.productid?._id,
+            VendorPrice: vendorPrice,
+            AdminPrice: adminPrice,
+            quantity: item?.quantity,
+            totalPrice: totalPrice,
+          };
+        });
+        console.log("products", products);
+        const config = {
+          url: "/vendor/postAdminOrders",
+          method: "post",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          // data: {
+          //   adminId: adminDetails?._id,
+          //   vendorId: item?.productid?.vendorid,
+          //   productId: item?.productid?._id,
+          //   cartId: item?._id,
+          //   VendorPrice:
+          //     Number(item?.productid?.productPrice) -
+          //     (Number(item?.productid?.productPrice) *
+          //       Number(item?.productid?.discount)) /
+          //       100,
+          //   AdminPrice: amounts[item?.productid?._id]
+          //     ? amounts[item?.productid?._id]
+          //     : 0,
+          //   quantity: item?.quantity,
+          //   totalPrice:
+          //     (amounts[item?.productid?._id] ||
+          //       Number(item?.productid?.productPrice) -
+          //         (Number(item?.productid?.productPrice) *
+          //           Number(item?.productid?.discount)) /
+          //           100) * item?.quantity,
+          // },
+          data: { products },
         };
-      });
-      console.log("products", products);
-      const config = {
-        url: "/vendor/postAdminOrders",
-        method: "post",
-        baseURL: "http://localhost:8521/api",
-        headers: { "content-type": "application/json" },
-        // data: {
-        //   adminId: adminDetails?._id,
-        //   vendorId: item?.productid?.vendorid,
-        //   productId: item?.productid?._id,
-        //   cartId: item?._id,
-        //   VendorPrice:
-        //     Number(item?.productid?.productPrice) -
-        //     (Number(item?.productid?.productPrice) *
-        //       Number(item?.productid?.discount)) /
-        //       100,
-        //   AdminPrice: amounts[item?.productid?._id]
-        //     ? amounts[item?.productid?._id]
-        //     : 0,
-        //   quantity: item?.quantity,
-        //   totalPrice:
-        //     (amounts[item?.productid?._id] ||
-        //       Number(item?.productid?.productPrice) -
-        //         (Number(item?.productid?.productPrice) *
-        //           Number(item?.productid?.discount)) /
-        //           100) * item?.quantity,
-        // },
-        data: { products },
-      };
-      let res = await axios(config);
-      if (res.status === 200) {
-        getaddtocart();
-        alert("Booking done successfully");
-      }
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.error);
+        let res = await axios(config);
+        if (res.status === 200) {
+          getaddtocart();
+          alert("Booking done successfully");
+        }
+      } catch (error) {
+        if (error.response) {
+          alert(error.response.data.error);
+        }
       }
     }
-    // }
   };
 
   const deletecart = async (item) => {
