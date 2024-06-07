@@ -149,6 +149,7 @@ export default function AddProductInvetory() {
       );
       if (res.status === 200) {
         // let seen = {};
+
         setorderedProductsList(
           res.data.allAdminOrders.filter((obj) => {
             if (
@@ -168,7 +169,7 @@ export default function AddProductInvetory() {
       setorderedProductsList([]);
     }
   };
-
+  console.log("9090: ", orderedProductsList);
   // ======================== Add Product in the inventory========================
   async function addToInventory() {
     try {
@@ -334,6 +335,10 @@ export default function AddProductInvetory() {
     );
   }, [price, discount]);
 
+  {
+    /*  
+
+
   const removeDuplicates = (orderedProductsList) => {
     const productIdMap = new Map();
 
@@ -349,13 +354,17 @@ export default function AddProductInvetory() {
 
   const newarray = removeDuplicates(orderedProductsList);
 
+   */
+  }
+  const newarray = orderedProductsList;
+
   // console.log("orderedProductsList555555: ", orderedProductsList);
   // console.log("newarray", newarray);
   // console.log("InvoiceDoc", InvoiceDoc);
   // console.log("ChosenProd", ChosenProd);
   console.log("inventoryList", inventoryList);
   console.log("productInfo", productInfo);
-  console.log("newarray", newarray);
+  console.log("newarray434", newarray);
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -457,7 +466,7 @@ export default function AddProductInvetory() {
                   }}
                 >
                   <option>Choose Products</option>
-                  {newarray
+                  {newarray[0]?.items
                     ?.filter(
                       (val) =>
                         // val.vendorid._id === venid &&

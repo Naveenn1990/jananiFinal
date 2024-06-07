@@ -65,6 +65,8 @@ export default function VendorAddedProductsStatus() {
     }
   };
 
+  console.log("orderedProductsList9090: ", orderedProductsList);
+
   const [search, setSearch] = useState("");
   const [tableFilter, settableFilter] = useState([]);
 
