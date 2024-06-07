@@ -252,6 +252,10 @@ import Adminorder from "./Admin/Adminorder";
 import PatientCaseStudy from "./DoctorsPortal/PatientCaseStudy";
 import VendorAdminInvoice from "./Vendor/VendorAdminInvoice";
 import VendorAdminInv from "./Admin/VendorAdminInv";
+import LabVendor from "./Admin/LabVendor";
+import Labvendorproducts from "./Admin/Labvendorproducts";
+import Labvendorproductcart from "./Admin/Labvendorproductcart";
+import LaborderHistory from "./Admin/LaborderHistory";
 
 function App() {
   return (
@@ -2299,6 +2303,45 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<AddHouseKeeping />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/LabVendor"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<LabVendor />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/Labvendorproducts"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Labvendorproducts />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/LaborderHistory"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<LaborderHistory />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/Labvendorproductcart"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Labvendorproductcart />} />
                 </>
               }
             ></Route>

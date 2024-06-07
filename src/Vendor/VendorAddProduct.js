@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 
 export const VendorAddProducts = () => {
   const navigate = useNavigate();
+  const Vendor = JSON.parse(sessionStorage.getItem("VendorDetails"));
 
   const [show, setShow] = useState(false);
   // const [show1, setShow1] = useState(false);
@@ -41,7 +42,11 @@ export const VendorAddProducts = () => {
       .get("http://localhost:8521/api/vendor/productList")
       .then(function (response) {
         // handle success
-        setProductList(response.data.allProducts);
+        setProductList(
+          response.data.allProducts?.filter(
+            (item) => item?.vendorid?.vendorId === Vendor?.vendorId
+          )
+        );
       })
       .catch(function (error) {
         // handle error
@@ -53,6 +58,7 @@ export const VendorAddProducts = () => {
     getProductList();
   }, []);
 
+  console.log("ProductList", ProductList);
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
@@ -149,12 +155,17 @@ export const VendorAddProducts = () => {
                   <td>{item?.manufacturingDate}</td>
                   <td>{item?.expiryDate}</td>
                   <td>{item?.discount}</td>
+                  <td>{item?.productSize}</td>
                   <td>{item?.packSize}</td>
                   <td>{item?.colour}</td>
                   <td>{item?.flavour}</td>
                   <td>{item?.fragrance}</td>
                   <td>{item?.variant}</td>
-                  <td>{item?.description}</td>
+                  <td>
+                    <p style={{ height: "100px", overflowX: "scroll" }}>
+                      {item?.description}
+                    </p>
+                  </td>
                   <td>{item?.brand}</td>
                   <td>{item?.countryOfOrigin}</td>
                   <td>{item?.manufacturercompanyname}</td>

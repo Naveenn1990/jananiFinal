@@ -338,7 +338,7 @@ export default function AddProductInvetory() {
     const productIdMap = new Map();
 
     return orderedProductsList.filter((item) => {
-      const productId = item?.productId?._id;
+      const productId = item.productId?._id;
       if (!productIdMap.has(productId)) {
         productIdMap.set(productId, true);
         return true;
@@ -723,91 +723,129 @@ export default function AddProductInvetory() {
                             >
                               {val?.productId?.productName}
                             </p>
-                          
+
                             <div className="row">
                               {val?.productId?.productType ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}>Product Type:</span>  {val?.productId?.productType}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    Product Type:
+                                  </span>{" "}
+                                  {val?.productId?.productType}
                                 </div>
                               ) : (
                                 <></>
                               )}
                               {val?.AdminPrice ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}>Buying Price:</span> ₹ {val?.AdminPrice} /-
+                                  <span style={{ fontWeight: "bold" }}>
+                                    Buying Price:
+                                  </span>{" "}
+                                  ₹ {val?.AdminPrice} /-
                                 </div>
                               ) : (
                                 <></>
                               )}
                               {val?.quantity ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}>Quantity:</span>  {val?.quantity} 
+                                  <span style={{ fontWeight: "bold" }}>
+                                    Quantity:
+                                  </span>{" "}
+                                  {val?.quantity}
                                 </div>
                               ) : (
                                 <></>
                               )}
                               {val?.productId?.productSize ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}>Product Size :</span>  {val?.productId?.productSize}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    Product Size :
+                                  </span>{" "}
+                                  {val?.productId?.productSize}
                                 </div>
                               ) : (
                                 <></>
                               )}
                               {val?.productId?.packSize ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}>Pack Size :</span>  {val?.productId?.packSize}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    Pack Size :
+                                  </span>{" "}
+                                  {val?.productId?.packSize}
                                 </div>
                               ) : (
                                 <></>
                               )}
                               <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                               <span style={{fontWeight:"bold"}}>Manufacturing Date :{" "}</span> 
+                                <span style={{ fontWeight: "bold" }}>
+                                  Manufacturing Date :{" "}
+                                </span>
                                 {moment(val?.manufacturingDate).format(
                                   "DD-MM-YYYY"
                                 )}
                               </div>
                               <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                <span style={{fontWeight:"bold"}}>Expiry Date :{" "}</span>
+                                <span style={{ fontWeight: "bold" }}>
+                                  Expiry Date :{" "}
+                                </span>
                                 {moment(val?.expiryDate).format("DD-MM-YYYY")}
                               </div>
                               {val?.productId?.colour ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}>Colour :</span>  {val?.productId?.colour}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    Colour :
+                                  </span>{" "}
+                                  {val?.productId?.colour}
                                 </div>
                               ) : (
                                 <></>
                               )}
                               {val?.productId?.flavour ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}> Flavour :</span> {val?.productId?.flavour}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    {" "}
+                                    Flavour :
+                                  </span>{" "}
+                                  {val?.productId?.flavour}
                                 </div>
                               ) : (
                                 <></>
                               )}
                               {val?.productId?.fragrance ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}> Fragrance :</span> {val?.productId?.fragrance}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    {" "}
+                                    Fragrance :
+                                  </span>{" "}
+                                  {val?.productId?.fragrance}
                                 </div>
                               ) : (
                                 <></>
                               )}
                               {val?.productId?.variant ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}>Varient :</span>  {val?.productId?.variant}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    Varient :
+                                  </span>{" "}
+                                  {val?.productId?.variant}
                                 </div>
                               ) : (
                                 <></>
                               )}
                               {val?.productId?.brand ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}>Brand :</span>  {val?.productId?.brand}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    Brand :
+                                  </span>{" "}
+                                  {val?.productId?.brand}
                                 </div>
                               ) : (
                                 <></>
                               )}
                               {val?.productId?.countryOfOrigin ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}>Country Of Origin :</span> 
+                                  <span style={{ fontWeight: "bold" }}>
+                                    Country Of Origin :
+                                  </span>
                                   {val?.productId?.countryOfOrigin}
                                 </div>
                               ) : (
@@ -815,7 +853,9 @@ export default function AddProductInvetory() {
                               )}
                               {val?.productId?.manufacturercompanyname ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}>Manufacturer Company :</span> 
+                                  <span style={{ fontWeight: "bold" }}>
+                                    Manufacturer Company :
+                                  </span>
                                   {val?.productId?.manufacturercompanyname}
                                 </div>
                               ) : (
@@ -823,7 +863,9 @@ export default function AddProductInvetory() {
                               )}
                               {val?.productId?.manufactureraddress ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                                 <span style={{fontWeight:"bold"}}>Manufacturer Address :</span> 
+                                  <span style={{ fontWeight: "bold" }}>
+                                    Manufacturer Address :
+                                  </span>
                                   {val?.productId?.manufactureraddress}
                                 </div>
                               ) : (

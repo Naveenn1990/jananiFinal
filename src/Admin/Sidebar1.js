@@ -141,6 +141,24 @@ export default function Sidebar1() {
             >
               Add Lab Packages
             </h6>
+            <h6
+              className="sidebarItem1"
+              onClick={() => window.location.assign("/admin/LabVendor")}
+            >
+              Vendor's
+            </h6>
+            <h6
+              className="sidebarItem1"
+              onClick={() => window.location.assign("/admin/Labvendorproducts")}
+            >
+              Vendor Product's
+            </h6>
+            <h6
+              className="sidebarItem1"
+              onClick={() => window.location.assign("/admin/LaborderHistory")}
+            >
+              Purchase Order History
+            </h6>
           </div>
 
           <h6 className="sidebarItem" onClick={() => setPharM(!PharM)}>
@@ -475,18 +493,36 @@ export default function Sidebar1() {
             >
               Hospital lab
             </h6>
+
             <h6
               className="sidebarItem1"
               onClick={() => window.location.assign("/admin/ClinicalLabPanel")}
             >
               Clinical lab
             </h6>
-
             <h6
               className="sidebarItem1"
               onClick={() => window.location.assign("/admin/Packages")}
             >
               Add Lab Packages
+            </h6>
+            <h6
+              className="sidebarItem1"
+              onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+            >
+              Vendor's
+            </h6>
+            <h6
+              className="sidebarItem1"
+              onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+            >
+              Vendor Product's
+            </h6>
+            <h6
+              className="sidebarItem1"
+              onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+            >
+              Purchase Order History
             </h6>
           </div>
           {Subadmin?.pharmacyManagement === true ? (

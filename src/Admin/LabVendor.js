@@ -4,7 +4,7 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 import { MdDelete } from "react-icons/md";
 import axios from "axios";
 
-export default function AddVendor() {
+export default function LabVendor() {
   const formdata = new FormData();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -38,7 +38,7 @@ export default function AddVendor() {
       formdata.set("profilePic", profilePic);
       formdata.set("identityCard", identityCard);
       formdata.set("medicalLicence", medicalLicence);
-      formdata.set("vendortype", "PHARMACY");
+      formdata.set("VendorType", "Lab");
       const config = {
         url: "/vendor/addvendor",
         method: "post",
@@ -76,18 +76,19 @@ export default function AddVendor() {
       );
       if (res.status === 200) {
         setVendorList(
-          res.data.allVendors?.filter((item) => item?.VendorType === "Pharmacy")
+          res.data.allVendors?.filter((item) => item?.VendorType === "Lab")
         );
       }
     } catch (error) {
       console.log(error);
-      // setVendorList(
-      //   error.response.data.allVendors?.filter(
-      //     (item) => item?.VendorType === "Pharmacy"
-      //   )
-      // );
+      //   setVendorList(
+      //     error.response.data.allVendors?.filter(
+      //       (item) => item?.VendorType === "Lab"
+      //     )
+      //   );
     }
   };
+
   useEffect(() => {
     getAllVendors();
   }, []);

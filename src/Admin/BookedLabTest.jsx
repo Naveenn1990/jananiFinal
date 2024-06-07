@@ -15,6 +15,15 @@ import { useReactToPrint } from "react-to-print";
 import Select from "react-select";
 
 function BookedLabTest() {
+  // Select width
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      // Adjust the width here
+      minHeight: "60px", // Adjust the height here
+    }),
+  };
+
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -80,6 +89,8 @@ function BookedLabTest() {
         console.log(error);
       });
   };
+
+  console.log("patientlist656555: ", patientlist);
 
   useEffect(() => {
     getPatientlist();
@@ -174,86 +185,83 @@ function BookedLabTest() {
     }
   };
 
-  // const [patientname, setpatientname] = useState("");
-  // const [Phoneno, setPhoneno] = useState("");
-  // const [email, setemail] = useState("");
-  // const [testDate, settestDate] = useState("");
-  // const [causeid, setcauseid] = useState("");
+  const [PatientType, setPatientType] = useState("");
+  const [patientObj, setpatientObj] = useState("");
+  const [patientname, setpatientname] = useState("");
+  const [Phoneno, setPhoneno] = useState("");
+  const [email, setemail] = useState("");
+  const [testDate, settestDate] = useState("");
+  const [causeid, setcauseid] = useState("");
   // const [patientData, setpatientData] = useState({});
-  // // const [Labtests, setLabtests] = useState([]);
-  // let [selectedOptions, setSelectedOptions] = useState([]);
+  const [Labtests1, setLabtests1] = useState([]);
+  let [selectedOptions, setSelectedOptions] = useState([]);
+  const hasSelectedOptions = Labtests1 && Labtests1.length > 0;
 
-  // const AddLabTest = (Labtests) => {
-  //   setSelectedOptions(
-  //     Labtests?.map((val) => {
-  //       return {
-  //         testid: val._id,
-  //         testName: val.testName,
-  //         priceNonInsurance: val.priceNonInsurance,
-  //         priceInsurance: val.priceInsurance,
-  //         unit: val.unit,
-  //         // beforeFoodRefVal: val.beforeFoodRefVal,
-  //         // afterFoodRefVal: val.afterFoodRefVal,
-  //         generalRefVal: val.generalRefVal,
-  //       };
-  //     })
-  //   );
-  //   setLabtests(Labtests);
-  // };
-  // const bookLabTest = async () => {
-  //   let obj;
-  //   // if (
-  //   //   patientData &&
-  //   //   JSON.parse(patientData)?.registrationType === "IPD"
-  //   // ) {
-  //   //   obj = {
-  //   //     causeid: causeid,
-  //   //     patientid: JSON.parse(patientData)?._id,
-  //   //     patientname: patientname,
-  //   //     Phoneno: Phoneno,
-  //   //     email: email,
-  //   //     testDate: testDate,
-  //   //     Labtests: selectedOptions,
-  //   //   };
-  //   // } else if (
-  //   //   patientData &&
-  //   //   JSON.parse(patientData)?.registrationType === "OPD"
-  //   // ) {
-  //   //   obj = {
-  //   //     patientid: JSON.parse(patientData)?._id,
-  //   //     patientname: patientname,
-  //   //     Phoneno: Phoneno,
-  //   //     email: email,
-  //   //     testDate: testDate,
-  //   //     Labtests: selectedOptions,
-  //   //   };
-  //   // } else if (!patientData) {
-  //   //   obj = {
-  //   //     patientname: patientname,
-  //   //     Phoneno: Phoneno,
-  //   //     email: email,
-  //   //     testDate: testDate,
-  //   //     Labtests: selectedOptions,
-  //   //   };
-  //   // }
-  //   try {
-  //     const config = {
-  //       url: "/user/bookHospitalLabTest",
-  //       method: "post",
-  //       baseURL: "http://localhost:8521/api",
-  //       headers: { "content-type": "application/json" },
-  //       data: obj,
-  //     };
-  //     let res = await axios(config);
-  //     if (res.status === 200 || res.status === 201) {
-  //       alert("Lab test booked");
-  //       // thankyouShow();
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     return alert(error.response.data.error);
-  //   }
-  // };
+  const AddLabTest = (Labtests) => {
+    setSelectedOptions(
+      Labtests?.map((val) => {
+        return {
+          testid: val._id,
+          testName: val.testName,
+          priceNonInsurance: val.priceNonInsurance,
+          priceInsurance: val.priceInsurance,
+          unit: val.unit,
+          // beforeFoodRefVal: val.beforeFoodRefVal,
+          // afterFoodRefVal: val.afterFoodRefVal,
+          generalRefVal: val.generalRefVal,
+        };
+      })
+    );
+    setLabtests1(Labtests);
+  };
+  const bookLabTest = async () => {
+    let obj;
+    if (PatientType === "IPD") {
+      obj = {
+        causeid: causeid,
+        patientid: patientObj?._id,
+        patientname: patientObj?.Firstname,
+        Phoneno: patientObj?.PhoneNumber,
+        email: patientObj?.Email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+      };
+    } else if (PatientType === "OPD") {
+      obj = {
+        patientid: patientObj?._id,
+        patientname: patientname,
+        Phoneno: Phoneno,
+        email: email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+      };
+    } else {
+      obj = {
+        patientname: patientname,
+        Phoneno: Phoneno,
+        email: email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+      };
+    }
+    try {
+      const config = {
+        url: "/user/bookHospitalLabTest",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: obj,
+      };
+      let res = await axios(config);
+      if (res.status === 200 || res.status === 201) {
+        alert("Lab test booked");
+        // thankyouShow();
+      }
+    } catch (error) {
+      console.log(error);
+      return alert(error.response.data.error);
+    }
+  };
 
   return (
     <div>
@@ -366,7 +374,7 @@ function BookedLabTest() {
                       item?.Labtests?.filter((val) => val.patientReportVal)
                         ?.length ? (
                         <b style={{ color: "green" }}>Reports Added</b>
-                      ) : (
+                      ) : item?.paymentStatus === "PAID" ? (
                         <Button
                           onClick={() => {
                             handleShow5();
@@ -375,6 +383,10 @@ function BookedLabTest() {
                         >
                           Add Report
                         </Button>
+                      ) : (
+                        <div style={{ color: "red" }}>
+                          <b>Payment not done</b>
+                        </div>
                       )}
                     </td>
                     <td>
@@ -418,9 +430,7 @@ function BookedLabTest() {
                         <span style={{ color: "green" }}>
                           <b>PAID</b>
                         </span>
-                      ) : item?.Labtests?.length ===
-                        item?.Labtests?.filter((val) => val.patientReportVal)
-                          ?.length ? (
+                      ) : (
                         <Button
                           onClick={() => {
                             setBookingid(item?._id);
@@ -429,8 +439,6 @@ function BookedLabTest() {
                         >
                           Done
                         </Button>
-                      ) : (
-                        <>--/--</>
                       )}
                     </td>
                   </tr>
@@ -936,30 +944,104 @@ function BookedLabTest() {
                   })}
                 </Form.Select>
               </FloatingLabel> */}
+              <FloatingLabel
+                className="col-md-6 p-2"
+                controlId="floatingName"
+                label="Type"
+              >
+                <Form.Select onChange={(e) => setPatientType(e.target.value)}>
+                  <option>Choose Options</option>
+                  <option value={"IPD"}>IPD</option>
+                  <option value={"OPD"}>OPD</option>
+                  <option value={"GENERAL"}>General</option>
+                </Form.Select>
+              </FloatingLabel>
+
+              {PatientType === "IPD" || PatientType === "OPD" ? (
+                <FloatingLabel
+                  className="col-md-6 p-2"
+                  controlId="floatingName"
+                  label="Patient List"
+                >
+                  <Form.Select
+                    onChange={(e) => setpatientObj(JSON.parse(e.target.value))}
+                  >
+                    <option>Choose Options</option>
+                    {patientlist
+                      ?.filter((item) => item?.registrationType === PatientType)
+                      ?.map((val) => {
+                        return (
+                          <option value={JSON.stringify(val)}>
+                            {val?.Firstname} {val?.Lastname}
+                          </option>
+                        );
+                      })}
+                  </Form.Select>
+                </FloatingLabel>
+              ) : (
+                <></>
+              )}
+
+              {PatientType === "IPD" ? (
+                <FloatingLabel
+                  className="col-md-6 p-2"
+                  controlId="floatingName"
+                  label="Cause"
+                >
+                  <Form.Select onChange={(e) => setcauseid(e.target.value)}>
+                    <option>Choose Options</option>
+                    {patientObj?.cause?.map((val) => {
+                      return <option value={val?._id}>{val?.CauseName}</option>;
+                    })}
+                  </Form.Select>
+                </FloatingLabel>
+              ) : (
+                <></>
+              )}
 
               <FloatingLabel
                 className="col-md-6 p-2"
                 controlId="floatingName"
                 label="Name"
               >
-                <Form.Control
-                  type="text"
-                  // value={patientname}
-                  placeholder="Name"
-                  // onChange={(e) => setpatientname(e.target.value)}
-                />
+                {PatientType === "IPD" || PatientType === "OPD" ? (
+                  <Form.Control
+                    type="text"
+                    value={patientObj?.Firstname}
+                    placeholder="Name"
+                    disabled
+                    onChange={(e) => setpatientname(e.target.value)}
+                  />
+                ) : (
+                  <Form.Control
+                    type="text"
+                    value={patientname}
+                    placeholder="Name"
+                    onChange={(e) => setpatientname(e.target.value)}
+                  />
+                )}
               </FloatingLabel>
               <FloatingLabel
                 className="  col-md-6 p-2"
                 controlId="floatingMobile"
                 label="Mobile"
               >
-                <Form.Control
-                  type="number"
-                  // value={Phoneno}
-                  placeholder="Mobile"
-                  // onChange={(e) => setPhoneno(e.target.value)}
-                />
+                {PatientType === "IPD" || PatientType === "OPD" ? (
+                  <Form.Control
+                    type="number"
+                    value={patientObj?.PhoneNumber}
+                    placeholder="Mobile"
+                    disabled
+                    onChange={(e) => setPhoneno(e.target.value)}
+                  />
+                ) : (
+                  <Form.Control
+                    type="number"
+                    value={Phoneno}
+                    placeholder="Mobile"
+                    onChange={(e) => setPhoneno(e.target.value)}
+                  />
+                )}
               </FloatingLabel>
             </Row>
             <Row>
@@ -968,23 +1050,38 @@ function BookedLabTest() {
                 controlId="floatingEmail"
                 label="Email"
               >
-                <Form.Control
-                  type="email"
-                  // value={email}
-                  placeholder="Email"
-                  // onChange={(e) => setemail(e.target.value)}
-                />
+                {PatientType === "IPD" || PatientType === "OPD" ? (
+                  <Form.Control
+                    type="email"
+                    value={patientObj?.Email}
+                    placeholder="Email"
+                    disabled
+                    onChange={(e) => setemail(e.target.value)}
+                  />
+                ) : (
+                  <Form.Control
+                    type="email"
+                    value={email}
+                    placeholder="Email"
+                    onChange={(e) => setemail(e.target.value)}
+                  />
+                )}
               </FloatingLabel>
-              <FloatingLabel className="col-md-6 p-1" controlId="floatingName">
+              <FloatingLabel
+                className="col-md-6 p-1"
+                controlId="floatingName"
+                label={hasSelectedOptions ? "" : "Select Lab Tests"}
+              >
                 <Select
-                  // defaultValue={[colourOptions[2], colourOptions[3]]}
                   isMulti
-                  name="colors"
+                  name="labTests"
                   options={HospitalLabList}
                   className="basic-multi-select"
-                  classNamePrefix="select"
-                  value={Labtests}
-                  // onChange={AddLabTest}
+                  classNamePrefix=""
+                  value={Labtests1}
+                  onChange={AddLabTest}
+                  styles={customStyles}
+                  placeholder=""
                 />
               </FloatingLabel>
             </Row>
@@ -997,8 +1094,8 @@ function BookedLabTest() {
                 <Form.Control
                   type="date"
                   placeholder=""
-                  // value={testDate}
-                  // onChange={(e) => settestDate(e.target.value)}
+                  value={testDate}
+                  onChange={(e) => settestDate(e.target.value)}
                 />
               </FloatingLabel>
             </Row>
@@ -1033,8 +1130,7 @@ function BookedLabTest() {
 
             <Button
               onClick={() => {
-                alert("LAB Test Booked");
-                handleClose();
+                bookLabTest();
               }}
               onHide={handleClose}
               className="col-md-12"
