@@ -338,7 +338,7 @@ export default function AddProductInvetory() {
     const productIdMap = new Map();
 
     return orderedProductsList.filter((item) => {
-      const productId = item.productId._id;
+      const productId = item?.productId?._id;
       if (!productIdMap.has(productId)) {
         productIdMap.set(productId, true);
         return true;

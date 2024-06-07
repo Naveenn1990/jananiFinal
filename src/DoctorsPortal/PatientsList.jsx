@@ -36,13 +36,13 @@ export const PatientsList = () => {
   const handleClose3 = () => setShow3(false);
   const handleShow3 = () => setShow3(true);
 
-  const [show4, setShow4] = useState(false);
-  const handleClose4 = () => setShow4(false);
-  const handleShow4 = () => setShow4(true);
-
   const [show5, setShow5] = useState(false);
   const handleClose5 = () => setShow5(false);
   const handleShow5 = () => setShow5(true);
+
+  const [show6, setShow6] = useState(false);
+  const handleClose6 = () => setShow6(false);
+  const handleShow6 = () => setShow6(true);
 
   const createPDF = async () => {
     const input = document.getElementById("pdf");
@@ -53,6 +53,23 @@ export const PatientsList = () => {
     pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
     pdf.save("Prescription.pdf");
   };
+  const doctor = JSON.parse(sessionStorage.getItem("DoctorDetails"));
+  const [AppointmentList, setAppointmentList] = useState([]);
+  const getAppointmentList = () => {
+    axios
+      .get("http://localhost:8521/api/user/getlist")
+      .then(function (response) {
+        const data = response.data.Info.filter(
+          (item) => item?.ConsultantDoctor?._id == doctor?._id
+        );
+        setAppointmentList(data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  const [SelectTime, setSelectTime] = useState("")
 
   const [Topic, setTopic] = useState("");
   const [description, setdescription] = useState("");
@@ -132,6 +149,7 @@ export const PatientsList = () => {
 
   useEffect(() => {
     getpatientlist();
+    getAppointmentList()
   }, []);
 
   console.log("patientlist: ", patientlist);
@@ -230,7 +248,7 @@ export const PatientsList = () => {
                               className="table-details-btn mb-2"
                               
                               onClick={() => {
-                                handleShow4();
+                                handleShow6();
                                 setselectedcauseid(item);
                               }}
                             >
@@ -684,189 +702,43 @@ export const PatientsList = () => {
           )}
         </Modal.Footer>
       </Modal>
-      <Modal size="lg" show={show4} onHide={handleClose4}>
+      <Modal show={show6} onHide={handleClose6}>
         <Modal.Header closeButton>
-          <Modal.Title>Patient Prescription </Modal.Title>
+          <Modal.Title>Select Appointment Date</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <div id="pdf" className="container" style={{padding:"35px",backgroundColor:"white"}}>
-        <div className="row mt-3">
-          <div>
-            <h3>Prescription :</h3>
-          </div>
-          <Table bordered>
-            <thead>
-              <tr>
-                <th>Sl No</th>
-                <th>Medicine Type</th>
-                <th>Generic Name</th>
-                <th>Dosage</th>
-                <th>Duration</th>
-                <th>Instruction</th>
-                <th>Result</th>
-              </tr>
-            </thead>
-            <tbody>
-              {selectedcauseid?.medicineInfo?.map((item1,i)=>{
-                return(
-                  <tr>
-                  <td>{i+1}</td>
-                  <td>{item1?.medicineType}</td>
-                  <td>{item1?.genericName}</td>
-                  <td>
-                    <p>Morning: {item1?.morningDose}</p>
-                    <p>Afternoon: {item1?.noonDose}</p>
-                    <p>Night: {item1?.nightDose}</p>
-                  </td>
-                  <td>{item1?.duration}</td>
-                  <td>{item1?.medicineTakingTime}</td>
-                  <td>{item1?.result}</td>
-                </tr>
-                )
-              })}
-             
-            </tbody>
-          </Table>
-        </div>
-
-        <div className="row mt-3">
-          <div>
-            <h3>Investigation :</h3>
-          </div>
-          <Table bordered>
-            <thead>
-              <tr>
-                <th>Sl No</th>
-                <th>Invastigation Name</th>
-                <th>Description</th>
-                <th>Image(Investigation)</th>
-                <th>Remark</th>
-              </tr>
-            </thead>
-            <tbody>
-              {selectedcauseid?.investigationList?.map((item2,i)=>{
-                return(
-                  <tr>
-                  <td>{i+1}</td>
-                  <td>{item2?.investigationName}</td>
-                  <td>{item2?.investigationDescription}</td>
-                  <td>                   
-                     <a
-                              href={`http://localhost:8521/Patient/${item2.investigationIncludeInReport}`}
-                              target="blank_"
-                            >
-                              View Documents
-                            </a>
-                  </td>
-                  <td>
-                   {item2?.notes}
-                  </td>
-                </tr>
-                )
-              })}
-             
-            </tbody>
-          </Table>
-        </div>
-        <div className="row mt-3">
-          <div>
-            <h3>Examination :</h3>
-          </div>
-          <Table bordered>
-            <thead>
-              <tr>
-                <th>Description</th>
-                <th>Result</th>
-             
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Height(cm) :</td>
-                <td>{selectedcauseid?.height} cm</td>                
-              </tr>
-              <tr>
-                <td>Weight(kg) :</td>
-                <td>{selectedcauseid?.weight} kg</td>                
-              </tr>
-              <tr>
-                <td>BMI :</td>
-                <td>{selectedcauseid?.bmi}</td>                
-              </tr>
-              <tr>
-                <td>Temperature :</td>
-                <td>{selectedcauseid?.temperature} F</td>                
-              </tr>
-              <tr>
-                <td>Pulse Rate :</td>
-                <td>{selectedcauseid?.pulserate} </td>                
-              </tr>
-              <tr>
-                <td>Blood Pressure :</td>
-                <td>{selectedcauseid?.bp}</td>                
-              </tr>
-              <tr>
-                <td>Spo2(% at RA) :</td>
-                <td>{selectedcauseid?.spo2} </td>                
-              </tr>
-              <tr>
-                <td>Sugar(mg/dl) :</td>
-                <td>{selectedcauseid?.suger} </td>                
-              </tr>
-              <tr>
-                <td>Head Circumference(cm) :</td>
-                <td>{selectedcauseid?.headcircumference} </td>                
-              </tr>
-            </tbody>
-            <h4>Systemic Examination</h4>
-            <tbody>
-            <tr>
-                <td>RS :</td>
-                <td>{selectedcauseid?.rs} </td>                
-              </tr>
-            <tr>
-                <td>CVS :</td>
-                <td>{selectedcauseid?.cvs} </td>                
-              </tr>
-            <tr>
-                <td>CNS :</td>
-                <td>{selectedcauseid?.cns} </td>                
-              </tr>
-            <tr>
-                <td>PA :</td>
-                <td>{selectedcauseid?.pa} </td>                
-              </tr>
-            </tbody>
-            <h4>Examination</h4>
-            <tbody>
-                <tr>
-                    <td>General Examination :</td>
-                    <td>{selectedcauseid?.generalexamination}</td>
-                </tr>
-                <tr>
-                    <td>Local Examination :</td>
-                    <td>{selectedcauseid?.localexamination}</td>
-                </tr>
-            </tbody>
-          </Table>
-
-        </div>
-   
-      </div>
+          <Form.Select
+            onChange={(e) => setSelectTime(e.target.value)}
+            aria-label="Default select example"
+          >
+            <option>select date</option>
+            {AppointmentList?.filter((ele)=>ele?.PatientId === selectedcauseid?._id)?.map((item) => {
+              return <option value={JSON.stringify(item)}>{item?.Dateofappointment}</option>;
+            })}
+          </Form.Select>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose4}>
+          <Button variant="secondary" onClick={handleClose6}>
             Close
           </Button>
-         
+          {selectedcauseid?.cause?.length > 0 ? (
             <Button
-              variant="primary" 
-              onClick={createPDF}          
+              variant="primary"
+              onClick={() =>
+                navigate(`/patientcasestudy`, {
+                  state: { item: JSON.parse(SelectTime) },
+                })
+              }
             >
-              Print
-            </Button>         
+              Submit
+            </Button>
+          ) : (
+            ""
+          )}
         </Modal.Footer>
       </Modal>
+
+
     </div>
   );
 };

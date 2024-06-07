@@ -35,7 +35,8 @@ export default function VendorSidebar() {
       </Navbar.Brand>
       <div className=" text-center m-3 ms-4">
         <img
-          src="./img/admin-doctors-list-3.jpg"
+          // src="./img/admin-doctors-list-3.jpg"
+          src={`http://localhost:8521/Vendor/${VendorDetails?.profilePic}`}
           alt=""
           style={{ width: "70px", height: "70px", borderRadius: "30%" }}
         />
