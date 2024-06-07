@@ -50,6 +50,13 @@ const VendorAddedProductCart = () => {
         data: {
           id: item?._id,
           quantity: item?.quantity + 1,
+          totalamount:
+            (amounts[item?.productid?._id] ||
+              Number(item?.productid?.productPrice) -
+                (Number(item?.productid?.productPrice) *
+                  Number(item?.productid?.discount)) /
+                  100) *
+            (item?.quantity + 1),
         },
       };
       let res = await axios(config);
@@ -77,6 +84,13 @@ const VendorAddedProductCart = () => {
           data: {
             id: item?._id,
             quantity: item?.quantity - 1,
+            totalamount:
+              (amounts[item?.productid?._id] ||
+                Number(item?.productid?.productPrice) -
+                  (Number(item?.productid?.productPrice) *
+                    Number(item?.productid?.discount)) /
+                    100) *
+              (item?.quantity - 1),
           },
         };
         let res = await axios(config);
@@ -91,34 +105,69 @@ const VendorAddedProductCart = () => {
     }
   };
 
-  const addBooking = async (item) => {
+  const checkVendor = () => {
+    const vendorId = getAddtocart[0]?.productid?.vendorid;
+    const result = getAddtocart?.map(
+      (cart) => cart.productid?.vendorid === vendorId
+    );
+  };
+
+  const addBooking = async () => {
+    // checkVendor();
+    // if (!checkVendor) {
+    //   alert("Please select all products from single vendor");
+    // } else {
     try {
+      const products = getAddtocart.map((item) => {
+        const vendorPrice =
+          Number(item?.productid?.productPrice) -
+          (Number(item?.productid?.productPrice) *
+            Number(item?.productid?.discount)) /
+            100;
+        const adminPrice = amounts[item?.productid?._id]
+          ? amounts[item?.productid?._id]
+          : 0;
+        const totalPrice =
+          (amounts[item?.productid?._id] || vendorPrice) * item?.quantity;
+
+        return {
+          adminId: adminDetails?._id,
+          vendorId: item?.productid?.vendorid,
+          productId: item?.productid?._id,
+          VendorPrice: vendorPrice,
+          AdminPrice: adminPrice,
+          quantity: item?.quantity,
+          totalPrice: totalPrice,
+        };
+      });
+      console.log("products", products);
       const config = {
         url: "/vendor/postAdminOrders",
         method: "post",
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
-        data: {
-          cartId: item?._id,
-          vendorId: item?.productid?.vendorid,
-          productId: item?.productid?._id,
-          adminId: adminDetails?._id,
-          VendorPrice:
-            Number(item?.productid?.productPrice) -
-            (Number(item?.productid?.productPrice) *
-              Number(item?.productid?.discount)) /
-              100,
-          AdminPrice: amounts[item?.productid?._id]
-            ? amounts[item?.productid?._id]
-            : 0,
-          quantity: item?.quantity,
-          totalPrice:
-            (amounts[item?.productid?._id] ||
-              Number(item?.productid?.productPrice) -
-                (Number(item?.productid?.productPrice) *
-                  Number(item?.productid?.discount)) /
-                  100) * item?.quantity,
-        },
+        // data: {
+        //   adminId: adminDetails?._id,
+        //   vendorId: item?.productid?.vendorid,
+        //   productId: item?.productid?._id,
+        //   cartId: item?._id,
+        //   VendorPrice:
+        //     Number(item?.productid?.productPrice) -
+        //     (Number(item?.productid?.productPrice) *
+        //       Number(item?.productid?.discount)) /
+        //       100,
+        //   AdminPrice: amounts[item?.productid?._id]
+        //     ? amounts[item?.productid?._id]
+        //     : 0,
+        //   quantity: item?.quantity,
+        //   totalPrice:
+        //     (amounts[item?.productid?._id] ||
+        //       Number(item?.productid?.productPrice) -
+        //         (Number(item?.productid?.productPrice) *
+        //           Number(item?.productid?.discount)) /
+        //           100) * item?.quantity,
+        // },
+        data: { products },
       };
       let res = await axios(config);
       if (res.status === 200) {
@@ -130,6 +179,7 @@ const VendorAddedProductCart = () => {
         alert(error.response.data.error);
       }
     }
+    // }
   };
 
   const deletecart = async (item) => {
@@ -172,7 +222,11 @@ const VendorAddedProductCart = () => {
               <th className="fw-bold">Product ID</th>
               <th className="fw-bold">Product Name</th>
               <th className="fw-bold">Vendor Proposed Price</th>
-              <th className="fw-bold">Admin Buying Price</th>
+              <th className="fw-bold">
+                Admin Buying Price (Please select the quantity after adding
+                Admin Amount)
+                <span style={{ fontSize: "18px" }}>*</span>
+              </th>
               <th className="fw-bold">Quantity</th>
               <th className="fw-bold">Total</th>
               <th className="fw-bold">Action</th>
@@ -255,7 +309,7 @@ const VendorAddedProductCart = () => {
                   </td>
                   <td>
                     <div style={{ display: "flex", gap: "20px" }}>
-                      <button
+                      {/* <button
                         style={{
                           border: "none",
                           backgroundColor: "#20958c",
@@ -267,7 +321,7 @@ const VendorAddedProductCart = () => {
                       >
                         Book
                       </button>
-                      /
+                      / */}
                       <button
                         style={{
                           border: "none",
@@ -284,6 +338,41 @@ const VendorAddedProductCart = () => {
             })}
           </tbody>
         </Table>
+
+        <div
+          style={{
+            display: "flex",
+            marginTop: "20px",
+            justifyContent: "space-between",
+          }}
+        >
+          <p>
+            Total Amount :{" "}
+            {getAddtocart?.reduce(
+              (a, item) =>
+                a +
+                (amounts[item?.productid?._id] ||
+                  Number(item?.productid?.productPrice) -
+                    (Number(item?.productid?.productPrice) *
+                      Number(item?.productid?.discount)) /
+                      100) *
+                  item?.quantity,
+              0
+            )}
+          </p>
+          <button
+            style={{
+              border: "none",
+              backgroundColor: "#20958c",
+              color: "white",
+              borderRadius: "5px",
+              fontWeight: "500",
+            }}
+            onClick={() => addBooking()}
+          >
+            Book
+          </button>
+        </div>
       </div>
     </div>
   );

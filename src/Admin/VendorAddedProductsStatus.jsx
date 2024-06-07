@@ -10,11 +10,8 @@ import { faCircleInfo, faTag } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import Carousel from "react-multi-carousel";
 import moment from "moment/moment";
-import { FaFileInvoiceDollar } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
 
 export default function VendorAddedProductsStatus() {
-  const navigate = useNavigate();
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
   const responsive = {
     superLargeDesktop: {
@@ -86,9 +83,9 @@ export default function VendorAddedProductsStatus() {
     }
   };
 
-  // console.log("orderedProductsList", orderedProductsList);
-  // console.log("SelectedProduct", SelectedProduct);
-  console.log("adminInvoice44: ", orderedProductsList);
+  console.log("orderedProductsList", orderedProductsList);
+  console.log("SelectedProduct", SelectedProduct);
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -128,15 +125,14 @@ export default function VendorAddedProductsStatus() {
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
               <th>Order id</th>
-              <th>Product Name</th>
-              <th>Vendor Price</th>
-              <th>Admin Price</th>
-              <th>Quantity</th>
+              <th>Order Date</th>
+              <th>Vendor Name</th>
+              <th>Vendor Id</th>
+              <th>No.of products</th>
               <th>Total Amount</th>
               <th>Payment Detils</th>
               <th>Status</th>
               <th>Details</th>
-              <th>Invoice</th>
 
               {/* <th>Contact</th>
 
@@ -176,22 +172,6 @@ export default function VendorAddedProductsStatus() {
                           }}
                         />
                       </td>
-                      <td>
-                        {val.orderStatus === "DELIVERED" ? (
-                          <FaFileInvoiceDollar
-                            style={{ fontSize: "30px", color: "#20958C" }}
-                            onClick={() =>
-                              navigate("/admin/Vendor-Admin-Inv", {
-                                state: {
-                                  ProductDetails: val,
-                                },
-                              })
-                            }
-                          />
-                        ) : (
-                          <></>
-                        )}
-                      </td>
                       {/* <td>{val.totalPaidPrice}</td> */}
                     </tr>
                   );
@@ -200,11 +180,13 @@ export default function VendorAddedProductsStatus() {
                   return (
                     <tr style={{ fontSize: "15px", textAlign: "center" }}>
                       <td>{val?._id}</td>
-                      <td>{val?.productId?.productName}</td>
-                      <td>{val.VendorPrice}</td>
-                      <td> {val.AdminPrice}</td>
-                      <td>{val.quantity}</td>
-                      <td>{val.totalPrice}</td>
+                      <td>{moment(val?.createdAt)?.format("DD-MM-YYYY")}</td>
+                      <td>
+                        {val.vendorId?.fname}&nbsp;{val.vendorId?.lname}
+                      </td>
+                      <td> {val.vendorId?.vendorId}</td>
+                      <td>{val.items?.length}</td>
+                      <td>{val.totalAmount}</td>
                       <td>
                         <div
                           style={{
@@ -227,22 +209,6 @@ export default function VendorAddedProductsStatus() {
                           }}
                         />
                       </td>
-                      <td>
-                        {val.orderStatus === "DELIVERED" ? (
-                          <FaFileInvoiceDollar
-                            style={{ fontSize: "30px", color: "#20958C" }}
-                            onClick={() =>
-                              navigate("/admin/Vendor-Admin-Inv", {
-                                state: {
-                                  ProductDetails: val,
-                                },
-                              })
-                            }
-                          />
-                        ) : (
-                          <></>
-                        )}
-                      </td>
                       {/* <td>{val.totalPaidPrice}</td> */}
                     </tr>
                   );
@@ -260,22 +226,23 @@ export default function VendorAddedProductsStatus() {
         </Modal.Header>
         <Modal.Body className="all-bg-green ">
           <div className="row" style={{ color: "white" }}>
+            <h6
+              style={{
+                textAlign: "center",
+                padding: "1% 0%",
+                backgroundColor: "lightblue",
+              }}
+            >
+              ABOUT VENDOR
+            </h6>
             <div className="col-lg-4">
               <img
                 src={`http://localhost:8521/Vendor/${SelectedProduct?.vendorId?.profilePic}`}
-                style={{ width: "50%" }}
+                style={{ width: "70%" }}
               />
+            </div>
+            <div className="col-lg-4">
               <div style={{ border: "1px solid lightgrey" }}>
-                <h6
-                  style={{
-                    textAlign: "center",
-                    padding: "4% 0%",
-                    backgroundColor: "lightblue",
-                  }}
-                >
-                  ABOUT VENDOR
-                </h6>
-
                 <h6
                   style={{
                     paddingLeft: "4%",
@@ -326,218 +293,59 @@ export default function VendorAddedProductsStatus() {
                 </h6>
               </div>
             </div>
-            <div className="col-lg-8">
-              <div style={{ border: "1px solid lightgrey", padding: "2%" }}>
-                <Row>
-                  {SelectedProduct?.productId?.productImgs?.length > 0 ? (
-                    <Col md={2}>
-                      <img
-                        src={`http://localhost:8521/VendorProduct/${SelectedProduct?.productId?.productImgs[0]}`}
-                        style={{ width: "100%" }}
-                      />
-                    </Col>
-                  ) : (
-                    ""
-                  )}
-                  <Col md={10}>
-                    <p
-                      style={{
-                        fontSize: "14px",
-                        textAlign: "justify",
-                        fontWeight: "600",
-                      }}
-                    >
-                      {SelectedProduct?.productId?.productName}
-                    </p>
-                    {/* <p>
-                      ({SelectedProduct?.categoryid?.categoryName} -{" "}
-                      {SelectedProduct?.subcategoryid?.subcategoryName})
-                    </p> */}
-                  </Col>
-                </Row>
+          </div>
+          <div className="row" style={{ color: "white" }}>
+            <h6
+              style={{
+                textAlign: "center",
+                padding: "1% 0%",
+                backgroundColor: "lightblue",
+              }}
+            >
+              Product details
+            </h6>
 
-                <hr></hr>
-                <p style={{ textAlign: "justify" }}>
-                  {SelectedProduct?.productId?.description}
-                </p>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Product Type :
-                    </span>
-                  </Col>
-                  <Col md={6}>{SelectedProduct?.productId?.productType}</Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Manufacturer company name :
-                    </span>
-                  </Col>
-                  <Col md={6}>
-                    {SelectedProduct?.productId?.manufacturercompanyname}
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Manufacturer company Address :
-                    </span>
-                  </Col>
-                  <Col md={6}>
-                    {SelectedProduct?.productId?.manufactureraddress}
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Manufacturing Date :
-                    </span>
-                  </Col>
-                  <Col md={6}>
-                    {SelectedProduct?.productId?.manufacturingDate}
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Brand:
-                    </span>
-                  </Col>
-                  <Col md={6}>{SelectedProduct?.productId?.brand}</Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Colour :
-                    </span>
-                  </Col>
-                  <Col md={6}>{SelectedProduct?.productId?.colour}</Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Country Of Origin :
-                    </span>
-                  </Col>
-                  <Col md={6}>
-                    {SelectedProduct?.productId?.countryOfOrigin}
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Flavour :
-                    </span>
-                  </Col>
-                  <Col md={6}>{SelectedProduct?.productId?.flavour}</Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Fragrance :
-                    </span>
-                  </Col>
-                  <Col md={6}>{SelectedProduct?.productId?.fragrance}</Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Colour :
-                    </span>
-                  </Col>
-                  <Col md={6}>{SelectedProduct?.productId?.colour}</Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Manufacturing Date :
-                    </span>
-                  </Col>
-                  <Col md={6}>
-                    {moment(
-                      SelectedProduct?.productId?.manufacturingDate
-                    )?.format("DD-MM-YYYY")}
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                      Expiry Date :
-                    </span>
-                  </Col>
-                  <Col md={6}>
-                    {moment(SelectedProduct?.productId?.expiryDate)?.format(
-                      "DD-MM-YYYY"
-                    )}
-                  </Col>
-                </Row>
+            <div className="col-lg-12 mt-3">
+              <div
+                className="Table-container"
+                style={{ backgroundColor: "white", padding: "10px" }}
+              >
+                <Table className="table" responsive>
+                  <thead>
+                    <tr className="admin-table-head">
+                      <th className="fw-bold">Product Image</th>
+                      <th className="fw-bold">Product ID</th>
+                      <th className="fw-bold">Product Name</th>
+                      <th className="fw-bold">Vendor Price</th>
+                      <th className="fw-bold">Admin Price</th>
+                      <th className="fw-bold">Quantity</th>
+                      <th className="fw-bold">Total</th>
+                    </tr>
+                  </thead>
 
-                <Row>
-                  <Col md={6}>
-                    <Row>
-                      <Col md={6}>
-                        <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                          Product Price :
-                        </span>
-                      </Col>
-                      <Col md={6}>
-                        {SelectedProduct?.productId?.productPrice} &nbsp;
-                        {SelectedProduct?.productId?.currencyFormat}
-                      </Col>
-                    </Row>
-                  </Col>
-                  <Col md={6}>
-                    <Row>
-                      <Col md={6}>
-                        <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                          Discount :
-                        </span>
-                      </Col>
-                      <Col md={6}>
-                        {SelectedProduct?.productId?.discount}&nbsp;
-                        {SelectedProduct?.productId?.currencyFormat}
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
-
-                {/* <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                    Heart Beat
-                  </span>
-                  <ProgressBar
-                    variant="success"
-                    style={{ height: "6px" }}
-                    now={40}
-                  />
-
-                  <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                    Blood Pressure
-                  </span>
-                  <ProgressBar
-                    variant="info"
-                    style={{ height: "6px" }}
-                    now={60}
-                  />
-
-                  <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                    Sugar
-                  </span>
-                  <ProgressBar
-                    variant="warning"
-                    style={{ height: "6px" }}
-                    now={60}
-                  />
-
-                  <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                    Haemoglobin
-                  </span>
-                  <ProgressBar
-                    variant="danger"
-                    style={{ height: "6px" }}
-                    now={60}
-                  /> */}
+                  <tbody>
+                    {SelectedProduct?.items?.map((item, index) => (
+                      <tr className="admin-table-row" key={index}>
+                        <td>
+                          <img
+                            src={`http://localhost:8521/VendorProduct/${item?.productId?.productImgs[0]}`}
+                            style={{ width: "50%" }}
+                          />
+                        </td>
+                        <td>{item?.productId?._id}</td>
+                        <td>{item?.productId?.productName}</td>
+                        <td>₹ {item?.VendorPrice}</td>
+                        <td>₹ {item?.AdminPrice}</td>
+                        <td>{item?.quantity}</td>
+                        <td>₹ {item?.totalPrice}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
               </div>
+              <p style={{ textAlign: "right" }}>
+                Total Amount : {SelectedProduct?.totalAmount}
+              </p>
             </div>
           </div>
         </Modal.Body>

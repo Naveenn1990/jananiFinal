@@ -9,15 +9,18 @@ import {
   Form,
   Modal,
   Table,
+  ProgressBar,
   Row,
   Col,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Badge from "@material-ui/core/Badge";
 import { withStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import InfoIcon from "@mui/icons-material/Info";
+import RemoveIcon from "@mui/icons-material/Remove";
+import AddIcon from "@mui/icons-material/Add";
 import moment from "moment";
 
 const VendorAddedProducts = () => {
@@ -43,16 +46,43 @@ const VendorAddedProducts = () => {
     axios
       .get("http://localhost:8521/api/vendor/productList")
       .then(function (response) {
-        setProductList(response.data.allProducts);
+        setProductList(
+          response.data.allProducts?.filter(
+            (item) => item?.vendorid?.vendorId === SelectedVendor
+          )
+        );
       })
       .catch(function (error) {
         console.log(error);
       });
   };
 
+  const [VendorList, setVendorList] = useState([]);
+  const [SelectedVendor, setSelectedVendor] = useState("");
+  const getAllVendors = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/vendor/getvendorList"
+      );
+      if (res.status === 200) {
+        setVendorList(res.data.allVendors);
+      }
+    } catch (error) {
+      console.log(error);
+      // setVendorList(error.response.data.allVendors);
+    }
+  };
+
   useEffect(() => {
-    getProductList();
+    getAllVendors();
+    getaddtocart();
   }, []);
+
+  useEffect(() => {
+    if (SelectedVendor) {
+      getProductList();
+    }
+  }, [SelectedVendor]);
 
   const [qnty, setqnty] = useState(1);
 
@@ -76,11 +106,13 @@ const VendorAddedProducts = () => {
         data: {
           productid: item?._id,
           quantity: 1,
+          totalamount:
+            Number(item?.productPrice) -
+            (Number(item?.productPrice) * Number(item?.discount)) / 100,
         },
       };
       let res = await axios(config);
       if (res.status === 200) {
-        getProductList();
         getaddtocart();
         alert(res.data.success);
       }
@@ -104,12 +136,9 @@ const VendorAddedProducts = () => {
       });
   };
 
-  useEffect(() => {
-    getProductList();
-    getaddtocart();
-  }, []);
-
-  console.log("SelectedProduct", SelectedProduct);
+  console.log("SelectedProduct", ProductList);
+  console.log("VendorList", VendorList);
+  console.log("SelectedVendor", SelectedVendor);
   return (
     <div className="Vatsal">
       <div>
@@ -157,77 +186,151 @@ const VendorAddedProducts = () => {
               </div>
             </div>
           </div>
+          <div className="row">
+            <p
+              style={{ color: "#20958c", fontSize: "20px", fontWeight: "bold" }}
+            >
+              Select Vendor
+            </p>
+            <select
+              className="me-2"
+              style={{
+                width: "400px",
+                margin: "10px",
+                padding: "10px",
+                borderColor: "#bdbdbd",
+                borderRadius: "5px",
+              }}
+              onChange={(e) => setSelectedVendor(e.target.value)}
+            >
+              <option>Select</option>
+              {VendorList?.map((vendor) => (
+                <option value={vendor?.vendorId}>
+                  {vendor?.fname}&nbsp;{vendor?.lname} - ({vendor?.vendorId})
+                </option>
+              ))}
+            </select>
+          </div>
+          {SelectedVendor ? (
+            <Table
+              className="table "
+              responsive
+              style={{ width: "1500px" }}
+              bordered
+            >
+              <thead>
+                <tr className="admin-table-head">
+                  <th className="fw-bold">
+                    <div style={{ width: "20%" }}>productName</div>
+                  </th>
+                  <th className="fw-bold">manufacturingDate</th>
 
-          <Table
-            className="table "
-            responsive
-            style={{ width: "1500px" }}
-            bordered
-          >
-            <thead>
-              <tr className="admin-table-head">
-                <th className="fw-bold">
-                  <div style={{ width: "20%" }}>productName</div>
-                </th>
-                <th className="fw-bold">manufacturingDate</th>
+                  <th className="fw-bold">expiryDate</th>
+                  <th className="fw-bold">Quantity(Stock)</th>
+                  <th className="fw-bold">productPrice</th>
+                  <th className="fw-bold">Selling Price</th>
+                  {/* <th className="fw-bold">Admin Price </th>
+                <th className="fw-bold">Quantity </th>
+                <th className="fw-bold">Admin Final Price </th> */}
+                  <th className="fw-bold">Add To Cart </th>
+                  <th className="fw-bold">description </th>
+                </tr>
+              </thead>
 
-                <th className="fw-bold">expiryDate</th>
-                <th className="fw-bold">Quantity(Stock)</th>
-                <th className="fw-bold">productPrice</th>
-                <th className="fw-bold">Selling Price</th>
-                <th className="fw-bold">Add To Cart </th>
-                <th className="fw-bold">description </th>
-              </tr>
-            </thead>
+              <tbody>
+                {ProductList?.map((item) => {
+                  return (
+                    <tr className="admin-table-row">
+                      <td>
+                        <div style={{ width: "" }}>{item?.productName}</div>
+                      </td>
+                      <td>
+                        {moment(item?.manufacturingDate).format("DD/MM/YYYY")}
+                      </td>
+                      <td>{moment(item?.expiryDate).format("DD/MM/YYYY")}</td>
+                      <td>{item?.stock}</td>
+                      <td>
+                        <div style={{ width: "110px" }}>
+                          <p>A.Price = ₹{item?.productPrice} </p>
+                          <p>Discount = {item?.discount}% </p>
+                        </div>
+                      </td>
 
-            <tbody>
-              {ProductList?.map((item) => {
-                return (
-                  <tr className="admin-table-row">
-                    <td>
-                      <div style={{ width: "" }}>{item?.productName}</div>
-                    </td>
-                    <td>
-                      {moment(item?.manufacturingDate).format("DD/MM/YYYY")}
-                    </td>
-                    <td>{moment(item?.expiryDate).format("DD/MM/YYYY")}</td>
-                    <td>{item?.stock}</td>
-                    <td>
-                      <div style={{ width: "110px" }}>
-                        <p>A.Price = ₹{item?.productPrice} </p>
-                        <p>Discount = {item?.discount}% </p>
+                      <td>
+                        <p>
+                          ₹{" "}
+                          {Number(item?.productPrice) -
+                            (Number(item?.productPrice) *
+                              Number(item?.discount)) /
+                              100}
+                        </p>
+                      </td>
+
+                      {/* <td>
+                      <div style={{ width: "141px" }}>
+                        <input
+                          className="vi_0"
+                          type="number"
+                          placeholder="Enter Your Price"
+                        />
                       </div>
                     </td>
 
                     <td>
-                      <p>
-                        ₹{" "}
-                        {Number(item?.productPrice) -
-                          (Number(item?.productPrice) *
-                            Number(item?.discount)) /
-                            100}
-                      </p>
-                    </td>
-                    <td>
-                      <div className="p-2">
-                        <Button
-                          variant="success"
-                          onClick={() => AddToCart(item)}
+                      <td className="d-flex rounded-pill border border-dark p-2 m-2">
+                        <button
+                          style={{
+                            backgroundColor: "transparent",
+                            border: "none",
+                          }}
+                          onClick={subqantity}
                         >
-                          Add to Cart
-                        </Button>
-                      </div>
+                          <RemoveIcon />
+                        </button>
+                        <Form.Group
+                          className="mb-1"
+                          controlId="exampleForm.ControlInput1"
+                        >
+                          {qnty}
+                        </Form.Group>
+                        <button
+                          style={{
+                            backgroundColor: "transparent",
+                            border: "none",
+                          }}
+                          onClick={addqantity}
+                        >
+                          <AddIcon />
+                        </button>
+                      </td>
                     </td>
-                    <td>
-                      <div className="p-2" onClick={() => ReadMoreClose(item)}>
-                        <InfoIcon />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+                    <td>3000</td> */}
+                      <td>
+                        <div className="p-2">
+                          <Button
+                            variant="success"
+                            onClick={() => AddToCart(item)}
+                          >
+                            Add to Cart
+                          </Button>
+                        </div>
+                      </td>
+                      <td>
+                        <div
+                          className="p-2"
+                          onClick={() => ReadMoreClose(item)}
+                        >
+                          <InfoIcon />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          ) : (
+            ""
+          )}
         </Container>
 
         {/* INfo icon modal */}
@@ -242,7 +345,6 @@ const VendorAddedProducts = () => {
             <div className="row" style={{ color: "white" }}>
               <div className="col-lg-4">
                 <img
-                  alt=""
                   src={`http://localhost:8521/Vendor/${SelectedProduct?.vendorid?.profilePic}`}
                   style={{ width: "50%" }}
                 />
@@ -313,7 +415,6 @@ const VendorAddedProducts = () => {
                     {SelectedProduct?.productImgs?.length > 0 ? (
                       <Col md={2}>
                         <img
-                          alt=""
                           src={`http://localhost:8521/VendorProduct/${SelectedProduct?.productImgs[0]}`}
                           style={{ width: "100%" }}
                         />
@@ -459,11 +560,89 @@ const VendorAddedProducts = () => {
                       </Row>
                     </Col>
                   </Row>
+
+                  {/* <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                    Heart Beat
+                  </span>
+                  <ProgressBar
+                    variant="success"
+                    style={{ height: "6px" }}
+                    now={40}
+                  />
+
+                  <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                    Blood Pressure
+                  </span>
+                  <ProgressBar
+                    variant="info"
+                    style={{ height: "6px" }}
+                    now={60}
+                  />
+
+                  <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                    Sugar
+                  </span>
+                  <ProgressBar
+                    variant="warning"
+                    style={{ height: "6px" }}
+                    now={60}
+                  />
+
+                  <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                    Haemoglobin
+                  </span>
+                  <ProgressBar
+                    variant="danger"
+                    style={{ height: "6px" }}
+                    now={60}
+                  /> */}
                 </div>
               </div>
             </div>
           </Modal.Body>
+          {/* <Modal.Footer>
+          <div style={{ display: "flex" }}>
+            <button
+              style={{
+                backgroundColor: "grey",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                marginRight: "20px",
+                padding: "4px 10px",
+              }}
+              onClick={() => {
+                setShow(false);
+              }}
+            >
+              CANCEL
+            </button>
+
+            <button
+              style={{
+                backgroundColor: "orange",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                padding: "4px 10px",
+              }}
+              onClick={() => {
+                setShow(false);
+                alert("Doctor Added");
+              }}
+            >
+              SUBMIT
+            </button>
+          </div>
+        </Modal.Footer> */}
         </Modal>
+        {/* info icon modal */}
+
+        {/* VIEW MODAL */}
+
+        {/* Delete Modal */}
       </div>
     </div>
   );
