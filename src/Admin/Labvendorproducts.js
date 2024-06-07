@@ -23,7 +23,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import moment from "moment";
 
-const VendorAddedProducts = () => {
+const Labvendorproducts = () => {
   const StyledBadge = withStyles((theme) => ({
     badge: {
       right: -3,
@@ -66,7 +66,7 @@ const VendorAddedProducts = () => {
       );
       if (res.status === 200) {
         setVendorList(
-          res.data.allVendors?.filter((item) => item?.VendorType === "Pharmacy")
+          res.data.allVendors?.filter((item) => item?.VendorType === "Lab")
         );
       }
     } catch (error) {
@@ -175,7 +175,7 @@ const VendorAddedProducts = () => {
               <Button className="all-bg-green">Search Product</Button>
 
               <div className="cart-badge holder col-lg-2 d-flex gap-2  justify-content-end px-2">
-                <Link to="../admin/VendorAddedProductCart">
+                <Link to="../admin/Labvendorproductcart">
                   <IconButton aria-label="cart">
                     <StyledBadge
                       badgeContent={getAddtocart?.length}
@@ -650,4 +650,4 @@ const VendorAddedProducts = () => {
   );
 };
 
-export default VendorAddedProducts;
+export default Labvendorproducts;
