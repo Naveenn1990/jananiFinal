@@ -117,7 +117,7 @@ export default function VendorSidebar() {
         </h6>
       </Link>
 
-      <Link to={"/productstatus"}>
+      {/* <Link to={"/productstatus"}>
         <h6 className="sidebarItem">
           <FontAwesomeIcon
             icon={faFileInvoice}
@@ -125,7 +125,7 @@ export default function VendorSidebar() {
           />
           Product Status
         </h6>
-      </Link>
+      </Link> */}
 
       <h6
         className="sidebarItem"

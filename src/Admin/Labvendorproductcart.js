@@ -6,7 +6,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { contextType } from "google-map-react";
 
-const VendorAddedProductCart = () => {
+const Labvendorproductcart = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true); // Function to open the modal
@@ -214,7 +214,7 @@ const VendorAddedProductCart = () => {
         Admin Cart
       </h4>
       <div className="py-3 py-1">
-        <Link to="/admin/VendorAddedProduct">
+        <Link to="/admin/Labvendorproducts">
           <Button variant="primary">Go back</Button>
         </Link>
       </div>
@@ -382,4 +382,4 @@ const VendorAddedProductCart = () => {
   );
 };
 
-export default VendorAddedProductCart;
+export default Labvendorproductcart;

@@ -1,20 +1,72 @@
+import {
+  faAngleLeft,
+  faAngleRight,
+  faCancel,
+  faCheck,
+  faDownload,
+  faEllipsis,
+  faEye,
+  faFilter,
+  faHouseUser,
+  faPenToSquare,
+  faPlus,
+  faTrash,
+  faUpload,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Container, Modal, Table } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Dropdown,
+  FloatingLabel,
+  Form,
+  FormLabel,
+  Modal,
+  Table,
+} from "react-bootstrap";
+import { TfiRuler } from "react-icons/tfi";
 import { BsFillPatchCheckFill } from "react-icons/bs";
 import { MdCancel } from "react-icons/md";
-import { FaFileInvoiceDollar } from "react-icons/fa6";
+import { faCircleInfo, faTag } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+
 export const VendorOrders = () => {
-  const Vendor = JSON.parse(sessionStorage.getItem("VendorDetails"));
   const navigate = useNavigate();
+  const Vendor = JSON.parse(sessionStorage.getItem("VendorDetails"));
+
   const [show, setShow] = useState(false);
+
   const viewClose = () => setShow(false);
   const viewShow = () => setShow(true);
+
+  const [show2, setShow2] = useState(false);
+  const handleClose2 = () => setShow2(false);
+  const handleShow2 = () => setShow2(true);
+
+  const [SelectedProduct, setSelectedProduct] = useState({});
 
   const deleteBtnClose = () => {
     setShow(false);
     setPayment();
+  };
+  const deleteBtnShow = () => setShow2(true);
+
+  const [ProductList, setProductList] = useState([]);
+
+  const getProductList = () => {
+    axios
+      .get("http://localhost:8521/api/vendor/productList")
+      .then(function (response) {
+        // handle success
+        setProductList(response.data.allProducts);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
   };
 
   const [OrderList, setOrderList] = useState([]);
@@ -32,9 +84,10 @@ export const VendorOrders = () => {
       });
   };
 
-  console.log(OrderList, "OrderListMY");
+  console.log(OrderList, "OrderList");
 
   useEffect(() => {
+    getProductList();
     getOrderList();
   }, []);
 
@@ -273,15 +326,14 @@ export const VendorOrders = () => {
         >
           <thead>
             <tr className="admin-table-head">
-              <th className="fw-bold">Product Id</th>
-              <th className="fw-bold">Product Name</th>
-              <th className="fw-bold">Product Type</th>
-              <th className="fw-bold">Currency Format</th>
-              <th className="fw-bold">Vendor Price</th>
-              <th className="fw-bold">Admin Price</th>
-              <th className="fw-bold">Quantity </th>
-              <th className="fw-bold">Total Price </th>
-              <th className="fw-bold">Action </th>
+              <th className="fw-bold">Order id</th>
+              <th className="fw-bold">Order Date</th>
+              <th className="fw-bold">Admin Name</th>
+              <th className="fw-bold">Admin Email</th>
+              <th className="fw-bold">No.of products</th>
+              <th className="fw-bold">Total Amount</th>
+              <th className="fw-bold">Details</th>
+              <th className="fw-bold">Action</th>
             </tr>
           </thead>
 
@@ -290,47 +342,57 @@ export const VendorOrders = () => {
               (data) => data.orderStatus == "PLACED_ORDER"
             )?.map((item) => {
               return (
-                <tr className="admin-table-row">
-                  <td>{item?.productId?._id}</td>
-                  <td>{item?.productId?.productName}</td>
-                  <td>{item?.productId?.productType}</td>
-                  <td>{item?.productId?.currencyFormat}</td>
-                  <td>{item?.VendorPrice}</td>
-                  <td>{item?.AdminPrice}</td>
-                  <td>{item?.quantity}</td>
-                  <td>{item?.totalPrice}</td>
-                  <td>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <button
+                <>
+                  <tr className="admin-table-row">
+                    <td>{item?._id}</td>
+                    <td>{moment(item?.createdAt)?.format("DD-MM-YYYY")}</td>
+                    <td>{item.adminId?.username}</td>
+                    <td> {item.adminId?.email}</td>
+                    <td>{item.items?.length}</td>
+                    <td>{item.totalAmount}</td>
+                    <td>
+                      <FontAwesomeIcon
+                        icon={faCircleInfo}
+                        style={{ color: "#20958c", fontSize: "25px" }}
                         onClick={() => {
-                          AcceptOrder(item);
+                          handleShow2();
+                          setSelectedProduct(item);
                         }}
-                        style={{
-                          backgroundColor: "green",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "20px",
-                        }}
-                      >
-                        ACCEPT
-                      </button>{" "}
-                      /
-                      <button
-                        onClick={() => {
-                          CANCELLEDORDER(item);
-                        }}
-                        style={{
-                          backgroundColor: "#d32728",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "20px",
-                        }}
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                      />
+                    </td>
+                    <td>
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        <button
+                          onClick={() => {
+                            AcceptOrder(item);
+                          }}
+                          style={{
+                            backgroundColor: "green",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "20px",
+                          }}
+                        >
+                          ACCEPT
+                        </button>{" "}
+                        /
+                        <button
+                          onClick={() => {
+                            CANCELLEDORDER(item);
+                          }}
+                          style={{
+                            backgroundColor: "#d32728",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "20px",
+                          }}
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </>
               );
             })}
           </tbody>
@@ -346,14 +408,13 @@ export const VendorOrders = () => {
         >
           <thead>
             <tr className="admin-table-head">
-              <th className="fw-bold">Product Id</th>
-              <th className="fw-bold">Product Name</th>
-              <th className="fw-bold">Product Type</th>
-              <th className="fw-bold">Currency Format</th>
-              <th className="fw-bold">Vendor Price</th>
-              <th className="fw-bold">Admin Price</th>
-              <th className="fw-bold">Quantity </th>
-              <th className="fw-bold">Total Price </th>
+              <th className="fw-bold">Order id</th>
+              <th className="fw-bold">Order Date</th>
+              <th className="fw-bold">Admin Name</th>
+              <th className="fw-bold">Admin Email</th>
+              <th className="fw-bold">No.of products</th>
+              <th className="fw-bold">Total Amount</th>
+              <th className="fw-bold">Details</th>
               <th className="fw-bold">Action </th>
             </tr>
           </thead>
@@ -363,14 +424,22 @@ export const VendorOrders = () => {
             )?.map((item) => {
               return (
                 <tr className="admin-table-row">
-                  <td>{item?.productId?._id}</td>
-                  <td>{item?.productId?.productName}</td>
-                  <td>{item?.productId?.productType}</td>
-                  <td>{item?.productId?.currencyFormat}</td>
-                  <td>{item?.VendorPrice}</td>
-                  <td>{item?.AdminPrice}</td>
-                  <td>{item?.quantity}</td>
-                  <td>{item?.totalPrice}</td>
+                  <td>{item?._id}</td>
+                  <td>{moment(item?.createdAt)?.format("DD-MM-YYYY")}</td>
+                  <td>{item.adminId?.username}</td>
+                  <td> {item.adminId?.email}</td>
+                  <td>{item.items?.length}</td>
+                  <td>{item.totalAmount}</td>
+                  <td>
+                    <FontAwesomeIcon
+                      icon={faCircleInfo}
+                      style={{ color: "#20958c", fontSize: "25px" }}
+                      onClick={() => {
+                        handleShow2();
+                        setSelectedProduct(item);
+                      }}
+                    />
+                  </td>
                   <td>
                     <button
                       onClick={() => {
@@ -401,32 +470,38 @@ export const VendorOrders = () => {
         >
           {" "}
           <thead>
-            <tr className="admin-table-head text-center">
-              <th className="fw-bold">Product Id</th>
-              <th className="fw-bold">Product Name</th>
-              <th className="fw-bold">Product Type</th>
-              <th className="fw-bold">Currency Format</th>
-              <th className="fw-bold">Vendor Price</th>
-              <th className="fw-bold">Admin Price</th>
-              <th className="fw-bold">Quantity </th>
-              <th className="fw-bold">Total Price </th>
+            <tr className="admin-table-head">
+              <th className="fw-bold">Order id</th>
+              <th className="fw-bold">Order Date</th>
+              <th className="fw-bold">Admin Name</th>
+              <th className="fw-bold">Admin Email</th>
+              <th className="fw-bold">No.of products</th>
+              <th className="fw-bold">Total Amount</th>
+              <th className="fw-bold">Details</th>
               <th className="fw-bold">Action </th>
-              <th className="fw-bold">Invoice </th>
             </tr>
           </thead>
           <tbody>
             {OrderList?.filter((data) => data.orderStatus == "DELIVERED")?.map(
               (item) => {
                 return (
-                  <tr className="admin-table-row text-center">
-                    <td>{item?.productId?._id}</td>
-                    <td>{item?.productId?.productName}</td>
-                    <td>{item?.productId?.productType}</td>
-                    <td>{item?.productId?.currencyFormat}</td>
-                    <td>{item?.VendorPrice}</td>
-                    <td>{item?.AdminPrice}</td>
-                    <td>{item?.quantity}</td>
-                    <td>{item?.totalPrice}</td>
+                  <tr className="admin-table-row">
+                    <td>{item?._id}</td>
+                    <td>{moment(item?.createdAt)?.format("DD-MM-YYYY")}</td>
+                    <td>{item.adminId?.username}</td>
+                    <td> {item.adminId?.email}</td>
+                    <td>{item.items?.length}</td>
+                    <td>{item.totalAmount}</td>
+                    <td>
+                      <FontAwesomeIcon
+                        icon={faCircleInfo}
+                        style={{ color: "#20958c", fontSize: "25px" }}
+                        onClick={() => {
+                          handleShow2();
+                          setSelectedProduct(item);
+                        }}
+                      />
+                    </td>
                     <td>
                       {item?.orderPayment == "DONE" ? (
                         <button
@@ -454,18 +529,6 @@ export const VendorOrders = () => {
                           PENDING
                         </button>
                       )}
-                    </td>
-                    <td>
-                      <FaFileInvoiceDollar
-                        style={{ fontSize: "30px", color: "#20958C" }}
-                        onClick={() =>
-                          navigate("/Vendor-admin-invoice", {
-                            state: {
-                              ProductDetails: item,
-                            },
-                          })
-                        }
-                      />
                     </td>
                   </tr>
                 );
@@ -546,6 +609,71 @@ export const VendorOrders = () => {
 
           {/* <Button variant="success"><FontAwesomeIcon icon={faCheck} className='fs-5 me-2' />Save</Button> */}
         </Modal.Footer>
+      </Modal>
+
+      <Modal size="lg" show={show2} onHide={handleClose2}>
+        <Modal.Header className="all-bg-green text-light">
+          <Modal.Title>Product Details</Modal.Title>
+          <Button variant="secondary" onClick={handleClose2}>
+            Close
+          </Button>
+        </Modal.Header>
+        <Modal.Body className="all-bg-green ">
+          <div className="row" style={{ color: "white" }}>
+            <h6
+              style={{
+                textAlign: "center",
+                padding: "1% 0%",
+                backgroundColor: "lightblue",
+              }}
+            >
+              Product details
+            </h6>
+
+            <div className="col-lg-12 mt-3">
+              <div
+                className="Table-container"
+                style={{ backgroundColor: "white", padding: "10px" }}
+              >
+                <Table className="table" responsive>
+                  <thead>
+                    <tr className="admin-table-head">
+                      <th className="fw-bold">Product Image</th>
+                      <th className="fw-bold">Product ID</th>
+                      <th className="fw-bold">Product Name</th>
+                      <th className="fw-bold">Vendor Price</th>
+                      <th className="fw-bold">Admin Price</th>
+                      <th className="fw-bold">Quantity</th>
+                      <th className="fw-bold">Total</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {SelectedProduct?.items?.map((item, index) => (
+                      <tr className="admin-table-row" key={index}>
+                        <td>
+                          <img
+                            src={`http://localhost:8521/VendorProduct/${item?.productId?.productImgs[0]}`}
+                            style={{ width: "50%" }}
+                          />
+                        </td>
+                        <td>{item?.productId?._id}</td>
+                        <td>{item?.productId?.productName}</td>
+                        <td>₹ {item?.VendorPrice}</td>
+                        <td>₹ {item?.AdminPrice}</td>
+                        <td>{item?.quantity}</td>
+                        <td>₹ {item?.totalPrice}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+              <p style={{ textAlign: "right" }}>
+                Total Amount : {SelectedProduct?.totalAmount}
+              </p>
+            </div>
+          </div>
+        </Modal.Body>
       </Modal>
     </div>
   );
