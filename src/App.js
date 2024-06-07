@@ -255,6 +255,7 @@ import VendorAdminInv from "./Admin/VendorAdminInv";
 import LabVendor from "./Admin/LabVendor";
 import Labvendorproducts from "./Admin/Labvendorproducts";
 import Labvendorproductcart from "./Admin/Labvendorproductcart";
+import LaborderHistory from "./Admin/LaborderHistory";
 
 function App() {
   return (
@@ -2321,6 +2322,16 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<Labvendorproducts />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/LaborderHistory"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<LaborderHistory />} />{" "}
                 </>
               }
             ></Route>

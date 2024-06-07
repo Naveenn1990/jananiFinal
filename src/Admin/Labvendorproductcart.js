@@ -18,7 +18,7 @@ const Labvendorproductcart = () => {
   const [getAddtocart, setgetAddtocart] = useState([]);
   const getaddtocart = () => {
     axios
-      .get("http://localhost:8521/api/vendor/getaddtocartdata")
+      .get("http://localhost:8521/api/admin/getLabcart")
       .then(function (response) {
         setgetAddtocart(response.data.addtocart);
       })
@@ -43,7 +43,7 @@ const Labvendorproductcart = () => {
   const incresequantity = async (item) => {
     try {
       const config = {
-        url: "/vendor/updateAdminquantity",
+        url: "/admin/updateLabquantity",
         method: "post",
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
@@ -77,7 +77,7 @@ const Labvendorproductcart = () => {
     } else {
       try {
         const config = {
-          url: "/vendor/updateAdminquantity",
+          url: "/admin/updateLabquantity",
           method: "post",
           baseURL: "http://localhost:8521/api",
           headers: { "content-type": "application/json" },
@@ -146,7 +146,7 @@ const Labvendorproductcart = () => {
         });
         console.log("products", products);
         const config = {
-          url: "/vendor/postAdminOrders",
+          url: "/admin/postLaborder",
           method: "post",
           baseURL: "http://localhost:8521/api",
           headers: { "content-type": "application/json" },
@@ -189,7 +189,7 @@ const Labvendorproductcart = () => {
   const deletecart = async (item) => {
     try {
       const config = {
-        url: "/vendor/deletecart",
+        url: "/admin/deleteLabcart",
         method: "delete",
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
