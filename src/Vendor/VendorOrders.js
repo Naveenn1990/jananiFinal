@@ -84,11 +84,30 @@ export const VendorOrders = () => {
       });
   };
 
+  const getLabOrderList = () => {
+    axios
+      .get(
+        "http://localhost:8521/api/admin/getAllLabVendorOrders/" + Vendor?._id
+      )
+      .then(function (response) {
+        // handle success
+        setOrderList(response.data.allVendorOrders);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+  };
+
   console.log(OrderList, "OrderList");
 
   useEffect(() => {
     getProductList();
-    getOrderList();
+    if (Vendor?.VendorType === "Lab") {
+      getLabOrderList();
+    } else if (Vendor?.VendorType === "Pharmacy") {
+      getOrderList();
+    }
   }, []);
 
   const AcceptOrder = async (data) => {
@@ -122,6 +141,37 @@ export const VendorOrders = () => {
     }
   };
 
+  const AcceptLabOrder = async (data) => {
+    try {
+      {
+        const config = {
+          url: "/admin/changeLabOrderValues",
+          method: "put",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            orderid: data?._id,
+            vendorId: data?.vendorId,
+            orderStatus: "OUT_FOR_DELIVERY",
+            orderPayment: "PENDING",
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          console.log(res.data);
+          console.log(res.data.success);
+          alert("Order Accepted");
+          getLabOrderList();
+        }
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
   const CANCELLEDORDER = async (data) => {
     try {
       {
@@ -143,6 +193,37 @@ export const VendorOrders = () => {
           console.log(res.data.success);
           alert("Order Accepted");
           getOrderList();
+        }
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
+  const CANCELLEDLABORDER = async (data) => {
+    try {
+      {
+        const config = {
+          url: "/admin/changeLabOrderValues",
+          method: "put",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            orderid: data?._id,
+            vendorId: data?.vendorId,
+            orderStatus: "CANCELLED_ORDER",
+            orderPayment: "PENDING",
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          console.log(res.data);
+          console.log(res.data.success);
+          alert("Order Accepted");
+          getLabOrderList();
         }
       }
     } catch (error) {
@@ -189,6 +270,42 @@ export const VendorOrders = () => {
     }
   };
 
+  const DeliverLabOrder = async (data) => {
+    if (Payment) {
+      try {
+        {
+          const config = {
+            url: "/admin/changeLabOrderValues",
+            method: "put",
+            baseURL: "http://localhost:8521/api",
+            headers: { "content-type": "application/json" },
+            data: {
+              orderid: Selecteddata?._id,
+              vendorId: Selecteddata?.vendorId,
+              orderStatus: "DELIVERED",
+              orderPayment: Payment,
+            },
+          };
+          let res = await axios(config);
+          if (res.status === 200) {
+            console.log(res.data);
+            console.log(res.data.success);
+            alert("Order Delivered");
+            getLabOrderList();
+            setShow(false);
+          }
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
+      }
+    } else {
+      alert("Please Confirm Payment");
+    }
+  };
+
   const MakePayment = async (data) => {
     try {
       {
@@ -210,6 +327,37 @@ export const VendorOrders = () => {
           console.log(res.data.success);
           alert("Payment Done");
           getOrderList();
+        }
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
+  const MakeLabPayment = async (data) => {
+    try {
+      {
+        const config = {
+          url: "/admin/changeLabOrderValues",
+          method: "put",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            orderid: data?._id,
+            vendorId: data?.vendorId,
+            orderStatus: "DELIVERED",
+            orderPayment: "DONE",
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          console.log(res.data);
+          console.log(res.data.success);
+          alert("Payment Done");
+          getLabOrderList();
         }
       }
     } catch (error) {
@@ -364,7 +512,13 @@ export const VendorOrders = () => {
                       <div style={{ display: "flex", gap: "10px" }}>
                         <button
                           onClick={() => {
-                            AcceptOrder(item);
+                            Vendor?.VendorType === "Lab" ? (
+                              AcceptLabOrder(item)
+                            ) : Vendor?.VendorType === "Pharmacy" ? (
+                              AcceptOrder(item)
+                            ) : (
+                              <></>
+                            );
                           }}
                           style={{
                             backgroundColor: "green",
@@ -378,7 +532,13 @@ export const VendorOrders = () => {
                         /
                         <button
                           onClick={() => {
-                            CANCELLEDORDER(item);
+                            Vendor?.VendorType === "Lab" ? (
+                              CANCELLEDLABORDER(item)
+                            ) : Vendor?.VendorType === "Pharmacy" ? (
+                              CANCELLEDORDER(item)
+                            ) : (
+                              <></>
+                            );
                           }}
                           style={{
                             backgroundColor: "#d32728",
@@ -517,7 +677,13 @@ export const VendorOrders = () => {
                       ) : (
                         <button
                           onClick={() => {
-                            MakePayment(item);
+                            Vendor?.VendorType === "Lab" ? (
+                              MakeLabPayment(item)
+                            ) : Vendor?.VendorType === "Pharmacy" ? (
+                              MakePayment(item)
+                            ) : (
+                              <></>
+                            );
                           }}
                           style={{
                             backgroundColor: "green",
@@ -603,7 +769,18 @@ export const VendorOrders = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger">CANCEL</Button>
-          <Button variant="success" onClick={DeliverOrder}>
+          <Button
+            variant="success"
+            onClick={() => {
+              Vendor?.VendorType === "Lab" ? (
+                DeliverLabOrder()
+              ) : Vendor?.VendorType === "Pharmacy" ? (
+                DeliverOrder()
+              ) : (
+                <></>
+              );
+            }}
+          >
             DELIVER
           </Button>
 
