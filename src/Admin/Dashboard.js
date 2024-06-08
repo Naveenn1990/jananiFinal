@@ -17,7 +17,6 @@ var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 export default function Dashboard() {
   let adminDetails = sessionStorage.getItem("adminDetails");
-  let subadminDetails = sessionStorage.getItem("Subadmin");
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -70,8 +69,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     adminDetails = sessionStorage.getItem("adminDetails");
-    subadminDetails = sessionStorage.getItem("Subadmin");
-    if (!adminDetails && !subadminDetails) {
+
+    if (!adminDetails) {
       alert("Login details are required!!!");
       window.location.assign("/");
     }
@@ -323,7 +322,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        {subadminDetails ? (
+        {JSON.parse(adminDetails)?.type === "SUBADMIN" ? (
           <></>
         ) : (
           <div className="col-lg-3" id="box4">

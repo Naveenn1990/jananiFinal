@@ -12,10 +12,9 @@ import { ImCancelCircle } from "react-icons/im";
 import axios from "axios";
 
 export default function Subadmin() {
-
   let Checksubadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
-  
-  console.log("Checksubadmin",Checksubadmin);
+
+  console.log("Checksubadmin", Checksubadmin);
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -47,7 +46,7 @@ export default function Subadmin() {
   const [docAppointment, setdocAppointment] = useState(false);
   const [labManagement, setlabManagement] = useState(false);
   const [pharmacyManagement, setpharmacyManagement] = useState(false);
-  const [vendorManagement, setvendorManagement] = useState(false);
+  // const [vendorManagement, setvendorManagement] = useState(false);
   const [websiteManagement, setwebsiteManagement] = useState(false);
   const [serviceManagement, setserviceManagement] = useState(false);
   const [hospitalManagement, sethospitalManagement] = useState(false);
@@ -66,7 +65,7 @@ export default function Subadmin() {
   const [labManagementChanged, setlabManagementChanged] = useState("");
   const [pharmacyManagementChanged, setpharmacyManagementChanged] =
     useState("");
-  const [vendorManagementChanged, setvendorManagementChanged] = useState("");
+  // const [vendorManagementChanged, setvendorManagementChanged] = useState("");
   const [websiteManagementChanged, setwebsiteManagementChanged] = useState("");
   const [serviceManagementChanged, setserviceManagementChanged] = useState("");
   const [hospitalManagementChanged, sethospitalManagementChanged] =
@@ -95,7 +94,7 @@ export default function Subadmin() {
           docAppointment: docAppointment,
           labManagement: labManagement,
           pharmacyManagement: pharmacyManagement,
-          vendorManagement: vendorManagement,
+          // vendorManagement: vendorManagement,
           websiteManagement: websiteManagement,
           serviceManagement: serviceManagement,
           hospitalManagement: hospitalManagement,
@@ -118,7 +117,7 @@ export default function Subadmin() {
         setdocAppointment(false);
         setlabManagement(false);
         setpharmacyManagement(false);
-        setvendorManagement(false);
+        // setvendorManagement(false);
         setwebsiteManagement(false);
         setserviceManagement(false);
         sethospitalManagement(false);
@@ -133,7 +132,7 @@ export default function Subadmin() {
         setdocAppointmentChanged("");
         setlabManagementChanged("");
         setpharmacyManagementChanged("");
-        setvendorManagementChanged("");
+        // setvendorManagementChanged("");
         setwebsiteManagementChanged("");
         setserviceManagementChanged("");
         setbedManagementChanged("");
@@ -196,8 +195,8 @@ export default function Subadmin() {
             ? pharmacyManagement
             : "",
           pharmacyManagementChanged: pharmacyManagementChanged,
-          vendorManagement: vendorManagementChanged ? vendorManagement : "",
-          vendorManagementChanged: vendorManagementChanged,
+          // vendorManagement: vendorManagementChanged ? vendorManagement : "",
+          // vendorManagementChanged: vendorManagementChanged,
           websiteManagement: websiteManagementChanged ? websiteManagement : "",
           websiteManagementChanged: websiteManagementChanged,
           serviceManagement: serviceManagementChanged ? serviceManagement : "",
@@ -234,7 +233,7 @@ export default function Subadmin() {
             setdocAppointment(false);
             setlabManagement(false);
             setpharmacyManagement(false);
-            setvendorManagement(false);
+            // setvendorManagement(false);
             setwebsiteManagement(false);
             setserviceManagement(false);
             sethospitalManagement(false);
@@ -249,7 +248,7 @@ export default function Subadmin() {
             setdocAppointmentChanged("");
             setlabManagementChanged("");
             setpharmacyManagementChanged("");
-            setvendorManagementChanged("");
+            // setvendorManagementChanged("");
             setwebsiteManagementChanged("");
             setserviceManagementChanged("");
             sethospitalManagementChanged("");
@@ -542,7 +541,7 @@ export default function Subadmin() {
                 </div>
               </div>
 
-              <div className="col-lg-6">
+              {/* <div className="col-lg-6">
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <input
                     type="checkbox"
@@ -559,7 +558,7 @@ export default function Subadmin() {
                     Vendor management
                   </label>
                 </div>
-              </div>
+              </div> */}
 
               <div className="col-lg-6">
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -1029,7 +1028,7 @@ export default function Subadmin() {
                 </div>
               </div>
 
-              <div className="col-lg-6">
+              {/* <div className="col-lg-6">
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <input
                     type="checkbox"
@@ -1053,7 +1052,7 @@ export default function Subadmin() {
                     Vendor management
                   </label>
                 </div>
-              </div>
+              </div> */}
 
               <div className="col-lg-6">
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -1409,7 +1408,7 @@ export default function Subadmin() {
                 </div>
               </div>
 
-              <div className="col-lg-6">
+              {/* <div className="col-lg-6">
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <input
                     type="checkbox"
@@ -1425,7 +1424,7 @@ export default function Subadmin() {
                     Vendor management
                   </label>
                 </div>
-              </div>
+              </div> */}
 
               <div className="col-lg-6">
                 <div style={{ display: "flex", alignItems: "center" }}>
