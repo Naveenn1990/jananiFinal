@@ -1,37 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Modal, Row, Table } from "react-bootstrap";
-import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
-import { BsFillEyeFill } from "react-icons/bs";
-import { MdEdit } from "react-icons/md";
-import { FaUserMd } from "react-icons/fa";
-import { ImLab } from "react-icons/im";
+import { Button, Modal, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo, faTag } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import Carousel from "react-multi-carousel";
 import moment from "moment/moment";
 
 export default function LaborderHistory() {
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
-  const responsive = {
-    superLargeDesktop: {
-      // the naming can be any, depends on you.
-      breakpoint: { max: 4000, min: 3000 },
-      items: 5,
-    },
-    desktop: {
-      breakpoint: { max: 3000, min: 1024 },
-      items: 3,
-    },
-    tablet: {
-      breakpoint: { max: 1024, min: 464 },
-      items: 2,
-    },
-    mobile: {
-      breakpoint: { max: 464, min: 0 },
-      items: 1,
-    },
-  };
   useEffect(() => {
     adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
     if (!adminDetails) {
@@ -80,6 +55,31 @@ export default function LaborderHistory() {
     } else {
       setSearch(e.target.value);
       setorderedProductsList([...orderedProductsList]);
+    }
+  };
+
+  const AddLabInventory = async (item) => {
+    console.log("itemmmm",item);
+    try {
+      const config = {
+        url: "/lab/addlabInventory",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          vendorProductId:item?.productId?._id,
+          VendorPrice:item?.VendorPrice,
+          AdminPrice:item?.AdminPrice,
+          totalPrice:item?.totalPrice,
+          quantity:item?.quantity,
+        },
+      };
+      let res = await axios(config);
+      if (res === 201) {
+        alert(res.data.success)
+      }
+    } catch (error) {
+      alert(error.response.data.error)
     }
   };
 
@@ -237,6 +237,7 @@ export default function LaborderHistory() {
             </h6>
             <div className="col-lg-4">
               <img
+                alt=""
                 src={`http://localhost:8521/Vendor/${SelectedProduct?.vendorId?.profilePic}`}
                 style={{ width: "70%" }}
               />
@@ -310,7 +311,7 @@ export default function LaborderHistory() {
                 className="Table-container"
                 style={{ backgroundColor: "white", padding: "10px" }}
               >
-                <Table className="table" responsive>
+                <Table className="table" responsive bordered>
                   <thead>
                     <tr className="admin-table-head">
                       <th className="fw-bold">Product Image</th>
@@ -320,6 +321,7 @@ export default function LaborderHistory() {
                       <th className="fw-bold">Admin Price</th>
                       <th className="fw-bold">Quantity</th>
                       <th className="fw-bold">Total</th>
+                      <th className="fw-bold">Add Inventory</th>
                     </tr>
                   </thead>
 
@@ -328,6 +330,7 @@ export default function LaborderHistory() {
                       <tr className="admin-table-row" key={index}>
                         <td>
                           <img
+                            alt=""
                             src={`http://localhost:8521/VendorProduct/${item?.productId?.productImgs[0]}`}
                             style={{ width: "50%" }}
                           />
@@ -338,6 +341,15 @@ export default function LaborderHistory() {
                         <td>₹ {item?.AdminPrice}</td>
                         <td>{item?.quantity}</td>
                         <td>₹ {item?.totalPrice}</td>
+                        <td>
+                          {SelectedProduct?.orderStatus === "DELIVERED" ? (
+                            <Button
+                            onClick={()=>AddLabInventory(item)}
+                            >Add</Button>
+                          ) : (
+                            <p>PENDING</p>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>

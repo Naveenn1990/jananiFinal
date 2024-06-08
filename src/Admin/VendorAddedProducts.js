@@ -347,6 +347,7 @@ const VendorAddedProducts = () => {
             <div className="row" style={{ color: "white" }}>
               <div className="col-lg-4">
                 <img
+                alt=""
                   src={`http://localhost:8521/Vendor/${SelectedProduct?.vendorid?.profilePic}`}
                   style={{ width: "50%" }}
                 />
@@ -417,6 +418,7 @@ const VendorAddedProducts = () => {
                     {SelectedProduct?.productImgs?.length > 0 ? (
                       <Col md={2}>
                         <img
+                        alt=""
                           src={`http://localhost:8521/VendorProduct/${SelectedProduct?.productImgs[0]}`}
                           style={{ width: "100%" }}
                         />
