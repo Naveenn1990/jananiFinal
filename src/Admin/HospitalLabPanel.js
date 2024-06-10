@@ -11,7 +11,10 @@ import Hospitallabtestreport from "./Hospitallabreport";
 import TotalHLabRevenue from "./TotalHlabRevenue";
 import HLabProfile from "./HLabProfile";
 import BookedLabTest from "./BookedLabTest";
+import SampleHospitalLab from "./SampleHospitalLab";
+import ReportHospitalLab from "./ReportHospitalLab";
 export default function HospitalLabPanel() {
+  const admin = JSON.parse(sessionStorage.getItem("adminDetails"));
   const [ViewModal, setViewModal] = useState();
   const [Title, setTitle] = useState("Hospital Lab management");
 
@@ -52,108 +55,149 @@ export default function HospitalLabPanel() {
           ViewModal
         ) : (
           <div className="row">
-            <div className="col-lg-4">
-              <div
-                className="websiteMcards"
-                onClick={() => {
-                  setViewModal(<HospitallabCategory />);
-                  setView(true);
-                  setTitle("ADD-LAB-TEST-CATEGORY");
-                }}
-              >
-                <PiTestTubeFill className="WebMI" style={{ color: "white" }} />
-                ADD-LAB-TEST-CATEGORY
-              </div>
-            </div>
+            {admin?.labTechnician ? (
+              <>
+                <div className="col-lg-4">
+                  {" "}
+                  <div
+                    className="websiteMcards"
+                    onClick={() => {
+                      setViewModal(<SampleHospitalLab />);
+                      setView(true);
+                      setTitle("Sample Collection");
+                    }}
+                  >
+                    <AiOutlineAppstore className="WebMI" />
+                    Sample Collection
+                  </div>
+                </div>
+                <div className="col-lg-4">
+                  {" "}
+                  <div
+                    className="websiteMcards"
+                    onClick={() => {
+                      setViewModal(<ReportHospitalLab />);
+                      setView(true);
+                      setTitle("Reports");
+                    }}
+                  >
+                    <AiOutlineAppstore className="WebMI" />
+                    Report
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="col-lg-4">
+                  <div
+                    className="websiteMcards"
+                    onClick={() => {
+                      setViewModal(<HospitallabCategory />);
+                      setView(true);
+                      setTitle("ADD-LAB-TEST-CATEGORY");
+                    }}
+                  >
+                    <PiTestTubeFill
+                      className="WebMI"
+                      style={{ color: "white" }}
+                    />
+                    ADD-LAB-TEST-CATEGORY
+                  </div>
+                </div>
 
-            <div className="col-lg-4">
-              <div
-                className="websiteMcards"
-                onClick={() => {
-                  setViewModal(<Hospitallab />);
-                  setView(true);
-                  setTitle("ADD-LAB-TEST");
-                }}
-              >
-                <PiTestTubeFill className="WebMI" style={{ color: "white" }} />
-                ADD-LAB-TEST
-              </div>
-            </div>
+                <div className="col-lg-4">
+                  <div
+                    className="websiteMcards"
+                    onClick={() => {
+                      setViewModal(<Hospitallab />);
+                      setView(true);
+                      setTitle("ADD-LAB-TEST");
+                    }}
+                  >
+                    <PiTestTubeFill
+                      className="WebMI"
+                      style={{ color: "white" }}
+                    />
+                    ADD-LAB-TEST
+                  </div>
+                </div>
 
-            <div className="col-lg-4">
-              {" "}
-              <div
-                className="websiteMcards"
-                onClick={() => {
-                  setViewModal(<Hospitallabtestlist />);
-                  setTitle("HEALTH PACKAGE");
-                  setView(true);
-                }}
-              >
-                <GiTestTubes className="WebMI" />
-                HEALTH-PACKAGE
-              </div>
-            </div>
+                <div className="col-lg-4">
+                  {" "}
+                  <div
+                    className="websiteMcards"
+                    onClick={() => {
+                      setViewModal(<Hospitallabtestlist />);
+                      setTitle("HEALTH PACKAGE");
+                      setView(true);
+                    }}
+                  >
+                    <GiTestTubes className="WebMI" />
+                    HEALTH-PACKAGE
+                  </div>
+                </div>
 
-            <div className="col-lg-4">
-              {" "}
-              <div
-                className="websiteMcards"
-                onClick={() => {
-                  setViewModal(<Hospitallabtestreport />);
-                  setView(true);
-                  setTitle("LAB TEST-REPORT");
-                }}
-              >
-                <TbReportSearch className="WebMI" />
-                LAB TEST-REPORT
-              </div>
-            </div>
+                <div className="col-lg-4">
+                  {" "}
+                  <div
+                    className="websiteMcards"
+                    onClick={() => {
+                      setViewModal(<Hospitallabtestreport />);
+                      setView(true);
+                      setTitle("LAB TEST-REPORT");
+                    }}
+                  >
+                    <TbReportSearch className="WebMI" />
+                    LAB TEST-REPORT
+                  </div>
+                </div>
 
-            <div className="col-lg-4">
-              {" "}
-              <div
-                className="websiteMcards"
-                onClick={() => {
-                  setViewModal(<TotalHLabRevenue />);
-                  setView(true);
-                  setTitle("TOTAL REVENUE");
-                }}
-              >
-                <BsCurrencyRupee className="WebMI" />
-                TOTAL REVENUE
-              </div>
-            </div>
+                <div className="col-lg-4">
+                  {" "}
+                  <div
+                    className="websiteMcards"
+                    onClick={() => {
+                      setViewModal(<TotalHLabRevenue />);
+                      setView(true);
+                      setTitle("TOTAL REVENUE");
+                    }}
+                  >
+                    <BsCurrencyRupee className="WebMI" />
+                    TOTAL REVENUE
+                  </div>
+                </div>
 
-            <div className="col-lg-4">
-              {" "}
-              <div
-                className="websiteMcards"
-                onClick={() => {
-                  setViewModal(<HLabProfile />);
-                  setView(true);
-                  setTitle("LAB PROFILE");
-                }}
-              >
-                <AiOutlineAppstore className="WebMI" />
-                ADD LAB PROFILE
-              </div>
-            </div>
+                <div className="col-lg-4">
+                  {" "}
+                  <div
+                    className="websiteMcards"
+                    onClick={() => {
+                      setViewModal(<HLabProfile />);
+                      setView(true);
+                      setTitle("LAB PROFILE");
+                    }}
+                  >
+                    <AiOutlineAppstore className="WebMI" />
+                    ADD LAB PROFILE
+                  </div>
+                </div>
 
-            <div className="col-lg-4">
-              {" "}
-              <div
-                className="websiteMcards"
-                onClick={() => {
-                  setViewModal(<BookedLabTest />);
-                  setView(true);
-                  setTitle("BOOKED LAB TEST");
-                }}
-              >
-                <AiOutlineAppstore className="WebMI" />
-                Booked Lab Test
-              </div>
-            </div>
+                <div className="col-lg-4">
+                  {" "}
+                  <div
+                    className="websiteMcards"
+                    onClick={() => {
+                      setViewModal(<BookedLabTest />);
+                      setView(true);
+                      setTitle("BOOKED LAB TEST");
+                    }}
+                  >
+                    <AiOutlineAppstore className="WebMI" />
+                    Booked Lab Test
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
