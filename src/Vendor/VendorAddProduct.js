@@ -123,12 +123,17 @@ export const VendorAddProducts = () => {
           <thead>
             <tr className="admin-table-head">
               <th className="fw-bold">productName</th>
-              <th className="fw-bold">productPrice</th>
+
               <th className="fw-bold">currencyFormat</th>
               <th className="fw-bold">productType</th>
               <th className="fw-bold">manufacturingDate</th>
               <th className="fw-bold">expiryDate</th>
+              <th className="fw-bold">productPrice</th>
               <th className="fw-bold">discount </th>
+              <th className="fw-bold">CGST </th>
+              <th className="fw-bold">SGST </th>
+              <th className="fw-bold">MRP </th>
+              <th className="fw-bold">Total Amount </th>
               <th className="fw-bold">productSize </th>
               <th className="fw-bold">packSize </th>
               <th className="fw-bold">colour </th>
@@ -149,12 +154,22 @@ export const VendorAddProducts = () => {
               return (
                 <tr className="admin-table-row">
                   <td>{item?.productName}</td>
-                  <td>{item?.productPrice}</td>
+
                   <td>{item?.currencyFormat}</td>
                   <td>{item?.productType}</td>
                   <td>{item?.manufacturingDate}</td>
                   <td>{item?.expiryDate}</td>
+                  <td>{item?.productPrice}</td>
                   <td>{item?.discount}</td>
+                  <td>{item?.CGST}</td>
+                  <td>{item?.SGST}</td>
+                  <td>{item?.MRP}</td>
+                  <td>
+                    {item?.productPrice +
+                      (item?.productPrice * item?.CGST) / 100 +
+                      (item?.productPrice * item?.SGST) / 100 -
+                      (item?.productPrice * item?.discount) / 100}
+                  </td>
                   <td>{item?.productSize}</td>
                   <td>{item?.packSize}</td>
                   <td>{item?.colour}</td>
