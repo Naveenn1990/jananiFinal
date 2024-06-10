@@ -17,10 +17,18 @@ export const AddProduct = () => {
   const MandatoryValueShow = () => setShow1(true);
 
   const formdata = new FormData();
-
-  const [productName, setproductName] = useState();
-  const [productPrice, setproductPrice] = useState();
   const [productType, setproductType] = useState();
+  const [productName, setproductName] = useState();
+  const [HSN, setHSN] = useState("");
+  const [Batch, setBatch] = useState("");
+  const [No_of_Strips, setNo_of_Strips] = useState(0);
+  const [No_Tablets_strips, setNo_Tablets_strips] = useState(0);
+  const [Scheme, setScheme] = useState("");
+  const [productPrice, setproductPrice] = useState();
+  const [MRP, setMRP] = useState(0);
+  const [CGST, setCGST] = useState(0);
+  const [SGST, setSGST] = useState(0);
+
   const [ProductCategory, setProductCategory] = useState();
   const [ProductSubCategory, setProductSubCategory] = useState();
 
@@ -49,58 +57,201 @@ export const AddProduct = () => {
   const [GstDocument, setGstDocument] = useState("");
 
   const AddProduct = async (e) => {
-    e.preventDefault();    
-    let obj1 = {
-      vendorid: Vendor?._id,
-      productName: productName,
-      productPrice: productPrice,
-      productType: productType,
-      categoryid: ProductCategory,
-      subcategoryid: ProductSubCategory,
-      // Category: ProductCategory?.categoryName,
-      // Subcategory: ProductSubCategory?.subcategoryName,
-      manufacturingDate: manufacturingDate,
-      expiryDate: expiryDate,
-      discount: discount,
-      productSize: productSize,
-      packSize: packSize,
-      colour: colour,
-      flavour: flavour,
-      fragrance: fragrance,
-      variant: variant,
-      description: description,
-      brand: brand,
-      countryOfOrigin: countryOfOrigin,
-      manufacturercompanyname: manufacturercompanyname,
-      manufactureraddress: manufactureraddress,
-      stock: stock,
-      // minstock: minstock,
-      currencyFormat: currencyFormat,
-      productImgs: productImgs,
-      safetyDoc: safetyDoc,
-      GstDocument:GstDocument,
-    };
+    e.preventDefault();
 
-    try {      
-        const config = {
-          url: "/vendor/addProduct",
-          method: "post",
-          baseURL: "http://localhost:8521/api",
-          headers: { "content-type": "multipart/form-data" },
-          data: obj1,
+    if (productType?.toLowerCase() === "tablet") {
+      if (!No_of_Strips) {
+        alert("Please Enter Number of Strips");
+      } else if (!No_Tablets_strips) {
+        alert("Please Enter Number of Tablets in Strips");
+      } else if (
+        !HSN ||
+        !Batch ||
+        !MRP ||
+        !CGST ||
+        !SGST ||
+        !productType ||
+        !productName ||
+        !productPrice ||
+        !ProductCategory ||
+        !ProductSubCategory ||
+        !manufacturingDate ||
+        !expiryDate ||
+        !discount ||
+        !productSize ||
+        !packSize ||
+        !colour ||
+        !flavour ||
+        !fragrance ||
+        !variant ||
+        !description ||
+        !brand ||
+        !countryOfOrigin ||
+        !manufacturercompanyname ||
+        !manufactureraddress ||
+        !stock ||
+        !currencyFormat ||
+        productImgs?.length === 0 ||
+        !safetyDoc ||
+        !GstDocument
+      ) {
+        alert("Please fill all the fields");
+      } else {
+        let obj1 = {
+          HSN: HSN,
+          Batch: Batch,
+          No_of_Strips: No_of_Strips,
+          No_Tablets_strips: No_Tablets_strips,
+          Scheme: Scheme,
+          MRP: MRP,
+          CGST: CGST,
+          SGST: SGST,
+          vendorid: Vendor?._id,
+          productName: productName,
+          productPrice: productPrice,
+          productType: productType,
+          categoryid: ProductCategory,
+          subcategoryid: ProductSubCategory,
+          // Category: ProductCategory?.categoryName,
+          // Subcategory: ProductSubCategory?.subcategoryName,
+          manufacturingDate: manufacturingDate,
+          expiryDate: expiryDate,
+          discount: discount,
+          productSize: productSize,
+          packSize: packSize,
+          colour: colour,
+          flavour: flavour,
+          fragrance: fragrance,
+          variant: variant,
+          description: description,
+          brand: brand,
+          countryOfOrigin: countryOfOrigin,
+          manufacturercompanyname: manufacturercompanyname,
+          manufactureraddress: manufactureraddress,
+          stock: stock,
+          // minstock: minstock,
+          currencyFormat: currencyFormat,
+          productImgs: productImgs,
+          safetyDoc: safetyDoc,
+          GstDocument: GstDocument,
         };
-        let res = await axios(config);
-        if (res.status === 200) {
-          console.log(res.data);
-          console.log(res.data.success);
-          alert("Product Added");
-          window.location.assign("/VendorAddProducts")
+
+        try {
+          const config = {
+            url: "/vendor/addProduct",
+            method: "post",
+            baseURL: "http://localhost:8521/api",
+            headers: { "content-type": "multipart/form-data" },
+            data: obj1,
+          };
+          let res = await axios(config);
+          if (res.status === 200) {
+            console.log(res.data);
+            console.log(res.data.success);
+            alert("Product Added");
+            window.location.assign("/VendorAddProducts");
+          }
+        } catch (error) {
+          console.log(error.response);
+          if (error.response) {
+            alert(error.response.data.error);
+          }
         }
-      
-    } catch (error) {
-      console.log(error.response);
-      if (error.response) {
-        alert(error.response.data.error);
+      }
+    } else {
+      if (
+        !HSN ||
+        !Batch ||
+        !MRP ||
+        !CGST ||
+        !SGST ||
+        !productType ||
+        !productName ||
+        !productPrice ||
+        !ProductCategory ||
+        !ProductSubCategory ||
+        !manufacturingDate ||
+        !expiryDate ||
+        !discount ||
+        !productSize ||
+        !packSize ||
+        !colour ||
+        !flavour ||
+        !fragrance ||
+        !variant ||
+        !description ||
+        !brand ||
+        !countryOfOrigin ||
+        !manufacturercompanyname ||
+        !manufactureraddress ||
+        !stock ||
+        !currencyFormat ||
+        productImgs?.length === 0 ||
+        !safetyDoc ||
+        !GstDocument
+      ) {
+        alert("Please fill all the fields");
+      } else {
+        let obj1 = {
+          HSN: HSN,
+          Batch: Batch,
+          MRP: MRP,
+          CGST: CGST,
+          SGST: SGST,
+          No_of_Strips: No_of_Strips,
+          No_Tablets_strips: No_Tablets_strips,
+          Scheme: Scheme,
+          vendorid: Vendor?._id,
+          productName: productName,
+          productPrice: productPrice,
+          productType: productType,
+          categoryid: ProductCategory,
+          subcategoryid: ProductSubCategory,
+          // Category: ProductCategory?.categoryName,
+          // Subcategory: ProductSubCategory?.subcategoryName,
+          manufacturingDate: manufacturingDate,
+          expiryDate: expiryDate,
+          discount: discount,
+          productSize: productSize,
+          packSize: packSize,
+          colour: colour,
+          flavour: flavour,
+          fragrance: fragrance,
+          variant: variant,
+          description: description,
+          brand: brand,
+          countryOfOrigin: countryOfOrigin,
+          manufacturercompanyname: manufacturercompanyname,
+          manufactureraddress: manufactureraddress,
+          stock: stock,
+          // minstock: minstock,
+          currencyFormat: currencyFormat,
+          productImgs: productImgs,
+          safetyDoc: safetyDoc,
+          GstDocument: GstDocument,
+        };
+
+        try {
+          const config = {
+            url: "/vendor/addProduct",
+            method: "post",
+            baseURL: "http://localhost:8521/api",
+            headers: { "content-type": "multipart/form-data" },
+            data: obj1,
+          };
+          let res = await axios(config);
+          if (res.status === 200) {
+            console.log(res.data);
+            console.log(res.data.success);
+            alert("Product Added");
+            window.location.assign("/VendorAddProducts");
+          }
+        } catch (error) {
+          console.log(error.response);
+          if (error.response) {
+            alert(error.response.data.error);
+          }
+        }
       }
     }
   };
@@ -135,28 +286,46 @@ export const AddProduct = () => {
     }
   };
   const [productTypes, setProductTypes] = useState([]);
-  const getAllData = async()=>{
+  const getAllData = async () => {
     try {
-      const res = await axios.get("http://localhost:8521/api/vendor/producttype")
-      setProductTypes(res.data.success)
+      const res = await axios.get(
+        "http://localhost:8521/api/vendor/producttype"
+      );
+      setProductTypes(res.data.success);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
   useEffect(() => {
     getAllCategory();
     getAllSubCategory();
     getAllData();
   }, []);
 
+  console.log("asf", productTypes, productType?.toLowerCase());
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
-        {" "}
         Product
       </h4>
       <Container>
         <div className="row">
+          <div className="col-lg-3">
+            <label className="fw-bold text-dark">Product Type*</label>
+            <Form.Select
+              aria-label="Default select example"
+              value={productType}
+              onChange={(e) => setproductType(e.target.value)}
+            >
+              <option>Select Product Type</option>
+              {productTypes?.map((item) => {
+                return (
+                  <option value={item?.Producttype}>{item?.Producttype}</option>
+                );
+              })}
+            </Form.Select>
+          </div>
+
           <div className="col-lg-3">
             <label className="fw-bold text-dark">Product Name*</label>
             <InputGroup className="mb-3">
@@ -165,6 +334,30 @@ export const AddProduct = () => {
                 placeholder="Product Name"
                 aria-describedby="basic-addon1"
                 onChange={(e) => setproductName(e.target.value)}
+              />
+            </InputGroup>
+          </div>
+
+          <div className="col-lg-3">
+            <label className="fw-bold text-dark">HSN*</label>
+            <InputGroup className="mb-3">
+              <Form.Control
+                type="text"
+                placeholder="HSN"
+                aria-describedby="basic-addon1"
+                onChange={(e) => setHSN(e.target.value)}
+              />
+            </InputGroup>
+          </div>
+
+          <div className="col-lg-3">
+            <label className="fw-bold text-dark">Batch*</label>
+            <InputGroup className="mb-3">
+              <Form.Control
+                type="text"
+                placeholder="Batch"
+                aria-describedby="basic-addon1"
+                onChange={(e) => setBatch(e.target.value)}
               />
             </InputGroup>
           </div>
@@ -197,22 +390,49 @@ export const AddProduct = () => {
             </Form.Select>
           </div>
 
-          <div className="col-lg-3">
-            <label className="fw-bold text-dark">Product Type*</label>
-            <Form.Select
-              aria-label="Default select example"
-              value={productType}
-              onChange={(e) => setproductType(e.target.value)}
-            >
-              <option>Select Product Sub-Category</option>
-              {productTypes?.map((item) => {
-                return (
-                  <option value={item?._id}>{item?.Producttype}</option>
-                );
-              })}
-            </Form.Select>
-          </div>
-
+          {productType?.toLowerCase() === "tablet" ? (
+            <>
+              <div className="col-lg-3">
+                <label className="fw-bold text-dark">
+                  No. of Strips in Box*
+                </label>
+                <InputGroup className="mb-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="No. of Strips in Box"
+                    aria-describedby="basic-addon1"
+                    onChange={(e) => setNo_of_Strips(e.target.value)}
+                  />
+                </InputGroup>
+              </div>
+              <div className="col-lg-3">
+                <label className="fw-bold text-dark">
+                  No. of Tablets in strips*
+                </label>
+                <InputGroup className="mb-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="No. of Tablets in strips"
+                    aria-describedby="basic-addon1"
+                    onChange={(e) => setNo_Tablets_strips(e.target.value)}
+                  />
+                </InputGroup>
+              </div>
+              <div className="col-lg-3">
+                <label className="fw-bold text-dark">Scheme</label>
+                <InputGroup className="mb-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="Scheme (Ex: 20 + 1)"
+                    aria-describedby="basic-addon1"
+                    onChange={(e) => setScheme(e.target.value)}
+                  />
+                </InputGroup>
+              </div>
+            </>
+          ) : (
+            ""
+          )}
           {/* <div className="col-lg-3">
             <label className="fw-bold text-dark">Product Type Descprition*</label>
             <span></span>
@@ -225,9 +445,24 @@ export const AddProduct = () => {
               />
             </InputGroup>
           </div> */}
+          <div className="col-lg-3">
+            <label className="fw-bold text-dark">Currency Type*</label>
+            <Form.Select
+              aria-label="Default select example"
+              onChange={(e) => setcurrencyFormat(e.target.value)}
+            >
+              <option>Select Currency Type</option>
+              <option value="₹">₹</option>
+              <option value="$">$</option>
+            </Form.Select>
+          </div>
 
           <div className="col-lg-3">
-            <label className="fw-bold text-dark">Product Price*</label>
+            <label className="fw-bold text-dark">
+              {productType?.toLowerCase() === "tablet"
+                ? "Product Price/Strips*"
+                : "Product Price/Product*"}
+            </label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
@@ -237,18 +472,39 @@ export const AddProduct = () => {
               />
             </InputGroup>
           </div>
+          <div className="col-lg-3">
+            <label className="fw-bold text-dark">SGST*</label>
+            <InputGroup className="mb-3">
+              <Form.Control
+                type="text"
+                placeholder="SGST"
+                aria-describedby="basic-addon1"
+                onChange={(e) => setSGST(e.target.value)}
+              />
+            </InputGroup>
+          </div>
+          <div className="col-lg-3">
+            <label className="fw-bold text-dark">CGST*</label>
+            <InputGroup className="mb-3">
+              <Form.Control
+                type="text"
+                placeholder="CGST"
+                aria-describedby="basic-addon1"
+                onChange={(e) => setCGST(e.target.value)}
+              />
+            </InputGroup>
+          </div>
 
           <div className="col-lg-3">
-            <label className="fw-bold text-dark">Currency Type*</label>
-            <Form.Select
-              aria-label="Default select example"
-              onChange={(e) => setcurrencyFormat(e.target.value)}
-            >
-              <option>Select Currency Type</option>
-              <option value="₹">₹</option>
-
-              <option value="$">$</option>
-            </Form.Select>
+            <label className="fw-bold text-dark">MRP*</label>
+            <InputGroup className="mb-3">
+              <Form.Control
+                type="text"
+                placeholder="MRP"
+                aria-describedby="basic-addon1"
+                onChange={(e) => setMRP(e.target.value)}
+              />
+            </InputGroup>
           </div>
 
           <div className="col-lg-3">
@@ -264,31 +520,17 @@ export const AddProduct = () => {
           </div>
 
           <div className="col-lg-3">
-            <label className="fw-bold text-dark">stock*</label>
+            <label className="fw-bold text-dark">Stock*</label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
-                placeholder="stock"
+                placeholder="Stock"
                 aria-describedby="basic-addon1"
                 onChange={(e) => setstock(e.target.value)}
               />
             </InputGroup>
           </div>
 
-          {/* <div className="col-lg-3">
-            <label className="fw-bold text-dark">Min stock*</label>
-            <InputGroup className="mb-3">
-              <Form.Control
-                type="text"
-                placeholder="Min stock"
-                aria-describedby="basic-addon1"
-                onChange={(e) => setminstock(e.target.value)}
-              />
-            </InputGroup>
-          </div> */}
-        </div>
-
-        <div className="row">
           <div className="col-lg-3">
             <label className="fw-bold text-dark">Product variant*</label>
             <InputGroup className="mb-3">
@@ -326,7 +568,7 @@ export const AddProduct = () => {
           </div>
 
           <div className="col-lg-3">
-            <label className="fw-bold text-dark">productSize</label>
+            <label className="fw-bold text-dark">Product Size</label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
@@ -336,11 +578,9 @@ export const AddProduct = () => {
               />
             </InputGroup>
           </div>
-        </div>
 
-        <div className="row mb-4">
           <div className="col-lg-3">
-            <label className="fw-bold text-dark">packSize</label>
+            <label className="fw-bold text-dark">Pack Size</label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
@@ -364,7 +604,7 @@ export const AddProduct = () => {
           </div>
 
           <div className="col-lg-3">
-            <label className="fw-bold text-dark">flavour</label>
+            <label className="fw-bold text-dark">Flavour</label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
@@ -376,7 +616,7 @@ export const AddProduct = () => {
           </div>
 
           <div className="col-lg-3">
-            <label className="fw-bold text-dark">fragrance</label>
+            <label className="fw-bold text-dark">Fragrance</label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
@@ -388,7 +628,7 @@ export const AddProduct = () => {
           </div>
 
           <div className="col-lg-3">
-            <label className="fw-bold text-dark">description</label>
+            <label className="fw-bold text-dark">Description</label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
@@ -400,7 +640,7 @@ export const AddProduct = () => {
           </div>
 
           <div className="col-lg-3">
-            <label className="fw-bold text-dark">brand</label>
+            <label className="fw-bold text-dark">Brand</label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
@@ -412,7 +652,7 @@ export const AddProduct = () => {
           </div>
 
           <div className="col-lg-3">
-            <label className="fw-bold text-dark">countryOfOrigin</label>
+            <label className="fw-bold text-dark">Country Of Origin</label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
@@ -425,12 +665,12 @@ export const AddProduct = () => {
 
           <div className="col-lg-3">
             <label className="fw-bold text-dark">
-              manufacturer companyname
+              Manufacturer Company Name *
             </label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"
-                placeholder="manufacturer companyname"
+                placeholder="Manufacturer Company Name"
                 aria-describedby="basic-addon1"
                 onChange={(e) => setmanufacturercompanyname(e.target.value)}
               />
@@ -438,7 +678,7 @@ export const AddProduct = () => {
           </div>
 
           <div className="col-lg-3">
-            <label className="fw-bold text-dark">manufacturer address</label>
+            <label className="fw-bold text-dark">Manufacturer address</label>
             <InputGroup className="mb-3">
               <Form.Control
                 type="text"

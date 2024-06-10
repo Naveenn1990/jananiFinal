@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import moment from "moment/moment";
+import { Link } from "react-router-dom";
 
 export default function LaborderHistory() {
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
@@ -59,7 +60,6 @@ export default function LaborderHistory() {
   };
 
   const AddLabInventory = async (item) => {
-    console.log("itemmmm",item);
     try {
       const config = {
         url: "/lab/addlabInventory",
@@ -67,19 +67,19 @@ export default function LaborderHistory() {
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
         data: {
-          vendorProductId:item?.productId?._id,
-          VendorPrice:item?.VendorPrice,
-          AdminPrice:item?.AdminPrice,
-          totalPrice:item?.totalPrice,
-          quantity:item?.quantity,
+          vendorProductId: item?.productId?._id,
+          VendorPrice: item?.VendorPrice,
+          AdminPrice: item?.AdminPrice,
+          totalPrice: item?.totalPrice,
+          quantity: item?.quantity,
         },
       };
       let res = await axios(config);
       if (res === 201) {
-        alert(res.data.success)
+        alert(res.data.success);
       }
     } catch (error) {
-      alert(error.response.data.error)
+      alert(error.response.data.error);
     }
   };
 
@@ -133,10 +133,7 @@ export default function LaborderHistory() {
               <th>Payment Detils</th>
               <th>Status</th>
               <th>Details</th>
-
-              {/* <th>Contact</th>
-
-              <th>Action</th> */}
+              <th>invoice</th>
             </tr>
           </thead>
           <tbody>
@@ -173,6 +170,9 @@ export default function LaborderHistory() {
                         />
                       </td>
                       {/* <td>{val.totalPaidPrice}</td> */}
+                      <td>
+                        <Button>Invoice</Button>{" "}
+                      </td>
                     </tr>
                   );
                 })
@@ -208,6 +208,14 @@ export default function LaborderHistory() {
                             setSelectedProduct(val);
                           }}
                         />
+                      </td>
+                      <td>
+                        <Link
+                          to= "/admin/LabProductInvoice"
+                          state= {{ val: val }}
+                        >
+                          <Button>Invoice</Button>
+                        </Link>
                       </td>
                       {/* <td>{val.totalPaidPrice}</td> */}
                     </tr>
@@ -343,9 +351,9 @@ export default function LaborderHistory() {
                         <td>₹ {item?.totalPrice}</td>
                         <td>
                           {SelectedProduct?.orderStatus === "DELIVERED" ? (
-                            <Button
-                            onClick={()=>AddLabInventory(item)}
-                            >Add</Button>
+                            <Button onClick={() => AddLabInventory(item)}>
+                              Add
+                            </Button>
                           ) : (
                             <p>PENDING</p>
                           )}

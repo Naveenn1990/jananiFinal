@@ -256,6 +256,8 @@ import LabVendor from "./Admin/LabVendor";
 import Labvendorproducts from "./Admin/Labvendorproducts";
 import Labvendorproductcart from "./Admin/Labvendorproductcart";
 import LaborderHistory from "./Admin/LaborderHistory";
+import LabInventory from "./Admin/LabInventory";
+import LabProductInvoice from "./Admin/LabProductInvoice";
 
 function App() {
   return (
@@ -2334,7 +2336,25 @@ function App() {
                   <Adminpanel children={<LaborderHistory />} />{" "}
                 </>
               }
-            ></Route>
+            />
+            <Route
+              path="/admin/LabProductInvoice"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<LabProductInvoice />} />{" "}
+                </>
+              }
+            />
+            <Route
+              path="/admin/LabInventory"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<LabInventory />} />
+                </>
+              }
+            />
 
             <Route
               path="/admin/Labvendorproductcart"

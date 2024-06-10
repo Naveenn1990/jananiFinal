@@ -84,6 +84,7 @@ export const VendorOrders = () => {
       });
   };
 
+  console.log("OrderList",OrderList);
   const getLabOrderList = () => {
     axios
       .get(
@@ -494,7 +495,7 @@ export const VendorOrders = () => {
                   <tr className="admin-table-row">
                     <td>{item?._id}</td>
                     <td>{moment(item?.createdAt)?.format("DD-MM-YYYY")}</td>
-                    <td>{item.adminId?.username}</td>
+                    <td>{item.adminId?.name}</td>
                     <td> {item.adminId?.email}</td>
                     <td>{item.items?.length}</td>
                     <td>{item.totalAmount}</td>
@@ -735,7 +736,6 @@ export const VendorOrders = () => {
                 <div className="col-lg-6">
                   <h4 className="fw-bold text-dark mb-2">Payment</h4>
                 </div>
-
                 <div className="col-lg-6">
                   <button
                     style={{
