@@ -168,12 +168,21 @@ export default function Sidebar1() {
           >
             Vendor Products
           </h6>
+          <Link to="/admin/LaborderHistory">
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/LaborderHistory")}
+            // onClick={() => window.location.assign("/admin/LaborderHistory")}
           >
             Purchase Order History
           </h6>
+          </Link>
+          
+          <Link to="/admin/LabInventory">
+          <h6 className="sidebarItem1" >
+           Lab Inventory
+          </h6>
+          </Link>
+         
         </div>
 
         {admin?.pharmacyManagement === true ? (
