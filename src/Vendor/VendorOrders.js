@@ -735,7 +735,6 @@ export const VendorOrders = () => {
                 <div className="col-lg-6">
                   <h4 className="fw-bold text-dark mb-2">Payment</h4>
                 </div>
-
                 <div className="col-lg-6">
                   <button
                     style={{
