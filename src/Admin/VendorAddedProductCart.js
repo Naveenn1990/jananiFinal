@@ -13,7 +13,7 @@ const VendorAddedProductCart = () => {
   const [amounts, setAmounts] = useState({});
 
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
-  let Subadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
+  // let Subadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
 
   const [getAddtocart, setgetAddtocart] = useState([]);
   const getaddtocart = () => {

@@ -12,9 +12,9 @@ import { ImCancelCircle } from "react-icons/im";
 import axios from "axios";
 
 export default function Subadmin() {
-  let Checksubadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
+  // let Checksubadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
 
-  console.log("Checksubadmin", Checksubadmin);
+  // console.log("Checksubadmin", Checksubadmin);
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);

@@ -24,7 +24,7 @@ import moment from "moment/moment";
 
 export default function Adminheader() {
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
-  let Subadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
+  // let Subadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
   const responsive = {
     superLargeDesktop: {
       // the naming can be any, depends on you.
@@ -157,9 +157,9 @@ export default function Adminheader() {
   console.log("header inventory list: ", inventoryList);
 
   useEffect(() => {
-    Subadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
+    // Subadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
     adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
-    if (!adminDetails && !Subadmin) {
+    if (!adminDetails) {
       return alert("Access Denied!!!");
     } else {
       // getProductList();
@@ -267,7 +267,7 @@ export default function Adminheader() {
             <FaUserShield style={{ fontSize: "40px", marginTop: "10px" }} />
           </div>
         </div>
-  
+
         <Modal
           show={show}
           size="lg"
