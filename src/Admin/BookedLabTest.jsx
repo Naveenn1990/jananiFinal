@@ -298,9 +298,9 @@ function BookedLabTest() {
                 <th>Test List</th>
                 <th>Total Amount</th>
                 <th>Payment Status</th>
-                <th>Add Report</th>
+                {/* <th>Add Report</th> */}
                 <th>Invoice</th>
-                <th>View Report</th>
+                {/* <th>View Report</th> */}
                 <th>Payment</th>
               </tr>
             </thead>
@@ -369,7 +369,7 @@ function BookedLabTest() {
                       )}
                     </td>
 
-                    <td>
+                    {/* <td>
                       {item?.Labtests?.length ===
                       item?.Labtests?.filter((val) => val.patientReportVal)
                         ?.length ? (
@@ -388,11 +388,9 @@ function BookedLabTest() {
                           <b>Payment not done</b>
                         </div>
                       )}
-                    </td>
+                    </td> */}
                     <td>
-                      {item?.Labtests?.length ===
-                      item?.Labtests?.filter((val) => val.patientReportVal)
-                        ?.length ? (
+                      {item?.paymentStatus === "PAID" ? (
                         <Button
                           onClick={() => {
                             handleShow1();
@@ -402,12 +400,10 @@ function BookedLabTest() {
                           Invoice
                         </Button>
                       ) : (
-                        <b style={{ color: "red" }}>
-                          Invoice are not generated
-                        </b>
+                        <b style={{ color: "red" }}>Invoice is not generated</b>
                       )}
                     </td>
-                    <td>
+                    {/* <td>
                       {item?.Labtests?.length ===
                       item?.Labtests?.filter((val) => val.patientReportVal)
                         ?.length ? (
@@ -424,7 +420,7 @@ function BookedLabTest() {
                           Reports are not generated
                         </b>
                       )}
-                    </td>
+                    </td> */}
                     <td>
                       {item?.paymentStatus === "PAID" ? (
                         <span style={{ color: "green" }}>
@@ -524,26 +520,28 @@ function BookedLabTest() {
                     </thead>
 
                     <tbody>
-                      {Labtests?.Labtests?.filter(
-                        (ele) => ele.patientReportVal
-                      )?.map((item, i) => {
-                        return (
-                          <tr>
-                            <td>{i + 1}</td>
-                            <td>{item?.testName}</td>
-                            <td>
-                              {Labtests?.patientid?._id &&
-                              Labtests?.patientid?.haveInsurance ? (
-                                <>₹{item?.priceInsurance}</>
-                              ) : (
-                                <>₹{item?.priceNonInsurance}</>
-                              )}
-                            </td>
-                            {/* <td>1</td>
+                      {Labtests?.Labtests
+                        // ?.filter(
+                        //   (ele) => ele.patientReportVal
+                        // )
+                        ?.map((item, i) => {
+                          return (
+                            <tr>
+                              <td>{i + 1}</td>
+                              <td>{item?.testName}</td>
+                              <td>
+                                {Labtests?.patientid?._id &&
+                                Labtests?.patientid?.haveInsurance ? (
+                                  <>₹{item?.priceInsurance}</>
+                                ) : (
+                                  <>₹{item?.priceNonInsurance}</>
+                                )}
+                              </td>
+                              {/* <td>1</td>
                             <td>₹5025</td> */}
-                          </tr>
-                        );
-                      })}
+                            </tr>
+                          );
+                        })}
                     </tbody>
                   </table>
 
@@ -593,7 +591,14 @@ function BookedLabTest() {
                         <tr>
                           <td className="fw-bold p-0 text-start">Status :</td>
                           <td className="p-0 text-end">
-                            <b style={{ color: "red" }}>
+                            <b
+                              style={{
+                                color:
+                                  Labtests?.paymentStatus === "PAID"
+                                    ? "GREEN"
+                                    : "red",
+                              }}
+                            >
                               {Labtests?.paymentStatus}
                             </b>
                           </td>

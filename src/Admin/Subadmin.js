@@ -45,6 +45,7 @@ export default function Subadmin() {
   const [patientManagement, setpatientManagement] = useState(false);
   const [docAppointment, setdocAppointment] = useState(false);
   const [labManagement, setlabManagement] = useState(false);
+  const [labTechnician, setlabTechnician] = useState(false);
   const [pharmacyManagement, setpharmacyManagement] = useState(false);
   // const [vendorManagement, setvendorManagement] = useState(false);
   const [websiteManagement, setwebsiteManagement] = useState(false);
@@ -63,6 +64,7 @@ export default function Subadmin() {
   const [patientManagementChanged, setpatientManagementChanged] = useState("");
   const [docAppointmentChanged, setdocAppointmentChanged] = useState("");
   const [labManagementChanged, setlabManagementChanged] = useState("");
+  const [labTechnicianChanged, setlabTechnicianChanged] = useState("");
   const [pharmacyManagementChanged, setpharmacyManagementChanged] =
     useState("");
   // const [vendorManagementChanged, setvendorManagementChanged] = useState("");
@@ -93,6 +95,7 @@ export default function Subadmin() {
           patientManagement: patientManagement,
           docAppointment: docAppointment,
           labManagement: labManagement,
+          labTechnician: labTechnician,
           pharmacyManagement: pharmacyManagement,
           // vendorManagement: vendorManagement,
           websiteManagement: websiteManagement,
@@ -116,6 +119,7 @@ export default function Subadmin() {
         setpatientManagement(false);
         setdocAppointment(false);
         setlabManagement(false);
+        setlabTechnician(false);
         setpharmacyManagement(false);
         // setvendorManagement(false);
         setwebsiteManagement(false);
@@ -131,6 +135,7 @@ export default function Subadmin() {
         setpatientManagementChanged("");
         setdocAppointmentChanged("");
         setlabManagementChanged("");
+        setlabTechnicianChanged("");
         setpharmacyManagementChanged("");
         // setvendorManagementChanged("");
         setwebsiteManagementChanged("");
@@ -191,6 +196,8 @@ export default function Subadmin() {
           docAppointmentChanged: docAppointmentChanged,
           labManagement: labManagementChanged ? labManagement : "",
           labManagementChanged: labManagementChanged,
+          labTechnician: labTechnicianChanged ? labTechnician : "",
+          labTechnicianChanged: labTechnicianChanged,
           pharmacyManagement: pharmacyManagementChanged
             ? pharmacyManagement
             : "",
@@ -518,6 +525,25 @@ export default function Subadmin() {
                     }}
                   >
                     Lab management
+                  </label>
+                </div>
+              </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={labTechnician}
+                    onChange={(e) => setlabTechnician(e.target.checked)}
+                  ></input>
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Lab Technician
                   </label>
                 </div>
               </div>
@@ -1007,6 +1033,30 @@ export default function Subadmin() {
                   <input
                     type="checkbox"
                     checked={
+                      labTechnicianChanged ? labTechnician : View?.labTechnician
+                    }
+                    onChange={(e) => {
+                      setlabTechnicianChanged("changed");
+                      setlabTechnician(e.target.checked);
+                    }}
+                  ></input>
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Lab Technician
+                  </label>
+                </div>
+              </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={
                       pharmacyManagementChanged
                         ? pharmacyManagement
                         : View?.pharmacyManagement
@@ -1386,6 +1436,21 @@ export default function Subadmin() {
                     }}
                   >
                     Lab management
+                  </label>
+                </div>
+              </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input type="checkbox" checked={View?.labTechnician}></input>
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Lab Technician
                   </label>
                 </div>
               </div>
