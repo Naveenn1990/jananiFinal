@@ -1,7 +1,8 @@
 import { faPrint } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import moment from 'moment';
 import React from 'react'
-import { Button, Container } from 'react-bootstrap'
+import { Button, Container, Table } from 'react-bootstrap'
 import { useLocation } from 'react-router-dom';
 
 function LabProductInvoice() {
@@ -61,7 +62,7 @@ function LabProductInvoice() {
             }}>
             <div className="">
               <span className="fw-bold text-dark">Vendor Details:</span> <br />
-              <span><b>Name : </b>{`${val?.vendorId?.fname} ${val?.vendorId?.lname}`}</span>
+              <span><b>Name : </b>{`${val?.vendorId?.fname} ${val?.vendorId?.lname}`}</span><br/>
               <span>
                 {val?.vendorId?.address1} , 
                 {val?.vendorId?.city} , 
@@ -71,42 +72,59 @@ function LabProductInvoice() {
             </div>           
             <div className="">
               <span className="fw-bold text-dark">Vendor Details:</span> <br />
-              <span><b>Name : </b>{`${val?.vendorId?.fname} ${val?.vendorId?.lname}`}</span>
-              <span>
-                {val?.vendorId?.address1} , 
-                {val?.vendorId?.city} , 
-                {val?.vendorId?.state}, 
-                {val?.vendorId?.pincode}
-                </span>
+              <span><b>Phone : </b>{val?.vendorId?.phone}</span><br />
+              <span><b>Drug Lic : </b>JH/GH9/2011:78757 21B563:683247</span><br />
+              <span><b>GST No : </b>HJDS35445S998</span><br />
+              <span><b>Email : </b>{val?.vendorId?.email}</span>            
             </div>           
           </div>
 
           <h6 className="fw-bold text-dark">BILL</h6>
-          <table className="table table-bordered border-dark">
+          <Table bordered>
             <thead>
               <tr className="admin-table-head">
-                <th className="fw-bold">SL No</th>
-                <th className="fw-bold">Services</th>
-                <th className="fw-bold">Quantity</th>
-                <th className="fw-bold">Price</th>
-                <th className="fw-bold">Amount Status</th>
+                <th>SL No</th>
+                <th>HSN</th>
+                <th>Product Name</th>
+                <th>Batch</th>
+                <th>Ex.Dt</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>MRP</th>
+                <th>Value</th>
+                <th>Scheme</th>
+                <th>PDis%</th>
+                <th>PDisVal</th>
+                <th>BDis%</th>
+                <th>GST%</th>
+                <th>Value</th>
               </tr>
             </thead>
 
             <tbody>
-              {/* {patientCauseInfo.causeBillDetails?.map((item, i) => {
+              {val?.items?.map((item, i) => {
                 return (
                   <tr>
                     <td>{++i}</td>
-                    <td>{item.hospitalServices}</td>
-                    <td>{item.quantity}</td>
-                    <td>{item.hospitalServicesAmt}</td>
-                    <td>{item.amtStatus}</td>
+                    <td>37498384</td>
+                    <td>{item?.productId?.productName}</td>
+                    <td>345436</td>
+                    <td>{moment(item?.productId?.shortexpiryDate)?.format("DD-MM-YYYY")}</td>
+                    <td>{item?.quantity}</td>
+                    <td>{item?.VendorPrice}</td>
+                    <td>{item?.productId?.productPrice}</td>
+                    <td>{item?.AdminPrice}</td>
+                    <td>2+</td>
+                    <td>2%</td>
+                    <td>1</td>
+                    <td></td>
+                    <td>2%</td>
+                    <td>{item?.totalPrice}</td>
                   </tr>
                 );
-              })} */}
+              })}
             </tbody>
-          </table>
+          </Table>
 
           <div className=" d-flex justify-content-end">
             <table
@@ -121,9 +139,9 @@ function LabProductInvoice() {
                   </td>
                 </tr>
                 <tr>
-                  <td className="fw-bold p-0 text-start">
+                  {/* <td className="fw-bold p-0 text-start">
                     Total Remaining:{" "}
-                  </td>
+                  </td> */}
                   <td className="p-0 text-end">
                     {/* {patientCauseInfo.remainingAmt}₹ */}
                   </td>
@@ -133,7 +151,7 @@ function LabProductInvoice() {
                   <td className="p-0 text-end">$20</td>
                 </tr> */}
                 <tr>
-                  <td className="fw-bold p-0 text-start">Discount: </td>
+                  {/* <td className="fw-bold p-0 text-start">Discount: </td> */}
                   <td className="p-0 text-end">
                     {/* {patientCauseInfo.adminFinalDiscount}₹ */}
                   </td>
