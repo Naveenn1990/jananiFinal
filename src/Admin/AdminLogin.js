@@ -11,7 +11,7 @@ export default function AdminLogin() {
   const loginAdmin = async () => {
     try {
       const config = {
-        url: "/admin/adminlogin",
+        url: "/admin/subadminLogin",
         method: "post",
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
@@ -24,7 +24,7 @@ export default function AdminLogin() {
       if (res.status === 200) {
         sessionStorage.setItem(
           "adminDetails",
-          JSON.stringify(res.data.admindata)
+          JSON.stringify(res.data.subadmindata)
         );
         alert("Login successful");
         window.location.assign("/admin/dashboard");
