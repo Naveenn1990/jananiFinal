@@ -99,6 +99,29 @@ const VendorAddedProducts = () => {
   }
 
   const AddToCart = async (item) => {
+    const Tamount =
+      item?.productType?.toLowerCase() === "tablet" ? (
+        <>
+          {Number(item?.productPrice * item?.No_of_Strips) +
+            (Number(item?.productPrice * item?.No_of_Strips) *
+              Number(item?.CGST)) /
+              100 +
+            (Number(item?.productPrice * item?.No_of_Strips) *
+              Number(item?.SGST)) /
+              100 -
+            (Number(item?.productPrice * item?.No_of_Strips) *
+              Number(item?.discount)) /
+              100}
+        </>
+      ) : (
+        <>
+          {Number(item?.productPrice) +
+            (Number(item?.productPrice) * Number(item?.CGST)) / 100 +
+            (Number(item?.productPrice) * Number(item?.SGST)) / 100 -
+            (Number(item?.productPrice) * Number(item?.discount)) / 100}
+        </>
+      );
+
     try {
       const config = {
         url: "/vendor/adminaddtocart",
@@ -108,9 +131,7 @@ const VendorAddedProducts = () => {
         data: {
           productid: item?._id,
           quantity: 1,
-          totalamount:
-            Number(item?.productPrice) -
-            (Number(item?.productPrice) * Number(item?.discount)) / 100,
+          totalamount: Tamount?.props?.children,
         },
       };
       let res = await axios(config);
@@ -222,20 +243,22 @@ const VendorAddedProducts = () => {
             >
               <thead>
                 <tr className="admin-table-head">
+                  <th className="fw-bold">HSN No.</th>
+                  <th className="fw-bold">Batch No.</th>
                   <th className="fw-bold">
-                    <div style={{ width: "20%" }}>productName</div>
+                    <div style={{ width: "20%" }}>Product Name</div>
                   </th>
-                  <th className="fw-bold">manufacturingDate</th>
+                  <th className="fw-bold">Manufacturing Date</th>
 
-                  <th className="fw-bold">expiryDate</th>
-                  <th className="fw-bold">Quantity(Stock)</th>
-                  <th className="fw-bold">productPrice</th>
+                  <th className="fw-bold">Expiry Date</th>
+                  <th className="fw-bold">Scheme</th>
+                  <th className="fw-bold">Product Price</th>
                   <th className="fw-bold">Selling Price</th>
                   {/* <th className="fw-bold">Admin Price </th>
-                <th className="fw-bold">Quantity </th>
-                <th className="fw-bold">Admin Final Price </th> */}
+              <th className="fw-bold">Quantity </th>
+              <th className="fw-bold">Admin Final Price </th> */}
                   <th className="fw-bold">Add To Cart </th>
-                  <th className="fw-bold">description </th>
+                  <th className="fw-bold">Description </th>
                 </tr>
               </thead>
 
@@ -243,6 +266,8 @@ const VendorAddedProducts = () => {
                 {ProductList?.map((item) => {
                   return (
                     <tr className="admin-table-row">
+                      <td>{item?.HSN}</td>
+                      <td>{item?.Batch}</td>
                       <td>
                         <div style={{ width: "" }}>{item?.productName}</div>
                       </td>
@@ -250,63 +275,100 @@ const VendorAddedProducts = () => {
                         {moment(item?.manufacturingDate).format("DD/MM/YYYY")}
                       </td>
                       <td>{moment(item?.expiryDate).format("DD/MM/YYYY")}</td>
-                      <td>{item?.stock}</td>
+                      <td>{item?.Scheme ? item?.Scheme : "-"}</td>
                       <td>
                         <div style={{ width: "110px" }}>
-                          <p>A.Price = ₹{item?.productPrice} </p>
+                          <p>
+                            A.Price = ₹
+                            {item?.productType?.toLowerCase() === "tablet"
+                              ? item?.productPrice * item?.No_of_Strips
+                              : item?.productPrice}
+                          </p>
+                          <p>CGST = {item?.CGST}% </p>
+                          <p>SGST = {item?.SGST}% </p>
                           <p>Discount = {item?.discount}% </p>
                         </div>
                       </td>
 
                       <td>
                         <p>
-                          ₹{" "}
-                          {Number(item?.productPrice) -
-                            (Number(item?.productPrice) *
-                              Number(item?.discount)) /
-                              100}
+                          Selling Price = ₹{" "}
+                          {item?.productType?.toLowerCase() === "tablet" ? (
+                            <>
+                              {Number(item?.productPrice * item?.No_of_Strips) +
+                                (Number(
+                                  item?.productPrice * item?.No_of_Strips
+                                ) *
+                                  Number(item?.CGST)) /
+                                  100 +
+                                (Number(
+                                  item?.productPrice * item?.No_of_Strips
+                                ) *
+                                  Number(item?.SGST)) /
+                                  100 -
+                                (Number(
+                                  item?.productPrice * item?.No_of_Strips
+                                ) *
+                                  Number(item?.discount)) /
+                                  100}
+                            </>
+                          ) : (
+                            <>
+                              {Number(item?.productPrice) +
+                                (Number(item?.productPrice) *
+                                  Number(item?.CGST)) /
+                                  100 +
+                                (Number(item?.productPrice) *
+                                  Number(item?.SGST)) /
+                                  100 -
+                                (Number(item?.productPrice) *
+                                  Number(item?.discount)) /
+                                  100}
+                            </>
+                          )}
                         </p>
+                        <p>MRP = {item?.MRP} </p>
                       </td>
 
                       {/* <td>
-                      <div style={{ width: "141px" }}>
-                        <input
-                          className="vi_0"
-                          type="number"
-                          placeholder="Enter Your Price"
-                        />
-                      </div>
-                    </td>
+                    <div style={{ width: "141px" }}>
+                      <input
+                        className="vi_0"
+                        type="number"
+                        placeholder="Enter Your Price"
+                      />
+                    </div>
+                  </td>
 
-                    <td>
-                      <td className="d-flex rounded-pill border border-dark p-2 m-2">
-                        <button
-                          style={{
-                            backgroundColor: "transparent",
-                            border: "none",
-                          }}
-                          onClick={subqantity}
-                        >
-                          <RemoveIcon />
-                        </button>
-                        <Form.Group
-                          className="mb-1"
-                          controlId="exampleForm.ControlInput1"
-                        >
-                          {qnty}
-                        </Form.Group>
-                        <button
-                          style={{
-                            backgroundColor: "transparent",
-                            border: "none",
-                          }}
-                          onClick={addqantity}
-                        >
-                          <AddIcon />
-                        </button>
-                      </td>
+                  <td>
+                    <td className="d-flex rounded-pill border border-dark p-2 m-2">
+                      <button
+                        style={{
+                          backgroundColor: "transparent",
+                          border: "none",
+                        }}
+                        onClick={subqantity}
+                      >
+                        <RemoveIcon />
+                      </button>
+                      <Form.Group
+                        className="mb-1"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        {qnty}
+                      </Form.Group>
+                      <button
+                        style={{
+                          backgroundColor: "transparent",
+                          border: "none",
+                        }}
+                        onClick={addqantity}
+                      >
+                        <AddIcon />
+                      </button>
                     </td>
-                    <td>3000</td> */}
+                  </td>
+                  <td>3000</td> */}
                       <td>
                         <div className="p-2">
                           <Button
@@ -347,7 +409,7 @@ const VendorAddedProducts = () => {
             <div className="row" style={{ color: "white" }}>
               <div className="col-lg-4">
                 <img
-                alt=""
+                  alt=""
                   src={`http://localhost:8521/Vendor/${SelectedProduct?.vendorid?.profilePic}`}
                   style={{ width: "50%" }}
                 />
@@ -418,7 +480,6 @@ const VendorAddedProducts = () => {
                     {SelectedProduct?.productImgs?.length > 0 ? (
                       <Col md={2}>
                         <img
-                        alt=""
                           src={`http://localhost:8521/VendorProduct/${SelectedProduct?.productImgs[0]}`}
                           style={{ width: "100%" }}
                         />
@@ -469,8 +530,29 @@ const VendorAddedProducts = () => {
                         Manufacturing Date :
                       </span>
                     </Col>
-                    <Col md={6}>{SelectedProduct?.manufacturingDate}</Col>
+                    <Col md={6}>
+                      {moment(SelectedProduct?.manufacturingDate)?.format(
+                        "DD-MM-YYYY"
+                      )}
+                    </Col>
                   </Row>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        HSN No.:
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.HSN}</Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Batch No.:
+                      </span>
+                    </Col>
+                    <Col md={6}>{SelectedProduct?.Batch}</Col>
+                  </Row>
+
                   <Row>
                     <Col md={6}>
                       <span style={{ fontSize: "14px", fontWeight: "600" }}>
@@ -519,23 +601,38 @@ const VendorAddedProducts = () => {
                     </Col>
                     <Col md={6}>{SelectedProduct?.colour}</Col>
                   </Row>
-                  <Row>
-                    <Col md={6}>
-                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                        Colour :
-                      </span>
-                    </Col>
-                    <Col md={6}>{SelectedProduct?.colour}</Col>
-                  </Row>
 
-                  <Row>
-                    <Col md={6}>
-                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                        Colour :
-                      </span>
-                    </Col>
-                    <Col md={6}>{SelectedProduct?.colour}</Col>
-                  </Row>
+                  {SelectedProduct?.productType?.toLowerCase() === "tablet" ? (
+                    <Row>
+                      <Col md={6}>
+                        <Row>
+                          <Col md={9}>
+                            <span
+                              style={{ fontSize: "14px", fontWeight: "600" }}
+                            >
+                              Number of Strips/Box :
+                            </span>
+                          </Col>
+                          <Col md={3}>{SelectedProduct?.No_of_Strips}</Col>
+                        </Row>
+                      </Col>
+                      <Col md={6}>
+                        <Row>
+                          <Col md={9}>
+                            <span
+                              style={{ fontSize: "14px", fontWeight: "600" }}
+                            >
+                              Number of Tablets/strips :
+                            </span>
+                          </Col>
+                          <Col md={3}>{SelectedProduct?.No_Tablets_strips}</Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                  ) : (
+                    ""
+                  )}
+
                   <Row>
                     <Col md={6}>
                       <Row>
@@ -562,6 +659,100 @@ const VendorAddedProducts = () => {
                           {SelectedProduct?.currencyFormat}
                         </Col>
                       </Row>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <Row>
+                        <Col md={6}>
+                          <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                            CGST :
+                          </span>
+                        </Col>
+                        <Col md={6}>
+                          {SelectedProduct?.CGST} &nbsp;
+                          {SelectedProduct?.currencyFormat}
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col md={6}>
+                      <Row>
+                        <Col md={6}>
+                          <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                            SGST :
+                          </span>
+                        </Col>
+                        <Col md={6}>
+                          {SelectedProduct?.SGST}&nbsp;
+                          {SelectedProduct?.currencyFormat}
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <Row>
+                        <Col md={6}>
+                          <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                            MRP :
+                          </span>
+                        </Col>
+                        <Col md={6}>
+                          {SelectedProduct?.MRP} &nbsp;
+                          {SelectedProduct?.currencyFormat}
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col md={6}></Col>
+                  </Row>
+                  <hr></hr>
+                  <Row>
+                    <Col md={6}>
+                      <span style={{ fontSize: "14px", fontWeight: "600" }}>
+                        Total Price :
+                      </span>
+                    </Col>
+                    <Col md={6}>
+                      {SelectedProduct?.productType?.toLowerCase() ===
+                      "tablet" ? (
+                        <>
+                          {Number(
+                            SelectedProduct?.productPrice *
+                              SelectedProduct?.No_of_Strips
+                          ) +
+                            (Number(
+                              SelectedProduct?.productPrice *
+                                SelectedProduct?.No_of_Strips
+                            ) *
+                              Number(SelectedProduct?.CGST)) /
+                              100 +
+                            (Number(
+                              SelectedProduct?.productPrice *
+                                SelectedProduct?.No_of_Strips
+                            ) *
+                              Number(SelectedProduct?.SGST)) /
+                              100 -
+                            (Number(
+                              SelectedProduct?.productPrice *
+                                SelectedProduct?.No_of_Strips
+                            ) *
+                              Number(SelectedProduct?.discount)) /
+                              100}
+                        </>
+                      ) : (
+                        <>
+                          {Number(SelectedProduct?.productPrice) +
+                            (Number(SelectedProduct?.productPrice) *
+                              Number(SelectedProduct?.CGST)) /
+                              100 +
+                            (Number(SelectedProduct?.productPrice) *
+                              Number(SelectedProduct?.SGST)) /
+                              100 -
+                            (Number(SelectedProduct?.productPrice) *
+                              Number(SelectedProduct?.discount)) /
+                              100}
+                        </>
+                      )}
                     </Col>
                   </Row>
 
