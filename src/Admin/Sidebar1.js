@@ -131,6 +131,17 @@ export default function Sidebar1() {
             Lab management {LabM ? <IoIosArrowUp /> : <IoIosArrowDown />}
           </h6>
         ) : null}
+
+        {admin?.labTechnician === true ? (
+          <Link to="/admin/HospitalLabPanel">
+            <h6
+              className="sidebarItem1"
+              // onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+            >
+              Lab Technician
+            </h6>
+          </Link>
+        ) : null}
         <div
           style={{
             display: LabM ? "block" : "none",
@@ -196,36 +207,48 @@ export default function Sidebar1() {
             backgroundColor: "#d0f7f4",
           }}
         >
-          <h6
-            className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/AddProductCategory")}
-          >
-            IPD Patients
-          </h6>
-          <h6
-            className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/OPDPharmacy")}
-          >
-            OPD Patients
-          </h6>
-          <h6
-            className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/AddProductCategory")}
-          >
-            Add Product Category
-          </h6>
-          <h6
-            className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/ProductBrands")}
-          >
-            Add Brands
-          </h6>
-          <h6
-            className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/AddVendor")}
-          >
-            Create Vendor
-          </h6>
+          {/* <Link to={"/admin/AddProductCategory"}>
+            <h6 className="sidebarItem1">IPD Patients</h6>
+          </Link> */}
+          <Link to={"/admin/OPDPharmacy"}>
+            <h6 className="sidebarItem1">OPD Patients</h6>
+          </Link>
+          <Link to={"/admin/AddProductCategory"}>
+            <h6
+              className="sidebarItem1"
+              // onClick={() =>
+              // window.location.assign("/admin/AddProductCategory")
+              // }
+            >
+              Add Product Category
+            </h6>
+          </Link>
+          <Link to={"/admin/ProductBrands"}>
+            <h6
+              className="sidebarItem1"
+              // onClick={() => window.location.assign("/admin/ProductBrands")}
+            >
+              Add Brands
+            </h6>
+          </Link>
+          <Link to="/admin/ProductCustomerOrders">
+            <h6
+              className="sidebarItem1"
+              // onClick={() =>
+              //   window.location.assign("/admin/ProductCustomerOrders")
+              // }
+            >
+              Customer Orders
+            </h6>
+          </Link>
+          <Link to="/admin/AddVendor">
+            <h6
+              className="sidebarItem1"
+              // onClick={() => window.location.assign("/admin/AddVendor")}
+            >
+              Create Vendor
+            </h6>
+          </Link>
           {/* v6 */}
           <Link to="/admin/VendorAddedProduct">
             <h6
@@ -254,20 +277,15 @@ export default function Sidebar1() {
             >
               Order History
             </h6> */}
-          <h6
-            className="sidebarItem1"
-            onClick={() =>
-              window.location.assign("/admin/ProductCustomerOrders")
-            }
-          >
-            Customer Orders
-          </h6>
-          <h6
-            className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/addinventory")}
-          >
-            Inventory
-          </h6>
+
+          <Link to={"/admin/addinventory"}>
+            <h6
+              className="sidebarItem1"
+              // onClick={() => window.location.assign("/admin/addinventory")}
+            >
+              Inventory
+            </h6>
+          </Link>
           <Link to={"/admin/AdminBookProduct"}>
             <h6 className="sidebarItem1">Admin Book Product</h6>
           </Link>
@@ -292,12 +310,14 @@ export default function Sidebar1() {
         {/* <h6 className="sidebarItem">Vendor management</h6> */}
 
         {admin?.websiteManagement === true ? (
-          <h6
-            className="sidebarItem"
-            onClick={() => window.location.assign("/admin/Websitemanagement")}
-          >
-            Website management
-          </h6>
+          <Link to={"/admin/Websitemanagement"}>
+            <h6
+              className="sidebarItem"
+              // onClick={() => window.location.assign("/admin/Websitemanagement")}
+            >
+              Website management
+            </h6>
+          </Link>
         ) : null}
 
         {admin?.serviceManagement === true ? (
