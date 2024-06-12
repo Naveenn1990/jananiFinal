@@ -179,7 +179,8 @@ export default function AddProductInvetory() {
         stock: stock,
         minstock: minstock,
         maxOrderlimit: maxOrderlimit,
-        productPrice: price,
+        productPrice: newarray?.find((item) => item?._id === prodid)?.productId
+          ?.MRP,
         discount: discount,
         InvoiceNumber: InvoiceNumber,
         Invoicedate: Invoicedate,
@@ -330,10 +331,10 @@ export default function AddProductInvetory() {
   }, []);
 
   useEffect(() => {
-    setafterDiscountPrice(
-      Number((price - (price * discount) / 100).toFixed(1))
-    );
-  }, [price, discount]);
+    const xyz = newarray?.find((item) => item?._id === prodid)?.productId?.MRP;
+    const abc = xyz - xyz * (discount / 100);
+    setafterDiscountPrice(abc);
+  }, [discount]);
 
   {
     /*  
@@ -356,15 +357,21 @@ export default function AddProductInvetory() {
 
    */
   }
-  const newarray = orderedProductsList;
+  const newarray = [];
+  for (let i = 0; i < orderedProductsList.length; i++) {
+    for (let j = 0; j < orderedProductsList[i]?.items.length; j++) {
+      newarray.push(orderedProductsList[i]?.items[j]);
+    }
+  }
 
   // console.log("orderedProductsList555555: ", orderedProductsList);
   // console.log("newarray", newarray);
   // console.log("InvoiceDoc", InvoiceDoc);
   // console.log("ChosenProd", ChosenProd);
-  console.log("inventoryList", inventoryList);
-  console.log("productInfo", productInfo);
+  // console.log("inventoryList", inventoryList);
+  // console.log("productInfo", productInfo);
   console.log("newarray434", newarray);
+  console.log("catid", catid, subcatid);
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -466,7 +473,7 @@ export default function AddProductInvetory() {
                   }}
                 >
                   <option>Choose Products</option>
-                  {newarray[0]?.items
+                  {newarray
                     ?.filter(
                       (val) =>
                         // val.vendorid._id === venid &&
@@ -496,7 +503,10 @@ export default function AddProductInvetory() {
                 </label>
                 <input
                   placeholder="Price"
-                  value={price}
+                  value={
+                    newarray?.find((item) => item?._id === prodid)?.productId
+                      ?.MRP
+                  }
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -504,7 +514,7 @@ export default function AddProductInvetory() {
                     border: "1px solid #ebebeb",
                     backgroundColor: "#ebebeb",
                   }}
-                  onChange={(event) => setprice(event.target.value)}
+                  // onChange={(event) => setprice(event.target.value)}
                 ></input>
               </div>
               <div className="col-lg-6 col-sm-12 mt-2">
@@ -749,10 +759,45 @@ export default function AddProductInvetory() {
                                   <span style={{ fontWeight: "bold" }}>
                                     Buying Price:
                                   </span>{" "}
-                                  ₹ {val?.AdminPrice} /-
+                                  ₹ {val?.totalPrice} /-
                                 </div>
                               ) : (
                                 <></>
+                              )}
+                              {val?.productId?.productType?.toLowerCase() ===
+                              "tablet" ? (
+                                <>
+                                  {val?.productId?.No_of_Strips ? (
+                                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                                      <span style={{ fontWeight: "bold" }}>
+                                        No of Strips/Box:
+                                      </span>{" "}
+                                      {val?.productId?.No_of_Strips}
+                                    </div>
+                                  ) : (
+                                    <></>
+                                  )}
+                                  {val?.productId?.No_Tablets_strips ? (
+                                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                                      <span style={{ fontWeight: "bold" }}>
+                                        No of Tablet/Strips:
+                                      </span>{" "}
+                                      {val?.productId?.No_Tablets_strips}
+                                    </div>
+                                  ) : (
+                                    <></>
+                                  )}
+                                  <div className="col-lg-6 col-sm-12 mt-2 CZ">
+                                    <span style={{ fontWeight: "bold" }}>
+                                      Price/Strips:
+                                    </span>{" "}
+                                    {val?.totalPrice /
+                                      val?.quantity /
+                                      val?.productId?.No_of_Strips}
+                                  </div>
+                                </>
+                              ) : (
+                                ""
                               )}
                               {val?.quantity ? (
                                 <div className="col-lg-6 col-sm-12 mt-2 CZ">
@@ -2330,7 +2375,7 @@ export default function AddProductInvetory() {
               <th>Category</th>
               <th>Subcategory</th>
               <th>Amount</th>
-              <th>Discount</th>
+              <th>Discount (%)</th>
               <th>Offer Amount</th>
               <th>Stock Availability</th>
 

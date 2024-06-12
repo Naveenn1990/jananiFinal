@@ -41,6 +41,47 @@ const VendorAddedProductCart = () => {
   };
 
   const incresequantity = async (item) => {
+    const Tamount =
+      item?.productid?.productType?.toLowerCase() === "tablet" ? (
+        <>
+          {(amounts[item?.productid?._id] ||
+            Number(
+              item?.productid?.productPrice * item?.productid?.No_of_Strips
+            ) +
+              (Number(
+                item?.productid?.productPrice * item?.productid?.No_of_Strips
+              ) *
+                Number(item?.productid?.CGST)) /
+                100 +
+              (Number(
+                item?.productid?.productPrice * item?.productid?.No_of_Strips
+              ) *
+                Number(item?.productid?.SGST)) /
+                100 -
+              (Number(
+                item?.productid?.productPrice * item?.productid?.No_of_Strips
+              ) *
+                Number(item?.productid?.discount)) /
+                100) *
+            (item?.quantity + 1)}
+        </>
+      ) : (
+        <>
+          {(amounts[item?.productid?._id] ||
+            Number(item?.productid?.productPrice) +
+              (Number(item?.productid?.productPrice) *
+                Number(item?.productid?.CGST)) /
+                100) +
+            (Number(item?.productid?.productPrice) *
+              Number(item?.productid?.SGST)) /
+              100 -
+            ((Number(item?.productid?.productPrice) *
+              Number(item?.productid?.discount)) /
+              100) *
+              (item?.quantity + 1)}
+        </>
+      );
+
     try {
       const config = {
         url: "/vendor/updateAdminquantity",
@@ -50,13 +91,7 @@ const VendorAddedProductCart = () => {
         data: {
           id: item?._id,
           quantity: item?.quantity + 1,
-          totalamount:
-            (amounts[item?.productid?._id] ||
-              Number(item?.productid?.productPrice) -
-                (Number(item?.productid?.productPrice) *
-                  Number(item?.productid?.discount)) /
-                  100) *
-            (item?.quantity + 1),
+          totalamount: Tamount?.props?.children,
         },
       };
       let res = await axios(config);
@@ -75,6 +110,47 @@ const VendorAddedProductCart = () => {
     if (item?.quantity <= 1) {
       alert("Minimum quanitity is 1");
     } else {
+      const Tamount =
+        item?.productid?.productType?.toLowerCase() === "tablet" ? (
+          <>
+            {(amounts[item?.productid?._id] ||
+              Number(
+                item?.productid?.productPrice * item?.productid?.No_of_Strips
+              ) +
+                (Number(
+                  item?.productid?.productPrice * item?.productid?.No_of_Strips
+                ) *
+                  Number(item?.productid?.CGST)) /
+                  100 +
+                (Number(
+                  item?.productid?.productPrice * item?.productid?.No_of_Strips
+                ) *
+                  Number(item?.productid?.SGST)) /
+                  100 -
+                (Number(
+                  item?.productid?.productPrice * item?.productid?.No_of_Strips
+                ) *
+                  Number(item?.productid?.discount)) /
+                  100) *
+              (item?.quantity - 1)}
+          </>
+        ) : (
+          <>
+            {(amounts[item?.productid?._id] ||
+              Number(item?.productid?.productPrice) +
+                (Number(item?.productid?.productPrice) *
+                  Number(item?.productid?.CGST)) /
+                  100) +
+              (Number(item?.productid?.productPrice) *
+                Number(item?.productid?.SGST)) /
+                100 -
+              ((Number(item?.productid?.productPrice) *
+                Number(item?.productid?.discount)) /
+                100) *
+                (item?.quantity - 1)}
+          </>
+        );
+
       try {
         const config = {
           url: "/vendor/updateAdminquantity",
@@ -84,13 +160,7 @@ const VendorAddedProductCart = () => {
           data: {
             id: item?._id,
             quantity: item?.quantity - 1,
-            totalamount:
-              (amounts[item?.productid?._id] ||
-                Number(item?.productid?.productPrice) -
-                  (Number(item?.productid?.productPrice) *
-                    Number(item?.productid?.discount)) /
-                    100) *
-              (item?.quantity - 1),
+            totalamount: Tamount?.props?.children,
           },
         };
         let res = await axios(config);
@@ -125,23 +195,97 @@ const VendorAddedProductCart = () => {
       try {
         const products = getAddtocart.map((item) => {
           const vendorPrice =
-            Number(item?.productid?.productPrice) -
-            (Number(item?.productid?.productPrice) *
-              Number(item?.productid?.discount)) /
-              100;
+            item?.productid?.productType?.toLowerCase() === "tablet" ? (
+              <>
+                {Number(
+                  item?.productid?.productPrice * item?.productid?.No_of_Strips
+                ) +
+                  (Number(
+                    item?.productid?.productPrice *
+                      item?.productid?.No_of_Strips
+                  ) *
+                    Number(item?.productid?.CGST)) /
+                    100 +
+                  (Number(
+                    item?.productid?.productPrice *
+                      item?.productid?.No_of_Strips
+                  ) *
+                    Number(item?.productid?.SGST)) /
+                    100 -
+                  (Number(
+                    item?.productid?.productPrice *
+                      item?.productid?.No_of_Strips
+                  ) *
+                    Number(item?.productid?.discount)) /
+                    100}
+              </>
+            ) : (
+              <>
+                {Number(item?.productid?.productPrice) +
+                  (Number(item?.productid?.productPrice) *
+                    Number(item?.productid?.CGST)) /
+                    100 +
+                  (Number(item?.productid?.productPrice) *
+                    Number(item?.productid?.SGST)) /
+                    100 -
+                  (Number(item?.productid?.productPrice) *
+                    Number(item?.productid?.discount)) /
+                    100}
+              </>
+            );
           const adminPrice = amounts[item?.productid?._id]
             ? amounts[item?.productid?._id]
             : 0;
           const totalPrice =
-            (amounts[item?.productid?._id] || vendorPrice) * item?.quantity;
+            item?.productid?.productType?.toLowerCase() === "tablet" ? (
+              <>
+                {(amounts[item?.productid?._id] ||
+                  Number(
+                    item?.productid?.productPrice *
+                      item?.productid?.No_of_Strips
+                  ) +
+                    (Number(
+                      item?.productid?.productPrice *
+                        item?.productid?.No_of_Strips
+                    ) *
+                      Number(item?.productid?.CGST)) /
+                      100 +
+                    (Number(
+                      item?.productid?.productPrice *
+                        item?.productid?.No_of_Strips
+                    ) *
+                      Number(item?.productid?.SGST)) /
+                      100 -
+                    (Number(
+                      item?.productid?.productPrice *
+                        item?.productid?.No_of_Strips
+                    ) *
+                      Number(item?.productid?.discount)) /
+                      100) * item?.quantity}
+              </>
+            ) : (
+              <>
+                {(amounts[item?.productid?._id] ||
+                  Number(item?.productid?.productPrice) +
+                    (Number(item?.productid?.productPrice) *
+                      Number(item?.productid?.CGST)) /
+                      100 +
+                    (Number(item?.productid?.productPrice) *
+                      Number(item?.productid?.SGST)) /
+                      100 -
+                    (Number(item?.productid?.productPrice) *
+                      Number(item?.productid?.discount)) /
+                      100) * item?.quantity}
+              </>
+            );
           return {
             adminId: adminDetails?._id,
             vendorId: item?.productid?.vendorid,
             productId: item?.productid?._id,
-            VendorPrice: vendorPrice,
+            VendorPrice: vendorPrice?.props?.children,
             AdminPrice: adminPrice,
             quantity: item?.quantity,
-            totalPrice: totalPrice,
+            totalPrice: totalPrice?.props?.children,
           };
         });
         console.log("products", products);
@@ -207,7 +351,7 @@ const VendorAddedProductCart = () => {
       }
     }
   };
-
+  console.log("amounts", amounts);
   return (
     <div className="p-5">
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
@@ -246,10 +390,46 @@ const VendorAddedProductCart = () => {
                   <td>
                     <p>
                       ₹{" "}
-                      {Number(item?.productid?.productPrice) -
-                        (Number(item?.productid?.productPrice) *
-                          Number(item?.productid?.discount)) /
-                          100}
+                      {item?.productid?.productType?.toLowerCase() ===
+                      "tablet" ? (
+                        <>
+                          {Number(
+                            item?.productid?.productPrice *
+                              item?.productid?.No_of_Strips
+                          ) +
+                            (Number(
+                              item?.productid?.productPrice *
+                                item?.productid?.No_of_Strips
+                            ) *
+                              Number(item?.productid?.CGST)) /
+                              100 +
+                            (Number(
+                              item?.productid?.productPrice *
+                                item?.productid?.No_of_Strips
+                            ) *
+                              Number(item?.productid?.SGST)) /
+                              100 -
+                            (Number(
+                              item?.productid?.productPrice *
+                                item?.productid?.No_of_Strips
+                            ) *
+                              Number(item?.productid?.discount)) /
+                              100}
+                        </>
+                      ) : (
+                        <>
+                          {Number(item?.productid?.productPrice) +
+                            (Number(item?.productid?.productPrice) *
+                              Number(item?.productid?.CGST)) /
+                              100 +
+                            (Number(item?.productid?.productPrice) *
+                              Number(item?.productid?.SGST)) /
+                              100 -
+                            (Number(item?.productid?.productPrice) *
+                              Number(item?.productid?.discount)) /
+                              100}
+                        </>
+                      )}
                     </p>
                   </td>
                   <td>
@@ -305,11 +485,48 @@ const VendorAddedProductCart = () => {
                     </div>
                   </td>
                   <td>
-                    {(amounts[item?.productid?._id] ||
-                      Number(item?.productid?.productPrice) -
-                        (Number(item?.productid?.productPrice) *
-                          Number(item?.productid?.discount)) /
-                          100) * item?.quantity}
+                    {item?.productid?.productType?.toLowerCase() ===
+                    "tablet" ? (
+                      <>
+                        {(amounts[item?.productid?._id] ||
+                          Number(
+                            item?.productid?.productPrice *
+                              item?.productid?.No_of_Strips
+                          ) +
+                            (Number(
+                              item?.productid?.productPrice *
+                                item?.productid?.No_of_Strips
+                            ) *
+                              Number(item?.productid?.CGST)) /
+                              100 +
+                            (Number(
+                              item?.productid?.productPrice *
+                                item?.productid?.No_of_Strips
+                            ) *
+                              Number(item?.productid?.SGST)) /
+                              100 -
+                            (Number(
+                              item?.productid?.productPrice *
+                                item?.productid?.No_of_Strips
+                            ) *
+                              Number(item?.productid?.discount)) /
+                              100) * item?.quantity}
+                      </>
+                    ) : (
+                      <>
+                        {(amounts[item?.productid?._id] ||
+                          Number(item?.productid?.productPrice) +
+                            (Number(item?.productid?.productPrice) *
+                              Number(item?.productid?.CGST)) /
+                              100 +
+                            (Number(item?.productid?.productPrice) *
+                              Number(item?.productid?.SGST)) /
+                              100 -
+                            (Number(item?.productid?.productPrice) *
+                              Number(item?.productid?.discount)) /
+                              100) * item?.quantity}
+                      </>
+                    )}
                   </td>
                   <td>
                     <div style={{ display: "flex", gap: "20px" }}>
@@ -352,17 +569,36 @@ const VendorAddedProductCart = () => {
         >
           <p>
             Total Amount :{" "}
-            {getAddtocart?.reduce(
-              (a, item) =>
-                a +
-                (amounts[item?.productid?._id] ||
-                  Number(item?.productid?.productPrice) -
-                    (Number(item?.productid?.productPrice) *
-                      Number(item?.productid?.discount)) /
-                      100) *
-                  item?.quantity,
-              0
-            )}
+            {getAddtocart?.reduce((a, item) => {
+              const product = item?.productid;
+              if (!product) return a;
+
+              // Determine the price based on the product type
+              const basePrice =
+                product?.productType?.toLowerCase() === "tablet"
+                  ? Number(product?.productPrice) *
+                    Number(product?.No_of_Strips)
+                  : Number(product?.productPrice);
+
+              // Calculate the price with taxes (CGST and SGST)
+              const priceWithTaxes =
+                basePrice +
+                (basePrice * Number(product?.CGST || 0)) / 100 +
+                (basePrice * Number(product?.SGST || 0)) / 100;
+
+              // Calculate the price after discount
+              const priceAfterDiscount =
+                priceWithTaxes -
+                (basePrice * Number(product?.discount || 0)) / 100;
+
+              // Calculate the total amount for the current item
+              const itemTotal =
+                (amounts[product?._id] || priceAfterDiscount) *
+                (Number(item?.quantity) || 0);
+
+              // Accumulate the total amount
+              return a + itemTotal;
+            }, 0)}
           </p>
           <button
             style={{
