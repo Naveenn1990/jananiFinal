@@ -1,34 +1,7 @@
 import React, { useState } from "react";
-import { Modal, Table } from "react-bootstrap";
-import {
-  AiFillDelete,
-  AiOutlineAppstoreAdd,
-  AiOutlineFastBackward,
-  AiOutlinePlusCircle,
-} from "react-icons/ai";
-import {
-  BsCurrencyRupee,
-  BsFillEyeFill,
-  BsFillImageFill,
-  BsImages,
-  BsNewspaper,
-} from "react-icons/bs";
-import { MdEdit, MdEmojiEvents } from "react-icons/md";
-import { FaBlog, FaClinicMedical, FaUserMd } from "react-icons/fa";
-import { HiOutlineInformationCircle } from "react-icons/hi";
-
-import { ImLab } from "react-icons/im";
-import { RiGalleryFill } from "react-icons/ri";
-
-import { PiTestTubeFill } from "react-icons/pi";
-import { GrCircleInformation, GrDocumentTest, GrGallery } from "react-icons/gr";
-import AddBanner from "./Addbanners";
-import AddAboutUS from "./AddAboutUS";
-import AddLatestNews from "./AddLatestNews";
-import Addgallery from "./Addgallery";
-import Addblog from "./Addblog";
-import Addevents from "./Addevents";
-import Hospitallab from "./Hospitallab";
+import {  AiOutlineFastBackward} from "react-icons/ai";
+import { BsCurrencyRupee} from "react-icons/bs";
+import {  FaClinicMedical } from "react-icons/fa";
 import { GiTestTubes } from "react-icons/gi";
 import { TbReportSearch } from "react-icons/tb";
 import Hospitallabtestlist from "./HospitalLabTest";
@@ -36,24 +9,9 @@ import Hospitallabtestreport from "./Hospitallabreport";
 import Clinicallab from "./Clinicallab";
 import TotalLabRevenue from "./TotalLabRevenue";
 export default function ClinicalLabPanel() {
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  const [show1, setShow1] = useState(false);
-
-  const handleClose1 = () => setShow1(false);
-  const handleShow1 = () => setShow1(true);
-
-  const [show2, setShow2] = useState(false);
-
-  const handleClose2 = () => setShow2(false);
-  const handleShow2 = () => setShow2(true);
 
   const [ViewModal, setViewModal] = useState();
   const [Title, setTitle] = useState("Clinical Lab management");
-
   const [View, setView] = useState(false);
 
   return (

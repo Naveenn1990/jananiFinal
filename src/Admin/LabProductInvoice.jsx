@@ -79,7 +79,7 @@ function LabProductInvoice() {
             </div>           
           </div>
 
-          <h6 className="fw-bold text-dark">BILL</h6>
+          <h6 className="fw-bold text-dark">BILL Details</h6>
           <Table bordered>
             <thead>
               <tr className="admin-table-head">
