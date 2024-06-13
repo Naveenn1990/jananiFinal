@@ -162,27 +162,6 @@ export default function HospitalLabPanel() {
             ) : (
               <></>
             )}
-
-            {admin?.labReceptionist ? (
-              <>
-                <div className="col-lg-4">
-                  {" "}
-                  <div
-                    className="websiteMcards"
-                    onClick={() => {
-                      setViewModal(<BookedLabTest />);
-                      setView(true);
-                      setTitle("BOOKED LAB TEST");
-                    }}
-                  >
-                    <AiOutlineAppstore className="WebMI" />
-                    Booked Lab Test
-                  </div>
-                </div>
-              </>
-            ) : (
-              <></>
-            )}
           </div>
         )}
       </div>

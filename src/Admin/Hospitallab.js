@@ -101,6 +101,7 @@ export default function Hospitallab() {
   };
 
   const [HospitalLabList, setHospitalLabList] = useState([]);
+  const [HospitalLabListImmutable, setHospitalLabListImmutable] = useState([]);
   const HospitallabList = () => {
     axios
       .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
@@ -109,6 +110,7 @@ export default function Hospitallab() {
         if (response.status === 200) {
           const data = response.data.HospitalLabTests;
           setHospitalLabList(data);
+          setHospitalLabListImmutable(data);
         }
       })
       .catch(function (error) {
@@ -117,6 +119,45 @@ export default function Hospitallab() {
         setHospitalLabList([]);
       });
   };
+
+  //lab vials
+  const [vialList, setvialList] = useState([]);
+  const getHospitalVials = () => {
+    axios
+      .get("http://localhost:8521/api/admin/vialList")
+      .then(function (response) {
+        // handle success
+        if (response.status === 200) {
+          const data = response.data.viallist;
+          setvialList(data);
+        }
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+        setvialList([]);
+      });
+  };
+
+  // search
+  const [search, setSearch] = useState("");
+  function handleFilter() {
+    if (search != "") {
+      // setSearch(search);
+      const filterTable = HospitalLabList.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(search.toLowerCase())
+        )
+      );
+      setHospitalLabList([...filterTable]);
+    } else {
+      setHospitalLabList([...HospitalLabListImmutable]);
+    }
+  }
+
+  useEffect(() => {
+    handleFilter();
+  }, [search]);
 
   useEffect(() => {
     HospitallabCategories();
@@ -136,12 +177,14 @@ export default function Hospitallab() {
           }}
         >
           <input
-            placeholder="Search Hospital Lab"
+            value={search}
+            placeholder="Search Hospital Lab test"
             style={{
               padding: "5px 10px",
               border: "1px solid #20958c",
               borderRadius: "0px",
             }}
+            onChange={(e) => setSearch(e.target.value)}
           />
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <ImLab className="AddIcon1" onClick={() => setShow(true)} />
@@ -417,6 +460,55 @@ export default function Hospitallab() {
                   value={generalRefVal}
                   onChange={(e) => setgeneralRefVal(e.target.value)}
                 ></input>
+              </div>
+
+              <div className="col-lg-6" style={{ marginTop: "4%" }}>
+                <label
+                  style={{
+                    color: "white",
+                    fontWeight: "400",
+                    fontSize: "18px",
+                  }}
+                >
+                  Vials
+                </label>
+                <select
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                >
+                  <option>Choose Vial</option>
+                </select>
+              </div>
+
+              <div
+                className="col-lg-12"
+                style={{
+                  marginTop: "4%",
+                  backgroundColor: "#ebebeb",
+                  textAlign: "center",
+                }}
+              >
+                <Table>
+                  <thead>
+                    <td>S.no.</td>
+                    <td>Vials</td>
+                    <td>Action</td>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1. </td>
+                      <td>lavender </td>
+                      <td>
+                        <AiFillDelete style={{ color: "red" }} />{" "}
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
               </div>
             </div>
           </Modal.Body>
