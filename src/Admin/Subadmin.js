@@ -10,12 +10,11 @@ import { FaEye } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { ImCancelCircle } from "react-icons/im";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Subadmin() {
-  // let Checksubadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
-
-  // console.log("Checksubadmin", Checksubadmin);
-
+  const isAdminlogin = sessionStorage.getItem("adminDetails");
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -45,6 +44,8 @@ export default function Subadmin() {
   const [patientManagement, setpatientManagement] = useState(false);
   const [docAppointment, setdocAppointment] = useState(false);
   const [labManagement, setlabManagement] = useState(false);
+  const [labReceptionist, setlabReceptionist] = useState(false);
+  const [labSampleCollector, setlabSampleCollector] = useState(false);
   const [labTechnician, setlabTechnician] = useState(false);
   const [pharmacyManagement, setpharmacyManagement] = useState(false);
   // const [vendorManagement, setvendorManagement] = useState(false);
@@ -57,6 +58,7 @@ export default function Subadmin() {
   const [accounts, setaccounts] = useState(false);
   const [enqAndComplaints, setenqAndComplaints] = useState(false);
   const [subadminlist, setsubadminlist] = useState([]);
+  const [subadminlistImmutable, setsubadminlistImmutable] = useState([]);
   const [View, setView] = useState({});
   const [subadminChanged, setsubadminChanged] = useState("");
   const [doctorManagementChanged, setdoctorManagementChanged] = useState("");
@@ -65,6 +67,9 @@ export default function Subadmin() {
   const [docAppointmentChanged, setdocAppointmentChanged] = useState("");
   const [labManagementChanged, setlabManagementChanged] = useState("");
   const [labTechnicianChanged, setlabTechnicianChanged] = useState("");
+  const [labReceptionistChanged, setlabReceptionistChanged] = useState("");
+  const [labSampleCollectorChanged, setlabSampleCollectorChanged] =
+    useState("");
   const [pharmacyManagementChanged, setpharmacyManagementChanged] =
     useState("");
   // const [vendorManagementChanged, setvendorManagementChanged] = useState("");
@@ -96,6 +101,8 @@ export default function Subadmin() {
           docAppointment: docAppointment,
           labManagement: labManagement,
           labTechnician: labTechnician,
+          labReceptionist: labReceptionist,
+          labSampleCollector: labSampleCollector,
           pharmacyManagement: pharmacyManagement,
           // vendorManagement: vendorManagement,
           websiteManagement: websiteManagement,
@@ -120,6 +127,8 @@ export default function Subadmin() {
         setdocAppointment(false);
         setlabManagement(false);
         setlabTechnician(false);
+        setlabReceptionist(false);
+        setlabSampleCollector(false);
         setpharmacyManagement(false);
         // setvendorManagement(false);
         setwebsiteManagement(false);
@@ -136,6 +145,8 @@ export default function Subadmin() {
         setdocAppointmentChanged("");
         setlabManagementChanged("");
         setlabTechnicianChanged("");
+        setlabReceptionistChanged("");
+        setlabSampleCollectorChanged("");
         setpharmacyManagementChanged("");
         // setvendorManagementChanged("");
         setwebsiteManagementChanged("");
@@ -161,6 +172,7 @@ export default function Subadmin() {
         ?.then((res) => {
           if (res.status === 200) {
             setsubadminlist(res.data.subadminList);
+            setsubadminlistImmutable(res.data.subadminList);
           }
         })
         ?.catch((err) => {
@@ -198,6 +210,12 @@ export default function Subadmin() {
           labManagementChanged: labManagementChanged,
           labTechnician: labTechnicianChanged ? labTechnician : "",
           labTechnicianChanged: labTechnicianChanged,
+          labReceptionist: labReceptionistChanged ? labReceptionist : "",
+          labReceptionistChanged: labReceptionistChanged,
+          labSampleCollector: labSampleCollectorChanged
+            ? labSampleCollector
+            : "",
+          labSampleCollectorChanged: labSampleCollectorChanged,
           pharmacyManagement: pharmacyManagementChanged
             ? pharmacyManagement
             : "",
@@ -225,10 +243,10 @@ export default function Subadmin() {
       axios(config)
         ?.then((res) => {
           if (res.status === 200) {
-            sessionStorage.setItem(
-              "Subadmin",
-              JSON.stringify(res.data.subadmin)
-            );
+            // sessionStorage.setItem(
+            //   "adminDetails",
+            //   JSON.stringify(res.data.subadmin)
+            // );
             subadminList();
             setname("");
             setemail("");
@@ -239,6 +257,9 @@ export default function Subadmin() {
             setpatientManagement(false);
             setdocAppointment(false);
             setlabManagement(false);
+            setlabReceptionist(false);
+            setlabSampleCollector(false);
+            setlabTechnician(false);
             setpharmacyManagement(false);
             // setvendorManagement(false);
             setwebsiteManagement(false);
@@ -254,6 +275,9 @@ export default function Subadmin() {
             setpatientManagementChanged("");
             setdocAppointmentChanged("");
             setlabManagementChanged("");
+            setlabTechnicianChanged("");
+            setlabReceptionistChanged("");
+            setlabSampleCollectorChanged("");
             setpharmacyManagementChanged("");
             // setvendorManagementChanged("");
             setwebsiteManagementChanged("");
@@ -315,9 +339,36 @@ export default function Subadmin() {
     }
   };
 
+  const [search, setSearch] = useState("");
+  function handleFilter() {
+    if (search != "") {
+      // setSearch(search);
+      const filterTable = subadminlist.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(search.toLowerCase())
+        )
+      );
+      setsubadminlist([...filterTable]);
+    } else {
+      // setSearch(search);
+      // subadminList();
+      setsubadminlist([...subadminlistImmutable]);
+    }
+  }
+
   useEffect(() => {
-    subadminList();
-  }, []);
+    handleFilter();
+  }, [search]);
+
+  useEffect(() => {
+    if (!isAdminlogin) {
+      alert("Authorization Denied");
+      navigate("/admin");
+    } else {
+      subadminList();
+    }
+  }, [isAdminlogin, navigate]);
+
   return (
     <div style={{ padding: "1%" }}>
       {/* <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
@@ -337,6 +388,7 @@ export default function Subadmin() {
             border: "1px solid #20958c",
             borderRadius: "0px",
           }}
+          onChange={(e) => setSearch(e.target.value)}
         />
         <button
           style={{
@@ -525,6 +577,44 @@ export default function Subadmin() {
                     }}
                   >
                     Lab management
+                  </label>
+                </div>
+              </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={labReceptionist}
+                    onChange={(e) => setlabReceptionist(e.target.checked)}
+                  ></input>
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Lab Receptionist
+                  </label>
+                </div>
+              </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={labSampleCollector}
+                    onChange={(e) => setlabSampleCollector(e.target.checked)}
+                  ></input>
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Lab Sample Collector
                   </label>
                 </div>
               </div>
@@ -741,6 +831,7 @@ export default function Subadmin() {
                 padding: "6px 12px",
                 border: "1px solid white",
               }}
+              onClick={handleClose}
             >
               CANCEL
             </button>
@@ -1024,6 +1115,58 @@ export default function Subadmin() {
                     }}
                   >
                     Lab management
+                  </label>
+                </div>
+              </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={
+                      labReceptionistChanged
+                        ? labReceptionist
+                        : View?.labReceptionist
+                    }
+                    onChange={(e) => {
+                      setlabReceptionistChanged("changed");
+                      setlabReceptionist(e.target.checked);
+                    }}
+                  ></input>
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Lab Receptionist
+                  </label>
+                </div>
+              </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={
+                      labSampleCollectorChanged
+                        ? labSampleCollector
+                        : View?.labSampleCollector
+                    }
+                    onChange={(e) => {
+                      setlabSampleCollectorChanged("changed");
+                      setlabSampleCollector(e.target.checked);
+                    }}
+                  ></input>
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Lab Sample Collector
                   </label>
                 </div>
               </div>
@@ -1436,6 +1579,42 @@ export default function Subadmin() {
                     }}
                   >
                     Lab management
+                  </label>
+                </div>
+              </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={View?.labReceptionist}
+                  ></input>
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Lab Receptionist
+                  </label>
+                </div>
+              </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={View?.labSampleCollector}
+                  ></input>
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Lab Sample Collector
                   </label>
                 </div>
               </div>

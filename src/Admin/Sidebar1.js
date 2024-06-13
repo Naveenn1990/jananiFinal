@@ -163,12 +163,6 @@ export default function Sidebar1() {
 
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/Packages")}
-          >
-            Add Lab Packages
-          </h6>
-          <h6
-            className="sidebarItem1"
             onClick={() => window.location.assign("/admin/LabVendor")}
           >
             Create Vendor
@@ -180,21 +174,29 @@ export default function Sidebar1() {
             Vendor Products
           </h6>
           <Link to="/admin/LaborderHistory">
-          <h6
-            className="sidebarItem1"
-            // onClick={() => window.location.assign("/admin/LaborderHistory")}
-          >
-            Purchase Order History
-          </h6>
+            <h6
+              className="sidebarItem1"
+              // onClick={() => window.location.assign("/admin/LaborderHistory")}
+            >
+              Purchase Order History
+            </h6>
           </Link>
-          
+
           <Link to="/admin/LabInventory">
-          <h6 className="sidebarItem1" >
-           Lab Inventory
-          </h6>
+            <h6 className="sidebarItem1">Lab Inventory</h6>
           </Link>
-         
         </div>
+
+        {admin?.labReceptionist ? (
+          <Link to="/admin/HospitalLabRecepPanel">
+            <h6
+              className="sidebarItem"
+              // onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+            >
+              Lab Receptionist
+            </h6>
+          </Link>
+        ) : null}
 
         {admin?.pharmacyManagement === true ? (
           <h6 className="sidebarItem" onClick={() => setPharM(!PharM)}>
