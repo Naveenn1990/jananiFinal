@@ -258,6 +258,7 @@ import Labvendorproductcart from "./Admin/Labvendorproductcart";
 import LaborderHistory from "./Admin/LaborderHistory";
 import LabInventory from "./Admin/LabInventory";
 import LabProductInvoice from "./Admin/LabProductInvoice";
+import { HospitalLabRecepPanel } from "./Admin/HospitalLabRecepPanel";
 
 function App() {
   return (
@@ -2461,6 +2462,16 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<HospitalLabPanel />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/HospitalLabRecepPanel"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<HospitalLabRecepPanel />} />{" "}
                 </>
               }
             ></Route>

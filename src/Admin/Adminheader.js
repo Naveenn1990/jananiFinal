@@ -156,18 +156,12 @@ export default function Adminheader() {
   }
 
   useEffect(() => {
-    // Subadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
-    adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
-    if (!adminDetails) {
-      return alert("Access Denied!!!");
-    } else {
-      // getProductList();
-      // getAllVendors();
-      getAllCategory();
-      getAllSubCategory();
-      listOfOrderedProducts();
-      getInventoryList();
-    }
+    // getProductList();
+    // getAllVendors();
+    getAllCategory();
+    getAllSubCategory();
+    listOfOrderedProducts();
+    getInventoryList();
   }, []);
 
   useEffect(() => {

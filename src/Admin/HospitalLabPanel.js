@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineAppstore, AiOutlineFastBackward } from "react-icons/ai";
 import { BsCurrencyRupee } from "react-icons/bs";
 import { PiTestTubeFill } from "react-icons/pi";
@@ -13,6 +13,7 @@ import HLabProfile from "./HLabProfile";
 import BookedLabTest from "./BookedLabTest";
 import SampleHospitalLab from "./SampleHospitalLab";
 import ReportHospitalLab from "./ReportHospitalLab";
+import AddVials from "./AddVials";
 export default function HospitalLabPanel() {
   const admin = JSON.parse(sessionStorage.getItem("adminDetails"));
   const [ViewModal, setViewModal] = useState();
@@ -87,6 +88,10 @@ export default function HospitalLabPanel() {
                 </div>
               </>
             ) : (
+              <></>
+            )}
+
+            {admin?.labManagement ? (
               <>
                 <div className="col-lg-4">
                   <div
@@ -102,6 +107,23 @@ export default function HospitalLabPanel() {
                       style={{ color: "white" }}
                     />
                     ADD-LAB-TEST-CATEGORY
+                  </div>
+                </div>
+
+                <div className="col-lg-4">
+                  <div
+                    className="websiteMcards"
+                    onClick={() => {
+                      setViewModal(<AddVials />);
+                      setView(true);
+                      setTitle("ADD-VIALS");
+                    }}
+                  >
+                    <PiTestTubeFill
+                      className="WebMI"
+                      style={{ color: "white" }}
+                    />
+                    ADD-VIALS
                   </div>
                 </div>
 
@@ -136,52 +158,13 @@ export default function HospitalLabPanel() {
                     HEALTH-PACKAGE
                   </div>
                 </div>
+              </>
+            ) : (
+              <></>
+            )}
 
-                <div className="col-lg-4">
-                  {" "}
-                  <div
-                    className="websiteMcards"
-                    onClick={() => {
-                      setViewModal(<Hospitallabtestreport />);
-                      setView(true);
-                      setTitle("LAB TEST-REPORT");
-                    }}
-                  >
-                    <TbReportSearch className="WebMI" />
-                    LAB TEST-REPORT
-                  </div>
-                </div>
-
-                <div className="col-lg-4">
-                  {" "}
-                  <div
-                    className="websiteMcards"
-                    onClick={() => {
-                      setViewModal(<TotalHLabRevenue />);
-                      setView(true);
-                      setTitle("TOTAL REVENUE");
-                    }}
-                  >
-                    <BsCurrencyRupee className="WebMI" />
-                    TOTAL REVENUE
-                  </div>
-                </div>
-
-                <div className="col-lg-4">
-                  {" "}
-                  <div
-                    className="websiteMcards"
-                    onClick={() => {
-                      setViewModal(<HLabProfile />);
-                      setView(true);
-                      setTitle("LAB PROFILE");
-                    }}
-                  >
-                    <AiOutlineAppstore className="WebMI" />
-                    ADD LAB PROFILE
-                  </div>
-                </div>
-
+            {admin?.labReceptionist ? (
+              <>
                 <div className="col-lg-4">
                   {" "}
                   <div
@@ -197,6 +180,8 @@ export default function HospitalLabPanel() {
                   </div>
                 </div>
               </>
+            ) : (
+              <></>
             )}
           </div>
         )}
