@@ -122,30 +122,29 @@ export const VendorAddProducts = () => {
         <Table className="table " responsive style={{ width: "1500px" }}>
           <thead>
             <tr className="admin-table-head">
-              <th className="fw-bold">productName</th>
-
-              <th className="fw-bold">currencyFormat</th>
-              <th className="fw-bold">productType</th>
-              <th className="fw-bold">manufacturingDate</th>
-              <th className="fw-bold">expiryDate</th>
-              <th className="fw-bold">productPrice</th>
-              <th className="fw-bold">discount </th>
+              <th className="fw-bold">Product Name</th>
+              <th className="fw-bold">Currency Format</th>
+              <th className="fw-bold">Product Type</th>
+              <th className="fw-bold">Manufacturing Date</th>
+              <th className="fw-bold">Expiry Date</th>
+              <th className="fw-bold">Product Price</th>
+              <th className="fw-bold">Discount </th>
               <th className="fw-bold">CGST </th>
               <th className="fw-bold">SGST </th>
               <th className="fw-bold">MRP </th>
               <th className="fw-bold">Total Amount </th>
-              <th className="fw-bold">productSize </th>
-              <th className="fw-bold">packSize </th>
-              <th className="fw-bold">colour </th>
-              <th className="fw-bold">flavour </th>
-              <th className="fw-bold">fragrance </th>
-              <th className="fw-bold">variant </th>
-              <th className="fw-bold">description </th>
-              <th className="fw-bold">brand </th>
-              <th className="fw-bold">countryOfOrigin </th>
-              <th className="fw-bold">manufacturercompanyname </th>
-              <th className="fw-bold">manufactureraddress </th>
-              <th className="fw-bold">stock </th>
+              <th className="fw-bold">Product Size </th>
+              <th className="fw-bold">Pack Size </th>
+              <th className="fw-bold">Colour </th>
+              <th className="fw-bold">Flavour </th>
+              <th className="fw-bold">Fragrance </th>
+              <th className="fw-bold">Variant </th>
+              <th className="fw-bold">Description </th>
+              <th className="fw-bold">Brand </th>
+              <th className="fw-bold">Country Of Origin </th>
+              <th className="fw-bold">Manufacturer company name </th>
+              <th className="fw-bold">Manufacturer address </th>
+              <th className="fw-bold">Stock </th>
             </tr>
           </thead>
 

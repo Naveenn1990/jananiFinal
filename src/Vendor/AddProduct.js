@@ -32,8 +32,6 @@ export const AddProduct = () => {
   const [ProductCategory, setProductCategory] = useState();
   const [ProductSubCategory, setProductSubCategory] = useState();
 
-  console.log(ProductCategory, ProductSubCategory);
-
   const [manufacturingDate, setmanufacturingDate] = useState();
   const [expiryDate, setexpiryDate] = useState();
   const [discount, setdiscount] = useState();
@@ -301,8 +299,8 @@ export const AddProduct = () => {
     getAllSubCategory();
     getAllData();
   }, []);
-
-  console.log("asf", productTypes, productType?.toLowerCase());
+  console.log("categoryList", categoryList);
+  console.log("subcategoryList", subcategoryList);
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
@@ -382,11 +380,13 @@ export const AddProduct = () => {
               onChange={(e) => setProductSubCategory(e.target.value)}
             >
               <option>Select Product Sub-Category</option>
-              {subcategoryList?.map((item) => {
-                return (
-                  <option value={item?._id}>{item?.subcategoryName}</option>
-                );
-              })}
+              {subcategoryList
+                ?.filter((sub) => sub?.categoryid?._id === ProductCategory)
+                .map((item) => {
+                  return (
+                    <option value={item?._id}>{item?.subcategoryName}</option>
+                  );
+                })}
             </Form.Select>
           </div>
 

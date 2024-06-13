@@ -511,7 +511,7 @@ export default function Hospitaldoctors() {
               zIndex: "999",
             }}
           >
-            <FaUserMd className="AddIcon1" onClick={() => setShow(true)} />
+            <FaUserMd className="AddIcon1" onClick={() => handleShow()} />
           </div>
         </div>
 

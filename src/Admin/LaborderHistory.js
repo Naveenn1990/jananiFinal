@@ -76,7 +76,8 @@ export default function LaborderHistory() {
       };
       let res = await axios(config);
       if (res === 201) {
-        alert(res.data.success);
+        alert("Product added to inventory");
+        window.location.reload();
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -211,8 +212,8 @@ export default function LaborderHistory() {
                       </td>
                       <td>
                         <Link
-                          to= "/admin/LabProductInvoice"
-                          state= {{ val: val }}
+                          to="/admin/LabProductInvoice"
+                          state={{ val: val }}
                         >
                           <Button>Invoice</Button>
                         </Link>
@@ -324,6 +325,8 @@ export default function LaborderHistory() {
                     <tr className="admin-table-head">
                       <th className="fw-bold">Product Image</th>
                       <th className="fw-bold">Product ID</th>
+                      <th className="fw-bold">HSN No.</th>
+                      <th className="fw-bold">Batch No.</th>
                       <th className="fw-bold">Product Name</th>
                       <th className="fw-bold">Vendor Price</th>
                       <th className="fw-bold">Admin Price</th>
@@ -344,6 +347,8 @@ export default function LaborderHistory() {
                           />
                         </td>
                         <td>{item?.productId?._id}</td>
+                        <td>{item?.productId?.HSN}</td>
+                        <td>{item?.productId?.Batch}</td>
                         <td>{item?.productId?.productName}</td>
                         <td>₹ {item?.VendorPrice}</td>
                         <td>₹ {item?.AdminPrice}</td>
