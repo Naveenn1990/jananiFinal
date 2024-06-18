@@ -74,7 +74,7 @@ export default function Sidebar1() {
           </h6>
         </div>
 
-        {admin?.staffManagement === true ? (
+        {/* {admin?.staffManagement === true ? (
           <h6
             className="sidebarItem"
             onClick={() =>
@@ -83,7 +83,7 @@ export default function Sidebar1() {
           >
             Staff management
           </h6>
-        ) : null}
+        ) : null} */}
 
         {admin?.patientManagement === true ? (
           <h6 className="sidebarItem" onClick={() => setPatientM(!PatientM)}>
