@@ -54,6 +54,36 @@ export default function Hospitallab() {
   // const [afterFoodRefVal, setafterFoodRefVal] = useState("");
   const [generalRefVal, setgeneralRefVal] = useState("");
   const [testImg, settestImg] = useState({});
+  const [vialsneeded, setvialsneeded] = useState([]);
+  const [showvialsneeded, setshowvialsneeded] = useState([]);
+  const [addedVialObj, setaddedVialObj] = useState("");
+  function vialsAddedFn() {
+    setvialsneeded([
+      ...vialsneeded,
+      {
+        vialid: addedVialObj?._id,
+      },
+    ]);
+    setshowvialsneeded([
+      ...showvialsneeded,
+      {
+        vialid: addedVialObj?._id,
+        vial: addedVialObj?.vial,
+      },
+    ]);
+  }
+
+  function vialRemFn(id) {
+    setvialsneeded([
+      ...vialsneeded.filter((val) => val.vialid?.toString() !== id?.toString()),
+    ]);
+    setshowvialsneeded([
+      ...showvialsneeded.filter(
+        (val) => val.vialid?.toString() !== id?.toString()
+      ),
+    ]);
+  }
+
   const AddHospitalLabTest = async () => {
     const obj = {
       testCategory,
@@ -65,6 +95,7 @@ export default function Hospitallab() {
       // afterFoodRefVal,
       generalRefVal,
       testImg,
+      vialsneeded,
     };
     try {
       const config = {
@@ -162,6 +193,7 @@ export default function Hospitallab() {
   useEffect(() => {
     HospitallabCategories();
     HospitallabList();
+    getHospitalVials();
   }, []);
   return (
     <div>
@@ -472,17 +504,39 @@ export default function Hospitallab() {
                 >
                   Vials
                 </label>
-                <select
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                >
-                  <option>Choose Vial</option>
-                </select>
+                <div className="d-flex">
+                  <select
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                    }}
+                    onChange={(e) =>
+                      setaddedVialObj(JSON.parse(e.target.value))
+                    }
+                  >
+                    <option>Choose Vial</option>
+                    {vialList?.map((val) => {
+                      return (
+                        <option value={JSON.stringify(val)}>{val?.vial}</option>
+                      );
+                    })}
+                  </select>
+                  <button
+                    style={{
+                      marginLeft: "10px",
+                      border: "0px",
+                      backgroundColor: "#ebebeb",
+                      color: "#20958C",
+                      borderRadius: "10px ",
+                    }}
+                    onClick={vialsAddedFn}
+                  >
+                    Add
+                  </button>
+                </div>
               </div>
 
               <div
@@ -500,13 +554,20 @@ export default function Hospitallab() {
                     <td>Action</td>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>1. </td>
-                      <td>lavender </td>
-                      <td>
-                        <AiFillDelete style={{ color: "red" }} />{" "}
-                      </td>
-                    </tr>
+                    {showvialsneeded?.map((item, i) => {
+                      return (
+                        <tr>
+                          <td>{i + 1}. </td>
+                          <td>{item?.vial} </td>
+                          <td>
+                            <AiFillDelete
+                              style={{ color: "red" }}
+                              onClick={() => vialRemFn(item?.vialid)}
+                            />{" "}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </Table>
               </div>
