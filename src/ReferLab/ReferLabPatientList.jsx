@@ -1,14 +1,7 @@
 import {
-  faAngleLeft,
-  faAngleRight,
   faCancel,
   faCheck,
-  faEllipsis,
   faFilePdf,
-  faFilter,
-  faPenToSquare,
-  faTrash,
-  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
@@ -16,7 +9,6 @@ import React, { useEffect, useState } from "react";
 import {
   Button,
   Container,
-  Dropdown,
   FloatingLabel,
   Form,
   FormLabel,
@@ -24,6 +16,7 @@ import {
   ProgressBar,
   Table,
 } from "react-bootstrap";
+import { MdDelete, MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 export const ReferLabPatientList = () => {
@@ -53,10 +46,96 @@ export const ReferLabPatientList = () => {
       console.log(error);
     }
   };
+
+  console.log("LabPatientList", LabPatientList);
+  const [SearchItem, setSearchItem] = useState("");
+
+  const [LabPatientId, setLabPatientId] = useState("");
+  const DeleteLabpatient = async () => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:8521/api/ClinicLab/deletelappatient/${LabPatientId?._id}`
+      );
+      if (res.status === 200) {
+        getlabregisterpatient();
+        deleteBtnClose();
+      }
+    } catch (error) {
+      console.log(error);
+      alert(error.response.data.error);
+    }
+  };
+  const [HospitalLabList, setHospitalLabList] = useState([]);
+  const HospitallabList = () => {
+    axios
+      .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
+      .then(function (response) {
+        if (response.status === 200) {
+          const data = response.data.HospitalLabTests;
+          setHospitalLabList(data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        setHospitalLabList([]);
+      });
+  };
+  console.log("LabPatientId", LabPatientId);
+
+  const [firstname, setfirstname] = useState("");
+  const [lastname, setlastname] = useState("");
+  const [gender, setgender] = useState("");
+  const [Phoneno, setPhoneno] = useState("");
+  const [email, setemail] = useState("");
+  const [dob, setdob] = useState("");
+  const [age, setage] = useState("");
+  const [maritalStatus, setmaritalStatus] = useState("");
+  const [bloodgroup, setbloodgroup] = useState("");
+  const [Address, setAddress] = useState("");
+  const [DateofAppointment, setDateofAppointment] = useState("");
+  const [Injury, setInjury] = useState("");
+  const [OldPrescription, setOldPrescription] = useState("");
+  const [Selecttest, setSelecttest] = useState("");
+  const formdata = new FormData();
+  const EditReferalLabPatient = async()=>{
+    try {
+      formdata.set("LabPatientsFname", firstname);
+      formdata.set("LabPatientsLname", lastname);
+      formdata.set("Gender", gender);
+      formdata.set("PhoneNumber", Phoneno);
+      formdata.set("Email", email);
+      formdata.set("Dob", dob);
+      formdata.set("Age", age);
+      formdata.set("marritalStatus", maritalStatus);
+      formdata.set("BloodGroup", bloodgroup);
+      formdata.set("Address", Address);
+      formdata.set("AppointmentDate", DateofAppointment);
+      formdata.set("InjuryCondition", Injury);
+      formdata.set("OldPrescription", OldPrescription);
+      formdata.set("LabId", ReferalLAB?._id);
+      formdata.set("labtestid", Selecttest);
+      const config = {
+        url:"/editreferallabpatient/" + LabPatientId?._id,
+        method:"put",
+        baseURL:"http://localhost:8521/api/ClinicLab/",
+        headers: { "Content-Type": "multipart/form-data" },
+        data:formdata        
+      }
+      let res = await axios(config);
+      if(res.status === 200){
+        alert(res.data.success)
+        handleClose()
+        getlabregisterpatient();
+      }      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     getlabregisterpatient();
+    HospitallabList();
   }, []);
-  console.log("LabPatientList", LabPatientList);
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
@@ -73,22 +152,9 @@ export const ReferLabPatientList = () => {
                 placeholder="Search"
                 className="me-2"
                 aria-label="Search"
+                onChange={(e) => setSearchItem(e.target.value)}
               />
-              {/* <Button variant="outline-primary">Search</Button> */}
             </Form>
-
-            <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
-                <FontAwesomeIcon icon={faFilter} /> Filtered By
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                <Dropdown.Item href="#">Last 7 Days</Dropdown.Item>
-                <Dropdown.Item href="#">Last 1 Month</Dropdown.Item>
-                <Dropdown.Item href="#">Last 6 Month</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-
             <Button
               className="green-btn-9"
               onClick={() => navigate("/referlabaddpatient")}
@@ -109,68 +175,61 @@ export const ReferLabPatientList = () => {
                 <th>Actions </th>
               </tr>
             </thead>
-
             <tbody>
               {LabPatientList?.map((item, i) => {
-                return (
-                  <tr className="admin-table-row">
-                    <td>{i + 1} </td>
-                    <td>{`${item?.LabPatientsFname} ${item?.LabPatientsLname}`}</td>
-                    <td>{item?.Gender}</td>
-                    <td>{item?.Address}</td>
-                    <td>{item?.PhoneNumber}</td>
-                    <td>{item?.Age}</td>
-                    <td>{item?.BloodGroup}</td>
-                    <td>
-                      <div
-                        className="Diseases-btn"
-                        style={{ color: "red", border: "1px solid green" }}
-                      >
-                        {item?.InjuryCondition}
-                      </div>
-                    </td>
-
-                    <td>
-                      <Dropdown>
-                        <Dropdown.Toggle
-                          className="medicine-list"
-                          id="dropdown-basic"
+                if (
+                  SearchItem === "" ||
+                  Object.values(item).some((value) =>
+                    String(value)
+                      .toLowerCase()
+                      .includes(SearchItem.toLowerCase())
+                  )
+                )
+                  return (
+                    <tr className="admin-table-row">
+                      <td>{i + 1} </td>
+                      <td>{`${item?.LabPatientsFname} ${item?.LabPatientsLname}`}</td>
+                      <td>{item?.Gender}</td>
+                      <td>{item?.Address}</td>
+                      <td>{item?.PhoneNumber}</td>
+                      <td>{item?.Age}</td>
+                      <td>{item?.BloodGroup}</td>
+                      <td>
+                        <div
+                          className="Diseases-btn"
+                          style={{ color: "red", border: "1px solid green" }}
                         >
-                          <FontAwesomeIcon
-                            icon={faEllipsis}
-                            className="fs-3 "
+                          {item?.InjuryCondition}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex gap-4">
+                          <MdEdit
+                            style={{
+                              color: "green",
+                              fontSize: "18px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              handleShow();
+                              setLabPatientId(item);
+                            }}
                           />
-                        </Dropdown.Toggle>
-                        {/* <Dropdown.Menu>
-                          <Dropdown.Item
-                            className="medicine-list-dropdown"
-                            onClick={ViewProfileShow}
-                          >
-                            <FontAwesomeIcon icon={faUser} className="me-2" />
-                            View Profile
-                          </Dropdown.Item>
-                          <Dropdown.Item
-                            className="medicine-list-dropdown"
-                            onClick={handleShow}
-                          >
-                            <FontAwesomeIcon
-                              icon={faPenToSquare}
-                              className="me-2"
-                            />
-                            Edit Selected
-                          </Dropdown.Item>
-                          <Dropdown.Item
-                            className="medicine-list-dropdown"
-                            onClick={deleteBtnShow}
-                          >
-                            <FontAwesomeIcon icon={faTrash} className="me-2" />
-                            Remove Selected
-                          </Dropdown.Item>
-                        </Dropdown.Menu> */}
-                      </Dropdown>
-                    </td>
-                  </tr>
-                );
+                          <MdDelete
+                            style={{
+                              color: "red",
+                              fontSize: "18px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              deleteBtnShow();
+                              setLabPatientId(item);
+                            }}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
               })}
             </tbody>
           </Table>
@@ -190,23 +249,21 @@ export const ReferLabPatientList = () => {
           <Modal.Title>
             <div className="d-flex align-items-center gap-3 mb-3">
               <img
-                style={{ width: "50px", height: "50px", borderRadius: "5px" }}
-                src="./img/Our-doctors-img-1.jpg"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "24px",
+                }}
+                src="./img/dummyprofile.png"
                 alt=""
               />
-              <h4 className="fw-bold " style={{ color: "rgb(32, 139, 140)" }}>
+              <h4 className="fw-bold " style={{ color: "white" }}>
                 Edit Patient Detail
               </h4>
             </div>
-            <div
-              className="Diseases-btn"
-              style={{
-                color: "green",
-                border: "1px solid green",
-                width: "100px",
-              }}
-            >
-              Rajesh
+            <div>
+              {`${LabPatientId?.LabPatientsFname} 
+            ${LabPatientId?.LabPatientsLname}`}
             </div>
           </Modal.Title>
         </Modal.Header>
@@ -217,9 +274,13 @@ export const ReferLabPatientList = () => {
               <FloatingLabel
                 style={{ width: "300px" }}
                 controlId="floatingEmail"
-                label="First Name"
+                label={LabPatientId?.LabPatientsFname}
               >
-                <Form.Control type="text" placeholder="First Name" />
+                <Form.Control
+                  type="text"
+                  placeholder="First Name"
+                  onChange={(e) => setfirstname(e.target.value)}
+                />
               </FloatingLabel>
             </div>
 
@@ -228,9 +289,13 @@ export const ReferLabPatientList = () => {
               <FloatingLabel
                 style={{ width: "300px" }}
                 controlId="floatingName"
-                label="Last Name"
+                label={LabPatientId?.LabPatientsLname}
               >
-                <Form.Control type="text" placeholder="Last Name" />
+                <Form.Control
+                  type="text"
+                  placeholder="Last Name"
+                  onChange={(e) => setlastname(e.target.value)}
+                />
               </FloatingLabel>
             </div>
           </div>
@@ -241,11 +306,12 @@ export const ReferLabPatientList = () => {
               <Form.Select
                 style={{ width: "300px" }}
                 aria-label="Default select example"
+                onChange={(e) => setgender(e.target.value)}
               >
                 <option>Select gender</option>
-                <option value="1">Male</option>
-                <option value="2">Female</option>
-                <option value="3">Other</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
               </Form.Select>
             </div>
 
@@ -256,9 +322,13 @@ export const ReferLabPatientList = () => {
               <FloatingLabel
                 style={{ width: "300px" }}
                 controlId="floatingNumber"
-                label="Phone Number"
+                label={LabPatientId?.PhoneNumber}
               >
-                <Form.Control type="number" placeholder="Phone Number" />
+                <Form.Control
+                  type="number"
+                  placeholder="Phone Number"
+                  onChange={(e) => setPhoneno(e.target.value)}
+                />
               </FloatingLabel>
             </div>
           </div>
@@ -269,9 +339,13 @@ export const ReferLabPatientList = () => {
               <FloatingLabel
                 style={{ width: "300px" }}
                 controlId="floatingEmail"
-                label="Email"
+                label={LabPatientId?.Email}
               >
-                <Form.Control type="Email" placeholder="Email" />
+                <Form.Control
+                  type="Email"
+                  placeholder="Email"
+                  onChange={(e) => setemail(e.target.value)}
+                />
               </FloatingLabel>
             </div>
 
@@ -282,7 +356,11 @@ export const ReferLabPatientList = () => {
                 controlId="floatingEmail"
                 label=""
               >
-                <Form.Control type="date" placeholder="" />
+                <Form.Control
+                  type="date"
+                  placeholder=""
+                  onChange={(e) => setdob(e.target.value)}
+                />
               </FloatingLabel>
             </div>
           </div>
@@ -293,81 +371,113 @@ export const ReferLabPatientList = () => {
               <FloatingLabel
                 style={{ width: "300px" }}
                 controlId="floatingAge"
-                label="Age"
+                label={LabPatientId?.Age}
               >
-                <Form.Control type="number" placeholder="Age" />
+                <Form.Control
+                  type="number"
+                  placeholder="Age"
+                  onChange={(e) => setage(e.target.value)}
+                />
               </FloatingLabel>
             </div>
-
-            <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">
-                Blood Presure*{" "}
-              </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingEmail"
-                label="Blood Presure"
-              >
-                <Form.Control type="text" placeholder="Blood Presure" />
-              </FloatingLabel>
-            </div>
-          </div>
-
-          <div className="row mb-3">
             <div className="col-lg-6">
               <FormLabel className="fw-bold text-dark">Marital* </FormLabel>
               <Form.Select
                 style={{ width: "300px" }}
-                aria-label="Default select example"
+                onChange={(e) => setmaritalStatus(e.target.value)}
               >
                 <option>Marital Status </option>
-                <option value="1">Single</option>
-                <option value="2">Married</option>
-              </Form.Select>
-            </div>
-
-            <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">Blood Group* </FormLabel>
-              <Form.Select
-                style={{ width: "300px" }}
-                aria-label="Default select example"
-              >
-                <option>Blood Group</option>
-                <option value="1">A+</option>
-                <option value="2">A-</option>
-                <option value="3">B+</option>
-                <option value="3">B-</option>
-                <option value="3">AB+</option>
-                <option value="3">AB-</option>
-                <option value="3">O+</option>
-                <option value="3">O-</option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
               </Form.Select>
             </div>
           </div>
 
           <div className="row mb-3">
             <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">
-                Injury/Contion*{" "}
-              </FormLabel>
-              <FloatingLabel className="mb-5" label="Injury/Contion">
-                <Form.Control
-                  style={{ width: "300px" }}
-                  type="text"
-                  placeholder="Injury/Contion"
-                />
-              </FloatingLabel>
-            </div>
-
-            <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">Sugar Level* </FormLabel>
-              <FloatingLabel
+              <FormLabel className="fw-bold text-dark">Blood Group* </FormLabel>
+              <Form.Select
                 style={{ width: "300px" }}
-                controlId="floatingEmail"
-                label="Sugar Level"
+                onChange={(e) => setbloodgroup(e.target.value)}
               >
-                <Form.Control type="text" placeholder="Sugar Level" />
-              </FloatingLabel>
+                <option>Blood Group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </Form.Select>
+            </div>
+          </div>
+          <div className="container">
+            <div className="row mb-3">
+            <FormLabel className="fw-bold text-dark">
+            Address
+                </FormLabel>  
+              <textarea
+                onChange={(e) => setAddress(e.target.value)}
+                class="form-control"
+                placeholder={LabPatientId?.Address}
+              />
+            </div>
+          </div>
+
+          <div className="container">
+            <div className="row mb-3">
+              <div className="col-lg-6">
+                <FormLabel className="fw-bold text-dark">
+                  Date Of Appointment
+                </FormLabel>               
+                  <Form.Control
+                    style={{ width: "300px" }}
+                    type="date"
+                    onChange={(e) => setDateofAppointment(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                  />               
+              </div>
+
+              <div className="col-lg-6">
+                <FormLabel className="fw-bold text-dark">
+                Lab Test
+                </FormLabel>                
+                  <Form.Select 
+                    onChange={(e)=>setSelecttest(e.target.value)}
+                  >
+                      <option>Select Test</option>
+                {HospitalLabList?.map((item)=>{
+                  return(
+                    <option value={item?._id}>{item?.testName}</option>
+                  )
+                })}
+                  </Form.Select>               
+              </div>
+            </div>
+          </div>
+
+          <div className="container">
+            <div className="row">
+            <FormLabel className="fw-bold text-dark">
+            Injury/Contion
+                </FormLabel>   
+              <textarea
+                onChange={(e) => setInjury(e.target.value)}             
+                class="form-control"
+                placeholder={LabPatientId?.InjuryCondition}
+              />
+            </div>
+          </div>
+          <div className="container">
+            <div className="row mb-3">
+            <FormLabel className="fw-bold text-dark">
+             Choose Old Prescription
+                </FormLabel>  
+              <Form.Control
+                onChange={(e) => setOldPrescription(e.target.value)}
+               type="file"
+              />
             </div>
           </div>
         </Modal.Body>
@@ -376,7 +486,10 @@ export const ReferLabPatientList = () => {
             Cancle
           </Button>
           {/* <Button  variant="danger"><FontAwesomeIcon icon={faCancel} className='fs-5 me-2' />Reject</Button> */}
-          <Button variant="success">
+          <Button 
+          variant="success"
+          onClick={()=>EditReferalLabPatient()}
+          >
             <FontAwesomeIcon icon={faCheck} className="fs-5 me-2" />
             Save
           </Button>
@@ -392,9 +505,7 @@ export const ReferLabPatientList = () => {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>
-            {/* <div className="Diseases-btn" style={{ color: 'green', border: '1px solid green' }}>Friend</div> */}
-          </Modal.Title>
+          <Modal.Title></Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -414,15 +525,13 @@ export const ReferLabPatientList = () => {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger">
-            <FontAwesomeIcon icon={faCancel} className=" me-2" />
-            Delet
-          </Button>
           <Button variant="success" onClick={deleteBtnClose}>
             Cancle
           </Button>
-
-          {/* <Button variant="success"><FontAwesomeIcon icon={faCheck} className='fs-5 me-2' />Save</Button> */}
+          <Button variant="danger" onClick={DeleteLabpatient}>
+            <FontAwesomeIcon icon={faCancel} className=" me-2" />
+            Delete
+          </Button>
         </Modal.Footer>
       </Modal>
 

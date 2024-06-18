@@ -27,6 +27,7 @@ export const ReferLabAddPatient = () => {
   const [DateofAppointment, setDateofAppointment] = useState("");
   const [Injury, setInjury] = useState("");
   const [OldPrescription, setOldPrescription] = useState("");
+  const [Selecttest, setSelecttest] = useState("")
   const formdata = new FormData();
 
   const RegisterPatient = async () => {
@@ -45,6 +46,7 @@ export const ReferLabAddPatient = () => {
       formdata.set("InjuryCondition", Injury);
       formdata.set("OldPrescription", OldPrescription);
       formdata.set("LabId", ReferalLAB?._id);
+      formdata.set("labtestid", Selecttest);
       const config = {
         url: "/addLabPatient",
         method: "post",
@@ -230,30 +232,21 @@ console.log("HospitalLabList",HospitalLabList);
                   placeholder="Date of Appointment"
                   onChange={(e) => setDateofAppointment(e.target.value)}
                   value={DateofAppointment}
+                  min={new Date().toISOString().split('T')[0]}
                 />
               </FloatingLabel>
               <Form.Select
                 style={{ width: "400px" }}
-                aria-label="Default select example"
+               onChange={(e)=>setSelecttest(e.target.value)}
               >
-                <option>Select Category</option>
+                <option>Select Test</option>
                 {HospitalLabList?.map((item)=>{
                   return(
-                    <option value="1">{item?.testCategory?.testName}</option>
+                    <option value={item?._id}>{item?.testName}</option>
                   )
                 })}
               </Form.Select>
-            </div>
-            <div className="d-flex gap-4 mb-5">
-              <Form.Select
-                style={{ width: "400px" }}
-                aria-label="Default select example"
-              >
-                <option>Select Lab Test</option>
-                <option value="1">Dr.Rajesh</option>
-                <option value="2">Dr.Sarah Smith</option>
-              </Form.Select>
-            </div>
+            </div>          
             <FloatingLabel className="mb-5" label="Injury/Contion">
               <Form.Control
                 style={{ width: "820px", height: "100px" }}

@@ -21,8 +21,7 @@ import { Link } from "react-router-dom";
 
 export default function ReferLabSidebar() {
   const ReferalLAB = JSON.parse(sessionStorage.getItem("RLabDetails"));
-  console.log("ReferalLAB", ReferalLAB)
-
+  console.log("ReferalLAB", ReferalLAB);
   const [LabM, setLabM] = useState(false);
   const [PharM, setPharM] = useState(false);
   return (
@@ -230,7 +229,7 @@ export default function ReferLabSidebar() {
         Chat
       </h6>
 
-      <h6
+      {/* <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/referlabcalender")}
       >
@@ -240,7 +239,7 @@ export default function ReferLabSidebar() {
           style={{ color: "", marginRight: "5px" }}
         />
         Calendar
-      </h6>
+      </h6> */}
 
       <h6
         className="sidebarItem"
