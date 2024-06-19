@@ -136,7 +136,7 @@ export default function Adminheader() {
     }
   };
 
-  console.log("mkk ", orderedProductsList);
+
 
   const [inventoryList, setinventoryList] = useState([]);
   async function getInventoryList() {
@@ -154,7 +154,6 @@ export default function Adminheader() {
       setinventoryList([]);
     }
   }
-  console.log("header inventory list: ", inventoryList);
 
   useEffect(() => {
     // getProductList();

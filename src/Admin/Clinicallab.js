@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Table } from "react-bootstrap";
+import { Button, Modal, Table } from "react-bootstrap";
 import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { MdEdit } from "react-icons/md";
 import { useEffect } from "react";
@@ -26,7 +26,7 @@ export default function Clinicallab() {
   const [show5, setShow5] = useState(false);
   const handleClose5 = () => setShow5(false);
   const handleShow5 = () => setShow5(true);
-  
+
   //For Block
   const [show6, setShow6] = useState(false);
   const handleClose6 = () => setShow6(false);
@@ -102,14 +102,14 @@ export default function Clinicallab() {
     } catch (error) {
       console.log(error);
       if (error.response) {
-        alert( error.response.data.error);
+        alert(error.response.data.error);
       } else {
-        alert('An unexpected error occurred.');
-      }     
+        alert("An unexpected error occurred.");
+      }
     }
   };
 
-  const [LabDetailsShow, setLabDetailsShow] = useState({})
+  const [LabDetailsShow, setLabDetailsShow] = useState({});
   const UpdateClinicLab = async (e) => {
     e.preventDefault();
     formdata.set("ClinicLabName", ClinicLabName);
@@ -132,7 +132,7 @@ export default function Clinicallab() {
         url: `/ClinicLab/editClinicLabDetails/${LabDetailsShow?._id}`,
         method: "put",
         baseURL: "http://localhost:8521/api",
-        headers: { "content-type":"multipart/form-data" },
+        headers: { "content-type": "multipart/form-data" },
         data: formdata,
       };
 
@@ -160,11 +160,10 @@ export default function Clinicallab() {
     } catch (error) {
       console.log(error);
       if (error.response) {
-        alert( error.response.data.error);
+        alert(error.response.data.error);
       } else {
-        alert('An unexpected error occurred.');
+        alert("An unexpected error occurred.");
       }
-     
     }
   };
 
@@ -198,23 +197,27 @@ export default function Clinicallab() {
     }
   };
 
-  const ClinicBlock = async ()=>{
+  const ClinicBlock = async () => {
     try {
       const config = {
         url: `/ClinicLab/blocklabdetails/${LabDetailsShow?._id}`,
         method: "put",
         baseURL: "http://localhost:8521/api",
-        headers: { "content-type":"application/json" },
+        headers: { "content-type": "application/json" },
       };
       let res = await axios(config);
-      if(res.status === 200){
-        alert(res.data.success)
+      if (res.status === 200) {
+        alert(res.data.success);
+        handleClose6();
+        getClinicalLabsList();
       }
     } catch (error) {
       console.log(error);
-      alert(error.response.data.error)      
+      alert(error.response.data.error);
     }
-  }
+  };
+
+  const [SearchItem, setSearchItem] = useState("");
 
   useEffect(() => {
     getClinicalLabsList();
@@ -237,12 +240,14 @@ export default function Clinicallab() {
               border: "1px solid #20958c",
               borderRadius: "0px",
             }}
+            value={SearchItem}
+            onChange={(e) => setSearchItem(e.target.value)}
           />
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <AiOutlinePlusCircle
               className="AddIcon1"
               onClick={() => handleShow()}
-            />             
+            />
           </div>
         </div>
 
@@ -250,7 +255,7 @@ export default function Clinicallab() {
           <Modal.Header>
             <Modal.Title>Add Clinic Lab</Modal.Title>
           </Modal.Header>
-          <Modal.Body>          
+          <Modal.Body>
             <h6 style={{ color: "white", margin: "0% 2% 2% 2%" }}>
               Clinic Lab Information
             </h6>
@@ -422,7 +427,7 @@ export default function Clinicallab() {
                   <input
                     type="file"
                     id="file"
-                    name="file"                   
+                    name="file"
                     placeholder="Upload certificate"
                     style={{
                       width: "100%",
@@ -571,11 +576,11 @@ export default function Clinicallab() {
                   border: "none",
                   borderRadius: "4px",
                   fontWeight: "600",
-                  marginRight: "20px",                
+                  marginRight: "20px",
                   padding: "4px 10px",
                 }}
                 onClick={() => {
-                 handleClose()
+                  handleClose();
                 }}
               >
                 CANCEL
@@ -604,15 +609,13 @@ export default function Clinicallab() {
           <Modal.Header>
             <Modal.Title>Lab test Price</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-         
-          </Modal.Body>
+          <Modal.Body></Modal.Body>
           <Modal.Footer>
             <div style={{ display: "flex" }}>
               <button
                 style={{
                   backgroundColor: "grey",
-                  color: "white",                 
+                  color: "white",
                   borderRadius: "4px",
                   fontWeight: "600",
                   marginRight: "20px",
@@ -627,7 +630,7 @@ export default function Clinicallab() {
               <button
                 style={{
                   backgroundColor: "orange",
-                  color: "white",                 
+                  color: "white",
                   borderRadius: "4px",
                   border: "1px solid white",
                   fontWeight: "600",
@@ -692,149 +695,22 @@ export default function Clinicallab() {
             <Modal.Title>Edit Lab Details</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          <Modal.Body>          
-            <h6 style={{ color: "white", margin: "0% 2% 2% 2%" }}>
-              Clinic Lab Information
-            </h6>
-            <div
-              className="row"
-              style={{
-                border: "1px solid white",
-                padding: "2% 0%",
-                margin: "0% 1%",
-                borderRadius: "0px",
-              }}
-            >
-              <div className="col-lg-6">
-                <input
-                  placeholder={LabDetailsShow?.ClinicLabName}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                  value={ClinicLabName}
-                  onChange={(e) => setClinicLabName(e.target.value)}
-                ></input>
-              </div>
-
-              <div className="col-lg-6">
-                <div className="row" style={{ justifyContent: "center" }}>
-                  <div className="col-lg-4">
-                    <h6 style={{ marginTop: "20px", color: "white" }}>
-                      Started at :
-                    </h6>
-                  </div>
-                  <div className="col-lg-8">
-                    {" "}
-                    <input
-                      type="date"
-                      style={{
-                        width: "100%",
-                        padding: "8px 20px",
-                        borderRadius: "0px",
-                        border: "1px solid #ebebeb",
-                        backgroundColor: "#ebebeb",
-                      }}
-                      value={StartedAt}
-                      onChange={(e) => setStartedAt(e.target.value)}
-                    ></input>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-6">
-                <input
-                  type="text"
-                  placeholder={LabDetailsShow?.Address1}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                  value={Address1}
-                  onChange={(e) => setAddress1(e.target.value)}
-                ></input>
-              </div>
-
-              <div className="col-lg-6">
-                <input
-                  placeholder={LabDetailsShow?.Address2}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                  value={Address2}
-                  onChange={(e) => setAddress2(e.target.value)}
-                ></input>
-              </div>
-
-              <div className="col-lg-3">
-                <input
-                  placeholder={LabDetailsShow?.City}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "8%",
-                  }}
-                  value={City}
-                  onChange={(e) => setCity(e.target.value)}
-                ></input>
-              </div>
-
-              <div className="col-lg-3">
-                <input
-                  placeholder={LabDetailsShow?.state}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "8%",
-                  }}
-                  value={state}
-                  onChange={(e) => setstate(e.target.value)}
-                ></input>
-              </div>
-
-              <div className="col-lg-6">
-                <input
-                  placeholder={LabDetailsShow?.zipcode}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                  value={zipcode}
-                  onChange={(e) => setzipcode(e.target.value)}
-                ></input>
-              </div>
-
-              <div className="row align-items-center mt-4">
-                <label className="col-lg-3 text-light fw-semibold">
-                  Upload Certificate
-                </label>
-                <div className="col-lg-9">
+            <Modal.Body>
+              <h6 style={{ color: "white", margin: "0% 2% 2% 2%" }}>
+                Clinic Lab Information
+              </h6>
+              <div
+                className="row"
+                style={{
+                  border: "1px solid white",
+                  padding: "2% 0%",
+                  margin: "0% 1%",
+                  borderRadius: "0px",
+                }}
+              >
+                <div className="col-lg-6">
                   <input
-                    type="file"
-                    id="file"
-                    name="file"                   
-                    placeholder="Upload certificate"
+                    placeholder={LabDetailsShow?.ClinicLabName}
                     style={{
                       width: "100%",
                       padding: "8px 20px",
@@ -842,137 +718,264 @@ export default function Clinicallab() {
                       border: "1px solid #ebebeb",
                       backgroundColor: "#ebebeb",
                     }}
-                    onChange={(e) => setcertificate(e.target.files[0])}
+                    value={ClinicLabName}
+                    onChange={(e) => setClinicLabName(e.target.value)}
                   ></input>
                 </div>
-              </div>
-            </div>
 
-            <h6 style={{ color: "white", margin: "2%" }}>Personal Details</h6>
-            <div
-              className="row"
-              style={{
-                border: "1px solid white",
-                padding: "2% 0%",
-                margin: "0% 1%",
-                borderRadius: "0px",
-              }}
-            >
-              <div className="col-lg-6">
-                <input
-                  placeholder={LabDetailsShow?.Firstname}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                  value={Firstname}
-                  onChange={(e) => setFirstname(e.target.value)}
-                ></input>
+                <div className="col-lg-6">
+                  <div className="row" style={{ justifyContent: "center" }}>
+                    <div className="col-lg-4">
+                      <h6 style={{ marginTop: "20px", color: "white" }}>
+                        Started at :
+                      </h6>
+                    </div>
+                    <div className="col-lg-8">
+                      {" "}
+                      <input
+                        type="date"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                        }}
+                        value={StartedAt}
+                        onChange={(e) => setStartedAt(e.target.value)}
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <input
+                    type="text"
+                    placeholder={LabDetailsShow?.Address1}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    value={Address1}
+                    onChange={(e) => setAddress1(e.target.value)}
+                  ></input>
+                </div>
+
+                <div className="col-lg-6">
+                  <input
+                    placeholder={LabDetailsShow?.Address2}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    value={Address2}
+                    onChange={(e) => setAddress2(e.target.value)}
+                  ></input>
+                </div>
+
+                <div className="col-lg-3">
+                  <input
+                    placeholder={LabDetailsShow?.City}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "8%",
+                    }}
+                    value={City}
+                    onChange={(e) => setCity(e.target.value)}
+                  ></input>
+                </div>
+
+                <div className="col-lg-3">
+                  <input
+                    placeholder={LabDetailsShow?.state}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "8%",
+                    }}
+                    value={state}
+                    onChange={(e) => setstate(e.target.value)}
+                  ></input>
+                </div>
+
+                <div className="col-lg-6">
+                  <input
+                    placeholder={LabDetailsShow?.zipcode}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    value={zipcode}
+                    onChange={(e) => setzipcode(e.target.value)}
+                  ></input>
+                </div>
+
+                <div className="row align-items-center mt-4">
+                  <label className="col-lg-3 text-light fw-semibold">
+                    Upload Certificate
+                  </label>
+                  <div className="col-lg-9">
+                    <input
+                      type="file"
+                      id="file"
+                      name="file"
+                      placeholder="Upload certificate"
+                      style={{
+                        width: "100%",
+                        padding: "8px 20px",
+                        borderRadius: "0px",
+                        border: "1px solid #ebebeb",
+                        backgroundColor: "#ebebeb",
+                      }}
+                      onChange={(e) => setcertificate(e.target.files[0])}
+                    ></input>
+                  </div>
+                </div>
               </div>
 
-              <div className="col-lg-6">
-                <input
-                  placeholder={LabDetailsShow?.Lastname}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                  value={Lastname}
-                  onChange={(e) => setLastname(e.target.value)}
-                ></input>
-              </div>
+              <h6 style={{ color: "white", margin: "2%" }}>Personal Details</h6>
+              <div
+                className="row"
+                style={{
+                  border: "1px solid white",
+                  padding: "2% 0%",
+                  margin: "0% 1%",
+                  borderRadius: "0px",
+                }}
+              >
+                <div className="col-lg-6">
+                  <input
+                    placeholder={LabDetailsShow?.Firstname}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                    }}
+                    value={Firstname}
+                    onChange={(e) => setFirstname(e.target.value)}
+                  ></input>
+                </div>
 
-              <div className="col-lg-6">
-                <input
-                  placeholder={LabDetailsShow?.PhoneNumber}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                  value={PhoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                ></input>
-              </div>
+                <div className="col-lg-6">
+                  <input
+                    placeholder={LabDetailsShow?.Lastname}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                    }}
+                    value={Lastname}
+                    onChange={(e) => setLastname(e.target.value)}
+                  ></input>
+                </div>
 
-              <div className="col-lg-6">
-                <input
-                  placeholder={LabDetailsShow?.Email}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                  value={Email}
-                  onChange={(e) => setEmail(e.target.value)}
-                ></input>
-              </div>
+                <div className="col-lg-6">
+                  <input
+                    placeholder={LabDetailsShow?.PhoneNumber}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    value={PhoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  ></input>
+                </div>
 
-              <div className="col-lg-6">
-                <input
-                  placeholder="Password"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                  value={Password}
-                  onChange={(e) => setPassword(e.target.value)}
-                ></input>
-              </div>
+                <div className="col-lg-6">
+                  <input
+                    placeholder={LabDetailsShow?.Email}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    value={Email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  ></input>
+                </div>
 
-              <div className="col-lg-6">
-                <input
-                  placeholder="Confirm Password"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                  value={ConfirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                ></input>
+                <div className="col-lg-6">
+                  <input
+                    placeholder="Password"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    value={Password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  ></input>
+                </div>
+
+                <div className="col-lg-6">
+                  <input
+                    placeholder="Confirm Password"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    value={ConfirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  ></input>
+                </div>
+                <div>
+                  <label className="col-lg-3 mt-4 text-light fw-semibold">
+                    Profile Image:
+                  </label>
+                  <input
+                    className="col-lg-9"
+                    type="file"
+                    name="file"
+                    id="file"
+                    accept="image/*"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                    }}
+                    onChange={(e) => setProfileImg(e.target.files[0])}
+                  />
+                </div>
               </div>
-              <div>
-                <label className="col-lg-3 mt-4 text-light fw-semibold">
-                  Profile Image:
-                </label>
-                <input
-                  className="col-lg-9"
-                  type="file"
-                  name="file"
-                  id="file"
-                  accept="image/*"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                  onChange={(e) => setProfileImg(e.target.files[0])}
-                />
-              </div>
-            </div>
-          </Modal.Body>
+            </Modal.Body>
           </Modal.Body>
           <Modal.Footer>
             <div style={{ display: "flex" }}>
@@ -999,8 +1002,8 @@ export default function Clinicallab() {
                   fontWeight: "600",
                   border: "1px solid white",
                   padding: "4px 10px",
-                }}   
-                onClick={(e)=>UpdateClinicLab(e)}            
+                }}
+                onClick={(e) => UpdateClinicLab(e)}
               >
                 UPDATE
               </button>
@@ -1071,7 +1074,7 @@ export default function Clinicallab() {
                   marginRight: "20px",
                   padding: "4px 10px",
                 }}
-                onClick={handleClose6()}
+                onClick={() => handleClose6()}
               >
                 CANCEL
               </button>
@@ -1093,7 +1096,7 @@ export default function Clinicallab() {
           </Modal.Footer>
         </Modal>
 
-        <Table responsive="md" style={{ marginTop: "1%" }}>
+        <Table responsive="md" style={{ marginTop: "1%" }} bordered>
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
               <th>S.no.</th>
@@ -1101,61 +1104,104 @@ export default function Clinicallab() {
               <th>Clinic Name</th>
               <th> Email</th>
               <th>Contact</th>
+              <th>Status</th>
               <th>ACTION</th>
             </tr>
           </thead>
           <tbody>
             {clinicalLabs.map((labinfo, i) => {
-              return (
-                <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                  <td>{++i}</td>
+              if (
+                SearchItem === "" ||
+                Object.values(labinfo).some((value) =>
+                  String(value).toLowerCase().includes(SearchItem.toLowerCase())
+                )
+              )
+                return (
+                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                    <td>{++i}</td>
+                    <td>{labinfo?.ClinicLabId}</td>
+                    <td>{labinfo?.ClinicLabName}</td>
+                    <td>{labinfo?.Email}</td>
+                    <td>{labinfo?.PhoneNumber}</td>
+                    <td>
+                    {labinfo?.blocked === false ? (<>
+                          <Button
+                            style={{
+                              fontSize: "12px",
+                              border: "none",
+                              backgroundColor: "#20958c",
+                              color: "white",
+                              fontWeight: "600",
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              handleShow6();
+                              setLabDetailsShow(labinfo);
+                            }}
+                          >
+                            BLOCK
+                          </Button><br/>
+                          <b style={{color:"green"}}> User is UnBlock </b>
+                     </> ) : (<>
+                          <Button
+                            style={{
+                              fontSize: "12px",
+                              border: "none",                          
+                              color: "white",
+                              fontWeight: "600",
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                            }}
+                            variant="danger"
+                            onClick={() => {
+                              handleShow6();
+                              setLabDetailsShow(labinfo);
+                            }}
+                          >
+                            UNBLOCK
+                          </Button><br/>
+                          <b style={{color:"red"}}> User is Block </b>
+                        </>)}
 
-                  <td>{labinfo?.ClinicLabId}</td>
-                  <td>{labinfo?.ClinicLabName}</td>
-                  <td>{labinfo?.Email}</td>
-                  <td>{labinfo?.PhoneNumber}</td>
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        textAlign: "center",
-                        justifyContent: "space-evenly",
-                      }}
-                    >
-                      <MdEdit
-                        style={{ color: "#20958c", marginRight: "1%" }}
-                        onClick={() =>{ 
-                          handleShow4();
-                          setLabDetailsShow(labinfo)
-                        }}
-                      />
-                      <AiFillDelete
-                        style={{ color: "red" }}
-                        onClick={() => {
-                          setView(labinfo);
-                          handleShow5();
-                        }}
-                      />
-                      <button
+                    </td>
+                    <td>
+                      <div
                         style={{
-                          fontSize: "12px",
-                          border: "none",
-                          backgroundColor: "#20958c",
-                          color: "white",
-                          fontWeight: "600",
-                          borderRadius: "4px",
-                        }}
-                        onClick={()=>{
-                          handleShow6();
-                          setLabDetailsShow(labinfo)
+                          display: "flex",
+                          textAlign: "center",
+                          justifyContent: "space-evenly",
+                          gap:"10px"
                         }}
                       >
-                        BLOCK
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
+                        <MdEdit
+                          style={{
+                            color: "#20958c",
+                            marginRight: "1%",
+                            cursor: "pointer",
+                            fontSize:"20px"
+                          }}
+                          onClick={() => {
+                            handleShow4();
+                            setLabDetailsShow(labinfo);
+                          }}
+                        />
+                        <AiFillDelete
+                          style={{ 
+                             color: "red",
+                             cursor: "pointer",
+                             fontSize:"20px"
+                             }}
+                          onClick={() => {
+                            setView(labinfo);
+                            handleShow5();
+                          }}
+                        />
+                      
+                      </div>
+                    </td>
+                  </tr>
+                );
             })}
           </tbody>
         </Table>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Container,
@@ -27,41 +27,62 @@ export const ReferLabAddPatient = () => {
   const [DateofAppointment, setDateofAppointment] = useState("");
   const [Injury, setInjury] = useState("");
   const [OldPrescription, setOldPrescription] = useState("");
+  const [Selecttest, setSelecttest] = useState("")
   const formdata = new FormData();
 
-  const RegisterPatient = async()=>{
+  const RegisterPatient = async () => {
     try {
-        formdata.set("LabPatientsFname",firstname );
-        formdata.set("LabPatientsLname",lastname );
-        formdata.set("Gender",gender );
-        formdata.set("PhoneNumber",Phoneno );
-        formdata.set("Email",email );
-        formdata.set("Dob",dob );
-        formdata.set("Age",age );
-        formdata.set("marritalStatus",maritalStatus);
-        formdata.set("BloodGroup",bloodgroup);
-        formdata.set("Address",Address);
-        formdata.set("AppointmentDate",DateofAppointment);
-        formdata.set("InjuryCondition",Injury);
-        formdata.set("OldPrescription",OldPrescription);
-        formdata.set("LabId",ReferalLAB?._id);
-        const config ={
-            url:"/addLabPatient",
-            method:"post",
-            baseURL:"http://localhost:8521/api/ClinicLab",
-            headers:{'Content-Type': 'multipart/form-data'},
-            data:formdata,
-        }
-        let res = await axios(config)
-        if(res.status === 200){
-            alert(res.data.success)
-            window.location.assign("/referlabpatientlist")
-        }
+      formdata.set("LabPatientsFname", firstname);
+      formdata.set("LabPatientsLname", lastname);
+      formdata.set("Gender", gender);
+      formdata.set("PhoneNumber", Phoneno);
+      formdata.set("Email", email);
+      formdata.set("Dob", dob);
+      formdata.set("Age", age);
+      formdata.set("marritalStatus", maritalStatus);
+      formdata.set("BloodGroup", bloodgroup);
+      formdata.set("Address", Address);
+      formdata.set("AppointmentDate", DateofAppointment);
+      formdata.set("InjuryCondition", Injury);
+      formdata.set("OldPrescription", OldPrescription);
+      formdata.set("LabId", ReferalLAB?._id);
+      formdata.set("labtestid", Selecttest);
+      const config = {
+        url: "/addLabPatient",
+        method: "post",
+        baseURL: "http://localhost:8521/api/ClinicLab",
+        headers: { "Content-Type": "multipart/form-data" },
+        data: formdata,
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        window.location.assign("/referlabpatientlist");
+      }
     } catch (error) {
-        alert(error.response.data.error)
+      alert(error.response.data.error);
     }
-  }
+  };
 
+  const [HospitalLabList, setHospitalLabList] = useState([]);
+  const HospitallabList = () => {
+    axios
+      .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
+      .then(function (response) {
+        if (response.status === 200) {
+          const data = response.data.HospitalLabTests;
+          setHospitalLabList(data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        setHospitalLabList([]);
+      });
+  };
+  useEffect(() => {
+    HospitallabList();
+  }, []);
+console.log("HospitalLabList",HospitalLabList);
   return (
     <div>
       <div>
@@ -192,8 +213,8 @@ export const ReferLabAddPatient = () => {
             </div>
             <div className="mb-5">
               <textarea
-              onChange={(e)=>setAddress(e.target.value)}
-              value={Address}
+                onChange={(e) => setAddress(e.target.value)}
+                value={Address}
                 class="form-control"
                 placeholder="Address"
                 id="floatingTextarea2"
@@ -201,41 +222,40 @@ export const ReferLabAddPatient = () => {
               ></textarea>
             </div>
             <div className="d-flex gap-4 mb-5">
-              <Form.Select
-                style={{ width: "400px" }}
-                aria-label="Default select example"
-              >
-                <option>Refer Doctor</option>
-                <option value="1">Dr.Rajesh</option>
-                <option value="2">Dr.Sarah Smith</option>
-                <option value="3">Dr.Jay Soni</option>
-                <option value="3">Dr.Pooja Patel</option>
-                <option value="3">Others</option>
-              </Form.Select>
-
               <FloatingLabel
                 style={{ width: "400px" }}
                 controlId="floatingDate"
                 label="Date of Appointment"
               >
-                <Form.Control 
-                type="date" 
-                placeholder="Date of Appointment"
-                onChange={(e)=>setDateofAppointment(e.target.value)}
-                value={DateofAppointment}
+                <Form.Control
+                  type="date"
+                  placeholder="Date of Appointment"
+                  onChange={(e) => setDateofAppointment(e.target.value)}
+                  value={DateofAppointment}
+                  min={new Date().toISOString().split('T')[0]}
                 />
               </FloatingLabel>
-            </div>         
+              <Form.Select
+                style={{ width: "400px" }}
+               onChange={(e)=>setSelecttest(e.target.value)}
+              >
+                <option>Select Test</option>
+                {HospitalLabList?.map((item)=>{
+                  return(
+                    <option value={item?._id}>{item?.testName}</option>
+                  )
+                })}
+              </Form.Select>
+            </div>          
             <FloatingLabel className="mb-5" label="Injury/Contion">
               <Form.Control
                 style={{ width: "820px", height: "100px" }}
                 type="text"
                 placeholder="Injury/Contion"
-                onChange={(e)=>setInjury(e.target.value)}
+                onChange={(e) => setInjury(e.target.value)}
                 value={Injury}
               />
             </FloatingLabel>
-         
             <FormLabel className="fw-bold text-dark">
               {" "}
               Choose Old Prescription*{" "}
@@ -249,10 +269,8 @@ export const ReferLabAddPatient = () => {
                 width: "820px",
                 height: "50px",
               }}
-              onChange={(e)=>setOldPrescription(e.target.files[0])}
-             
+              onChange={(e) => setOldPrescription(e.target.files[0])}
             />
-           
             <div className="d-flex gap-3 mb-4 mt-4">
               <Button
                 style={{
@@ -261,7 +279,7 @@ export const ReferLabAddPatient = () => {
                   fontSize: "16px",
                   backgroundColor: "rgb(32 139 140)",
                 }}
-               onClick={()=>RegisterPatient()}
+                onClick={() => RegisterPatient()}
               >
                 Submit
               </Button>
