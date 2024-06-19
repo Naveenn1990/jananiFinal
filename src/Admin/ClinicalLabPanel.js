@@ -8,6 +8,7 @@ import Hospitallabtestlist from "./HospitalLabTest";
 import Hospitallabtestreport from "./Hospitallabreport";
 import Clinicallab from "./Clinicallab";
 import TotalLabRevenue from "./TotalLabRevenue";
+import ReferalPatientList from "./ReferalPatientList";
 export default function ClinicalLabPanel() {
 
   const [ViewModal, setViewModal] = useState();
@@ -67,16 +68,16 @@ export default function ClinicalLabPanel() {
               <div
                 className="websiteMcards"
                 onClick={() => {
-                  setViewModal(<Hospitallabtestlist />);
-                  setTitle("LAB TEST-LIST");
+                  setViewModal(<ReferalPatientList />);
+                  setTitle("REFERAL LAB PATIENT LIST");
                   setView(true);
                 }}
               >
                 <GiTestTubes className="WebMI" />
-                LAB TEST-LIST
+                REFERAL LAB PATIENTS
               </div>
             </div>
-            <div className="col-lg-4">
+            {/* <div className="col-lg-4">
               {" "}
               <div
                 className="websiteMcards"
@@ -89,8 +90,8 @@ export default function ClinicalLabPanel() {
                 <TbReportSearch className="WebMI" />
                 LAB TEST-REPORT
               </div>
-            </div>
-            <div className="col-lg-4">
+            </div> */}
+            {/* <div className="col-lg-4">
               {" "}
               <div
                 className="websiteMcards"
@@ -103,7 +104,7 @@ export default function ClinicalLabPanel() {
                 <BsCurrencyRupee className="WebMI" />
                 TOTAL REVENUE
               </div>
-            </div>
+            </div> */}
           </div>
         )}
       </div>
