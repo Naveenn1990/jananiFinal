@@ -11,26 +11,22 @@ import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import Barcode from "react-barcode";
 import axios from "axios";
+import { Link } from "react-router-dom";
 export default function Hospitallabtestlist() {
+  // =============== Add Health Package =====================
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  // =============== Edit Health Package =====================
   const [show1, setShow1] = useState(false);
-
   const handleClose1 = () => setShow1(false);
   const handleShow1 = () => setShow1(true);
 
+  // =============== Edit Health Package tests =====================
   const [show2, setShow2] = useState(false);
-
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
-
-  const [show4, setShow4] = useState(false);
-
-  const handleClose4 = () => setShow4(false);
-  const handleShow4 = () => setShow4(true);
 
   // =====================================================
 
@@ -40,9 +36,10 @@ export default function Hospitallabtestlist() {
   const [testList, settestList] = useState([]);
   const [sampletestList, setsampletestList] = useState([]);
   const [selectedData, setselectedData] = useState({});
+  const [View, setView] = useState({});
 
   const [HospitalLabList, setHospitalLabList] = useState([]);
-  const HospitallabList = () => {
+  const HospitallabListFn = () => {
     axios
       .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
       .then(function (response) {
@@ -63,12 +60,21 @@ export default function Hospitallabtestlist() {
     settestList((curr) => [...curr, { testid: selectedData?._id }]);
   }
 
+  function removeTestList(id) {
+    setsampletestList([
+      ...sampletestList.filter((val) => val._id.toString() !== id.toString()),
+    ]);
+    settestList([
+      ...testList.filter((val) => val.testid.toString() !== id.toString()),
+    ]);
+  }
+
   const AddHospitalHealthPkg = async () => {
     const obj = {
       healthpkgName,
       healthpkgImg,
       healthpkgPrice,
-      testList,
+      testList: JSON.stringify(testList),
     };
     try {
       const config = {
@@ -81,14 +87,15 @@ export default function Hospitallabtestlist() {
       const res = await axios(config);
 
       if (res.status === 201 || res.status === 200) {
+        getHospitalHealthPkgList();
         alert(res.data.success);
-        // HospitallabList();
-        setShow(false);
+        handleClose();
         sethealthpkgName("");
         sethealthpkgImg("");
         sethealthpkgPrice("");
         settestList([]);
         setselectedData({});
+        setView({});
       }
     } catch (err) {
       console.log(err);
@@ -117,6 +124,79 @@ export default function Hospitallabtestlist() {
         setHospitalHealthPkgList([]);
       });
   };
+
+  // =========== Edit Health package ===============
+  const EditHospitalHealthPkg = async () => {
+    const obj = {
+      healthpkgName,
+      healthpkgImg,
+      healthpkgPrice,
+    };
+    try {
+      const config = {
+        url: "/admin/editHospitalLabHealthPkg/" + View?._id,
+        method: "put",
+        headers: { "content-type": "multipart/form-data" },
+        baseURL: "http://localhost:8521/api",
+        data: obj,
+      };
+      const res = await axios(config);
+
+      if (res.status === 201 || res.status === 200) {
+        getHospitalHealthPkgList();
+        alert(res.data.success);
+        handleClose1();
+        sethealthpkgName("");
+        sethealthpkgImg("");
+        sethealthpkgPrice("");
+        settestList([]);
+        setselectedData({});
+        setView({});
+      }
+    } catch (err) {
+      console.log(err);
+      return alert(
+        err.response.data.error
+          ? err.response.data.error
+          : "Something went wrong! Please try again!"
+      );
+    }
+  };
+
+  // =========== delete available Health pkg ===========
+  const DeleteAvailableHealthPkgTest = async (id) => {
+    try {
+      const config = {
+        url: "/admin/removeHealthPkgTestList",
+        method: "put",
+        headers: { "content-type": "multipart/form-data" },
+        baseURL: "http://localhost:8521/api",
+        data: {
+          testobjid: id,
+        },
+      };
+      const res = await axios(config);
+
+      if (res.status === 201 || res.status === 200) {
+        getHospitalHealthPkgList();
+        alert(res.data.success);
+        handleClose1();
+        sethealthpkgName("");
+        sethealthpkgImg("");
+        sethealthpkgPrice("");
+        settestList([]);
+        setselectedData({});
+        setView({});
+      }
+    } catch (err) {
+      console.log(err);
+      return alert(
+        err.response.data.error
+          ? err.response.data.error
+          : "Something went wrong! Please try again!"
+      );
+    }
+  };
   // =======================================================
 
   const createPDF = async () => {
@@ -134,11 +214,11 @@ export default function Hospitallabtestlist() {
   const createPdf11 = () => {
     createPDF();
   };
-  console.log("HospitalHealthPkgList: ", HospitalHealthPkgList);
   useEffect(() => {
-    HospitallabList();
+    HospitallabListFn();
     getHospitalHealthPkgList();
   }, []);
+  console.log("View: ", View);
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -161,10 +241,11 @@ export default function Hospitallabtestlist() {
             }}
           />
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <ImLab className="AddIcon1" onClick={() => setShow(true)} />
+            <ImLab className="AddIcon1" onClick={handleShow} />
           </div>
         </div>
 
+        {/* ============== Add Health package Modal================== */}
         <Modal size="lg" show={show} onHide={handleClose}>
           <Modal.Header>
             <Modal.Title>Add Health Package</Modal.Title>
@@ -306,7 +387,7 @@ export default function Hospitallabtestlist() {
                 textAlign: "center",
               }}
             >
-              <Table>
+              <Table bordered>
                 <thead>
                   <th>S.no.</th>
                   <th>Test Category</th>
@@ -316,11 +397,12 @@ export default function Hospitallabtestlist() {
                   <th>Before Food Reference value</th> */}
                   <th>General Reference value</th>
                   <th>Unit</th>
+                  <th>Action</th>
                 </thead>
                 <tbody>
                   {sampletestList?.map((val, index) => {
                     return (
-                      <tr>
+                      <tr style={{ backgroundColor: "#EBEBEB" }}>
                         <td>{index + 1}</td>
                         <td>{val?.testCategory?.testCategory}</td>
                         <td>
@@ -335,6 +417,12 @@ export default function Hospitallabtestlist() {
                         <td>{val?.beforeFoodRefVal}</td> */}
                         <td>{val?.generalRefVal}</td>
                         <td>{val?.unit}</td>
+                        <td>
+                          <AiFillDelete
+                            style={{ color: "red" }}
+                            onClick={() => removeTestList(val?._id)}
+                          />
+                        </td>
                       </tr>
                     );
                   })}
@@ -378,31 +466,28 @@ export default function Hospitallabtestlist() {
           </Modal.Footer>
         </Modal>
 
-        <Modal size="md" show={show1} onHide={handleClose1}>
+        {/* ============== Edit Health Package Modal ================ */}
+        <Modal size="lg" show={show1} onHide={handleClose1}>
           <Modal.Header>
-            <Modal.Title>Lab test Price</Modal.Title>
+            <Modal.Title>Edit Health Package</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <div className="row">
-              <div className="col-lg-6">
-                <select
+              <div className="col-lg-6" style={{ marginTop: "4%" }}>
+                <label
                   style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
+                    color: "white",
+                    fontWeight: "400",
+                    fontSize: "18px",
                   }}
                 >
-                  <option>Select Lab Test</option>
-                  <option>Test-1</option>
-                  <option>Test-2</option>
-                </select>
-              </div>
-
-              <div className="col-lg-6">
+                  Health Package Name
+                </label>
                 <input
-                  placeholder="Lab Test Price"
+                  placeholder={View?.healthpkgName}
+                  type="text"
+                  value={healthpkgName}
+                  onChange={(e) => sethealthpkgName(e.target.value)}
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -412,55 +497,29 @@ export default function Hospitallabtestlist() {
                   }}
                 ></input>
               </div>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <div style={{ display: "flex" }}>
-              <button
-                style={{
-                  backgroundColor: "grey",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontWeight: "600",
-                  marginRight: "20px",
-                  border: "1px solid white",
-                  padding: "4px 10px",
-                }}
-                onClick={() => setShow1(false)}
-              >
-                CANCEL
-              </button>
 
-              <button
-                style={{
-                  backgroundColor: "orange",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontWeight: "600",
-                  border: "1px solid white",
-                  padding: "4px 10px",
-                }}
-                onClick={() => {
-                  setShow1(false);
-                  alert("lab test price added");
-                }}
-              >
-                SUBMIT
-              </button>
-            </div>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal size="md" show={show2} onHide={handleClose2}>
-          <Modal.Header>
-            <Modal.Title>Lab Total Revenue</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="row">
-              <div className="col-lg-12">
-                <select
+              <div className="col-lg-6" style={{ marginTop: "4%" }}>
+                <label
+                  style={{
+                    color: "white",
+                    fontWeight: "400",
+                    fontSize: "18px",
+                  }}
+                  htmlFor="cat-img"
+                >
+                  Health Package Image:
+                  <Link
+                    to={`http://localhost:8521/HospitalLabHealthPkg/${View?.healthpkgImg}`}
+                    target="blank_"
+                    style={{ color: "white", textDecoration: "underline" }}
+                  >
+                    Health Package Image
+                  </Link>
+                </label>
+                <input
+                  placeholder="Health Package Image"
+                  type="file"
+                  id="cat-img"
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -468,175 +527,69 @@ export default function Hospitallabtestlist() {
                     border: "1px solid #ebebeb",
                     backgroundColor: "#ebebeb",
                   }}
-                >
-                  <option>Select Lab test</option>
-                  <option>Test-1</option>
-                  <option>Test-2</option>
-                </select>
+                  accept="image/*"
+                  onChange={(e) => sethealthpkgImg(e.target.files[0])}
+                ></input>
               </div>
 
-              <div
-                style={{
-                  borderRadius: "0px",
-                  backgroundColor: "#20958c",
-                  color: "white",
-                  margin: "5% 20% 2% 20%",
-                  width: "60%",
-                  padding: "4%",
-                }}
-              >
-                <h6 style={{ textAlign: "center", fontSize: "20px" }}>
-                  Total Revenue
-                </h6>
-                <h6 style={{ textAlign: "center", fontSize: "30px" }}>
-                  ₹ 12000
-                </h6>
+              <div className="col-lg-6" style={{ marginTop: "4%" }}>
+                <label
+                  style={{
+                    color: "white",
+                    fontWeight: "400",
+                    fontSize: "18px",
+                  }}
+                >
+                  Health Package Price
+                </label>
+                <input
+                  placeholder={View?.healthpkgPrice}
+                  type="number"
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                  value={healthpkgPrice}
+                  onChange={(e) => sethealthpkgPrice(e.target.value)}
+                ></input>
               </div>
             </div>
-          </Modal.Body>
-        </Modal>
+            <div
+              style={{
+                border: "1px solid white",
+                marginTop: "10px",
+                textAlign: "center",
+              }}
+            >
+              <p style={{ color: "white" }}>
+                <b>Available Tests In Package:</b>
+              </p>
+              <Table bordered>
+                <thead>
+                  <th>S.no.</th>
+                  <th>Test Name</th>
 
-        <Modal size="lg" show={show4} onHide={handleClose4}>
-          <Modal.Body>
-            <div id="pdf" style={{ padding: "4%" }}>
-              <h5 style={{ textAlign: "center", marginBottom: "2%" }}>
-                Lab Test Details
-              </h5>
-              <Table responsive="lg" style={{ marginTop: "1%" }}>
+                  <th>General Reference value</th>
+                  <th>Turn Around Time(TAT)</th>
+                  <th>Unit</th>
+                </thead>
                 <tbody>
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td
-                      style={{
-                        border: "1px solid lightgrey",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Test Number :
-                    </td>
-                    <td style={{ border: "1px solid lightgrey" }}>#20958c</td>
-                    <td
-                      style={{
-                        border: "1px solid lightgrey",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Patient Name :
-                    </td>
-                    <td style={{ border: "1px solid lightgrey" }}>
-                      Anuj Kumar
-                    </td>
-                  </tr>
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td
-                      style={{
-                        border: "1px solid lightgrey",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Gender :
-                    </td>
-                    <td style={{ border: "1px solid lightgrey" }}>Male</td>
-                    <td
-                      style={{
-                        border: "1px solid lightgrey",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Date of birth :
-                    </td>
-                    <td style={{ border: "1px solid lightgrey" }}>
-                      16/01/1999
-                    </td>
-                  </tr>
+                  {View?.testList?.map((val, index) => {
+                    return (
+                      <tr style={{ backgroundColor: "#EBEBEB" }}>
+                        <td>{index + 1}</td>
 
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td
-                      style={{
-                        border: "1px solid lightgrey",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Mobile Number :
-                    </td>
-                    <td style={{ border: "1px solid lightgrey" }}>
-                      1232123545
-                    </td>
-                    <td
-                      style={{
-                        border: "1px solid lightgrey",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Email :
-                    </td>
-                    <td style={{ border: "1px solid lightgrey" }}>
-                      test@gmail.com
-                    </td>
-                  </tr>
+                        <td>{val?.testid?.testName}</td>
 
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td
-                      style={{
-                        border: "1px solid lightgrey",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Age :
-                    </td>
-                    <td style={{ border: "1px solid lightgrey" }}>24</td>
-                    <td
-                      style={{
-                        border: "1px solid lightgrey",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Blood Group :
-                    </td>
-                    <td style={{ border: "1px solid lightgrey" }}>AB+</td>
-                  </tr>
-
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td
-                      style={{
-                        border: "1px solid lightgrey",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Test Type :
-                    </td>
-                    <td style={{ border: "1px solid lightgrey" }}>HS-1AS</td>
-                    <td
-                      style={{
-                        border: "1px solid lightgrey",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Test Name :
-                    </td>
-                    <td style={{ border: "1px solid lightgrey" }}>
-                      Blood Test
-                    </td>
-                  </tr>
+                        <td>{val?.testid?.generalRefVal}</td>
+                        <td>{val?.testid?.tat}</td>
+                        <td>{val?.testid?.unit}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </Table>
             </div>
@@ -649,12 +602,12 @@ export default function Hospitallabtestlist() {
                   color: "white",
                   border: "none",
                   borderRadius: "4px",
+                  border: "1px solid white",
                   fontWeight: "600",
                   marginRight: "20px",
-                  border: "1px solid white",
                   padding: "4px 10px",
                 }}
-                onClick={() => setShow4(false)}
+                onClick={handleClose1}
               >
                 CANCEL
               </button>
@@ -665,25 +618,165 @@ export default function Hospitallabtestlist() {
                   color: "white",
                   border: "none",
                   borderRadius: "4px",
-                  border: "1px solid white",
                   fontWeight: "600",
+                  border: "1px solid white",
                   padding: "4px 10px",
                 }}
-                onClick={createPDF}
+                onClick={EditHospitalHealthPkg}
               >
-                PRINT PDF
+                Update
               </button>
             </div>
           </Modal.Footer>
         </Modal>
 
-        <Table responsive="md" style={{ marginTop: "1%" }}>
+        {/* ============== Edit Health Package tests Modal ================ */}
+        <Modal size="lg" show={show2} onHide={handleClose2}>
+          <Modal.Header>
+            <Modal.Title>Edit Health package Tests</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="row">
+              <div className="col-lg-12" style={{ marginTop: "4%" }}>
+                <label
+                  style={{
+                    color: "white",
+                    fontWeight: "400",
+                    fontSize: "18px",
+                  }}
+                >
+                  Health Package Test List
+                </label>
+                <div className="d-flex">
+                  <select
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                    }}
+                    onChange={(e) =>
+                      setselectedData(JSON.parse(e.target.value))
+                    }
+                  >
+                    <option>Choose Lab Category</option>
+                    {HospitalLabList?.map((item) => {
+                      return (
+                        <option value={JSON.stringify(item)}>
+                          {item?.testName}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <button
+                    style={{
+                      backgroundColor: "grey",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      border: "1px solid white",
+                      fontWeight: "600",
+                      marginRight: "20px",
+                      marginLeft: "10px",
+                      padding: "4px 10px",
+                    }}
+                    onClick={addTestList}
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <div
+                className="col-lg-12"
+                style={{
+                  marginTop: "4%",
+                  backgroundColor: "#ebebeb",
+                  textAlign: "center",
+                }}
+              >
+                <Table bordered>
+                  <thead>
+                    <th>S.no.</th>
+                    <th>Test Name</th>
+                    <th>General Reference value</th>
+                    <th>Turn Around Time(TAT)</th>
+                    <th>Unit</th>
+                    <th>Action</th>
+                  </thead>
+                  <tbody>
+                    {View?.testList?.map((val, index) => {
+                      return (
+                        <tr style={{ backgroundColor: "#EBEBEB" }}>
+                          <td>{index + 1}</td>
+                          <td>{val?.testid?.testName}</td>
+                          <td>{val?.testid?.generalRefVal}</td>
+                          <td>{val?.testid?.tat}</td>
+                          <td>{val?.testid?.unit}</td>
+                          <td>
+                            <AiFillDelete
+                              style={{ color: "red" }}
+                              onClick={() =>
+                                DeleteAvailableHealthPkgTest(val?.testid?._id)
+                              }
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <div style={{ display: "flex" }}>
+              <button
+                style={{
+                  backgroundColor: "grey",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  border: "1px solid white",
+                  fontWeight: "600",
+                  marginRight: "20px",
+                  padding: "4px 10px",
+                }}
+                onClick={handleClose2}
+              >
+                CANCEL
+              </button>
+
+              {/* <button
+                style={{
+                  backgroundColor: "orange",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  fontWeight: "600",
+                  border: "1px solid white",
+                  padding: "4px 10px",
+                }}
+                onClick={() => {
+                  AddHospitalLabTest();
+                }}
+              >
+                SUBMIT
+              </button> */}
+            </div>
+          </Modal.Footer>
+        </Modal>
+
+        <Table responsive="md" bordered style={{ marginTop: "1%" }}>
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
               <th>S.NO</th>
               <th>Health Package Image</th>
               <th>Health Package Name</th>
               <th>Health Package Price</th>
+              <th>Edit Package Tests</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -700,6 +793,31 @@ export default function Hospitallabtestlist() {
                   </td>
                   <td>{val?.healthpkgName}</td>
                   <td>{val?.healthpkgPrice}</td>
+                  <td>
+                    <MdEdit
+                      style={{ color: "#20958c", marginRight: "6%" }}
+                      onClick={() => {
+                        setView(val);
+                        handleShow2();
+                      }}
+                    />
+                  </td>
+                  <td>
+                    <MdEdit
+                      style={{ color: "#20958c", marginRight: "6%" }}
+                      onClick={() => {
+                        setView(val);
+                        handleShow1();
+                      }}
+                    />
+                    <AiFillDelete
+                      style={{ color: "red" }}
+                      onClick={() => {
+                        setView(val);
+                        // handleShow6();
+                      }}
+                    />
+                  </td>
                 </tr>
               );
             })}

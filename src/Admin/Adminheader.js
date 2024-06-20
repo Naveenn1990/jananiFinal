@@ -136,7 +136,7 @@ export default function Adminheader() {
     }
   };
 
-  console.log("mkk ", orderedProductsList);
+
 
   const [inventoryList, setinventoryList] = useState([]);
   async function getInventoryList() {
@@ -154,21 +154,14 @@ export default function Adminheader() {
       setinventoryList([]);
     }
   }
-  console.log("header inventory list: ", inventoryList);
 
   useEffect(() => {
-    // Subadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
-    adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
-    if (!adminDetails) {
-      return alert("Access Denied!!!");
-    } else {
-      // getProductList();
-      // getAllVendors();
-      getAllCategory();
-      getAllSubCategory();
-      listOfOrderedProducts();
-      getInventoryList();
-    }
+    // getProductList();
+    // getAllVendors();
+    getAllCategory();
+    getAllSubCategory();
+    listOfOrderedProducts();
+    getInventoryList();
   }, []);
 
   useEffect(() => {
