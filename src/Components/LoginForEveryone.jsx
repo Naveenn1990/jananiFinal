@@ -6,9 +6,7 @@ import { Button, Container, FloatingLabel, Form, FormLabel } from 'react-bootstr
 import { useNavigate } from 'react-router-dom'
 
 export const LoginForEveryone = () => {
-
-    const navigate = useNavigate()
-
+    const navigate = useNavigate();
     const [Doctor, setDoctor] = useState(true);
     const [ReferDoctor, setReferDoctor] = useState(false);
     const [Pharmacy, setPharmacy] = useState(false);
@@ -16,13 +14,9 @@ export const LoginForEveryone = () => {
     const [Staff, setStaff] = useState(false);
     const [Lab, setLab] = useState(false)
     const [Vendor, setVendor] = useState(false)
-
-
     const [DEmail, setDEmail] = useState("");
     const [DId, setDId] = useState("");
-
     const [Dpassword, setDpassword] = useState("");
-
     const DoctorLogin = async (e) => {
         e.preventDefault();
         // if (!patientfirstname | !patientlastname | !conpassword | !gender | !DOB | !) {

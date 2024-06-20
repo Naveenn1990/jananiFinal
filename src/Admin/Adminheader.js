@@ -185,14 +185,14 @@ export default function Adminheader() {
           </div>
           <div className="col-lg-5"></div>
           <div className="col-lg-2 d-flex align-items-center justify-content-center">
-            <Button
+            {/* <Button
               className="min-stock-alert-button"
               onClick={() => {
                 handleShow();
               }}
             >
               Min Stock Alert
-            </Button>
+            </Button> */}
           </div>
           <div className="col-lg-2" style={{ textAlign: "center" }}>
             {darkmode ? (
