@@ -4,7 +4,7 @@ import { Container, FloatingLabel, Form, Modal,Col } from "react-bootstrap";
 import { Card, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import LabCard from "./labCard";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Select from "react-select";
 

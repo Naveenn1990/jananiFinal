@@ -22,8 +22,41 @@ function ReferalPatientList() {
   };
   console.log("LabPatientList", LabPatientList);
   const [SearchItem, setSearchItem] = useState("");
-  const [PatientDetails, setPatientDetails] = useState("")
+  const [PatientDetails, setPatientDetails] = useState("");
 
+  const bookLabTest = async () => {
+    const  obj = {
+        patientname:` ${PatientDetails?.LabPatientsFname} ${PatientDetails?.LabPatientsLname}`,
+        Phoneno: PatientDetails?.PhoneNumber,
+        email: PatientDetails?.Email,
+        testDate: PatientDetails?.AppointmentDate,
+        patientType:"REFERRAL-LAB",
+        Labtests: PatientDetails?.Labtests,
+        ReferLabId:PatientDetails?.LabId?._id,
+        ReferLabName:PatientDetails?.LabId?.ClinicLabName,
+      };
+    
+    try {
+      const config = {
+        url: "/user/bookHospitalLabTest",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: obj,
+      };
+      let res = await axios(config);
+      if (res.status === 200 || res.status === 201) {
+        alert("Lab test booked");
+        handleClose();
+        getlabregisterpatient();
+      }
+    } catch (error) {
+      console.log(error);
+      return alert(error.response.data.error);
+    }
+  };
+
+  console.log("PatientDetails",PatientDetails);
   useEffect(() => {
     getlabregisterpatient();
   }, []);
@@ -80,9 +113,11 @@ function ReferalPatientList() {
                         </p>{" "}
                       </td>
                       <td>
-                        <p style={{ color: "red", fontWeight: "800" }}>
-                          {item?.labtestid?.testName}
-                        </p>{" "}
+                        {item?.Labtests?.map((item1,i)=>{
+                          return(
+                            <p><span>{i+1}).</span><b>{item1?.testName}</b></p>
+                          )
+                        })}
                       </td>
                       <td>{`${item?.LabPatientsFname} ${item?.LabPatientsLname}`}</td>
                       <td>{item?.Gender}</td>
@@ -141,7 +176,9 @@ function ReferalPatientList() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="success">
+          <Button variant="success"
+          onClick={()=>bookLabTest()}
+          >
             <FontAwesomeIcon icon={faCheck} className="fs-5 me-2" />
             Approve
           </Button>

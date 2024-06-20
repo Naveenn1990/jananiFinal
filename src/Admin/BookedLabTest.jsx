@@ -130,6 +130,7 @@ function BookedLabTest() {
         setHospitalLabList([]);
       });
   };
+  console.log("HospitalLabListtttt", HospitalLabList);
   console.log("AllTestList", AllTestList);
 
   const [Labtests, setLabtests] = useState({});
