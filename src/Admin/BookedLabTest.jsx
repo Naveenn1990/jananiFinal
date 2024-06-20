@@ -72,6 +72,7 @@ function BookedLabTest() {
         "http://localhost:8521/api/user/getBookedHospitalLabTest"
       );
       setAllTestList(res.data.list);
+      setFilteredCatList(res.data.list);
     } catch (error) {
       console.log(error);
     }
@@ -264,6 +265,29 @@ function BookedLabTest() {
     }
   };
 
+  // search
+  const [search, setSearch] = useState("");
+  const [FilteredCatList, setFilteredCatList] = useState([]);
+  function handleFilter() {
+    if (search != "") {
+      // setSearch(search);
+      const filterTable = AllTestList.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(search.toLowerCase())
+        )
+      );
+      setFilteredCatList([...filterTable]);
+    } else {
+      // setSearch(search);
+      // vialList();
+      setFilteredCatList([...AllTestList]);
+    }
+  }
+
+  useEffect(() => {
+    handleFilter();
+  }, [search]);
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -281,6 +305,8 @@ function BookedLabTest() {
               border: "1px solid #20958c",
               borderRadius: "0px",
             }}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <AiOutlineUserAdd className="AddIcon1" onClick={handleShow} />
@@ -306,7 +332,7 @@ function BookedLabTest() {
               </tr>
             </thead>
             <tbody>
-              {AllTestList?.map((item, i) => {
+              {FilteredCatList?.map((item, i) => {
                 return (
                   <tr style={{ fontSize: "15px", textAlign: "center" }}>
                     {/* <td>
