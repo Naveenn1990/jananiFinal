@@ -10,7 +10,7 @@ import {
   Row,
 } from "react-bootstrap";
 import { AiFillDelete, AiOutlineUserAdd } from "react-icons/ai";
-import { MdDelete, MdEdit } from "react-icons/md";
+import { MdDelete, MdDeleteOutline, MdEdit } from "react-icons/md";
 import { useReactToPrint } from "react-to-print";
 import Select from "react-select";
 
@@ -51,6 +51,16 @@ function BookedLabTest() {
   const [show6, setShow6] = useState(false);
   const handleClose6 = () => setShow6(false);
   const handleShow6 = () => setShow6(true);
+
+  // ================================= Delete lab booking modal =================================
+  const [show7, setShow7] = useState(false);
+  const handleClose7 = () => setShow7(false);
+  const handleShow7 = () => setShow7(true);
+
+  // ================================= Update lab booking modal =================================
+  const [show8, setShow8] = useState(false);
+  const handleClose8 = () => setShow8(false);
+  const handleShow8 = () => setShow8(true);
 
   const componentRef = useRef();
   const handleprint = useReactToPrint({
@@ -96,11 +106,11 @@ function BookedLabTest() {
   useEffect(() => {
     getPatientlist();
     GetLabtestList();
-    HospitallabList();
+    HospitallabListFn();
   }, []);
 
   const [HospitalLabList, setHospitalLabList] = useState([]);
-  const HospitallabList = () => {
+  const HospitallabListFn = () => {
     axios
       .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
       .then(function (response) {
@@ -126,7 +136,7 @@ function BookedLabTest() {
   const [Labreport, setLabreport] = useState("");
   const [TestId, setTestId] = useState("");
   const [TestDetails, setTestDetails] = useState({});
-
+  const [View, setView] = useState({});
   const [Bookingid, setBookingid] = useState("");
 
   // Handle selection change
@@ -161,6 +171,29 @@ function BookedLabTest() {
       }
     } catch (error) {
       alert(error.response.data.error);
+    }
+  };
+
+  const deleteBookedLabTests = async () => {
+    try {
+      const config = {
+        url: "/deleteLabBooking/" + View?._id,
+        method: "delete",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "application/json" },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        GetLabtestList();
+        handleClose7();
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response) {
+        return alert(error.response.data.error);
+      }
+      return alert("Server is not responding!");
     }
   };
 
@@ -207,8 +240,6 @@ function BookedLabTest() {
           priceNonInsurance: val.priceNonInsurance,
           priceInsurance: val.priceInsurance,
           unit: val.unit,
-          // beforeFoodRefVal: val.beforeFoodRefVal,
-          // afterFoodRefVal: val.afterFoodRefVal,
           generalRefVal: val.generalRefVal,
         };
       })
@@ -255,8 +286,9 @@ function BookedLabTest() {
       };
       let res = await axios(config);
       if (res.status === 200 || res.status === 201) {
-        alert("Lab test booked");
-        // thankyouShow();
+        alert(res.data.success);
+        GetLabtestList();
+        handleClose();
       }
     } catch (error) {
       console.log(error);
@@ -328,6 +360,7 @@ function BookedLabTest() {
                 <th>Invoice</th>
                 {/* <th>View Report</th> */}
                 <th>Payment</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -461,6 +494,28 @@ function BookedLabTest() {
                         >
                           Done
                         </Button>
+                      )}
+                    </td>
+                    <td>
+                      {item?.paymentStatus === "PAID" ? (
+                        <></>
+                      ) : (
+                        <div className="d-flex justify-content-center">
+                          <MdEdit
+                            style={{ color: "#20958C", fontSize: "22px" }}
+                            onClick={(e) => {
+                              setView(item);
+                              handleShow8();
+                            }}
+                          />
+                          <MdDeleteOutline
+                            style={{ color: "red", fontSize: "25px" }}
+                            onClick={(e) => {
+                              setView(item);
+                              handleShow7();
+                            }}
+                          />
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -954,27 +1009,6 @@ function BookedLabTest() {
           </Modal.Header>
           <Modal.Body>
             <Row>
-              {/* <FloatingLabel
-                className="col-md-6 p-2"
-                controlId="floatingName"
-                label="Name"
-              >
-                <Form.Select
-                // type="text"
-                // value={patientData}
-                // placeholder="Name"
-                // onChange={(e) => setpatientData(e.target.value)}
-                >
-                  <option>Open this select menu</option>
-                  {patientlist?.map((valdata) => {
-                    return (
-                      <option value={JSON.stringify(valdata)}>
-                        {valdata?._id} {valdata?.Firstname}
-                      </option>
-                    );
-                  })}
-                </Form.Select>
-              </FloatingLabel> */}
               <FloatingLabel
                 className="col-md-6 p-2"
                 controlId="floatingName"
@@ -1074,8 +1108,7 @@ function BookedLabTest() {
                   />
                 )}
               </FloatingLabel>
-            </Row>
-            <Row>
+
               <FloatingLabel
                 className="col-md-6 p-2"
                 controlId="floatingEmail"
@@ -1099,7 +1132,7 @@ function BookedLabTest() {
                 )}
               </FloatingLabel>
               <FloatingLabel
-                className="col-md-6 p-1"
+                className="col-md-6 p-2"
                 controlId="floatingName"
                 label={hasSelectedOptions ? "" : "Select Lab Tests"}
               >
@@ -1115,10 +1148,8 @@ function BookedLabTest() {
                   placeholder=""
                 />
               </FloatingLabel>
-            </Row>
-            <Row className="d-flex mt-2 justify-content-center mb-3">
               <FloatingLabel
-                className="col-md-6 "
+                className="col-md-6 p-2"
                 controlId="floatingEmail"
                 label=""
               >
@@ -1126,50 +1157,55 @@ function BookedLabTest() {
                   type="date"
                   placeholder=""
                   value={testDate}
+                  min={`${new Date().getFullYear()}-${String(
+                    new Date().getMonth() + 1
+                  ).padStart(2, "0")}-${String(new Date().getDate()).padStart(
+                    2,
+                    "0"
+                  )}`}
                   onChange={(e) => settestDate(e.target.value)}
                 />
               </FloatingLabel>
             </Row>
-            {/* <Row className="d-flex mt-2 justify-content-center mb-3">
-              {patientData &&
-              JSON.parse(patientData)?.registrationType === "IPD" ? (
-                <FloatingLabel
-                  className="col-md-6 p-2"
-                  controlId="floatingCause"
-                  label="Cause"
-                >
-                  <Form.Select
-                    type="text"
-                    value={causeid}
-                    placeholder="Cause"
-                    onChange={(e) => setcauseid(e.target.value)}
-                  >
-                    <option>Open this select menu</option>
-                    {JSON.parse(patientData)?.cause?.map((itemdata) => {
-                      return (
-                        <option value={itemdata?._id}>
-                          {itemdata?.CauseName}
-                        </option>
-                      );
-                    })}
-                  </Form.Select>
-                </FloatingLabel>
-              ) : (
-                <></>
-              )}
-            </Row> */}
 
-            <Button
-              onClick={() => {
-                bookLabTest();
-              }}
+            {/* <Button
               onHide={handleClose}
               className="col-md-12"
               style={{ backgroundColor: "white", color: "#20958C" }}
             >
               Submit
-            </Button>
+            </Button> */}
           </Modal.Body>
+          <Modal.Footer>
+            <button
+              style={{
+                backgroundColor: "gray",
+                color: "white",
+                width: "90px",
+                height: "40px",
+                border: "0px",
+                borderRadius: "10px",
+              }}
+              onClick={handleClose}
+            >
+              Cancel
+            </button>
+            <button
+              style={{
+                backgroundColor: "#06fa06",
+                color: "white",
+                width: "90px",
+                height: "40px",
+                border: "0px",
+                borderRadius: "10px",
+              }}
+              onClick={() => {
+                bookLabTest();
+              }}
+            >
+              Submit
+            </button>
+          </Modal.Footer>
         </Modal>
 
         <Modal size="md" show={show4} onHide={handleClose4}>
@@ -1383,6 +1419,257 @@ function BookedLabTest() {
                 }}
               >
                 DONE
+              </button>
+            </div>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal size="md" show={show7} onHide={handleClose7}>
+          <Modal.Header>
+            <Modal.Title>Delete Booking</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <b>
+              Are you sure! You want to{" "}
+              <span style={{ color: "red" }}>Delete</span> the booking?
+            </b>
+          </Modal.Body>
+          <Modal.Footer>
+            <div style={{ display: "flex" }}>
+              <button
+                style={{
+                  backgroundColor: "grey",
+                  color: "white",
+                  // border: "none",
+                  borderRadius: "4px",
+                  border: "1px solid white",
+                  fontWeight: "600",
+                  marginRight: "20px",
+                  padding: "4px 10px",
+                }}
+                onClick={() => handleClose7()}
+              >
+                CANCEL
+              </button>
+
+              <button
+                style={{
+                  backgroundColor: "red",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  fontWeight: "600",
+                  border: "1px solid white",
+                  padding: "4px 10px",
+                }}
+                onClick={() => {
+                  deleteBookedLabTests();
+                }}
+              >
+                DELETE
+              </button>
+            </div>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal size="lg" show={show8} onHide={handleClose8}>
+          <Modal.Header>
+            <Modal.Title>Update Booking Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Row>
+              <FloatingLabel
+                className="col-md-6 p-2"
+                controlId="floatingName"
+                label="Type"
+              >
+                <Form.Select onChange={(e) => setPatientType(e.target.value)}>
+                  <option>Choose Options</option>
+                  <option value={"IPD"}>IPD</option>
+                  <option value={"OPD"}>OPD</option>
+                  <option value={"GENERAL"}>General</option>
+                </Form.Select>
+              </FloatingLabel>
+
+              {PatientType === "IPD" || PatientType === "OPD" ? (
+                <FloatingLabel
+                  className="col-md-6 p-2"
+                  controlId="floatingName"
+                  label="Patient List"
+                >
+                  <Form.Select
+                    onChange={(e) => setpatientObj(JSON.parse(e.target.value))}
+                  >
+                    <option>Choose Options</option>
+                    {patientlist
+                      ?.filter((item) => item?.registrationType === PatientType)
+                      ?.map((val) => {
+                        return (
+                          <option value={JSON.stringify(val)}>
+                            {val?.Firstname} {val?.Lastname}
+                          </option>
+                        );
+                      })}
+                  </Form.Select>
+                </FloatingLabel>
+              ) : (
+                <></>
+              )}
+
+              {PatientType === "IPD" ? (
+                <FloatingLabel
+                  className="col-md-6 p-2"
+                  controlId="floatingName"
+                  label="Cause"
+                >
+                  <Form.Select onChange={(e) => setcauseid(e.target.value)}>
+                    <option>Choose Options</option>
+                    {patientObj?.cause?.map((val) => {
+                      return <option value={val?._id}>{val?.CauseName}</option>;
+                    })}
+                  </Form.Select>
+                </FloatingLabel>
+              ) : (
+                <></>
+              )}
+
+              <FloatingLabel
+                className="col-md-6 p-2"
+                controlId="floatingName"
+                label="Name"
+              >
+                {PatientType === "IPD" || PatientType === "OPD" ? (
+                  <Form.Control
+                    type="text"
+                    value={patientObj?.Firstname}
+                    placeholder="Name"
+                    disabled
+                    onChange={(e) => setpatientname(e.target.value)}
+                  />
+                ) : (
+                  <Form.Control
+                    type="text"
+                    value={patientname}
+                    placeholder="Name"
+                    onChange={(e) => setpatientname(e.target.value)}
+                  />
+                )}
+              </FloatingLabel>
+              <FloatingLabel
+                className="  col-md-6 p-2"
+                controlId="floatingMobile"
+                label="Mobile"
+              >
+                {PatientType === "IPD" || PatientType === "OPD" ? (
+                  <Form.Control
+                    type="number"
+                    value={patientObj?.PhoneNumber}
+                    placeholder="Mobile"
+                    disabled
+                    onChange={(e) => setPhoneno(e.target.value)}
+                  />
+                ) : (
+                  <Form.Control
+                    type="number"
+                    value={Phoneno}
+                    placeholder="Mobile"
+                    onChange={(e) => setPhoneno(e.target.value)}
+                  />
+                )}
+              </FloatingLabel>
+
+              <FloatingLabel
+                className="col-md-6 p-2"
+                controlId="floatingEmail"
+                label="Email"
+              >
+                {PatientType === "IPD" || PatientType === "OPD" ? (
+                  <Form.Control
+                    type="email"
+                    value={patientObj?.Email}
+                    placeholder="Email"
+                    disabled
+                    onChange={(e) => setemail(e.target.value)}
+                  />
+                ) : (
+                  <Form.Control
+                    type="email"
+                    value={email}
+                    placeholder="Email"
+                    onChange={(e) => setemail(e.target.value)}
+                  />
+                )}
+              </FloatingLabel>
+              <FloatingLabel
+                className="col-md-6 p-2"
+                controlId="floatingName"
+                label={hasSelectedOptions ? "" : "Select Lab Tests"}
+              >
+                <Select
+                  isMulti
+                  name="labTests"
+                  options={HospitalLabList}
+                  className="basic-multi-select"
+                  classNamePrefix=""
+                  value={Labtests1}
+                  onChange={AddLabTest}
+                  styles={customStyles}
+                  placeholder=""
+                />
+              </FloatingLabel>
+              <FloatingLabel
+                className="col-md-6 p-2"
+                controlId="floatingEmail"
+                label=""
+              >
+                <Form.Control
+                  type="date"
+                  placeholder=""
+                  value={testDate}
+                  min={`${new Date().getFullYear()}-${String(
+                    new Date().getMonth() + 1
+                  ).padStart(2, "0")}-${String(new Date().getDate()).padStart(
+                    2,
+                    "0"
+                  )}`}
+                  onChange={(e) => settestDate(e.target.value)}
+                />
+              </FloatingLabel>
+            </Row>
+          </Modal.Body>
+          <Modal.Footer>
+            <div style={{ display: "flex" }}>
+              <button
+                style={{
+                  backgroundColor: "grey",
+                  color: "white",
+                  // border: "none",
+                  borderRadius: "4px",
+                  border: "1px solid white",
+                  fontWeight: "600",
+                  marginRight: "20px",
+                  padding: "4px 10px",
+                }}
+                onClick={() => handleClose8()}
+              >
+                CANCEL
+              </button>
+
+              <button
+                style={{
+                  backgroundColor: "#d3d300",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  fontWeight: "600",
+                  border: "1px solid white",
+                  padding: "4px 10px",
+                }}
+                onClick={() => {
+                  deleteBookedLabTests();
+                }}
+              >
+                Update
               </button>
             </div>
           </Modal.Footer>
