@@ -28,6 +28,11 @@ export default function Hospitallabtestlist() {
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
 
+  // =============== delete Health Package =====================
+  const [show3, setShow3] = useState(false);
+  const handleClose3 = () => setShow3(false);
+  const handleShow3 = () => setShow3(true);
+
   // =====================================================
 
   const [healthpkgName, sethealthpkgName] = useState("");
@@ -116,6 +121,7 @@ export default function Hospitallabtestlist() {
         if (response.status === 200) {
           const data = response.data.HospitalHealthPkgs;
           setHospitalHealthPkgList(data);
+          setFilteredCatList(data);
         }
       })
       .catch(function (error) {
@@ -163,24 +169,21 @@ export default function Hospitallabtestlist() {
     }
   };
 
-  // =========== delete available Health pkg ===========
-  const DeleteAvailableHealthPkgTest = async (id) => {
+  // =========== Delete Health package ===============
+  const DeleteHospitalHealthPkg = async () => {
     try {
       const config = {
-        url: "/admin/removeHealthPkgTestList",
-        method: "put",
-        headers: { "content-type": "multipart/form-data" },
+        url: "/admin/deleteHospitalHealthPkg/" + View?._id,
+        method: "delete",
+        headers: { "content-type": "application/json" },
         baseURL: "http://localhost:8521/api",
-        data: {
-          testobjid: id,
-        },
       };
       const res = await axios(config);
 
-      if (res.status === 201 || res.status === 200) {
+      if (res.status === 200) {
         getHospitalHealthPkgList();
         alert(res.data.success);
-        handleClose1();
+        handleClose3();
         sethealthpkgName("");
         sethealthpkgImg("");
         sethealthpkgPrice("");
@@ -197,6 +200,101 @@ export default function Hospitallabtestlist() {
       );
     }
   };
+
+  // =========== add available Health pkg ===========
+  const AddAvailableHealthPkgTest = async () => {
+    try {
+      const config = {
+        url: "/admin/addIntoHealthPkgTestList",
+        method: "put",
+        headers: { "content-type": "application/json" },
+        baseURL: "http://localhost:8521/api",
+        data: {
+          Healthpkgid: View?._id,
+          testobjid: selectedData?._id,
+        },
+      };
+      const res = await axios(config);
+
+      if (res.status === 200) {
+        getHospitalHealthPkgList();
+        alert(res.data.success);
+        setView(res.data.view);
+        sethealthpkgName("");
+        sethealthpkgImg("");
+        sethealthpkgPrice("");
+        settestList([]);
+        setselectedData({});
+      }
+    } catch (err) {
+      console.log(err);
+      return alert(
+        err.response.data.error
+          ? err.response.data.error
+          : "Something went wrong! Please try again!"
+      );
+    }
+  };
+
+  // =========== delete available Health pkg ===========
+  const DeleteAvailableHealthPkgTest = async (id) => {
+    try {
+      const config = {
+        url: "/admin/removeHealthPkgTestList",
+        method: "put",
+        headers: { "content-type": "application/json" },
+        baseURL: "http://localhost:8521/api",
+        data: {
+          Healthpkgid: View?._id,
+          testobjid: id,
+        },
+      };
+      const res = await axios(config);
+
+      if (res.status === 200) {
+        getHospitalHealthPkgList();
+        alert(res.data.success);
+        setView(res.data.view);
+        sethealthpkgName("");
+        sethealthpkgImg("");
+        sethealthpkgPrice("");
+        settestList([]);
+        setselectedData({});
+      }
+    } catch (err) {
+      console.log(err);
+      return alert(
+        err.response.data.error
+          ? err.response.data.error
+          : "Something went wrong! Please try again!"
+      );
+    }
+  };
+
+  // =========== Hospital Lab Health package search ================
+  // search
+  const [search, setSearch] = useState("");
+  const [FilteredCatList, setFilteredCatList] = useState([]);
+  function handleFilter() {
+    if (search != "") {
+      // setSearch(search);
+      const filterTable = HospitalHealthPkgList.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(search.toLowerCase())
+        )
+      );
+      setFilteredCatList([...filterTable]);
+    } else {
+      // setSearch(search);
+      // vialList();
+      setFilteredCatList([...HospitalHealthPkgList]);
+    }
+  }
+
+  useEffect(() => {
+    handleFilter();
+  }, [search]);
+
   // =======================================================
 
   const createPDF = async () => {
@@ -239,6 +337,8 @@ export default function Hospitallabtestlist() {
               border: "1px solid #20958c",
               borderRadius: "0px",
             }}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <ImLab className="AddIcon1" onClick={handleShow} />
@@ -630,6 +730,53 @@ export default function Hospitallabtestlist() {
           </Modal.Footer>
         </Modal>
 
+        {/* ============== Delete Health Package Modal ================ */}
+        <Modal size="lg" show={show3} onHide={handleClose3}>
+          <Modal.Header>
+            <Modal.Title>Delete Health Package</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p style={{ color: "white" }}>
+              Are You sure! You want to <b style={{ color: "red" }}>DELETE</b>{" "}
+              the entry?
+            </p>
+          </Modal.Body>
+          <Modal.Footer>
+            <div style={{ display: "flex" }}>
+              <button
+                style={{
+                  backgroundColor: "grey",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  border: "1px solid white",
+                  fontWeight: "600",
+                  marginRight: "20px",
+                  padding: "4px 10px",
+                }}
+                onClick={handleClose3}
+              >
+                CANCEL
+              </button>
+
+              <button
+                style={{
+                  backgroundColor: "red",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  fontWeight: "600",
+                  border: "1px solid white",
+                  padding: "4px 10px",
+                }}
+                onClick={DeleteHospitalHealthPkg}
+              >
+                Delete
+              </button>
+            </div>
+          </Modal.Footer>
+        </Modal>
+
         {/* ============== Edit Health Package tests Modal ================ */}
         <Modal size="lg" show={show2} onHide={handleClose2}>
           <Modal.Header>
@@ -660,7 +807,7 @@ export default function Hospitallabtestlist() {
                       setselectedData(JSON.parse(e.target.value))
                     }
                   >
-                    <option>Choose Lab Category</option>
+                    <option>Choose Lab Test List</option>
                     {HospitalLabList?.map((item) => {
                       return (
                         <option value={JSON.stringify(item)}>
@@ -681,7 +828,7 @@ export default function Hospitallabtestlist() {
                       marginLeft: "10px",
                       padding: "4px 10px",
                     }}
-                    onClick={addTestList}
+                    onClick={AddAvailableHealthPkgTest}
                   >
                     Add
                   </button>
@@ -780,7 +927,7 @@ export default function Hospitallabtestlist() {
             </tr>
           </thead>
           <tbody>
-            {HospitalHealthPkgList?.map((val, index) => {
+            {FilteredCatList?.map((val, index) => {
               return (
                 <tr style={{ fontSize: "15px", textAlign: "center" }}>
                   <td>{index + 1}.</td>
@@ -814,7 +961,7 @@ export default function Hospitallabtestlist() {
                       style={{ color: "red" }}
                       onClick={() => {
                         setView(val);
-                        // handleShow6();
+                        handleShow3();
                       }}
                     />
                   </td>

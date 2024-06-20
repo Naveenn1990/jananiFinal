@@ -6,6 +6,7 @@ import { MdEdit } from "react-icons/md";
 import { FaUserMd } from "react-icons/fa";
 import { ImLab } from "react-icons/im";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function HospitallabCategory() {
   const [show, setShow] = useState(false);
@@ -48,7 +49,10 @@ export default function HospitallabCategory() {
 
       if (res.status === 201 || res.status === 200) {
         alert(res.data.success);
-        setShow(false);
+        HospitallabCategories();
+        handleClose();
+        settestCategory("");
+        settestCategoryImg("");
       }
     } catch (err) {
       console.log(err);
@@ -69,6 +73,7 @@ export default function HospitallabCategory() {
         if (response.status === 200) {
           const data = response.data.list;
           setHospitalLabCatList(data);
+          setFilteredCatList(data);
         }
       })
       .catch(function (error) {
@@ -76,6 +81,38 @@ export default function HospitallabCategory() {
         console.log(error);
         setHospitalLabCatList([]);
       });
+  };
+
+  const UpdateHospitalLabCategory = async () => {
+    const obj = {
+      testCategory,
+      testCategoryImg,
+    };
+    try {
+      const config = {
+        url: "/admin/editHospitalLabCat/" + View?._id,
+        method: "put",
+        headers: { "content-type": "multipart/form-data" },
+        baseURL: "http://localhost:8521/api",
+        data: obj,
+      };
+      const res = await axios(config);
+
+      if (res.status === 200) {
+        alert(res.data.success);
+        HospitallabCategories();
+        handleClose4();
+        settestCategory("");
+        settestCategoryImg("");
+      }
+    } catch (err) {
+      console.log(err);
+      return alert(
+        err.response.data.error
+          ? err.response.data.error
+          : "Something went wrong! Please try again!"
+      );
+    }
   };
 
   const [View, setView] = useState({});
@@ -91,6 +128,10 @@ export default function HospitallabCategory() {
         // handle success
         if (response.status === 200) {
           alert(response.data.success);
+          handleClose1();
+          HospitallabCategories();
+          settestCategory("");
+          settestCategoryImg("");
         }
       })
       .catch(function (error) {
@@ -99,6 +140,30 @@ export default function HospitallabCategory() {
         return alert("Something is up with the server");
       });
   };
+  console.log("Viewshabaash: ", View);
+
+  // search
+  const [search, setSearch] = useState("");
+  const [FilteredCatList, setFilteredCatList] = useState([]);
+  function handleFilter() {
+    if (search != "") {
+      // setSearch(search);
+      const filterTable = HospitalLabCatList.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(search.toLowerCase())
+        )
+      );
+      setFilteredCatList([...filterTable]);
+    } else {
+      // setSearch(search);
+      // vialList();
+      setFilteredCatList([...HospitalLabCatList]);
+    }
+  }
+
+  useEffect(() => {
+    handleFilter();
+  }, [search]);
 
   useEffect(() => {
     HospitallabCategories();
@@ -107,9 +172,6 @@ export default function HospitallabCategory() {
   return (
     <div>
       <div style={{ padding: "1%" }}>
-        {/* <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-            Hospital Lab
-          </h6> */}
         <div
           style={{
             display: "flex",
@@ -118,46 +180,17 @@ export default function HospitallabCategory() {
           }}
         >
           <input
-            placeholder="Search Hospital Lab"
+            placeholder="Search Hospital Lab Category"
             style={{
               padding: "5px 10px",
               border: "1px solid #20958c",
               borderRadius: "0px",
             }}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <ImLab className="AddIcon1" onClick={() => setShow(true)} />
-
-            {/* <button
-              style={{
-                border: "none",
-                fontSize: "14px",
-                fontWeight: "600",
-                backgroundColor: "#20958c",
-                margin: "0px 10px",
-                borderRadius: "4px",
-                color: "white",
-              }}
-              onClick={() => setShow1(true)}
-            >
-              {" "}
-              + ADD LAB PRICE
-            </button> */}
-
-            {/* <button
-              style={{
-                border: "none",
-                fontSize: "14px",
-                fontWeight: "600",
-                backgroundColor: "#20958c",
-                borderRadius: "4px",
-                color: "white",
-              }}
-              onClick={() => setShow2(true)}
-            >
-              {" "}
-              + LAB TOTAL REVENUE
-            </button> */}
           </div>
         </div>
 
@@ -279,7 +312,7 @@ export default function HospitallabCategory() {
                   border: "1px solid grey",
                   padding: "4px 10px",
                 }}
-                onClick={() => setShow1(false)}
+                onClick={handleClose1}
               >
                 CANCEL
               </button>
@@ -302,49 +335,6 @@ export default function HospitallabCategory() {
           </Modal.Footer>
         </Modal>
 
-        <Modal size="md" show={show2} onHide={handleClose2}>
-          <Modal.Header>
-            <Modal.Title>Lab Total Revenue</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="row">
-              <div className="col-lg-12">
-                <select
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                >
-                  <option>Select Lab test</option>
-                  <option>Test-1</option>
-                  <option>Test-2</option>
-                </select>
-              </div>
-
-              <div
-                style={{
-                  borderRadius: "0px",
-                  backgroundColor: "#20958c",
-                  color: "white",
-                  margin: "5% 20% 2% 20%",
-                  width: "60%",
-                  padding: "4%",
-                }}
-              >
-                <h6 style={{ textAlign: "center", fontSize: "20px" }}>
-                  Total Revenue
-                </h6>
-                <h6 style={{ textAlign: "center", fontSize: "30px" }}>
-                  ₹ 12000
-                </h6>
-              </div>
-            </div>
-          </Modal.Body>
-        </Modal>
-
         <Modal size="md" show={show4} onHide={handleClose4}>
           <Modal.Header>
             <Modal.Title>Edit lab test</Modal.Title>
@@ -352,35 +342,50 @@ export default function HospitallabCategory() {
           <Modal.Body>
             <div className="row">
               <div className="col-lg-12">
-                <input
-                  placeholder="Test Category"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                ></input>
-              </div>
-
-              <div className="col-lg-2" style={{ marginTop: "4%" }}>
                 <label
                   style={{
-                    marginTop: "14%",
-                    marginLeft: "25%",
                     color: "white",
                     fontWeight: "400",
                     fontSize: "18px",
                   }}
                 >
-                  Image
+                  Test Category
                 </label>
+                <input
+                  placeholder={View?.testCategory}
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                  onChange={(e) => settestCategory(e.target.value)}
+                ></input>
               </div>
-              <div className="col-lg-10" style={{ marginTop: "4%" }}>
+
+              <div className="col-lg-12" style={{ marginTop: "4%" }}>
+                <label
+                  style={{
+                    color: "white",
+                    fontWeight: "400",
+                    fontSize: "18px",
+                  }}
+                  htmlFor="cat-img"
+                >
+                  Test Category Image:{" "}
+                  <Link
+                    to={`http://localhost:8521/HospitalLabTest/${View?.testCategoryImg}`}
+                    target="blank_"
+                    style={{ color: "white", textDecoration: "underline" }}
+                  >
+                    Category Image
+                  </Link>
+                </label>
                 <input
                   placeholder="Test Category"
                   type="file"
+                  id="cat-img"
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -388,34 +393,8 @@ export default function HospitallabCategory() {
                     border: "1px solid #ebebeb",
                     backgroundColor: "#ebebeb",
                   }}
-                ></input>
-              </div>
-
-              <div className="col-lg-12">
-                <input
-                  placeholder="Test Type"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                ></input>
-              </div>
-
-              <div className="col-lg-12">
-                <input
-                  placeholder="Sub-Test"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
+                  accept="image/*"
+                  onChange={(e) => settestCategoryImg(e.target.files[0])}
                 ></input>
               </div>
             </div>
@@ -433,7 +412,7 @@ export default function HospitallabCategory() {
                   border: "1px solid white",
                   padding: "4px 10px",
                 }}
-                onClick={() => setShow(false)}
+                onClick={handleClose4}
               >
                 CANCEL
               </button>
@@ -448,12 +427,9 @@ export default function HospitallabCategory() {
                   fontWeight: "600",
                   padding: "4px 10px",
                 }}
-                onClick={() => {
-                  setShow(false);
-                  alert("Hospital lab test Updated");
-                }}
+                onClick={UpdateHospitalLabCategory}
               >
-                SUBMIT
+                Update
               </button>
             </div>
           </Modal.Footer>
@@ -470,7 +446,7 @@ export default function HospitallabCategory() {
             </tr>
           </thead>
           <tbody>
-            {HospitalLabCatList?.map((val, index) => {
+            {FilteredCatList?.map((val, index) => {
               return (
                 <tr style={{ fontSize: "15px", textAlign: "center" }}>
                   <td>{index + 1}</td>
@@ -493,7 +469,10 @@ export default function HospitallabCategory() {
                     >
                       <MdEdit
                         style={{ color: "#20958c", marginRight: "15px" }}
-                        onClick={() => setShow4(true)}
+                        onClick={() => {
+                          setView(val);
+                          handleShow4();
+                        }}
                       />
                       <AiFillDelete
                         style={{ color: "red" }}
