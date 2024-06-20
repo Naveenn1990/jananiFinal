@@ -79,7 +79,7 @@ export default function ReferLabSidebar() {
         Lab Dashboard
       </h6>
 
-      <h6 className="sidebarItem" onClick={() => setLabM(!LabM)}>
+      {/* <h6 className="sidebarItem" onClick={() => setLabM(!LabM)}>
         <FontAwesomeIcon
           icon={faVialVirus}
           style={{ marginRight: "5px", fontSize: "15px" }}
@@ -125,7 +125,7 @@ export default function ReferLabSidebar() {
           />
           Lab Test Report
         </h6>
-      </div>
+      </div> */}
 
       <h6 className="sidebarItem" onClick={() => setPharM(!PharM)}>
         <FontAwesomeIcon
@@ -217,7 +217,7 @@ export default function ReferLabSidebar() {
         Settings
       </h6>
 
-      <h6
+      {/* <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/referlabchat")}
       >
@@ -227,7 +227,7 @@ export default function ReferLabSidebar() {
           style={{ color: "", marginRight: "5px" }}
         />
         Chat
-      </h6>
+      </h6> */}
 
       {/* <h6
         className="sidebarItem"
@@ -241,7 +241,7 @@ export default function ReferLabSidebar() {
         Calendar
       </h6> */}
 
-      <h6
+      {/* <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/referlabcontact")}
       >
@@ -251,7 +251,7 @@ export default function ReferLabSidebar() {
           style={{ color: "", marginRight: "5px" }}
         />
         Contacts
-      </h6>
+      </h6> */}
 
       <h6
         className="sidebarItem"

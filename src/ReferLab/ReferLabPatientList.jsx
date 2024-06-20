@@ -35,6 +35,10 @@ export const ReferLabPatientList = () => {
   const ViewProfileClose = () => setShow2(false);
   const ViewProfileShow = () => setShow2(true);
 
+  const [show3, setShow3] = useState(false);
+  const handleClose3 = () => setShow3(false);
+  const handleShow3 = () => setShow3(true);
+
   const [LabPatientList, setLabPatientList] = useState([]);
   const getlabregisterpatient = async () => {
     try {
@@ -97,7 +101,7 @@ export const ReferLabPatientList = () => {
   const [OldPrescription, setOldPrescription] = useState("");
   const [Selecttest, setSelecttest] = useState("");
   const formdata = new FormData();
-  const EditReferalLabPatient = async()=>{
+  const EditReferalLabPatient = async () => {
     try {
       formdata.set("LabPatientsFname", firstname);
       formdata.set("LabPatientsLname", lastname);
@@ -115,22 +119,41 @@ export const ReferLabPatientList = () => {
       formdata.set("LabId", ReferalLAB?._id);
       formdata.set("labtestid", Selecttest);
       const config = {
-        url:"/editreferallabpatient/" + LabPatientId?._id,
-        method:"put",
-        baseURL:"http://localhost:8521/api/ClinicLab/",
+        url: "/editreferallabpatient/" + LabPatientId?._id,
+        method: "put",
+        baseURL: "http://localhost:8521/api/ClinicLab/",
         headers: { "Content-Type": "multipart/form-data" },
-        data:formdata        
-      }
+        data: formdata,
+      };
       let res = await axios(config);
-      if(res.status === 200){
-        alert(res.data.success)
-        handleClose()
+      if (res.status === 200) {
+        alert(res.data.success);
+        handleClose();
         getlabregisterpatient();
-      }      
+      }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+  const ReferToPatient = async () => {
+    try {
+      const config = {
+        url: "/refepatient/" + LabPatientId?._id,
+        method: "put",
+        baseURL: "http://localhost:8521/api/ClinicLab/",
+        headers: { "Content-Type": "application/json" },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        handleClose3();
+        getlabregisterpatient();
+      }
+    } catch (error) {
+      console.log(error);
+      alert(error.response.data.error);
+    }
+  };
 
   useEffect(() => {
     getlabregisterpatient();
@@ -173,6 +196,7 @@ export const ReferLabPatientList = () => {
                 <th>Blood Group </th>
                 <th>Diesease </th>
                 <th>Actions </th>
+                <th>Refer-Status </th>
               </tr>
             </thead>
             <tbody>
@@ -203,30 +227,48 @@ export const ReferLabPatientList = () => {
                         </div>
                       </td>
                       <td>
-                        <div className="d-flex gap-4">
-                          <MdEdit
-                            style={{
-                              color: "green",
-                              fontSize: "18px",
-                              cursor: "pointer",
-                            }}
+                        {item?.isRefer === false ? (
+                           <div className="d-flex gap-4">
+                           <MdEdit
+                             style={{
+                               color: "green",
+                               fontSize: "18px",
+                               cursor: "pointer",
+                             }}
+                             onClick={() => {
+                               handleShow();
+                               setLabPatientId(item);
+                             }}
+                           />
+                           <MdDelete
+                             style={{
+                               color: "red",
+                               fontSize: "18px",
+                               cursor: "pointer",
+                             }}
+                             onClick={() => {
+                               deleteBtnShow();
+                               setLabPatientId(item);
+                             }}
+                           />
+                         </div>
+                        ):(<p>Can't Do Anything</p>)}
+                       
+                      </td>
+                      <td>
+                        {item?.isRefer === false ? (
+                          <Button
                             onClick={() => {
-                              handleShow();
+                              handleShow3();
                               setLabPatientId(item);
                             }}
-                          />
-                          <MdDelete
-                            style={{
-                              color: "red",
-                              fontSize: "18px",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => {
-                              deleteBtnShow();
-                              setLabPatientId(item);
-                            }}
-                          />
-                        </div>
+                          >
+                            {" "}
+                            Refer{" "}
+                          </Button>
+                        ) : (
+                          <p>Refered</p>
+                        )}
                       </td>
                     </tr>
                   );
@@ -414,9 +456,7 @@ export const ReferLabPatientList = () => {
           </div>
           <div className="container">
             <div className="row mb-3">
-            <FormLabel className="fw-bold text-dark">
-            Address
-                </FormLabel>  
+              <FormLabel className="fw-bold text-dark">Address</FormLabel>
               <textarea
                 onChange={(e) => setAddress(e.target.value)}
                 class="form-control"
@@ -430,40 +470,34 @@ export const ReferLabPatientList = () => {
               <div className="col-lg-6">
                 <FormLabel className="fw-bold text-dark">
                   Date Of Appointment
-                </FormLabel>               
-                  <Form.Control
-                    style={{ width: "300px" }}
-                    type="date"
-                    onChange={(e) => setDateofAppointment(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                  />               
+                </FormLabel>
+                <Form.Control
+                  style={{ width: "300px" }}
+                  type="date"
+                  onChange={(e) => setDateofAppointment(e.target.value)}
+                  min={new Date().toISOString().split("T")[0]}
+                />
               </div>
 
               <div className="col-lg-6">
-                <FormLabel className="fw-bold text-dark">
-                Lab Test
-                </FormLabel>                
-                  <Form.Select 
-                    onChange={(e)=>setSelecttest(e.target.value)}
-                  >
-                      <option>Select Test</option>
-                {HospitalLabList?.map((item)=>{
-                  return(
-                    <option value={item?._id}>{item?.testName}</option>
-                  )
-                })}
-                  </Form.Select>               
+                <FormLabel className="fw-bold text-dark">Lab Test</FormLabel>
+                <Form.Select onChange={(e) => setSelecttest(e.target.value)}>
+                  <option>Select Test</option>
+                  {HospitalLabList?.map((item) => {
+                    return <option value={item?._id}>{item?.testName}</option>;
+                  })}
+                </Form.Select>
               </div>
             </div>
           </div>
 
           <div className="container">
             <div className="row">
-            <FormLabel className="fw-bold text-dark">
-            Injury/Contion
-                </FormLabel>   
+              <FormLabel className="fw-bold text-dark">
+                Injury/Contion
+              </FormLabel>
               <textarea
-                onChange={(e) => setInjury(e.target.value)}             
+                onChange={(e) => setInjury(e.target.value)}
                 class="form-control"
                 placeholder={LabPatientId?.InjuryCondition}
               />
@@ -471,12 +505,12 @@ export const ReferLabPatientList = () => {
           </div>
           <div className="container">
             <div className="row mb-3">
-            <FormLabel className="fw-bold text-dark">
-             Choose Old Prescription
-                </FormLabel>  
+              <FormLabel className="fw-bold text-dark">
+                Choose Old Prescription
+              </FormLabel>
               <Form.Control
                 onChange={(e) => setOldPrescription(e.target.value)}
-               type="file"
+                type="file"
               />
             </div>
           </div>
@@ -486,10 +520,7 @@ export const ReferLabPatientList = () => {
             Cancle
           </Button>
           {/* <Button  variant="danger"><FontAwesomeIcon icon={faCancel} className='fs-5 me-2' />Reject</Button> */}
-          <Button 
-          variant="success"
-          onClick={()=>EditReferalLabPatient()}
-          >
+          <Button variant="success" onClick={() => EditReferalLabPatient()}>
             <FontAwesomeIcon icon={faCheck} className="fs-5 me-2" />
             Save
           </Button>
@@ -678,6 +709,37 @@ export const ReferLabPatientList = () => {
             </tbody>
           </Table>
         </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={show3}
+        onHide={handleClose3}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title> REFERRAL HOSPITAL LAB</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ textAlign: "center", padding: "20px" }}>
+            <p style={{ fontSize: "18px", color: "#333" }}>
+              Are you sure you want to refer
+              <b style={{ color: "red" }}>
+                {`${LabPatientId?.LabPatientsFname} ${LabPatientId?.LabPatientsLname}`}
+              </b>
+              ?
+            </p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleClose3}>
+            Cancle
+          </Button>
+          <Button variant="success" onClick={ReferToPatient}>
+            <FontAwesomeIcon icon={faCheck} className=" me-2" />
+            Refer
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );

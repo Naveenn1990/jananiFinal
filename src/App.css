@@ -7,7 +7,34 @@ p {
   background-color: red !important;
   color: white !important;
 }
+.paginationBttns {
+  width: 97%;
+  height: 40px;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
 
+.paginationBttns a {
+  padding: 6px 10px;
+  margin: 8px;
+  border-radius: 10%;
+  border: 1px solid #20958c;
+  color: #20958c !important;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.paginationBttns a:hover {
+  color: white !important;
+  background-color: #20958c !important;
+}
+
+.paginationActive a {
+  color: white !important;
+  background-color: #20958c;
+}
 .pacClass {
   position: fixed;
   top: 0;
