@@ -9,8 +9,8 @@ import {
   FloatingLabel,
   Row,
 } from "react-bootstrap";
-import { AiFillDelete, AiOutlineUserAdd } from "react-icons/ai";
-import { MdDelete, MdEdit } from "react-icons/md";
+import { AiOutlineUserAdd } from "react-icons/ai";
+import { MdDelete } from "react-icons/md";
 import { useReactToPrint } from "react-to-print";
 import Select from "react-select";
 
@@ -119,6 +119,7 @@ function BookedLabTest() {
         setHospitalLabList([]);
       });
   };
+  console.log("HospitalLabListtttt",HospitalLabList);
   console.log("AllTestList", AllTestList);
 
   const [Labtests, setLabtests] = useState({});
