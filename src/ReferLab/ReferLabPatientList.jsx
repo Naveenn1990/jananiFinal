@@ -39,6 +39,10 @@ export const ReferLabPatientList = () => {
   const handleClose3 = () => setShow3(false);
   const handleShow3 = () => setShow3(true);
 
+  const [show4, setShow4] = useState(false);
+  const handleClose4 = () => setShow4(false);
+  const handleShow4 = () => setShow4(true);
+
   const [LabPatientList, setLabPatientList] = useState([]);
   const getlabregisterpatient = async () => {
     try {
@@ -195,6 +199,7 @@ export const ReferLabPatientList = () => {
                 <th>Age</th>
                 <th>Blood Group </th>
                 <th>Diesease </th>
+                <th>Test List </th>
                 <th>Actions </th>
                 <th>Refer-Status </th>
               </tr>
@@ -227,33 +232,44 @@ export const ReferLabPatientList = () => {
                         </div>
                       </td>
                       <td>
+                        <Button
+                          onClick={() => {
+                            setLabPatientId(item);
+                            handleShow4();
+                          }}
+                        >
+                          Test List
+                        </Button>
+                      </td>
+                      <td>
                         {item?.isRefer === false ? (
-                           <div className="d-flex gap-4">
-                           <MdEdit
-                             style={{
-                               color: "green",
-                               fontSize: "18px",
-                               cursor: "pointer",
-                             }}
-                             onClick={() => {
-                               handleShow();
-                               setLabPatientId(item);
-                             }}
-                           />
-                           <MdDelete
-                             style={{
-                               color: "red",
-                               fontSize: "18px",
-                               cursor: "pointer",
-                             }}
-                             onClick={() => {
-                               deleteBtnShow();
-                               setLabPatientId(item);
-                             }}
-                           />
-                         </div>
-                        ):(<p>Can't Do Anything</p>)}
-                       
+                          <div className="d-flex gap-4">
+                            <MdEdit
+                              style={{
+                                color: "green",
+                                fontSize: "18px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                handleShow();
+                                setLabPatientId(item);
+                              }}
+                            />
+                            <MdDelete
+                              style={{
+                                color: "red",
+                                fontSize: "18px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                deleteBtnShow();
+                                setLabPatientId(item);
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <p>Can't Do Anything</p>
+                        )}
                       </td>
                       <td>
                         {item?.isRefer === false ? (
@@ -738,6 +754,41 @@ export const ReferLabPatientList = () => {
           <Button variant="success" onClick={ReferToPatient}>
             <FontAwesomeIcon icon={faCheck} className=" me-2" />
             Refer
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={show4}
+        onHide={handleClose4}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title> LAB TEST LIST</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ backgroundColor: "white" }}>
+          <Table bordered>
+            <thead>
+              <tr>
+                <th>Sl.No</th>
+                <th>Test Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {LabPatientId?.Labtests?.map((item, i) => {
+                return (
+                  <tr>
+                    <td>{i+1}</td>
+                    <td>{item?.testName}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleClose4}>
+            Cancle
           </Button>
         </Modal.Footer>
       </Modal>

@@ -9,10 +9,59 @@ import {
 import { useNavigate } from "react-router-dom";
 import { CkEditorComponent } from "../CkEditor/CkEditorComponent";
 import axios from "axios";
+import Select from "react-select";
 
 export const ReferLabAddPatient = () => {
   const navigate = useNavigate();
   const ReferalLAB = JSON.parse(sessionStorage.getItem("RLabDetails"));
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      minHeight: "60px",
+    }),
+  };
+
+  const [HospitalLabList, setHospitalLabList] = useState([]);
+  const getHospitallabList = () => {
+    axios
+      .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
+      .then(function (response) {
+        if (response.status === 200) {
+          const data = response.data.HospitalLabTests;
+          data.forEach((item) => {
+            item.label = item.testName;
+            item.value = item.testName;
+          });
+
+          setHospitalLabList(data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        setHospitalLabList([]);
+      });
+  };
+
+  const [Labtests1, setLabtests1] = useState([]);
+  let [selectedOptions, setSelectedOptions] = useState([]);
+  const hasSelectedOptions = Labtests1 && Labtests1.length > 0;
+  const AddLabTest = (Labtests) => {
+    setSelectedOptions(
+      Labtests?.map((val) => {
+        return {
+          testid: val._id,
+          testName: val.testName,
+          priceNonInsurance: val.priceNonInsurance,
+          priceInsurance: val.priceInsurance,
+          unit: val.unit,
+          generalRefVal: val.generalRefVal,
+        };
+      })
+    );
+    setLabtests1(Labtests);
+  };
+
 
   const [firstname, setfirstname] = useState("");
   const [lastname, setlastname] = useState("");
@@ -27,7 +76,6 @@ export const ReferLabAddPatient = () => {
   const [DateofAppointment, setDateofAppointment] = useState("");
   const [Injury, setInjury] = useState("");
   const [OldPrescription, setOldPrescription] = useState("");
-  const [Selecttest, setSelecttest] = useState("")
   const formdata = new FormData();
 
   const RegisterPatient = async () => {
@@ -46,12 +94,12 @@ export const ReferLabAddPatient = () => {
       formdata.set("InjuryCondition", Injury);
       formdata.set("OldPrescription", OldPrescription);
       formdata.set("LabId", ReferalLAB?._id);
-      formdata.set("labtestid", Selecttest);
+      formdata.set("Labtests", JSON.stringify(selectedOptions));
       const config = {
         url: "/addLabPatient",
         method: "post",
         baseURL: "http://localhost:8521/api/ClinicLab",
-        headers: { "Content-Type": "multipart/form-data" },
+        // headers: { "Content-Type": "application/json" },
         data: formdata,
       };
       let res = await axios(config);
@@ -63,26 +111,10 @@ export const ReferLabAddPatient = () => {
       alert(error.response.data.error);
     }
   };
-
-  const [HospitalLabList, setHospitalLabList] = useState([]);
-  const HospitallabList = () => {
-    axios
-      .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
-      .then(function (response) {
-        if (response.status === 200) {
-          const data = response.data.HospitalLabTests;
-          setHospitalLabList(data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        setHospitalLabList([]);
-      });
-  };
+  console.log("selectedOptions",selectedOptions);
   useEffect(() => {
-    HospitallabList();
+    getHospitallabList();
   }, []);
-console.log("HospitalLabList",HospitalLabList);
   return (
     <div>
       <div>
@@ -232,21 +264,29 @@ console.log("HospitalLabList",HospitalLabList);
                   placeholder="Date of Appointment"
                   onChange={(e) => setDateofAppointment(e.target.value)}
                   value={DateofAppointment}
-                  min={new Date().toISOString().split('T')[0]}
+                  min={new Date().toISOString().split("T")[0]}
                 />
               </FloatingLabel>
-              <Form.Select
-                style={{ width: "400px" }}
-               onChange={(e)=>setSelecttest(e.target.value)}
+              <FloatingLabel
+              style={{ width: "400px" }}
+                className="col-md-5 p-1"
+                controlId="floatingName"
+                label={hasSelectedOptions ? "" : "Select Lab Tests"}
               >
-                <option>Select Test</option>
-                {HospitalLabList?.map((item)=>{
-                  return(
-                    <option value={item?._id}>{item?.testName}</option>
-                  )
-                })}
-              </Form.Select>
-            </div>          
+                <Select
+                  
+                  isMulti
+                  name="labTests"
+                  options={HospitalLabList}
+                  className="basic-multi-select"
+                  classNamePrefix=""
+                  value={Labtests1}
+                  onChange={AddLabTest}
+                  styles={customStyles}
+                  placeholder=""
+                />
+              </FloatingLabel>
+            </div>
             <FloatingLabel className="mb-5" label="Injury/Contion">
               <Form.Control
                 style={{ width: "820px", height: "100px" }}
@@ -282,20 +322,7 @@ console.log("HospitalLabList",HospitalLabList);
                 onClick={() => RegisterPatient()}
               >
                 Submit
-              </Button>
-              {/* <Button
-                style={{
-                  width: "10%",
-                  height: "40px",
-                  fontSize: "16px",
-                  backgroundColor: "#FE2E2E",
-                }}
-                onClick={() => {
-                  navigate("#");
-                }}
-              >
-                Cancel
-              </Button> */}
+              </Button>            
             </div>
           </Form>
         </Container>
