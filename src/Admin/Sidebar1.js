@@ -212,9 +212,9 @@ export default function Sidebar1() {
           {/* <Link to={"/admin/AddProductCategory"}>
             <h6 className="sidebarItem1">IPD Patients</h6>
           </Link> */}
-          <Link to={"/admin/OPDPharmacy"}>
+          {/* <Link to={"/admin/OPDPharmacy"}>
             <h6 className="sidebarItem1">OPD Patients</h6>
-          </Link>
+          </Link> */}
           <Link to={"/admin/AddProductCategory"}>
             <h6
               className="sidebarItem1"
@@ -377,12 +377,12 @@ export default function Sidebar1() {
             >
               Add hospital house keeping
             </h6> */}
-          <h6
+          {/* <h6
             className="sidebarItem1"
             onClick={() => window.location.assign("/admin/AddAccesories")}
           >
             Add Accessories
-          </h6>
+          </h6> */}
 
           <h6
             className="sidebarItem1"
@@ -391,18 +391,18 @@ export default function Sidebar1() {
             Add Rooms
           </h6>
 
-          <h6
+          {/* <h6
             className="sidebarItem1"
             onClick={() => window.location.assign("/admin/Adddepartment")}
           >
             Add Department
-          </h6>
-          <h6
+          </h6> */}
+          {/* <h6
             className="sidebarItem1"
             onClick={() => window.location.assign("/admin/Notifications")}
           >
             Notification
-          </h6>
+          </h6> */}
         </div>
 
         {admin?.bedManagement === true ? (

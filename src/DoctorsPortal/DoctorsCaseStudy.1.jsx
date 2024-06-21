@@ -74,7 +74,6 @@ export const DoctorsCaseStudy = () => {
     }
   };
 
-
   useEffect(() => {
     getAllProducts();
     getAppointmentList();
@@ -146,7 +145,7 @@ export const DoctorsCaseStudy = () => {
       let res = await axios(config);
       if (res.status === 200) {
         console.log(res.data.success);
-        getAppointmentList();        
+        getAppointmentList();
       }
     } catch (error) {
       console.log(error.response);
@@ -250,6 +249,7 @@ export const DoctorsCaseStudy = () => {
     }
   };
 
+  console.log("AppointmentList", AppointmentList);
   return (
     <div>
       <Container className="p-4">
@@ -696,7 +696,9 @@ export const DoctorsCaseStudy = () => {
                               <option value="OA">Only Afternoon</option>
                               <option value="1x">QD (Once a day)</option>
                               <option value="2x">BID (Twice a day)</option>
-                              <option value="3x">TID (Three times a day)</option>
+                              <option value="3x">
+                                TID (Three times a day)
+                              </option>
                               <option value="4x">QID (Four times a day)</option>
                               <option value="5x">FID (Five times a day)</option>
                               <option value="6x">Six times a day</option>
@@ -712,18 +714,30 @@ export const DoctorsCaseStudy = () => {
                               <option value="Q4H">Q4H (Every 4 hours)</option>
                               <option value="Q6H">Q6H (Every 6 hours)</option>
                               <option value="Q2H">Q2H (Every 2 hours)</option>
-                              <option value="QOD"> QOD (Every other hour)</option>
+                              <option value="QOD">
+                                {" "}
+                                QOD (Every other hour)
+                              </option>
                               <option value="QH">QH (Every hour)</option>
                               <option value="QAM">QAM (Every morning)</option>
                               <option value="QN">QN (Every night)</option>
                               <option value="QWK">QWK (Every week)</option>
-                              <option value="QWK2">QWK2 (Every two weeks)</option>
-                              <option value="BIS in 7d"> BIS in 7d (Twice a week) </option>
-                              <option value="TIW">TIW (Three times a week)</option>
+                              <option value="QWK2">
+                                QWK2 (Every two weeks)
+                              </option>
+                              <option value="BIS in 7d">
+                                {" "}
+                                BIS in 7d (Twice a week){" "}
+                              </option>
+                              <option value="TIW">
+                                TIW (Three times a week)
+                              </option>
                               <option value="OM">OM (Once in a month)</option>
                               <option value="SOS">SOS (If Necessary)</option>
                               <option value="Frequently">Frequently</option>
-                              <option value="Dieb. Alt.">Dieb. Alt. (Alternate Days)</option>
+                              <option value="Dieb. Alt.">
+                                Dieb. Alt. (Alternate Days)
+                              </option>
                               <option value="STAT">STAT</option>
                             </select>
                           </td>
