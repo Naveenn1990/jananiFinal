@@ -36,15 +36,15 @@ export default function ReferLabSidebar() {
         <span className="fw-bold fs-4" style={{ color: "rgb(32 139 140)" }}>
           JANANI
         </span>
-      </Navbar.Brand>      
+      </Navbar.Brand>
       <div className=" text-center m-3 ms-4">
         <img
-           src={`http://localhost:8521/ClinicLab/${ReferalLAB?.ProfileImg}`}
+          src={`http://localhost:8521/ClinicLab/${ReferalLAB?.ProfileImg}`}
           alt="profile pic"
           style={{ width: "70px", height: "70px", borderRadius: "30%" }}
         />
         <p className="fs-4 fw-bold" style={{ color: "rgb(32 139 140)" }}>
-        {`${ReferalLAB?.Firstname} ${ReferalLAB?.Lastname}`}
+          {`${ReferalLAB?.Firstname} ${ReferalLAB?.Lastname}`}
         </p>
         <p
           style={{
@@ -142,31 +142,30 @@ export default function ReferLabSidebar() {
         }}
       >
         <Link to="/referlabaddpatient">
-        <h6
-          className="sidebarItem1"
-        //   onClick={() => window.location.assign("/referlabaddpatient")}
-        >
-          <FontAwesomeIcon
-            icon={faPlus}
-            style={{ marginRight: "5px", fontSize: "15px" }}
-          />
-          Add Patient
-        </h6>
+          <h6
+            className="sidebarItem1"
+            //   onClick={() => window.location.assign("/referlabaddpatient")}
+          >
+            <FontAwesomeIcon
+              icon={faPlus}
+              style={{ marginRight: "5px", fontSize: "15px" }}
+            />
+            Add Patient
+          </h6>
         </Link>
-       
+
         <Link to="/referlabpatientlist">
-        <h6
-          className="sidebarItem1"
-        //   onClick={() => window.location.assign("/referlabpatientlist")}
-        >
-          <FontAwesomeIcon
-            icon={faList}
-            style={{ marginRight: "5px", fontSize: "15px" }}
-          />
-          Patients List
-        </h6>
+          <h6
+            className="sidebarItem1"
+            //   onClick={() => window.location.assign("/referlabpatientlist")}
+          >
+            <FontAwesomeIcon
+              icon={faList}
+              style={{ marginRight: "5px", fontSize: "15px" }}
+            />
+            Patients List
+          </h6>
         </Link>
-       
       </div>
 
       {/* <h6 className="sidebarItem" onClick={() => setLabM(!LabM)}>

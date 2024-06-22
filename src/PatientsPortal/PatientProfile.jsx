@@ -31,6 +31,8 @@ function PatientProfile() {
   const [password, setpassword] = useState("");
   const [conpassword, setconpassword] = useState("");
 
+  console.log("gender", gender);
+
   const UpdateProfile = async () => {
     try {
       const config = {
@@ -192,11 +194,15 @@ function PatientProfile() {
           <hr />
           <div className="d-flex justify-content-center mb-3">
             <div>
-            <Barcode value={`${patientDetails?.Firstname} ${patientDetails?.Lastname}`} width={1} height={50}  />
+              <Barcode
+                value={`${patientDetails?.Firstname} ${patientDetails?.Lastname}`}
+                width={1}
+                height={50}
+              />
 
-{/* Generate a barcode with additional options */}
-{/* <Barcode value="987654321" width={1} height={50} /> */}
-            
+              {/* Generate a barcode with additional options */}
+              {/* <Barcode value="987654321" width={1} height={50} /> */}
+
               <p style={{ textAlign: "center" }}>Profile Details</p>
             </div>
           </div>
@@ -270,6 +276,7 @@ function PatientProfile() {
                   <Form.Select onChange={(e) => setgender(e.target.value)}>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
+                    <option value="Other">Other</option>
                   </Form.Select>
                 </Form.Group>
               </div>
