@@ -162,13 +162,15 @@ function ReferalPatientList() {
           <Modal.Title>Approve Lab Test</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <div style={{ textAlign: "center", padding: "20px" }}>
-            <p style={{ fontSize: "18px", color: "#333" }}>
+          <div style={{ textAlign: "center", padding: "20px" }}>
+            <p style={{ fontSize: "18px", color: "white" }}>
               Are you sure you want to approve fo Lab Test &nbsp;
-              <b style={{ color: "red" }}>
+              <b style={{ color: "white" }}>
+                "{" "}
                 {`${PatientDetails?.LabPatientsFname} ${PatientDetails?.LabPatientsLname}`}
-              </b>&nbsp;
-              ?
+                "
+              </b>
+              &nbsp; ?
             </p>
           </div>
         </Modal.Body>

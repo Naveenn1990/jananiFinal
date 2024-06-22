@@ -13,12 +13,12 @@ export const ReferDoctorDashboard = () => {
                 <h4 className='fw-bold col-lg-4'>Dashboard</h4>
 
                 <div className='col-lg-6 d-flex gap-3 '>
-                    <Form.Select style={{ width: '200px', marginLeft: 'auto' }} aria-label="Default select example">
+                    {/* <Form.Select style={{ width: '200px', marginLeft: 'auto' }} aria-label="Default select example">
                         <option value="1">Last 30 Days</option>
                         <option value="2">Last 6 Months</option>
                         <option value="3">Last 1 Year</option>
                     </Form.Select>
-                    <Button className='d-flex gap-2' style={{ backgroundColor: 'rgb(32 139 140)' }}><FontAwesomeIcon icon={faFileInvoice} className='fs-6' /> Report</Button>
+                    <Button className='d-flex gap-2' style={{ backgroundColor: 'rgb(32 139 140)' }}><FontAwesomeIcon icon={faFileInvoice} className='fs-6' /> Report</Button> */}
                 </div>
             </div>
 
