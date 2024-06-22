@@ -259,6 +259,8 @@ import LaborderHistory from "./Admin/LaborderHistory";
 import LabInventory from "./Admin/LabInventory";
 import LabProductInvoice from "./Admin/LabProductInvoice";
 import { HospitalLabRecepPanel } from "./Admin/HospitalLabRecepPanel";
+import AddPatientRefHospital from "./ReferDoctor/AddPatientRefHospital";
+import ReferHospitalpatientList from "./ReferDoctor/ReferHospitalpatientList";
 
 function App() {
   return (
@@ -1259,12 +1261,36 @@ function App() {
               }
             />
             <Route
+              path="/addpatientrefhospital"
+              element={
+                <ReferDoctorCommanDashboard
+                  children={
+                    <>
+                      <AddPatientRefHospital />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
               path="/referdoctorpatientlist"
               element={
                 <ReferDoctorCommanDashboard
                   children={
                     <>
                       <ReferDoctorPatientList />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/referhospitalpatientlist"
+              element={
+                <ReferDoctorCommanDashboard
+                  children={
+                    <>
+                      <ReferHospitalpatientList />
                     </>
                   }
                 />
