@@ -1169,6 +1169,7 @@ export default function BillingList() {
                 <th> Cause Service</th>
                 <th>Cause Name</th>
                 <th>Action</th>
+                <th>View</th>
               </tr>
             </thead>
             <tbody>
@@ -1213,7 +1214,6 @@ export default function BillingList() {
                             });
                           }}
                           className="fs-5"
-                         
                           style={{ border: "none" }}
                         >
                           <FaEye

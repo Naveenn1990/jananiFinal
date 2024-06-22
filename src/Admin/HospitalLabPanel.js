@@ -144,7 +144,7 @@ export default function HospitalLabPanel() {
                   </div>
                 </div>
 
-                <div className="col-lg-4">
+                {/* <div className="col-lg-4">
                   {" "}
                   <div
                     className="websiteMcards"
@@ -157,7 +157,7 @@ export default function HospitalLabPanel() {
                     <GiTestTubes className="WebMI" />
                     HEALTH-PACKAGE
                   </div>
-                </div>
+                </div> */}
               </>
             ) : (
               <></>

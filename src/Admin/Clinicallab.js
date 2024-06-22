@@ -156,6 +156,7 @@ export default function Clinicallab() {
         setcertificate("");
         getClinicalLabsList();
         handleClose();
+        handleClose4();
       }
     } catch (error) {
       console.log(error);
@@ -1055,11 +1056,17 @@ export default function Clinicallab() {
         </Modal>
         <Modal size="md" show={show6} onHide={handleClose6}>
           <Modal.Header>
-            <Modal.Title>Block Lab Authentication</Modal.Title>
+            <Modal.Title>
+              {" "}
+              {LabDetailsShow?.blocked === false ? "Block" : "Un-Block"} Lab
+              Authentication
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>
-              Are You sure , You want to Block this Clinic's Lab information.
+            <div style={{ color: "white" }}>
+              Are You sure , You want to{" "}
+              {LabDetailsShow?.blocked === false ? "Block" : "Un-Block"} this
+              Clinic's Lab information.
             </div>
           </Modal.Body>
           <Modal.Footer>
@@ -1090,7 +1097,7 @@ export default function Clinicallab() {
                 }}
                 onClick={() => ClinicBlock()}
               >
-                BLOCK
+                {LabDetailsShow?.blocked === false ? "BLOCK" : "UN-BLOCK"}
               </button>
             </div>
           </Modal.Footer>
@@ -1102,7 +1109,7 @@ export default function Clinicallab() {
               <th>S.no.</th>
               <th>Clinic-Id</th>
               <th>Clinic Name</th>
-              <th> Email</th>
+              <th>Email</th>
               <th>Contact</th>
               <th>Status</th>
               <th>ACTION</th>
@@ -1124,7 +1131,8 @@ export default function Clinicallab() {
                     <td>{labinfo?.Email}</td>
                     <td>{labinfo?.PhoneNumber}</td>
                     <td>
-                    {labinfo?.blocked === false ? (<>
+                      {labinfo?.blocked === false ? (
+                        <>
                           <Button
                             style={{
                               fontSize: "12px",
@@ -1141,13 +1149,16 @@ export default function Clinicallab() {
                             }}
                           >
                             BLOCK
-                          </Button><br/>
-                          <b style={{color:"green"}}> User is UnBlock </b>
-                     </> ) : (<>
+                          </Button>
+                          <br />
+                          <b style={{ color: "green" }}> User is UnBlock </b>
+                        </>
+                      ) : (
+                        <>
                           <Button
                             style={{
                               fontSize: "12px",
-                              border: "none",                          
+                              border: "none",
                               color: "white",
                               fontWeight: "600",
                               borderRadius: "4px",
@@ -1160,10 +1171,11 @@ export default function Clinicallab() {
                             }}
                           >
                             UNBLOCK
-                          </Button><br/>
-                          <b style={{color:"red"}}> User is Block </b>
-                        </>)}
-
+                          </Button>
+                          <br />
+                          <b style={{ color: "red" }}> User is Block </b>
+                        </>
+                      )}
                     </td>
                     <td>
                       <div
@@ -1171,7 +1183,7 @@ export default function Clinicallab() {
                           display: "flex",
                           textAlign: "center",
                           justifyContent: "space-evenly",
-                          gap:"10px"
+                          gap: "10px",
                         }}
                       >
                         <MdEdit
@@ -1179,7 +1191,7 @@ export default function Clinicallab() {
                             color: "#20958c",
                             marginRight: "1%",
                             cursor: "pointer",
-                            fontSize:"20px"
+                            fontSize: "20px",
                           }}
                           onClick={() => {
                             handleShow4();
@@ -1187,17 +1199,16 @@ export default function Clinicallab() {
                           }}
                         />
                         <AiFillDelete
-                          style={{ 
-                             color: "red",
-                             cursor: "pointer",
-                             fontSize:"20px"
-                             }}
+                          style={{
+                            color: "red",
+                            cursor: "pointer",
+                            fontSize: "20px",
+                          }}
                           onClick={() => {
                             setView(labinfo);
                             handleShow5();
                           }}
                         />
-                      
                       </div>
                     </td>
                   </tr>
