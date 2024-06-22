@@ -175,6 +175,29 @@ function BookedLabTest() {
     }
   };
 
+  // const updateBookedLabTests = async () => {
+  //   try {
+  //     const config = {
+  //       url: "/updateBookingDetails/" + View?._id,
+  //       method: "put",
+  //       baseURL: "http://localhost:8521/api/user",
+  //       headers: { "content-type": "application/json" },
+  //     };
+  //     let res = await axios(config);
+  //     if (res.status === 200) {
+  //       alert(res.data.success);
+  //       GetLabtestList();
+  //       handleClose8();
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     if (error.response) {
+  //       return alert(error.response.data.error);
+  //     }
+  //     return alert("Server is not responding!");
+  //   }
+  // };
+
   const deleteBookedLabTests = async () => {
     try {
       const config = {
@@ -258,6 +281,7 @@ function BookedLabTest() {
         email: patientObj?.Email,
         testDate: testDate,
         Labtests: selectedOptions,
+        hospitallabRefferedBy: "SELF",
       };
     } else if (PatientType === "OPD") {
       obj = {
@@ -267,6 +291,7 @@ function BookedLabTest() {
         email: email,
         testDate: testDate,
         Labtests: selectedOptions,
+        hospitallabRefferedBy: "SELF",
       };
     } else {
       obj = {
@@ -275,6 +300,7 @@ function BookedLabTest() {
         email: email,
         testDate: testDate,
         Labtests: selectedOptions,
+        hospitallabRefferedBy: "SELF",
       };
     }
     try {
@@ -502,13 +528,13 @@ function BookedLabTest() {
                         <></>
                       ) : (
                         <div className="d-flex justify-content-center">
-                          <MdEdit
+                          {/* <MdEdit
                             style={{ color: "#20958C", fontSize: "22px" }}
                             onClick={(e) => {
                               setView(item);
                               handleShow8();
                             }}
-                          />
+                          /> */}
                           <MdDeleteOutline
                             style={{ color: "red", fontSize: "25px" }}
                             onClick={(e) => {
@@ -1473,7 +1499,7 @@ function BookedLabTest() {
           </Modal.Footer>
         </Modal>
 
-        <Modal size="lg" show={show8} onHide={handleClose8}>
+        {/* <Modal size="lg" show={show8} onHide={handleClose8}>
           <Modal.Header>
             <Modal.Title>Update Booking Details</Modal.Title>
           </Modal.Header>
@@ -1601,23 +1627,7 @@ function BookedLabTest() {
                   />
                 )}
               </FloatingLabel>
-              <FloatingLabel
-                className="col-md-6 p-2"
-                controlId="floatingName"
-                label={hasSelectedOptions ? "" : "Select Lab Tests"}
-              >
-                <Select
-                  isMulti
-                  name="labTests"
-                  options={HospitalLabList}
-                  className="basic-multi-select"
-                  classNamePrefix=""
-                  value={Labtests1}
-                  onChange={AddLabTest}
-                  styles={customStyles}
-                  placeholder=""
-                />
-              </FloatingLabel>
+
               <FloatingLabel
                 className="col-md-6 p-2"
                 controlId="floatingEmail"
@@ -1634,6 +1644,23 @@ function BookedLabTest() {
                     "0"
                   )}`}
                   onChange={(e) => settestDate(e.target.value)}
+                />
+              </FloatingLabel>
+              <FloatingLabel
+                className="col-md-12 p-2"
+                controlId="floatingName"
+                label={hasSelectedOptions ? "" : "Select Lab Tests"}
+              >
+                <Select
+                  isMulti
+                  name="labTests"
+                  options={HospitalLabList}
+                  className="basic-multi-select"
+                  classNamePrefix=""
+                  value={Labtests1}
+                  onChange={AddLabTest}
+                  styles={customStyles}
+                  placeholder=""
                 />
               </FloatingLabel>
             </Row>
@@ -1667,14 +1694,14 @@ function BookedLabTest() {
                   padding: "4px 10px",
                 }}
                 onClick={() => {
-                  deleteBookedLabTests();
+                  updateBookedLabTests();
                 }}
               >
                 Update
               </button>
             </div>
           </Modal.Footer>
-        </Modal>
+        </Modal> */}
       </div>
     </div>
   );

@@ -1,10 +1,4 @@
-import {
-  faCancel,
-  //   faEllipsis,
-  //   faPenToSquare,
-  faPlus,
-  //   faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCancel, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
@@ -16,6 +10,7 @@ import {
   FormLabel,
   Form,
   Table,
+  Row,
   //   Dropdown,
 } from "react-bootstrap";
 import Tab from "react-bootstrap/Tab";
@@ -25,16 +20,71 @@ import InputGroup from "react-bootstrap/InputGroup";
 // import { CkEditorComponent } from "../CkEditor/CkEditorComponent";
 import axios from "axios";
 import moment from "moment";
+import Select from "react-select";
 
 export const DoctorsCaseStudy = () => {
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      // Adjust the width here
+      minHeight: "60px", // Adjust the height here
+    }),
+  };
   const CaseStudy = sessionStorage.getItem("CaseStudy");
+  const DoctorDetailsData = JSON.parse(sessionStorage.getItem("DoctorDetails"));
   const [isClearable, setIsClearable] = useState(true);
   const [isSearchable, setIsSearchable] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isRtl, setIsRtl] = useState(false);
-  console.log(CaseStudy, "shghsg");
 
+  const [patientObj, setpatientObj] = useState("");
+  const [causeid, setcauseid] = useState("");
+  const [patientname, setpatientname] = useState("");
+  const [Phoneno, setPhoneno] = useState("");
+  const [email, setemail] = useState("");
+  const [Labtests1, setLabtests1] = useState([]);
+  const hasSelectedOptions = Labtests1 && Labtests1.length > 0;
+  const [testDate, settestDate] = useState("");
+
+  let [selectedOptions, setSelectedOptions] = useState([]);
+  const AddLabTest = (Labtests) => {
+    setSelectedOptions(
+      Labtests?.map((val) => {
+        return {
+          testid: val._id,
+          testName: val.testName,
+          priceNonInsurance: val.priceNonInsurance,
+          priceInsurance: val.priceInsurance,
+          unit: val.unit,
+          generalRefVal: val.generalRefVal,
+        };
+      })
+    );
+    setLabtests1(Labtests);
+  };
+
+  const [HospitalLabList, setHospitalLabList] = useState([]);
+  const HospitallabListFn = () => {
+    axios
+      .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
+      .then(function (response) {
+        // handle success
+        if (response.status === 200) {
+          const data = response.data.HospitalLabTests;
+          data.forEach((item) => {
+            item.label = item.testName;
+            item.value = item.testName;
+          });
+          setHospitalLabList(data);
+        }
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+        setHospitalLabList([]);
+      });
+  };
   const [AppointmentList, setAppointmentList] = useState({});
   const getAppointmentList = () => {
     axios
@@ -74,10 +124,96 @@ export const DoctorsCaseStudy = () => {
     }
   };
 
+  const [AllTestList, setAllTestList] = useState([]);
+  const GetLabtestList = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/user/getBookedHospitalLabTest"
+      );
+      setAllTestList(res.data.list);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const bookLabTest = async () => {
+    let obj;
+    if (
+      AppointmentList?.appointmentType === "SELF" &&
+      AppointmentList?.patientDBId?.registrationType === "IPD"
+    ) {
+      obj = {
+        causeid: causeid,
+        patientid: patientObj?._id,
+        patientname: patientObj?.Firstname,
+        Phoneno: patientObj?.PhoneNumber,
+        email: patientObj?.Email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+        hospitallabRefferedBy: `${DoctorDetailsData?.Firstname} ${DoctorDetailsData?.Lastname}`,
+      };
+    } else if (
+      AppointmentList?.appointmentType === "SELF" &&
+      AppointmentList?.patientDBId?.registrationType === "OPD"
+    ) {
+      obj = {
+        patientid: patientObj?._id,
+        patientname: patientObj?.Firstname,
+        Phoneno: patientObj?.PhoneNumber,
+        email: patientObj?.Email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+        hospitallabRefferedBy: `${DoctorDetailsData?.Firstname} ${DoctorDetailsData?.Lastname}`,
+      };
+    } else {
+      obj = {
+        patientname: patientname,
+        Phoneno: Phoneno,
+        email: email,
+        testDate: testDate,
+        Labtests: selectedOptions,
+        hospitallabRefferedBy: `${DoctorDetailsData?.Firstname} ${DoctorDetailsData?.Lastname}`,
+      };
+    }
+    try {
+      const config = {
+        url: "/user/bookHospitalLabTest",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: obj,
+      };
+      let res = await axios(config);
+      if (res.status === 200 || res.status === 201) {
+        alert(res.data.success);
+        const config = {
+          url: "/user/addInvestigationInfo" + AppointmentList?._id,
+          method: "put",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            labid: res.data.bookingLabTest?._id,
+          },
+        };
+        let res1 = await axios(config);
+        if (res1.status === 200) {
+          alert(res1.data.success);
+          GetLabtestList();
+        }
+
+        // handleClose();
+      }
+    } catch (error) {
+      console.log(error);
+      return alert(error.response.data.error);
+    }
+  };
 
   useEffect(() => {
     getAllProducts();
     getAppointmentList();
+    HospitallabListFn();
+    GetLabtestList();
   }, []);
 
   const [show, setShow] = useState(false);
@@ -119,19 +255,19 @@ export const DoctorsCaseStudy = () => {
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "multipart/form-data" },
         data: {
-          medicineName: medicineName,
-          genericName: genericName,
-          medicineType: medicineType,
-          dosage: dosage,
+          medicineName: DocselectedMedicine?.productName,
+          // genericName: genericName,
+          // medicineType: medicineType,
+          // dosage: dosage,
           morningDose: morningDose,
           noonDose: noonDose,
           eveDose: eveDose,
           nightDose: nightDose,
           medicineTakefrquency: medicineTakefrquency,
           medicineTakingTime: medicineTakingTime,
-          duration: duration,
-          days: days,
-          result: result,
+          // duration: duration,
+          // days: days,
+          // result: result,
           Quantity: Quantity,
           totalAmtToPay: Number(
             (
@@ -145,8 +281,8 @@ export const DoctorsCaseStudy = () => {
       };
       let res = await axios(config);
       if (res.status === 200) {
-        console.log(res.data.success);
-        getAppointmentList();        
+        getAppointmentList();
+        alert(res.data.success);
       }
     } catch (error) {
       console.log(error.response);
@@ -155,6 +291,23 @@ export const DoctorsCaseStudy = () => {
       }
     }
   };
+
+  const [patientlist, setpatientlist] = useState([]);
+
+  const getPatientlist = () => {
+    axios
+      .get("http://localhost:8521/api/user/getPatientList")
+      .then(function (response) {
+        setpatientlist(response.data.UsersInfo);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getPatientlist();
+  }, []);
 
   const [investigationName, setinvestigationName] = useState();
   const [investigationDescription, setinvestigationDescription] = useState();
@@ -168,7 +321,6 @@ export const DoctorsCaseStudy = () => {
     const obj = {
       investigationName: investigationName,
       investigationDescription: investigationDescription,
-      investigationIncludeInReport: investigationIncludeInReport,
       notes: notes,
     };
     try {
@@ -176,7 +328,7 @@ export const DoctorsCaseStudy = () => {
         url: "/user/addInvestigationInfo/" + AppointmentList?._id,
         method: "put",
         baseURL: "http://localhost:8521/api",
-        headers: { "content-type": "multipart/form-data" },
+        headers: { "content-type": "application/json" },
         data: obj,
       };
       let res = await axios(config);
@@ -249,7 +401,7 @@ export const DoctorsCaseStudy = () => {
       }
     }
   };
-
+  console.log("AppointmentList: ", AppointmentList);
   return (
     <div>
       <Container className="p-4">
@@ -327,11 +479,13 @@ export const DoctorsCaseStudy = () => {
               >
                 <p className="col-lg-2">
                   <span className="fw-bold text-dark">Name</span> :{" "}
-                  {AppointmentList?.Firstname}
+                  {AppointmentList?.Firstname} {AppointmentList?.Lastname}
                 </p>
                 <p className="col-lg-2">
                   <span className="fw-bold text-dark">ID</span> :{" "}
-                  {AppointmentList?.PatientId?.slice(0, 10)}
+                  {AppointmentList?.patientDBId?.PatientId
+                    ? AppointmentList?.patientDBId?.PatientId
+                    : "NULL"}
                 </p>
                 <p className="col-lg-2">
                   <span className="fw-bold text-dark">Age</span> :
@@ -356,7 +510,7 @@ export const DoctorsCaseStudy = () => {
                 >
                   <thead className="table-secondary">
                     <tr>
-                      <th style={{ color: "#208b8c", fontWeight: "bold" }}>
+                      <th style={{ color: "white", fontWeight: "bold" }}>
                         Patient Information
                       </th>
                       <th></th>
@@ -364,8 +518,12 @@ export const DoctorsCaseStudy = () => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="fw-bold text-dark">Patient Status : </td>
-                      <td className="text-success fw-bold">Active</td>
+                      <td className="fw-bold text-dark">
+                        Date Of Appointment :{" "}
+                      </td>
+                      <td className="text-success fw-bold">
+                        {AppointmentList?.Dateofappointment}
+                      </td>
                     </tr>
 
                     {/* <tr>
@@ -376,30 +534,21 @@ export const DoctorsCaseStudy = () => {
             </tr> */}
 
                     <tr>
-                      <td className="fw-bold text-dark">Family ID :</td>
-                      <td>1</td>
-                    </tr>
-
-                    <tr>
-                      <td className="fw-bold text-dark">Reg Date :</td>
-                      <td>03/08/2023 12:33 PM</td>
-                    </tr>
-
-                    <tr>
-                      <td className="fw-bold text-dark">Mebmber Ship :</td>
-                      <td className="text-danger fw-bold">No Member Ship</td>
-                    </tr>
-
-                    <tr>
-                      <td className="fw-bold text-dark">Group Tag :</td>
-                      <td>#ahg424</td>
-                    </tr>
-
-                    <tr>
-                      <td className="fw-bold text-dark">Address :</td>
+                      <td className="fw-bold text-dark">Name :</td>
                       <td>
-                        Singapoor Layout <br />
-                        Banglore
+                        {AppointmentList?.Firstname} {AppointmentList?.Lastname}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="fw-bold text-dark">Email :</td>
+                      <td>{AppointmentList?.Email}</td>
+                    </tr>
+
+                    <tr>
+                      <td className="fw-bold text-dark">Phone Number :</td>
+                      <td className="text-danger fw-bold">
+                        {AppointmentList?.PhoneNumber}
                       </td>
                     </tr>
                   </tbody>
@@ -412,49 +561,38 @@ export const DoctorsCaseStudy = () => {
                 >
                   <thead className="table-secondary">
                     <tr>
-                      <th style={{ color: "#208b8c", fontWeight: "bold" }}>
-                        Medical History
+                      <th style={{ color: "white", fontWeight: "bold" }}>
+                        Patient Information
                       </th>
                       <th></th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="fw-bold text-dark">Medical : </td>
-                      <td>Tb</td>
-                    </tr>
-
-                    <tr>
-                      <td className="fw-bold text-dark">Family :</td>
-                      <td>Fever</td>
-                    </tr>
-
-                    <tr>
-                      <td className="fw-bold text-dark">Drug :</td>
-                      <td>Dolo 650</td>
-                    </tr>
-
-                    <tr>
-                      <td className="fw-bold text-dark">Social :</td>
-                      <td>Tobbacco Chewing</td>
-                    </tr>
-
-                    <tr>
-                      <td className="fw-bold text-dark">Allergies :</td>
-                      <td>--</td>
-                    </tr>
-
-                    <tr>
-                      <td className="fw-bold text-dark">Surgical :</td>
-                      <td>--</td>
+                      <td className="fw-bold text-dark">Gender :</td>
+                      <td>{AppointmentList?.Gender}</td>
                     </tr>
 
                     <tr>
                       <td className="fw-bold text-dark">Address :</td>
                       <td>
-                        Singapoor Layout <br />
-                        Banglore
+                        {AppointmentList?.patientDBId?.Address1
+                          ? `${AppointmentList?.patientDBId?.Address1}, ${AppointmentList?.patientDBId?.Address2}, ${AppointmentList?.patientDBId?.City1}, ${AppointmentList?.patientDBId?.State1}, ${AppointmentList?.patientDBId?.Zipcode}`
+                          : "Not Mentioned"}
                       </td>
+                    </tr>
+                    <tr>
+                      <td className="fw-bold text-dark">Aadhar Card : </td>
+                      <td>
+                        {AppointmentList?.patientDBId?.Aadharno
+                          ? AppointmentList?.patientDBId?.Aadharno
+                          : "Not Mentioned"}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="fw-bold text-dark">Token :</td>
+                      <td>{AppointmentList?.token}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -490,54 +628,10 @@ export const DoctorsCaseStudy = () => {
                 </p>
               </div>
 
-              {/* <table className="table table-bordered" style={{ width: '' }}>
-                <thead className='table-secondary'>
-                    <tr>
-                        <th className='fw-bold' style={{ width: '130px', color: '#208b8c' }} >Prescription Date</th>
-                        <th className='fw-bold ' style={{ width: '420px', color: '#208b8c' }}>Prescription</th>
-                        <th className='fw-bold' style={{ width: '100px', color: '#208b8c' }}>Action</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr>
-
-                        <td>03/08/2023 12:34 PM</td>
-
-                        <td>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">1.</span>
-                                <input type="text" class="form-control" placeholder='DOLO 650' aria-label="Amount (to the nearest dollar)" />
-                              
-                                <span class="input-group-text">1 x 0 x 1 / 2 Days</span>
-                            </div>
-                        </td>
-                        <td><Button className='all-bg-green'>Add</Button></td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>06/08/2023 01:24 PM</td>
-
-                        <td>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">1.</span>
-                                <input type="text" class="form-control" placeholder='KHASI KI DAWAI ' aria-label="Amount (to the nearest dollar)" />
-                                <span class="input-group-text">1 x 1 x 1 / 3 Days</span>
-                            </div>
-                        </td>
-
-                        <td><Button className='all-bg-green'>Add</Button></td>
-
-                    </tr>
-                </tbody>
-            </table> */}
-
               <h4 className="fw-bold text-dark">Medicine Information</h4>
               <hr />
               <div className="row">
-                <div className="col-lg-4 ">
+                <div className="col-lg-6 ">
                   <InputGroup className="mb-3">
                     {/* <Select
                       className="basic-single"
@@ -584,16 +678,30 @@ export const DoctorsCaseStudy = () => {
                       onChange={(e) => setmedicineName(e.target.value)}
                     /> */}
                   </InputGroup>
-
+                  <InputGroup className="">
+                    <FormLabel className="fw-bold text-dark">
+                      Quantity{" "}
+                    </FormLabel>
+                  </InputGroup>
                   <InputGroup className="mb-3">
+                    <Form.Control
+                      type="number"
+                      value={Quantity}
+                      placeholder="Quantity"
+                      aria-describedby="basic-addon1"
+                      onChange={(e) => setQuantity(e.target.value)}
+                    />
+                  </InputGroup>
+
+                  {/* <InputGroup className="mb-3">
                     <Form.Control
                       placeholder="Genric Name"
                       aria-describedby="basic-addon1"
                       onChange={(e) => setgenericName(e.target.value)}
                     />
-                  </InputGroup>
+                  </InputGroup> */}
 
-                  <Form.Select
+                  {/* <Form.Select
                     aria-label="Default select example"
                     className="mb-3"
                     onChange={(e) => setmedicineType(e.target.value)}
@@ -619,18 +727,18 @@ export const DoctorsCaseStudy = () => {
                     <option value="Syringe">Syringe</option>
                     <option value="Syrup">Syrup</option>
                     <option value="Toothpaste">Toothpaste</option>
-                  </Form.Select>
+                  </Form.Select> */}
 
-                  <InputGroup className="mb-3">
+                  {/* <InputGroup className="mb-3">
                     <Form.Control
                       placeholder="Dosage"
                       aria-describedby="basic-addon1"
                       onChange={(e) => setdosage(e.target.value)}
                     />
-                  </InputGroup>
+                  </InputGroup> */}
                 </div>
 
-                <div className="col-lg-4">
+                <div className="col-lg-6">
                   <td width="24%">
                     <table className="table table-striped table-bordered table-condensed">
                       <tbody>
@@ -696,7 +804,9 @@ export const DoctorsCaseStudy = () => {
                               <option value="OA">Only Afternoon</option>
                               <option value="1x">QD (Once a day)</option>
                               <option value="2x">BID (Twice a day)</option>
-                              <option value="3x">TID (Three times a day)</option>
+                              <option value="3x">
+                                TID (Three times a day)
+                              </option>
                               <option value="4x">QID (Four times a day)</option>
                               <option value="5x">FID (Five times a day)</option>
                               <option value="6x">Six times a day</option>
@@ -712,18 +822,30 @@ export const DoctorsCaseStudy = () => {
                               <option value="Q4H">Q4H (Every 4 hours)</option>
                               <option value="Q6H">Q6H (Every 6 hours)</option>
                               <option value="Q2H">Q2H (Every 2 hours)</option>
-                              <option value="QOD"> QOD (Every other hour)</option>
+                              <option value="QOD">
+                                {" "}
+                                QOD (Every other hour)
+                              </option>
                               <option value="QH">QH (Every hour)</option>
                               <option value="QAM">QAM (Every morning)</option>
                               <option value="QN">QN (Every night)</option>
                               <option value="QWK">QWK (Every week)</option>
-                              <option value="QWK2">QWK2 (Every two weeks)</option>
-                              <option value="BIS in 7d"> BIS in 7d (Twice a week) </option>
-                              <option value="TIW">TIW (Three times a week)</option>
+                              <option value="QWK2">
+                                QWK2 (Every two weeks)
+                              </option>
+                              <option value="BIS in 7d">
+                                {" "}
+                                BIS in 7d (Twice a week){" "}
+                              </option>
+                              <option value="TIW">
+                                TIW (Three times a week)
+                              </option>
                               <option value="OM">OM (Once in a month)</option>
                               <option value="SOS">SOS (If Necessary)</option>
                               <option value="Frequently">Frequently</option>
-                              <option value="Dieb. Alt.">Dieb. Alt. (Alternate Days)</option>
+                              <option value="Dieb. Alt.">
+                                Dieb. Alt. (Alternate Days)
+                              </option>
                               <option value="STAT">STAT</option>
                             </select>
                           </td>
@@ -777,58 +899,6 @@ export const DoctorsCaseStudy = () => {
                       </tbody>
                     </table>
                   </td>
-                </div>
-                <div className="col-lg-4">
-                  <InputGroup className="mb-3">
-                    <Form.Control
-                      placeholder="Duration"
-                      aria-describedby="basic-addon1"
-                      onChange={(e) => setduration(e.target.value)}
-                    />
-                  </InputGroup>
-
-                  <Form.Select
-                    aria-label="Default select example"
-                    className="mb-3"
-                    onChange={(e) => setdays(e.target.value)}
-                  >
-                    <option id="days" value="days">
-                      Days
-                    </option>
-                    <option id="hrs" value="hours">
-                      Hours
-                    </option>
-                    <option id="weeks" value="weeks">
-                      Weeks
-                    </option>
-                    <option id="months" value="months">
-                      Months
-                    </option>
-                  </Form.Select>
-
-                  <InputGroup className="mb-3">
-                    <Form.Control
-                      placeholder="Result"
-                      aria-describedby="basic-addon1"
-                      onChange={(e) => setresult(e.target.value)}
-                    />
-                  </InputGroup>
-
-                  <InputGroup className="">
-                    <FormLabel className="fw-bold text-dark">
-                      Quantity{" "}
-                    </FormLabel>
-                  </InputGroup>
-                  <InputGroup className="mb-3">
-                    <Form.Control
-                      type="number"
-                      value={Quantity}
-                      placeholder="Quantity"
-                      aria-describedby="basic-addon1"
-                      onChange={(e) => setQuantity(e.target.value)}
-                    />
-                  </InputGroup>
-
                   <div className="mb-2">
                     <Button
                       className="d-flex align-items-center gap-2 all-bg-green"
@@ -841,63 +911,39 @@ export const DoctorsCaseStudy = () => {
                 </div>
               </div>
 
-              <div className="mt-4 mb-5">
-                <h5 className="fw-bold text-dark">Medicine List</h5>
-                <hr />
-                <table className="table table-striped">
-                  <thead className="all-bg-green">
-                    <tr>
-                      <th className="text-light fw-bold" width="5%">
-                        S. No
-                      </th>
-                      <th className="text-light fw-bold" width="10%">
-                        Type
-                      </th>
-                      {/* <th className="text-light fw-bold" width="15%">
-                        Name
-                      </th> */}
-                      <th className="text-light fw-bold" width="15%">
-                        Generic Name
-                      </th>
-                      <th className="text-light fw-bold" width="10%">
-                        Dosage
-                      </th>
-                      <th className="text-light fw-bold" width="15%">
-                        Frequency
-                      </th>
-                      <th className="text-light fw-bold" width="10%">
-                        Duration
-                      </th>
-                      <th className="text-light fw-bold" width="15%">
-                        Instruction
-                      </th>
-                      {/* <th className='text-light fw-bold' width="10%">Action</th> */}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {AppointmentList?.medicineInfo?.map((item, index) => {
-                      return (
-                        <tr className="admin-table-row">
-                          <td>{index + 1}</td>
+              <div className="row">
+                <div className="mt-4 mb-5 col-lg-12">
+                  <h5 className="fw-bold text-dark">Medicine List</h5>
+                  <hr />
+                  <table className="table table-striped">
+                    <thead className="all-bg-green">
+                      <tr>
+                        <th className="text-light fw-bold">S. No</th>
 
-                          <td className=" me-2">{item?.medicineType}</td>
-                          {/* <td>{item?.medicineName}</td> */}
+                        <th className="text-light fw-bold">Medicine Name</th>
 
-                          <td>{item?.genericName}</td>
-                          <td>{item?.dosage} </td>
+                        <th className="text-light fw-bold">Frequency</th>
+                        <th className="text-light fw-bold">Quantity</th>
 
-                          <td>
-                            {item?.morningDose}-{item?.noonDose}-{item?.eveDose}
-                            -{item?.nightDose}
-                          </td>
+                        {/* <th className='text-light fw-bold' width="10%">Action</th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {AppointmentList?.medicineInfo?.map((item, index) => {
+                        return (
+                          <tr className="admin-table-row">
+                            <td>{index + 1}</td>
 
-                          <td>
-                            {item?.duration} {item?.days}
-                          </td>
+                            <td>{item?.medicineName}</td>
 
-                          <td>{item?.medicineTakingTime}</td>
+                            <td>
+                              {item?.morningDose}-{item?.noonDose}-
+                              {item?.eveDose}-{item?.nightDose}
+                            </td>
 
-                          {/* <td>
+                            <td>{item?.Quantity}</td>
+
+                            {/* <td>
 
             <Dropdown>
                 <Dropdown.Toggle className='medicine-list' id="dropdown-basic">
@@ -911,13 +957,13 @@ export const DoctorsCaseStudy = () => {
             </Dropdown>
 
         </td> */}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-
               {/* <p className='fw-bold'>Advice :</p>
                             <div style={{ width: '800px' }}>
                                 <CkEditorComponent />
@@ -933,8 +979,8 @@ export const DoctorsCaseStudy = () => {
 
             {/* THIRD TAB */}
             <Tab.Pane eventKey="third">
-              <h5 className="fw-bold">Choose Investigation</h5>
-              <div className="row align-items-center mb-4">
+              <h5 className="fw-bold">Choose Lab Test</h5>
+              {/* <div className="row align-items-center mb-4">
                 <div className="col-lg-4">
                   <select
                     class="form-select"
@@ -965,50 +1011,10 @@ export const DoctorsCaseStudy = () => {
                     />
                   </InputGroup>
                 </div>
-
-                {/* <div className="col-lg-2">
-                                    <Button className='all-bg-green'><FontAwesomeIcon icon={faPlus} /> ADD </Button>
-                                </div> */}
               </div>
-
-              <h5 className="fw-bold">
-                Select Investigation (Tick the checkbox include in the report)
-              </h5>
-
-              <Form
-                style={{
-                  border: "1px solid grey",
-                  padding: "5px",
-                  borderRadius: "5px",
-                  marginBottom: "10px",
-                  width: "fit-content",
-                }}
-              >
-                {/* {["checkbox"].map((type) => (
-                  <div key={`default-${type}`} className="d-flex gap-4">
-                    <label className="fw-bold"> Investigation : </label>
-                    <Form.Check // prettier-ignore
-                      type={type}
-                      id={`default-${type}`}
-                      onChange={(e) =>
-                        setinvestigationIncludeInReport(
-                          !investigationIncludeInReport
-                        )
-                      }
-                    />
-                  </div>
-                ))} */}
-                <input
-                  type="file"
-                  onChange={(e) => {
-                    setinvestigationIncludeInReport(e.target.files[0]);
-                  }}
-                />
-              </Form>
 
               <p className="fw-bold">Notes :</p>
               <div>
-                {/* <CkEditorComponent /> */}
                 <textarea
                   placeholder="note"
                   style={{
@@ -1019,18 +1025,211 @@ export const DoctorsCaseStudy = () => {
                   cols={10}
                   onChange={(e) => setnotes(e.target.value)}
                 />
-              </div>
+              </div> */}
+
+              <Row>
+                {/* <FloatingLabel
+                  className="col-md-6 p-2"
+                  controlId="floatingName"
+                  label="Type"
+                >
+                  <Form.Select onChange={(e) => setPatientType(e.target.value)}>
+                    <option>Choose Options</option>
+                    <option value={"IPD"}>IPD</option>
+                    <option value={"OPD"}>OPD</option>
+                    <option value={"GENERAL"}>General</option>
+                  </Form.Select>
+                </FloatingLabel> */}
+
+                {AppointmentList?.appointmentType === "SELF" ? (
+                  <FloatingLabel
+                    className="col-md-6 p-2"
+                    controlId="floatingName"
+                    label="Patient List"
+                  >
+                    <Form.Select
+                      onChange={(e) =>
+                        setpatientObj(JSON.parse(e.target.value))
+                      }
+                    >
+                      <option>Choose Options</option>
+                      {patientlist
+                        ?.filter(
+                          (item) =>
+                            item?.registrationType ===
+                              AppointmentList?.patientDBId?.registrationType &&
+                            item?._id?.toString() ===
+                              AppointmentList?.patientDBId?._id?.toString()
+                        )
+                        ?.map((val) => {
+                          return (
+                            <option value={JSON.stringify(val)}>
+                              {val?.Firstname} {val?.Lastname}
+                            </option>
+                          );
+                        })}
+                    </Form.Select>
+                  </FloatingLabel>
+                ) : (
+                  <></>
+                )}
+
+                {AppointmentList?.appointmentType === "SELF" &&
+                AppointmentList?.patientDBId?.registrationType === "IPD" ? (
+                  <FloatingLabel
+                    className="col-md-6 p-2"
+                    controlId="floatingName"
+                    label="Cause"
+                  >
+                    <Form.Select onChange={(e) => setcauseid(e.target.value)}>
+                      <option>Choose Options</option>
+                      {patientObj?.cause?.map((val) => {
+                        return (
+                          <option value={val?._id}>{val?.CauseName}</option>
+                        );
+                      })}
+                    </Form.Select>
+                  </FloatingLabel>
+                ) : (
+                  <></>
+                )}
+
+                <FloatingLabel
+                  className="col-md-6 p-2"
+                  controlId="floatingName"
+                  label="Name"
+                >
+                  {AppointmentList?.appointmentType === "SELF" &&
+                  (AppointmentList?.patientDBId?.registrationType === "IPD" ||
+                    AppointmentList?.patientDBId?.registrationType ===
+                      "OPD") ? (
+                    <Form.Control
+                      type="text"
+                      value={patientObj?.Firstname}
+                      placeholder="Name"
+                      disabled
+                      onChange={(e) => setpatientname(e.target.value)}
+                    />
+                  ) : (
+                    <Form.Control
+                      type="text"
+                      value={patientname}
+                      placeholder="Name"
+                      onChange={(e) => setpatientname(e.target.value)}
+                    />
+                  )}
+                </FloatingLabel>
+                <FloatingLabel
+                  className="  col-md-6 p-2"
+                  controlId="floatingMobile"
+                  label="Mobile"
+                >
+                  {AppointmentList?.appointmentType === "SELF" &&
+                  (AppointmentList?.patientDBId?.registrationType === "IPD" ||
+                    AppointmentList?.patientDBId?.registrationType ===
+                      "OPD") ? (
+                    <Form.Control
+                      type="number"
+                      value={patientObj?.PhoneNumber}
+                      placeholder="Mobile"
+                      disabled
+                      onChange={(e) => setPhoneno(e.target.value)}
+                    />
+                  ) : (
+                    <Form.Control
+                      type="number"
+                      value={Phoneno}
+                      placeholder="Mobile"
+                      onChange={(e) => setPhoneno(e.target.value)}
+                    />
+                  )}
+                </FloatingLabel>
+
+                <FloatingLabel
+                  className="col-md-6 p-2"
+                  controlId="floatingEmail"
+                  label="Email"
+                >
+                  {AppointmentList?.appointmentType === "SELF" &&
+                  (AppointmentList?.patientDBId?.registrationType === "IPD" ||
+                    AppointmentList?.patientDBId?.registrationType ===
+                      "OPD") ? (
+                    <Form.Control
+                      type="email"
+                      value={patientObj?.Email}
+                      placeholder="Email"
+                      disabled
+                      onChange={(e) => setemail(e.target.value)}
+                    />
+                  ) : (
+                    <Form.Control
+                      type="email"
+                      value={email}
+                      placeholder="Email"
+                      onChange={(e) => setemail(e.target.value)}
+                    />
+                  )}
+                </FloatingLabel>
+                <FloatingLabel
+                  className="col-md-6 p-2"
+                  controlId="floatingName"
+                  label={hasSelectedOptions ? "" : "Select Lab Tests"}
+                >
+                  <Select
+                    isMulti
+                    name="labTests"
+                    options={HospitalLabList}
+                    className="basic-multi-select"
+                    classNamePrefix=""
+                    value={Labtests1}
+                    onChange={AddLabTest}
+                    styles={customStyles}
+                    placeholder=""
+                  />
+                </FloatingLabel>
+                <FloatingLabel
+                  className="col-md-6 p-2"
+                  controlId="floatingEmail"
+                  label=""
+                >
+                  <Form.Control
+                    type="date"
+                    placeholder=""
+                    value={testDate}
+                    min={`${new Date().getFullYear()}-${String(
+                      new Date().getMonth() + 1
+                    ).padStart(2, "0")}-${String(new Date().getDate()).padStart(
+                      2,
+                      "0"
+                    )}`}
+                    onChange={(e) => settestDate(e.target.value)}
+                  />
+                </FloatingLabel>
+              </Row>
 
               <div className="row gap-3 ms-2">
-                <Button
+                {/* <Button
                   className="col-lg-2"
                   style={{ backgroundColor: "#008900" }}
                   onClick={(e) => AddInvestigation(e)}
                 >
                   Add
-                </Button>
-                {/* <Button className='col-lg-2' style={{ backgroundColor: '#cd0b0be3' }}>Print</Button>
-                                <Button className='col-lg-2' style={{ backgroundColor: '#990399' }}>Email</Button> */}
+                </Button> */}
+                <button
+                  style={{
+                    backgroundColor: "#20958C",
+                    color: "white",
+                    width: "90px",
+                    height: "40px",
+                    border: "0px",
+                    borderRadius: "10px",
+                  }}
+                  onClick={() => {
+                    bookLabTest();
+                  }}
+                >
+                  Submit
+                </button>
               </div>
               <div className="mt-5">
                 <Table responsive bordered>

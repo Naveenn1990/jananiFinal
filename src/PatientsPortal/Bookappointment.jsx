@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, FloatingLabel, Form } from "react-bootstrap";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const Bookappointment = () => {
+  const navigate = useNavigate();
   const user = JSON.parse(sessionStorage.getItem("PatientUser"));
   const [patientfirstname, setpatientfirstname] = useState("");
   const [patientlastname, setpatientlastname] = useState("");
@@ -21,18 +23,16 @@ export const Bookappointment = () => {
   const [Document, setDocument] = useState();
   const [medicalReason, setmedicalReason] = useState();
   const [Others, setOthers] = useState(false);
-const [SelectedTime, setSelectedTime] = useState({})
-console.log("SelectedTime",SelectedTime);
-useEffect(() => {
-  if(StatrtTime){
-    setSelectedTime(JSON?.parse(StatrtTime))
-  }
-  
-}, [StatrtTime])
+  const [SelectedTime, setSelectedTime] = useState({});
+  console.log("SelectedTime", SelectedTime);
+  useEffect(() => {
+    if (StatrtTime) {
+      setSelectedTime(JSON?.parse(StatrtTime));
+    }
+  }, [StatrtTime]);
 
-
-  console.log("DateofApp",DateofApp);
-  console.log("StatrtTime",StatrtTime);
+  console.log("DateofApp", DateofApp);
+  console.log("StatrtTime", StatrtTime);
 
   function selectedDocOck(val) {
     let docInfo = Doctors.find((item) => item?._id === val);
@@ -58,6 +58,7 @@ useEffect(() => {
     e.preventDefault();
     formdata.append("token", prefix + randomNumber);
     formdata.append("PatientId", user?._id);
+    formdata.append("patientDBId", user?._id);
     formdata.append("Firstname", Others ? patientfirstname : user?.Firstname);
     formdata.append("Lastname", Others ? patientlastname : user?.Lastname);
     formdata.append("Gender", Others ? gender : user?.Gender);
@@ -74,6 +75,7 @@ useEffect(() => {
     formdata.append("Document", Document);
     formdata.append("medicalReason", medicalReason);
     formdata.append("bookingstatus", SelectedTime?.bookingstatus);
+    formdata.append("appointmentType", Others ? "OTHERS" : "SELF");
 
     try {
       const config = {
@@ -88,7 +90,7 @@ useEffect(() => {
         console.log(res.data);
         console.log(res.data.success);
         alert("Appointment Added");
-        window.location.assign("/yourappointment");
+        navigate("/yourappointment");
       }
     } catch (error) {
       console.log(error.response);
@@ -116,7 +118,6 @@ useEffect(() => {
   useEffect(() => {
     getDoctors();
   }, []);
-
 
   return (
     <div>
@@ -305,8 +306,8 @@ useEffect(() => {
                     <Form.Select
                       className="width-respns width-respns-768px"
                       style={{ width: "400px", marginBottom: "20px" }}
-                      onChange={(e) => {                        
-                        setDateofApp(e.target.value);                       
+                      onChange={(e) => {
+                        setDateofApp(e.target.value);
                       }}
                     >
                       <option>Select the date</option>
@@ -362,28 +363,31 @@ useEffect(() => {
                           ))
                       )}
                     </Form.Select> */}
-                      <Form.Select
-        className="width-respns width-respns-768px"
-        style={{ width: "400px", marginBottom: "20px" }}
-        aria-label="Default select example"
-        onChange={(e) => {
-          setStatrtTime(e.target.value);
-        }}
-      >
-        <option>Select Time</option>
-        {Doctors?.filter((ele) => ele?._id === ConsultantDr)?.flatMap((doctor) =>
-          doctor?.scheduleList
-            ?.filter((ele) => ele.scheduleDate === DateofApp)
-            ?.map((scheduleItem, index) => (
-              <option key={index} 
-              // value={scheduleItem?.startTime}
-              value={JSON.stringify(scheduleItem)}
-              >
-                {`${scheduleItem?.startTime} to ${scheduleItem?.endTime}`}
-              </option>
-            ))
-        )}
-      </Form.Select>
+                    <Form.Select
+                      className="width-respns width-respns-768px"
+                      style={{ width: "400px", marginBottom: "20px" }}
+                      aria-label="Default select example"
+                      onChange={(e) => {
+                        setStatrtTime(e.target.value);
+                      }}
+                    >
+                      <option>Select Time</option>
+                      {Doctors?.filter(
+                        (ele) => ele?._id === ConsultantDr
+                      )?.flatMap((doctor) =>
+                        doctor?.scheduleList
+                          ?.filter((ele) => ele.scheduleDate === DateofApp)
+                          ?.map((scheduleItem, index) => (
+                            <option
+                              key={index}
+                              // value={scheduleItem?.startTime}
+                              value={JSON.stringify(scheduleItem)}
+                            >
+                              {`${scheduleItem?.startTime} to ${scheduleItem?.endTime}`}
+                            </option>
+                          ))
+                      )}
+                    </Form.Select>
                   </div>
                   {/* <FloatingLabel
                     className="width-respns"
