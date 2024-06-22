@@ -1,9 +1,11 @@
-import { faBars, faBell, faUser } from '@fortawesome/free-solid-svg-icons'
+import {faBell} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { Button, Container, Nav, Navbar, Form } from 'react-bootstrap'
 
 export const ReferDoctorsHeader = () => {
+  const ReferralDocDetails = JSON.parse(sessionStorage.getItem("RDoctorDetails"));
+  console.log("ReferralDocDetails",ReferralDocDetails);
   return (
     <div>
       <Navbar expand="lg"  >
@@ -12,16 +14,16 @@ export const ReferDoctorsHeader = () => {
           {/* <FontAwesomeIcon icon={faBars} /> */}
           <Navbar.Collapse id="navbarScroll">
 
-            <Form className="d-flex m-auto  ">
+            {/* <Form className="d-flex m-auto  ">
               <Form.Control
                 type="search"
                 placeholder="Search"
                 style={{ width: "600px", borderRadius: "30px" }}
-                // style={{marginLeft:"-200px"}}
+               
                 aria-label="Search"
               />
               <a href="#"><Button className='red-btn-7'></Button></a>
-            </Form>
+            </Form> */}
 
             <Nav
               className="ms-auto my-2 my-lg-0"
@@ -29,18 +31,20 @@ export const ReferDoctorsHeader = () => {
 
             >
               <FontAwesomeIcon icon={faBell} className='notification-icon' />
-              <div className="dropdown">
-               
-                  <button className="dropbtn navigation-all fs-6" >Emma Walk
-                    <img style={{ width: '40px ', marginLeft: '10px', height: '40px', borderRadius: '50%' }} src="./img/admin-doctors-list-2.jpg" alt="img" />
+              <div className="dropdown">               
+                  <button className="dropbtn navigation-all fs-6" >
+                    {`${ReferralDocDetails?.Firstname} ${ReferralDocDetails?.Lastname}`}
+                    <img 
+                    style={{ 
+                      width: '40px ', 
+                      marginLeft: '10px', 
+                      height: '40px', 
+                      borderRadius: '50%' 
+                      }} 
+                      src={`http://localhost:8521/Clinic/${ReferralDocDetails?.ProfileImg}`}
+                      alt="img" />
                   </button>
              
-                <div className="dropdown-content">
-                  <a href="/refersettings">Account</a>
-                  <a href="/refersettings">Settings</a>
-                  <a href="/doctorlogin">Logout</a>
-
-                </div>
               </div>
             </Nav>
           </Navbar.Collapse>
