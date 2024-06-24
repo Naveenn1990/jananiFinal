@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Carousel from "react-bootstrap/Carousel";
-import { Container, FloatingLabel, Form, Modal,Col } from "react-bootstrap";
+import { Container, FloatingLabel, Form, Modal, Col } from "react-bootstrap";
 import { Card, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import LabCard from "./labCard";
@@ -11,16 +11,14 @@ import Select from "react-select";
 export const Diagnostic = () => {
   const navigate = useNavigate();
 
-  // Select width 
+  // Select width
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-       // Adjust the width here
-      minHeight: '60px' // Adjust the height here
-    })
+      // Adjust the width here
+      minHeight: "60px", // Adjust the height here
+    }),
   };
-  
- 
 
   const labUserDetails = sessionStorage.getItem("labUser");
 
@@ -32,17 +30,17 @@ export const Diagnostic = () => {
 
   const thankyouClose = () => setShow1(false);
   const thankyouShow = () => setShow1(true);
-  //date logic 
+  //date logic
   const [minDate, setMinDate] = useState(getTodayDate());
 
   function getTodayDate() {
     const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const dd = String(today.getDate()).padStart(2, "0");
+    const mm = String(today.getMonth() + 1).padStart(2, "0"); // January is 0!
     const yyyy = today.getFullYear();
     return `${yyyy}-${mm}-${dd}`;
   }
-// date logic
+  // date logic
 
   const [HospitalLabCatList, setHospitalLabCatList] = useState([]);
   const HospitallabCategories = () => {
@@ -300,11 +298,11 @@ export const Diagnostic = () => {
           {/* </div> */}
         </div>
 
-        <Container>
+        {/* <Container>
           <div>
             <LabCard />{" "}
           </div>
-        </Container>
+        </Container> */}
 
         <Container className="margin-top">
           <div>
@@ -686,122 +684,139 @@ export const Diagnostic = () => {
 
       {/* BOOK TEST MODAL */}
       <Modal
-  show={show}
-  onHide={handleClose}
-  // backdrop="static"
-  keyboard={false}
-  size="lg"
->
-  <Modal.Header closeButton style={{ backgroundColor: "#20958C", color: "white", borderBottom: "1px solid white" }}>
-    <Modal.Title style={{ fontWeight: "bold", textAlign: "center", width: "100%" }}>
-      Book Your Test
-    </Modal.Title>
-  </Modal.Header>
+        show={show}
+        onHide={handleClose}
+        // backdrop="static"
+        keyboard={false}
+        size="lg"
+      >
+        <Modal.Header
+          closeButton
+          style={{
+            backgroundColor: "#20958C",
+            color: "white",
+            borderBottom: "1px solid white",
+          }}
+        >
+          <Modal.Title
+            style={{ fontWeight: "bold", textAlign: "center", width: "100%" }}
+          >
+            Book Your Test
+          </Modal.Title>
+        </Modal.Header>
 
-  <Modal.Body style={{ padding: "20px", borderTop: "2px solid white" }}>
-    <div className="white-border "   style={{ border: "2px solid white", padding: "20px", margin:"10px" }}>
- <Row>
-      <Col md={6} className="p-2">
-        <FloatingLabel controlId="floatingName" label="Patient Name">
-          <Form.Control
-            type="text"
-            value={patientname}
-            placeholder="Enter your name"
-            onChange={(e) => setpatientname(e.target.value)}
-          />
-        </FloatingLabel>
-      </Col>
-      <Col md={6} className="p-2">
-        <FloatingLabel controlId="floatingMobile" label="Mobile">
-          <Form.Control
-            type="tel"
-            value={Phoneno}
-            placeholder="Enter your mobile number"
-            onChange={(e) => setPhoneno(e.target.value)}
-          />
-        </FloatingLabel>
-      </Col>
-    </Row>
+        <Modal.Body style={{ padding: "20px", borderTop: "2px solid white" }}>
+          <div
+            className="white-border "
+            style={{
+              border: "2px solid white",
+              padding: "20px",
+              margin: "10px",
+            }}
+          >
+            <Row>
+              <Col md={6} className="p-2">
+                <FloatingLabel controlId="floatingName" label="Patient Name">
+                  <Form.Control
+                    type="text"
+                    value={patientname}
+                    placeholder="Enter your name"
+                    onChange={(e) => setpatientname(e.target.value)}
+                  />
+                </FloatingLabel>
+              </Col>
+              <Col md={6} className="p-2">
+                <FloatingLabel controlId="floatingMobile" label="Mobile">
+                  <Form.Control
+                    type="tel"
+                    value={Phoneno}
+                    placeholder="Enter your mobile number"
+                    onChange={(e) => setPhoneno(e.target.value)}
+                  />
+                </FloatingLabel>
+              </Col>
+            </Row>
 
-    <Row>
-      <Col md={6} className="p-2">
-        <FloatingLabel controlId="floatingEmail" label="Email">
-          <Form.Control
-            type="email"
-            value={email}
-            placeholder="Enter your email address"
-            onChange={(e) => setemail(e.target.value)}
-          />
-        </FloatingLabel>
-      </Col>
-      <Col md={6} className="p-2">
-        <FloatingLabel controlId="floatingLabTests" label={hasSelectedOptions ? "" : "Select Lab Tests"}>
-          <Select
-            isMulti
-            name="labTests"
-            options={HospitalLabList}
-            className="basic-multi-select"
-            classNamePrefix=""
-            value={Labtests}
-            onChange={AddLabTest}
-            styles={customStyles}
-            placeholder=""
-          />
-        </FloatingLabel>
-      </Col>
-    </Row>
-    <Row className="d-flex mt-2 justify-content-center mb-3">
-      <Col md={6} className="p-2">
-        <FloatingLabel controlId="floatingTestDate" label="Test Date">
-          <Form.Control
-            type="date"
-            min={minDate}
-            value={testDate}
-            onChange={(e) => settestDate(e.target.value)}
-          />
-        </FloatingLabel>
-      </Col>
-      {labUserDetails && JSON.parse(labUserDetails)?.registrationType === "IPD" && (
-        <Col md={6} className="p-2">
-          <FloatingLabel controlId="floatingCause" label="Cause">
-            <Form.Select
-              value={causeid}
-              onChange={(e) => setcauseid(e.target.value)}
-            >
-              <option value="">Select Cause</option>
-              {JSON.parse(labUserDetails)?.cause?.map((itemdata) => (
-                <option key={itemdata?._id} value={itemdata?._id}>
-                  {itemdata?.CauseName}
-                </option>
-              ))}
-            </Form.Select>
-          </FloatingLabel>
-        </Col>
-      )}
-    </Row>
-    </div>
-   
-  
-    <Button
-  onClick={bookLabTest}
-  className="col-md-12"
-  style={{
-    backgroundColor: "#ffa500", // Set button background color to orange
-    color: "white",
-    borderRadius: "10px",
-    padding: "10px 20px",
-    fontSize: "12px",
-    fontWeight: "bold",
-    border: "none",
-    marginTop:"20px",
-  }}
->
-  Submit
-</Button>
+            <Row>
+              <Col md={6} className="p-2">
+                <FloatingLabel controlId="floatingEmail" label="Email">
+                  <Form.Control
+                    type="email"
+                    value={email}
+                    placeholder="Enter your email address"
+                    onChange={(e) => setemail(e.target.value)}
+                  />
+                </FloatingLabel>
+              </Col>
+              <Col md={6} className="p-2">
+                <FloatingLabel
+                  controlId="floatingLabTests"
+                  label={hasSelectedOptions ? "" : "Select Lab Tests"}
+                >
+                  <Select
+                    isMulti
+                    name="labTests"
+                    options={HospitalLabList}
+                    className="basic-multi-select"
+                    classNamePrefix=""
+                    value={Labtests}
+                    onChange={AddLabTest}
+                    styles={customStyles}
+                    placeholder=""
+                  />
+                </FloatingLabel>
+              </Col>
+            </Row>
+            <Row className="d-flex mt-2 justify-content-center mb-3">
+              <Col md={6} className="p-2">
+                <FloatingLabel controlId="floatingTestDate" label="Test Date">
+                  <Form.Control
+                    type="date"
+                    min={minDate}
+                    value={testDate}
+                    onChange={(e) => settestDate(e.target.value)}
+                  />
+                </FloatingLabel>
+              </Col>
+              {labUserDetails &&
+                JSON.parse(labUserDetails)?.registrationType === "IPD" && (
+                  <Col md={6} className="p-2">
+                    <FloatingLabel controlId="floatingCause" label="Cause">
+                      <Form.Select
+                        value={causeid}
+                        onChange={(e) => setcauseid(e.target.value)}
+                      >
+                        <option value="">Select Cause</option>
+                        {JSON.parse(labUserDetails)?.cause?.map((itemdata) => (
+                          <option key={itemdata?._id} value={itemdata?._id}>
+                            {itemdata?.CauseName}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </FloatingLabel>
+                  </Col>
+                )}
+            </Row>
+          </div>
 
-  </Modal.Body>
-</Modal>
-
+          <Button
+            onClick={bookLabTest}
+            className="col-md-12"
+            style={{
+              backgroundColor: "#ffa500", // Set button background color to orange
+              color: "white",
+              borderRadius: "10px",
+              padding: "10px 20px",
+              fontSize: "12px",
+              fontWeight: "bold",
+              border: "none",
+              marginTop: "20px",
+            }}
+          >
+            Submit
+          </Button>
+        </Modal.Body>
+      </Modal>
 
       {/* THANK YOU MODAL */}
 
@@ -814,16 +829,26 @@ export const Diagnostic = () => {
             <div className="col-lg-6">
               <h2
                 style={{
-                  color: "#208b8c",
+                  color: "white",
                   fontFamily: "Bricolage_Grotesque variant0",
                 }}
               >
                 THANK YOU !
               </h2>
-              <p className="mb-3">We have received your booking request</p>
+              <p
+                className="mb-3"
+                style={{
+                  color: "white",
+                }}
+              >
+                We have received your booking request
+              </p>
               <h6
                 className="fw-semibold"
-                style={{ fontFamily: "Bricolage_Grotesque variant0" }}
+                style={{
+                  color: "white",
+                  fontFamily: "Bricolage_Grotesque variant0",
+                }}
               >
                 Our medical experts will get in touch with you shortly.....
               </h6>

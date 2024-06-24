@@ -757,6 +757,8 @@ export default function Hospitaldoctors() {
     }
   };
 
+  console.log("data", data);
+
   return (
     <div>
       <div style={{ padding: "1%" }}>

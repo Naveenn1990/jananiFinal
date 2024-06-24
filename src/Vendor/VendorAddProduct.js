@@ -79,11 +79,11 @@ export const VendorAddProducts = () => {
               </Dropdown.Menu>
             </Dropdown>
 
-            <p>
+            {/* <p>
               <Button variant="danger" size="md" active>
                 <FontAwesomeIcon icon={faDownload} /> Import
               </Button>
-            </p>
+            </p> */}
           </div>
 
           <div className="col-lg-8  d-flex gap-2">
