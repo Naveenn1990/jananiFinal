@@ -19,11 +19,12 @@ import { useNavigate } from "react-router-dom";
 
 export const AppointmentList = () => {
   const doctor = JSON.parse(sessionStorage.getItem("DoctorDetails"));
-const navigate = useNavigate()
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const [appointmentCompleted, setappointmentCompleted] = useState(false);
   const [AppointmentList, setAppointmentList] = useState([]);
   const getAppointmentList = () => {
     axios
@@ -39,7 +40,6 @@ const navigate = useNavigate()
       });
   };
 
-  console.log("AppointmentList",AppointmentList);
   useEffect(() => {
     getAppointmentList();
   }, []);
@@ -49,17 +49,21 @@ const navigate = useNavigate()
     window.location.assign("/doctorscasestudy");
   };
 
-  const [DateFilter, setDateFilter] = useState("")
-
+  const [DateFilter, setDateFilter] = useState("");
+  console.log(
+    "AppointmentList: ",
+    AppointmentList,
+    typeof appointmentCompleted,
+    appointmentCompleted
+  );
   return (
     <div>
-    
       <Navbar expand="lg" style={{ backgroundColor: "#dae1f3" }}>
         <Container fluid>
           <Navbar.Brand className="fw-bold" href="#">
             Appointment
           </Navbar.Brand>
-         
+
           <Navbar.Collapse id="navbarScroll">
             <div className="d-flex gap-5">
               <Form className="d-flex">
@@ -72,16 +76,28 @@ const navigate = useNavigate()
                 <Button variant="outline-primary">Search</Button>
               </Form>
               <div className="d-flex gap-3 align-items-center">
-                <label style={{width:"68%"}}>Select Date : </label>
+                <label style={{ width: "68%" }}>Select Date : </label>
                 <Form.Control
                   type="date"
-                  className="me-2" 
-                  onChange={(e)=>setDateFilter(e.target.value)}                
+                  className="me-2"
+                  onChange={(e) => setDateFilter(e.target.value)}
                 />
-                <Button
-                onClick={()=>setDateFilter("")}
-                variant="danger"
-                >Clear</Button>
+                <Button onClick={() => setDateFilter("")} variant="danger">
+                  Clear
+                </Button>
+              </div>
+              <div className="d-flex gap-3 align-items-center">
+                {/* <label style={{ width: "68%" }}>Filter : </label> */}
+                <Form.Select
+                  // type="date"
+                  className="me-2"
+                  onChange={(e) =>
+                    setappointmentCompleted(Boolean(e.target.value))
+                  }
+                >
+                  <option value={false}>Pending</option>
+                  <option value={true}>Completed</option>
+                </Form.Select>
               </div>
             </div>
           </Navbar.Collapse>
@@ -102,52 +118,66 @@ const navigate = useNavigate()
             </tr>
           </thead>
           <tbody>
-            {AppointmentList
-             ?.filter((item) => !DateFilter || item?.Dateofappointment === DateFilter)
-            ?.map((item) => {
-              return (
-                <tr className="admin-table-row">
-                  <td>
-                    {item?.Firstname}&nbsp;{item?.Lastname}
-                  </td>
-                  <td>
-                    {item?.Dateofappointment} <br /> 
-                    {item?.starttime}{" "}
-                    {item?.endtime}{" "}
-                  </td>
-                  <td>{item?.Email}</td>
-
-                  <td>{item?.PhoneNumber}</td>
-                  <td>
-                    <div
-                      className="Diseases-btn"
-                      style={{ color: "red", border: "1px solid red" }}
-                    >
-                      {item?.Condition}
-                    </div>
-                  </td>
-
-                  <td>
-                    {item?.payment === "unpaid" ? (<>
-                    <p>Payment Pending</p>
-                    </>):(<>
-                      <button
-                      className="table-details-btn"
-                      onClick={() => CaseStudy(item?._id)}
-                    >
-                      Case Study
-                    </button>
-                    </>)}
-                   
-                  </td>
-                  <td>
-                    <div  onClick={()=>navigate('/patientcasestudy', { state: { item: item } }) }>
-                    <Button>View Reports</Button>
-                    </div>
+            {AppointmentList?.filter(
+              (item) => !DateFilter || item?.Dateofappointment === DateFilter
+              // &&
+              //   item?.isAppointmentCompleted === appointmentCompleted
+            )
+              ?.filter(
+                (data) => data.isAppointmentCompleted === appointmentCompleted
+              )
+              ?.map((item) => {
+                return (
+                  <tr className="admin-table-row">
+                    <td>
+                      {item?.Firstname}&nbsp;{item?.Lastname}
                     </td>
-                </tr>
-              );
-            })}
+                    <td>
+                      {item?.Dateofappointment} <br />
+                      {item?.starttime} {item?.endtime}{" "}
+                    </td>
+                    <td>{item?.Email}</td>
+
+                    <td>{item?.PhoneNumber}</td>
+                    <td>
+                      <div
+                        className="Diseases-btn"
+                        style={{ color: "red", border: "1px solid red" }}
+                      >
+                        {item?.Condition}
+                      </div>
+                    </td>
+
+                    <td>
+                      {item?.payment === "unpaid" ? (
+                        <>
+                          <p>Payment Pending</p>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="table-details-btn"
+                            onClick={() => CaseStudy(item?._id)}
+                          >
+                            Case Study
+                          </button>
+                        </>
+                      )}
+                    </td>
+                    <td>
+                      <div
+                        onClick={() =>
+                          navigate("/patientcasestudy", {
+                            state: { item: item },
+                          })
+                        }
+                      >
+                        <Button>View Reports</Button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </Table>
       </Container>
