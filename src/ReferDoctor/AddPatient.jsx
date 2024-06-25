@@ -1,7 +1,4 @@
-import { faEye } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Label from "react-bootstrap/FormLabel";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Container,
@@ -12,61 +9,100 @@ import {
 import { useNavigate } from "react-router-dom";
 import { CkEditorComponent } from "../CkEditor/CkEditorComponent";
 import axios from "axios";
-
+import Select from "react-select";
 export const AddPatient = () => {
     const ReferralDocDetails = JSON.parse(sessionStorage.getItem("RDoctorDetails"));
+    
+    const customStyles = {
+      control: (provided, state) => ({
+        ...provided,
+        minHeight: "60px",
+      }),
+    };
+    const [Labtests1, setLabtests1] = useState([]);
+    let [selectedOptions, setSelectedOptions] = useState([]);
+    const hasSelectedOptions = Labtests1 && Labtests1.length > 0;
+    const AddLabTest = (Labtests) => {
+      setSelectedOptions(
+        Labtests?.map((val) => {
+          return {
+            testid: val._id,
+            testName: val.testName,
+            priceNonInsurance: val.priceNonInsurance,
+            priceInsurance: val.priceInsurance,
+            unit: val.unit,
+            generalRefVal: val.generalRefVal,
+          };
+        })
+      );
+      setLabtests1(Labtests);
+    };
+
+    const [HospitalLabList, setHospitalLabList] = useState([]);
+    const getHospitallabList = () => {
+      axios
+        .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
+        .then(function (response) {
+          if (response.status === 200) {
+            const data = response.data.HospitalLabTests;
+            data.forEach((item) => {
+              item.label = item.testName;
+              item.value = item.testName;
+            });
+  
+            setHospitalLabList(data);
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+          setHospitalLabList([]);
+        });
+    };
 
   const [patientfirstname, setpatientfirstname] = useState("");
   const [patientlastname, setpatientlastname] = useState("");
   const [gender, setgender] = useState("");
   const [DOB, setDOB] = useState("");
+  const [Age, setAge] = useState("");
   const [email, setemail] = useState("");
   const [mobileno, setmobileno] = useState();
+  const [maritalStatus, setmaritalStatus] = useState("");
   const [Address, setAddress] = useState();
-  const [BloodPressure, setBloodPressure] = useState();
-  const [MaritalStatus, setMaritalStatus] = useState();
   const [bloodgroup, setbloodgroup] = useState();
-  const [Sugarlevel, setSugarlevel] = useState();
   const [Document, setDocument] = useState();
   const [InjuryCondition, setInjuryCondition] = useState();
-  const [Note, setNote] = useState();
-
-  const [Password, setPassword] = useState();
-  const [ConfirmPassword, setConfirmPassword] = useState();
-
+  const [DateofAppointment, setDateofAppointment] = useState("");
   const formdata = new FormData();
+  console.log("selectedOptions",selectedOptions);
   const AddRefPatient = async (e) => {
     e.preventDefault();
+    try {
+    formdata.set("ClinicId", ReferralDocDetails?._id);
     formdata.append("Firstname", patientfirstname);
     formdata.append("Lastname", patientlastname);
-    formdata.append("Gender", gender);
-    formdata.append("DOB", DOB);
+    formdata.append("Gender", gender);   
     formdata.append("PhoneNumber", mobileno);
     formdata.append("Email", email);
+    formdata.append("DOB", DOB);
+    formdata.append("age", Age);
     formdata.append("Address1", Address);
-    formdata.append("BloodPressure", BloodPressure);
     formdata.append("BloodGroup", bloodgroup);
-    formdata.append("Sugarlevel", Sugarlevel);
-    formdata.append("MaritalStatus", MaritalStatus);
-    formdata.append("note", Note);
+    formdata.append("MaritalStatus", maritalStatus);
     formdata.append("InjuryCondition", InjuryCondition);
     formdata.append("oldprescriptionDoc", Document);
-    formdata.append("Password", Password);
-    formdata.append("ConfirmPassword", ConfirmPassword);
-
-    try {
+    formdata.append("Labtests", JSON.stringify(selectedOptions));
       const config = {
         url: "/Clinic/addRefPatient",
         method: "post",
         baseURL: "http://localhost:8521/api",
-        headers: { "content-type": "multipart/form-data" },
+        // headers: { "content-type": "multipart/form-data" },
         data: formdata,
       };
+      
       let res = await axios(config);
       if (res.status === 200) {
-        console.log(res.data);
-        console.log(res.data.success);
-        alert("Appointment Added");
+        alert(res.data.success);
+        window.location.assign("/referdoctorpatientlist")
       }
     } catch (error) {
       console.log(error.response);
@@ -76,11 +112,16 @@ export const AddPatient = () => {
     }
   };
 
+  useEffect(() => {
+    getHospitallabList()
+  }, [])
+  
+
   return (
     <div>
       <div>
         <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold">
-          Add Patient{" "}
+          Add Patient For Refer Lab{" "}
         </h4>
         <Container className="">
           <Form style={{ marginLeft: "100px", marginTop: "50px" }}>
@@ -162,26 +203,29 @@ export const AddPatient = () => {
             <div className="d-flex gap-4 mb-5">
               <FloatingLabel
                 style={{ width: "400px" }}
-                controlId="floatingEmail"
-                label="Blood Presure"
+                label="Age"
               >
                 <Form.Control
-                  type="text"
-                  placeholder="Blood Presure"
-                  onChange={(e) => setBloodPressure(e.target.value)}
+                  type="number"
+                  onChange={(e) => setAge(e.target.value)}
                 />
               </FloatingLabel>
-            </div>
-            <div className="d-flex gap-4 mb-5">
-              <Form.Select
+
+              <FloatingLabel
                 style={{ width: "400px" }}
-                aria-label="Default select example"
-                onChange={(e) => setMaritalStatus(e.target.value)}
+                controlId="floatingEmail"
+                label="Marital Status"
               >
+                <Form.Select
+                  onChange={(e) => setmaritalStatus(e.target.value)}
+                >
                 <option>Marital Status </option>
                 <option value="Single">Single</option>
                 <option value="Married">Married</option>
-              </Form.Select>
+                </Form.Select>
+              </FloatingLabel>
+            </div>          
+            <div className="d-flex gap-4 mb-5">             
 
               <Form.Select
                 style={{ width: "400px" }}
@@ -199,30 +243,53 @@ export const AddPatient = () => {
                 <option value="O-">O-</option>
               </Form.Select>
             </div>
+           
             <div className="mb-5">
-              <FloatingLabel
-                style={{ width: "400px" }}
-                controlId="floatingEmail"
-                label="Sugar Level"
-              >
-                <Form.Control
-                  type="text"
-                  placeholder="Sugar Level"
-                  onChange={(e) => setSugarlevel(e.target.value)}
-                />
-              </FloatingLabel>
-            </div>
-            <div className="mb-5">
-              {/* <label >Comments</label> */}
               <textarea
+              value={Address}
                 class="form-control"
                 placeholder="Address"
                 id="floatingTextarea2"
                 style={{ width: "820px", height: "100px" }}
                 onChange={(e) => setAddress(e.target.value)}
-              ></textarea>
+              />
             </div>
           
+            <div className="d-flex gap-4 mb-5">
+              <FloatingLabel
+                style={{ width: "400px" }}
+                controlId="floatingDate"
+                label="Date of Appointment"
+              >
+                <Form.Control
+                  type="date"
+                  placeholder="Date of Appointment"
+                  onChange={(e) => setDateofAppointment(e.target.value)}
+                  value={DateofAppointment}
+                  min={new Date().toISOString().split("T")[0]}
+                />
+              </FloatingLabel>
+              <FloatingLabel
+              style={{ width: "400px" }}
+                className="col-md-5 p-1"
+                controlId="floatingName"
+                label={hasSelectedOptions ? "" : "Select Lab Tests"}
+              >
+                <Select
+                  
+                  isMulti
+                  name="labTests"
+                  options={HospitalLabList}
+                  className="basic-multi-select"
+                  classNamePrefix=""
+                  value={Labtests1}
+                  onChange={AddLabTest}
+                  styles={customStyles}
+                  placeholder=""
+                />
+              </FloatingLabel>
+            </div>
+
             <FloatingLabel className="mb-5" label="Injury/Contion">
               <Form.Control
                 style={{ width: "820px", height: "100px" }}
@@ -246,7 +313,7 @@ export const AddPatient = () => {
               }}
               onChange={(e) => setDocument(e.target.files[0])}
             />
-            <CkEditorComponent />
+          
             <div className="d-flex gap-3 mb-4 mt-4">
               <Button
                 style={{
@@ -261,19 +328,7 @@ export const AddPatient = () => {
               >
                 Submit
               </Button>
-              <Button
-                style={{
-                  width: "10%",
-                  height: "40px",
-                  fontSize: "16px",
-                  backgroundColor: "#FE2E2E",
-                }}
-                onClick={(e) => {
-                  AddRefPatient(e);
-                }}
-              >
-                Cancel
-              </Button>
+            
             </div>
           </Form>
         </Container>

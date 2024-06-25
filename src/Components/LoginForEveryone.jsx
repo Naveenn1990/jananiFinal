@@ -138,16 +138,14 @@ export const LoginForEveryone = () => {
 
   const [RLEmail, setRLEmail] = useState("");
   const [RLID, setRLID] = useState("");
-
   const [RLpassword, setRLpassword] = useState("");
+  const [showPassword1, setShowPassword1] = useState(false);
+  const togglePasswordVisibility1 = () => {
+    setShowPassword1(!showPassword1);
+  };
 
   const RLabLogin = async (e) => {
     e.preventDefault();
-    // if (!patientfirstname | !patientlastname | !conpassword | !gender | !DOB | !) {
-    //   alert("Please Fill All The Field");
-    // } else if (password !== conpassword) {
-    //   alert("Password and ConfirmPassword should be same");
-    // } else {
     try {
       const config = {
         url: "/ClinicLab/ClinicLabLogin",
@@ -294,48 +292,13 @@ export const LoginForEveryone = () => {
                   className="col-lg-2 "
                 >
                   Refer Lab
-                </Button>
-
-                {/* <Button
-
-                                    onClick={() => {
-                                        setDoctor(false);
-                                        setReferDoctor(false);
-                                        setPharmacy(false);
-                                        setReferLab(false);
-                                        setStaff(true);
-                                        setVendor(false)
-                                    }}
-
-                                    style={{ backgroundColor: 'rgb(124 69 159)' }} className="col-lg-2 ">
-                                    Staff
-                                </Button> */}
-
-                {/* <Button
-
-                                    onClick={() => {
-                                        setDoctor(false);
-                                        setReferDoctor(false);
-                                        setPharmacy(false);
-                                        
-                                        setReferLab(false);
-                                        setStaff(false);
-                                        setLab(true);
-    setVendor(false)
-
-                                    }}
-
-                                    style={{ backgroundColor: '#1a9929' }} className="col-lg-2 ">
-                                    Lab
-                                </Button> */}
+                </Button>             
                 <Button
                   onClick={() => {
                     setDoctor(false);
                     setReferDoctor(false);
                     setPharmacy(false);
-
                     setReferLab(false);
-
                     setStaff(false);
                     setLab(false);
                     setVendor(true);
@@ -575,16 +538,19 @@ export const LoginForEveryone = () => {
                               >
                                 <Form.Control
                                   className="doctor-login-password"
-                                  type="password"
+                                  type={showPassword1 ? "text" : "password"}
                                   placeholder="Password"
                                   onChange={(e) =>
                                     setRLpassword(e.target.value)
                                   }
+                                  value={RLpassword}
                                 />
 
                                 <FontAwesomeIcon
-                                  icon={faEye}
+                                  icon={showPassword1 ? faEyeSlash : faEye}
                                   className="doctor-login-eye"
+                                  onClick={togglePasswordVisibility1}
+                                  style={{ cursor: 'pointer' }}
                                 />
                               </FloatingLabel>
 
