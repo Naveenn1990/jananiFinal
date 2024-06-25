@@ -31,30 +31,28 @@ import {
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { AiFillDelete } from "react-icons/ai";
-import { MdEdit } from "react-icons/md";
+import { MdDelete, MdEdit } from "react-icons/md";
 import axios from "axios";
 import moment from "moment";
 
 function ReferHospitalpatientList() {
-  const navigate = useNavigate();
+    const [ViewData, setViewData] = useState()
   const ReferralDocDetails = JSON.parse(
     sessionStorage.getItem("RDoctorDetails")
   );
   const [show, setShow] = useState(false);
-  const [show1, setShow1] = useState(false);
-  const [show2, setShow2] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const [show1, setShow1] = useState(false);
   const deleteBtnClose = () => setShow1(false);
   const deleteBtnShow = () => setShow1(true);
 
+  const [show2, setShow2] = useState(false);
   const ViewProfileClose = () => setShow2(false);
   const ViewProfileShow = () => setShow2(true);
 
   const [RefHospitalPatientList, setRefHospitalPatientList] = useState([]);
-
   const getRefPatientList = () => {
     axios
       .get(
@@ -68,6 +66,20 @@ function ReferHospitalpatientList() {
       });
   };
 
+  const DeleteReferHospitalpatient = async () => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:8521/api/Clinic/deleterefhospitalpatient/${ViewData?._id}`
+      );
+      if (res.status === 200) {
+        getRefPatientList();
+        deleteBtnClose();
+      }
+    } catch (error) {
+      console.log(error);
+      alert(error.response.data.error);
+    }
+  };
   const [SearchItem, setSearchItem] = useState("")
 
   useEffect(() => {
@@ -170,53 +182,28 @@ function ReferHospitalpatientList() {
                       <td>
                         <Button> Refer</Button>
                       </td>
-
                       <td>
-                        {/* onClick={handleShow} */}
-                        <Dropdown>
-                          <Dropdown.Toggle
-                            className="medicine-list"
-                            id="dropdown-basic"
-                          >
-                            {/* <FontAwesomeIcon icon={faBook} style={{ color: "#803c3c", marginRight: '5px' , fontSize:'15px'}} /> */}
-                            <FontAwesomeIcon
-                              icon={faEllipsis}
-                              className="fs-3"
+                        <div className="d-flex gap-4">
+                        <MdEdit  
+                        style={{
+                            color:"green", 
+                            fontSize:"20px",
+                            cursor:"pointer"
+                            }}
+                            onClick={handleShow}
                             />
-                          </Dropdown.Toggle>
-
-                          <Dropdown.Menu>
-                            {/* <Dropdown.Item className='medicine-list-dropdown' href="/purchaseorderlist"><FontAwesomeIcon icon={faHouseUser} className='me-2' />Manufacturer</Dropdown.Item>
-                                                <Dropdown.Item className='medicine-list-dropdown' href="/medicinedetail"><FontAwesomeIcon icon={faEye} className='me-2' />View Details</Dropdown.Item> */}
-                            <Dropdown.Item
-                              className="medicine-list-dropdown"
-                              onClick={ViewProfileShow}
-                            >
-                              <FontAwesomeIcon icon={faUser} className="me-2" />
-                              View Profile
-                            </Dropdown.Item>
-                            <Dropdown.Item
-                              className="medicine-list-dropdown"
-                              onClick={handleShow}
-                            >
-                              <FontAwesomeIcon
-                                icon={faPenToSquare}
-                                className="me-2"
-                              />
-                              Edit Selected
-                            </Dropdown.Item>
-                            <Dropdown.Item
-                              className="medicine-list-dropdown"
-                              onClick={deleteBtnShow}
-                            >
-                              <FontAwesomeIcon
-                                icon={faTrash}
-                                className="me-2"
-                              />
-                              Remove Selected
-                            </Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
+                        <MdDelete 
+                        style={{
+                            color:"red", 
+                            fontSize:"20px",
+                            cursor:"pointer"
+                            }}
+                            onClick={()=>{
+                                deleteBtnShow();
+                                setViewData(item)
+                            }}
+                            />
+                        </div>                      
                       </td>
                     </tr>
                   );
@@ -465,8 +452,7 @@ function ReferHospitalpatientList() {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>
-            {/* <div className="Diseases-btn" style={{ color: 'green', border: '1px solid green' }}>Friend</div> */}
+          <Modal.Title>          
           </Modal.Title>
         </Modal.Header>
 
@@ -487,7 +473,9 @@ function ReferHospitalpatientList() {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger">
+          <Button 
+          onClick={()=>DeleteReferHospitalpatient()}
+          variant="danger">
             <FontAwesomeIcon icon={faCancel} className=" me-2" />
             Delet
           </Button>
