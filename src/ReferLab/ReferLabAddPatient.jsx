@@ -12,7 +12,6 @@ import axios from "axios";
 import Select from "react-select";
 
 export const ReferLabAddPatient = () => {
-  const navigate = useNavigate();
   const ReferalLAB = JSON.parse(sessionStorage.getItem("RLabDetails"));
 
   const customStyles = {
@@ -33,7 +32,6 @@ export const ReferLabAddPatient = () => {
             item.label = item.testName;
             item.value = item.testName;
           });
-
           setHospitalLabList(data);
         }
       })
@@ -50,12 +48,12 @@ export const ReferLabAddPatient = () => {
     setSelectedOptions(
       Labtests?.map((val) => {
         return {
-          testid: val._id,
-          testName: val.testName,
-          priceNonInsurance: val.priceNonInsurance,
-          priceInsurance: val.priceInsurance,
-          unit: val.unit,
-          generalRefVal: val.generalRefVal,
+          testid: val?._id,
+          testName: val?.testName,
+          priceNonInsurance: val?.priceNonInsurance,
+          priceInsurance: val?.priceInsurance,
+          unit: val?.unit,
+          generalRefVal: val?.generalRefVal,
         };
       })
     );
