@@ -81,9 +81,12 @@ export const LoginForEveryone = () => {
         },
       };
       let res = await axios(config);
-      console.log("config",config);
+      console.log("config", config);
       if (res.status === 200) {
-        sessionStorage.setItem("RDoctorDetails", JSON.stringify(res.data.Clinic));
+        sessionStorage.setItem(
+          "RDoctorDetails",
+          JSON.stringify(res.data.Clinic)
+        );
         alert("Login Success..");
         window.location.assign("/referdoctordashboard");
       }
@@ -389,8 +392,12 @@ export const LoginForEveryone = () => {
                       placeholder="Password"
                       onChange={(e) => setDpassword(e.target.value)}
                     />
-                    <FontAwesomeIcon
+                    {/* <FontAwesomeIcon
                       icon={faEye}
+                      className="doctor-login-eye"
+                    /> */}
+                    <FontAwesomeIcon
+                      icon={faEyeSlash}
                       className="doctor-login-eye"
                     />
                   </FloatingLabel>
@@ -456,7 +463,7 @@ export const LoginForEveryone = () => {
                           icon={showPassword ? faEyeSlash : faEye}
                           className="doctor-login-eye"
                           onClick={togglePasswordVisibility}
-                          style={{ cursor: 'pointer' }}
+                          style={{ cursor: "pointer" }}
                         />
                       </FloatingLabel>
 
