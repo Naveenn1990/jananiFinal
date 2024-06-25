@@ -21,8 +21,10 @@ import InputGroup from "react-bootstrap/InputGroup";
 import axios from "axios";
 import moment from "moment";
 import Select from "react-select";
+import { useNavigate } from "react-router-dom";
 
 export const DoctorsCaseStudy = () => {
+  const navigate = useNavigate();
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -39,6 +41,7 @@ export const DoctorsCaseStudy = () => {
   const [isRtl, setIsRtl] = useState(false);
 
   const [patientObj, setpatientObj] = useState("");
+  const [TestView, setTestView] = useState({});
   const [causeid, setcauseid] = useState("");
   const [patientname, setpatientname] = useState("");
   const [Phoneno, setPhoneno] = useState("");
@@ -46,7 +49,7 @@ export const DoctorsCaseStudy = () => {
   const [Labtests1, setLabtests1] = useState([]);
   const hasSelectedOptions = Labtests1 && Labtests1.length > 0;
   const [testDate, settestDate] = useState("");
-
+  console.log("TestView: ", TestView);
   let [selectedOptions, setSelectedOptions] = useState([]);
   const AddLabTest = (Labtests) => {
     setSelectedOptions(
@@ -187,7 +190,7 @@ export const DoctorsCaseStudy = () => {
       if (res.status === 200 || res.status === 201) {
         alert(res.data.success);
         const config = {
-          url: "/user/addInvestigationInfo" + AppointmentList?._id,
+          url: "/user/addInvestigationInfo/" + AppointmentList?._id,
           method: "put",
           baseURL: "http://localhost:8521/api",
           headers: { "content-type": "application/json" },
@@ -223,6 +226,16 @@ export const DoctorsCaseStudy = () => {
   const [show1, setShow1] = useState(false);
   const deleteBtnClose = () => setShow1(false);
   const deleteBtnShow = () => setShow1(true);
+
+  // Available / Recommeded lab tests
+  const [show2, setShow2] = useState(false);
+  const handleClose2 = () => setShow2(false);
+  const handleShow2 = () => setShow2(true);
+
+  // Appointment completion
+  const [show3, setShow3] = useState(false);
+  const handleClose3 = () => setShow3(false);
+  const handleShow3 = () => setShow3(true);
 
   const [medicineName, setmedicineName] = useState("");
   const [genericName, setgenericName] = useState("");
@@ -361,7 +374,7 @@ export const DoctorsCaseStudy = () => {
 
   const [generalexamination, setgeneralexamination] = useState();
   const [localexamination, setlocalexamination] = useState();
-
+  const [isAppointmentCompleted, setisAppointmentCompleted] = useState(false);
   const AddExamination = async (e) => {
     e.preventDefault();
     try {
@@ -386,13 +399,15 @@ export const DoctorsCaseStudy = () => {
           pa: Gastrointestinalsystem,
           generalexamination: generalexamination,
           localexamination: localexamination,
+          isAppointmentCompleted: isAppointmentCompleted,
         },
       };
       let res = await axios(config);
       if (res.status === 200) {
         alert(res.data.success);
         getAppointmentList();
-        alert("Casestudy Updated");
+        handleClose3();
+        navigate("/appointmentlist");
       }
     } catch (error) {
       console.log(error);
@@ -1234,26 +1249,34 @@ export const DoctorsCaseStudy = () => {
               <div className="mt-5">
                 <Table responsive bordered>
                   <thead>
-                    <th>Investigation</th>
-                    <th>Description</th>
-                    <th>Report</th>
-                    <th>Notes</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Recommended Tests</th>
                   </thead>
                   <tbody>
                     {AppointmentList.investigationList?.map((val) => {
                       return (
                         <tr>
-                          <td>{val.investigationName}</td>
-                          <td>{val.investigationDescription}</td>
+                          <td>{val?.labid?.email}</td>
+                          <td>{val?.labid?.Phoneno}</td>
                           <td>
-                            <a
-                              href={`http://localhost:8521/Patient/${val.investigationIncludeInReport}`}
-                              target="blank_"
+                            <button
+                              style={{
+                                backgroundColor: "#20958C",
+                                color: "white",
+                                width: "90px",
+                                height: "40px",
+                                border: "0px",
+                                borderRadius: "10px",
+                              }}
+                              onClick={() => {
+                                setTestView(val?.labid);
+                                handleShow2();
+                              }}
                             >
-                              View Documents
-                            </a>
+                              Tests
+                            </button>
                           </td>
-                          <td>{val.notes}</td>
                         </tr>
                       );
                     })}
@@ -1460,9 +1483,11 @@ export const DoctorsCaseStudy = () => {
                 <Button
                   className="col-lg-2"
                   style={{ backgroundColor: "#208b8c" }}
-                  onClick={(e) => AddExamination(e)}
+                  onClick={(e) => {
+                    handleShow3();
+                  }}
                 >
-                  Save & Bill
+                  Save
                 </Button>
               </div>
             </Tab.Pane>
@@ -1658,6 +1683,87 @@ export const DoctorsCaseStudy = () => {
           </Button>
 
           {/* <Button variant="success"><FontAwesomeIcon icon={faCheck} className='fs-5 me-2' />Save</Button> */}
+        </Modal.Footer>
+      </Modal>
+
+      {/* list booked / recommended lab tests */}
+      <Modal
+        show={show2}
+        onHide={handleClose2}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Recommended Tests</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div className="text-center">
+            <Table>
+              <thead>
+                <th>S.no.</th>
+                <th>Test</th>
+                <th>Unit</th>
+                <th>General Referece Value</th>
+              </thead>
+              <tbody style={{ backgroundColor: "white" }}>
+                {TestView?.Labtests?.map((data, index) => {
+                  return (
+                    <tr>
+                      <td>{index + 1}. </td>
+                      <td>{data?.testName}</td>
+                      <td>{data?.unit}</td>
+                      <td>{data?.generalRefVal}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={handleClose2}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Appointment completed : no test results checking, nothing is remaining */}
+      <Modal
+        show={show3}
+        onHide={handleClose3}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Appointment Completion</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div>
+            <p style={{ fontWeight: "bold", color: "white" }}>
+              Is appointment completed? All reports are reviewed?{" "}
+            </p>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <input
+                type="checkbox"
+                onChange={() => {
+                  setisAppointmentCompleted(!isAppointmentCompleted);
+                }}
+              />
+              <div style={{ fontWeight: "bold", color: "white" }}>
+                Completed
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose3}>
+            Cancel
+          </Button>
+          <Button variant="success" onClick={(e) => AddExamination(e)}>
+            Add Examination
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>
