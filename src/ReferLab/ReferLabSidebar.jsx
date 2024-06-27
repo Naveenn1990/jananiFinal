@@ -21,9 +21,18 @@ import { Link } from "react-router-dom";
 
 export default function ReferLabSidebar() {
   const ReferalLAB = JSON.parse(sessionStorage.getItem("RLabDetails"));
-  console.log("ReferalLAB", ReferalLAB);
   const [LabM, setLabM] = useState(false);
   const [PharM, setPharM] = useState(false);
+  const [ReferalPatient, setReferalPatient] = useState(false);
+
+  const logout = () => {
+    sessionStorage.removeItem("RLabDetails");
+    window.location.assign("/loginforeveryone");
+  };
+  if (!ReferalLAB) {
+    window.location.assign("/home");
+    alert("please Login");
+  }
   return (
     <div className="sidebar">
       <Navbar.Brand>
@@ -79,7 +88,7 @@ export default function ReferLabSidebar() {
         Lab Dashboard
       </h6>
 
-      {/* <h6 className="sidebarItem" onClick={() => setLabM(!LabM)}>
+      <h6 className="sidebarItem" onClick={() => setLabM(!LabM)}>
         <FontAwesomeIcon
           icon={faVialVirus}
           style={{ marginRight: "5px", fontSize: "15px" }}
@@ -93,39 +102,45 @@ export default function ReferLabSidebar() {
           backgroundColor: "#d0f7f4",
         }}
       >
-        <h6
-          className="sidebarItem1"
-          onClick={() => window.location.assign("/referlabtest")}
-        >
-          <FontAwesomeIcon
-            icon={faMicroscope}
-            style={{ marginRight: "5px", fontSize: "15px" }}
-          />
-          Lab Test
-        </h6>
+        <Link to={"/referlabtest"}>
+          <h6
+            className="sidebarItem1"
+            // onClick={() => window.location.assign("/referlabtest")}
+          >
+            <FontAwesomeIcon
+              icon={faMicroscope}
+              style={{ marginRight: "5px", fontSize: "15px" }}
+            />
+            Lab Test
+          </h6>
+        </Link>
 
-        <h6
-          className="sidebarItem1"
-          onClick={() => window.location.assign("/referlabtestlist")}
-        >
-          <FontAwesomeIcon
-            icon={faClipboardList}
-            style={{ marginRight: "5px", fontSize: "15px" }}
-          />
-          Lab Test List
-        </h6>
+        <Link to={"/referlabtestlist"}>
+          <h6
+            className="sidebarItem1"
+            // onClick={() => window.location.assign("/referlabtestlist")}
+          >
+            <FontAwesomeIcon
+              icon={faClipboardList}
+              style={{ marginRight: "5px", fontSize: "15px" }}
+            />
+            Lab Test List
+          </h6>
+        </Link>
 
-        <h6
-          className="sidebarItem1"
-          onClick={() => window.location.assign("/referlabtestreport")}
-        >
-          <FontAwesomeIcon
-            icon={faFilePdf}
-            style={{ marginRight: "5px", fontSize: "15px" }}
-          />
-          Lab Test Report
-        </h6>
-      </div> */}
+        <Link to={"/referlabtestreport"}>
+          <h6
+            className="sidebarItem1"
+            // onClick={() => window.location.assign("/referlabtestreport")}
+          >
+            <FontAwesomeIcon
+              icon={faFilePdf}
+              style={{ marginRight: "5px", fontSize: "15px" }}
+            />
+            Lab Test Report
+          </h6>
+        </Link>
+      </div>
 
       <h6 className="sidebarItem" onClick={() => setPharM(!PharM)}>
         <FontAwesomeIcon
@@ -168,6 +183,35 @@ export default function ReferLabSidebar() {
         </Link>
       </div>
 
+      <h6 className="sidebarItem" onClick={() => setReferalPatient(!ReferalPatient)}>
+        <FontAwesomeIcon
+          icon={faFileInvoice}
+          style={{ marginRight: "5px", fontSize: "15px" }}
+        />
+       Referal Patients {ReferalPatient ? <IoIosArrowUp /> : <IoIosArrowDown />}
+      </h6>
+
+      <div
+        style={{
+          display: ReferalPatient ? "block" : "none",
+          backgroundColor: "#d0f7f4",
+        }}
+      >
+        <Link to="/doctorfeferpatientlist">
+          <h6
+            className="sidebarItem1"
+          >
+            <FontAwesomeIcon
+              icon={faPlus}
+              style={{ marginRight: "5px", fontSize: "15px" }}
+            />
+            Patient List
+          </h6>
+        </Link>
+
+     
+      </div>
+
       {/* <h6 className="sidebarItem" onClick={() => setLabM(!LabM)}>
                 <FontAwesomeIcon icon={faVialVirus} style={{ marginRight: '5px', fontSize: '15px' }} />
                 Lab {LabM ? <IoIosArrowUp /> : <IoIosArrowDown />}
@@ -203,18 +247,20 @@ export default function ReferLabSidebar() {
                     Lab Test Report
                 </h6>
             </div> */}
-
-      <h6
-        className="sidebarItem"
-        onClick={() => window.location.assign("/referlabsettings")}
-      >
-        {" "}
-        <FontAwesomeIcon
-          icon={faGear}
-          style={{ color: "", marginRight: "5px" }}
-        />
-        Settings
-      </h6>
+           
+      <Link to={"/referlabsettings"}>
+        <h6
+          className="sidebarItem"
+          // onClick={() => window.location.assign("/referlabsettings")}
+        >
+          {" "}
+          <FontAwesomeIcon
+            icon={faGear}
+            style={{ color: "", marginRight: "5px" }}
+          />
+          Settings
+        </h6>
+      </Link>
 
       {/* <h6
         className="sidebarItem"
@@ -252,10 +298,7 @@ export default function ReferLabSidebar() {
         Contacts
       </h6> */}
 
-      <h6
-        className="sidebarItem"
-        onClick={() => window.location.assign("/loginforeveryone")}
-      >
+      <h6 className="sidebarItem" onClick={() => logout()}>
         {" "}
         <FontAwesomeIcon
           icon={faPowerOff}
