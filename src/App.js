@@ -261,6 +261,7 @@ import LabProductInvoice from "./Admin/LabProductInvoice";
 import { HospitalLabRecepPanel } from "./Admin/HospitalLabRecepPanel";
 import AddPatientRefHospital from "./ReferDoctor/AddPatientRefHospital";
 import ReferHospitalpatientList from "./ReferDoctor/ReferHospitalpatientList";
+import { VendorNotification } from "./Vendor/VendorNotification";
 
 function App() {
   return (
@@ -1480,6 +1481,18 @@ function App() {
                   children={
                     <>
                       <VendorSettings />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/VendorNotification"
+              element={
+                <VendorCommanDashboard
+                  children={
+                    <>
+                      <VendorNotification />
                     </>
                   }
                 />

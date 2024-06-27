@@ -23,6 +23,12 @@ export const LoginForEveryone = () => {
   const [DEmail, setDEmail] = useState("");
   const [DId, setDId] = useState("");
   const [Dpassword, setDpassword] = useState("");
+
+  const [showPasswordDoctor, setShowPasswordDoctor] = useState(false);
+  const togglePasswordVisibilityDoctor = () => {
+    setShowPasswordDoctor(!showPasswordDoctor);
+  };
+
   const DoctorLogin = async (e) => {
     e.preventDefault();
     // if (!patientfirstname | !patientlastname | !conpassword | !gender | !DOB | !) {
@@ -177,6 +183,11 @@ export const LoginForEveryone = () => {
 
   const [Vendorpassword, setVendorpassword] = useState("");
 
+  const [showPasswordVendor, setShowPasswordVendor] = useState(false);
+  const togglePasswordVisibilityVendor = () => {
+    setShowPasswordVendor(!showPasswordVendor);
+  };
+
   const VendorLogin = async (e) => {
     e.preventDefault();
     // if (!patientfirstname | !patientlastname | !conpassword | !gender | !DOB | !) {
@@ -292,7 +303,7 @@ export const LoginForEveryone = () => {
                   className="col-lg-2 "
                 >
                   Refer Lab
-                </Button>             
+                </Button>
                 <Button
                   onClick={() => {
                     setDoctor(false);
@@ -351,17 +362,16 @@ export const LoginForEveryone = () => {
                   >
                     <Form.Control
                       className="doctor-login-password"
-                      type="password"
+                      type={showPasswordDoctor ? "text" : "password"}
                       placeholder="Password"
                       onChange={(e) => setDpassword(e.target.value)}
                     />
-                    {/* <FontAwesomeIcon
-                      icon={faEye}
-                      className="doctor-login-eye"
-                    /> */}
+
                     <FontAwesomeIcon
-                      icon={faEyeSlash}
+                      icon={showPasswordDoctor ? faEye : faEyeSlash}
                       className="doctor-login-eye"
+                      onClick={togglePasswordVisibilityDoctor}
+                      style={{ cursor: "pointer" }}
                     />
                   </FloatingLabel>
 
@@ -423,7 +433,7 @@ export const LoginForEveryone = () => {
                           value={RDpassword}
                         />
                         <FontAwesomeIcon
-                          icon={showPassword ? faEyeSlash : faEye}
+                          icon={showPassword ? faEye : faEyeSlash}
                           className="doctor-login-eye"
                           onClick={togglePasswordVisibility}
                           style={{ cursor: "pointer" }}
@@ -547,10 +557,10 @@ export const LoginForEveryone = () => {
                                 />
 
                                 <FontAwesomeIcon
-                                  icon={showPassword1 ? faEyeSlash : faEye}
+                                  icon={showPassword1 ? faEye : faEyeSlash}
                                   className="doctor-login-eye"
                                   onClick={togglePasswordVisibility1}
-                                  style={{ cursor: 'pointer' }}
+                                  style={{ cursor: "pointer" }}
                                 />
                               </FloatingLabel>
 
@@ -727,15 +737,27 @@ export const LoginForEveryone = () => {
                                       >
                                         <Form.Control
                                           className="doctor-login-password"
-                                          type="password"
+                                          type={
+                                            showPasswordVendor
+                                              ? "text"
+                                              : "password"
+                                          }
                                           placeholder="Password"
                                           onChange={(e) =>
                                             setVendorpassword(e.target.value)
                                           }
                                         />
                                         <FontAwesomeIcon
-                                          icon={faEye}
+                                          icon={
+                                            showPasswordVendor
+                                              ? faEye
+                                              : faEyeSlash
+                                          }
                                           className="doctor-login-eye"
+                                          onClick={
+                                            togglePasswordVisibilityVendor
+                                          }
+                                          style={{ cursor: "pointer" }}
                                         />
                                       </FloatingLabel>
 
