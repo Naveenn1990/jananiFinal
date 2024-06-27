@@ -88,6 +88,7 @@ export const AddPatient = () => {
     formdata.append("Address1", Address);
     formdata.append("BloodGroup", bloodgroup);
     formdata.append("MaritalStatus", maritalStatus);
+    formdata.append("appointmentdate", DateofAppointment);
     formdata.append("InjuryCondition", InjuryCondition);
     formdata.append("oldprescriptionDoc", Document);
     formdata.append("Labtests", JSON.stringify(selectedOptions));
