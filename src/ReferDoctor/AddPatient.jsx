@@ -91,7 +91,7 @@ export const AddPatient = () => {
     formdata.append("appointmentdate", DateofAppointment);
     formdata.append("InjuryCondition", InjuryCondition);
     formdata.append("oldprescriptionDoc", Document);
-    formdata.append("Labtests", JSON.stringify(selectedOptions));
+    // formdata.append("Labtests", JSON.stringify(selectedOptions));
       const config = {
         url: "/Clinic/addRefPatient",
         method: "post",
@@ -270,7 +270,7 @@ export const AddPatient = () => {
                   min={new Date().toISOString().split("T")[0]}
                 />
               </FloatingLabel>
-              <FloatingLabel
+              {/* <FloatingLabel
               style={{ width: "400px" }}
                 className="col-md-5 p-1"
                 controlId="floatingName"
@@ -288,7 +288,7 @@ export const AddPatient = () => {
                   styles={customStyles}
                   placeholder=""
                 />
-              </FloatingLabel>
+              </FloatingLabel> */}
             </div>
 
             <FloatingLabel className="mb-5" label="Injury/Contion">

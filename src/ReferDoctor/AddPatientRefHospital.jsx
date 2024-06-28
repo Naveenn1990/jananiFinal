@@ -26,8 +26,7 @@ function AddPatientRefHospital() {
     const [bloodgroup, setbloodgroup] = useState("");
     const [Age, setAge] = useState()
     const [Appointmentdate, setAppointmentdate] = useState("")
-    const [Address, setAddress] = useState();
-    
+    const [Address, setAddress] = useState();    
     const [Document, setDocument] = useState();
     const [InjuryCondition, setInjuryCondition] = useState();  
     const formdata = new FormData();

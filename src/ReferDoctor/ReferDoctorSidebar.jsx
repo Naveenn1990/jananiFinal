@@ -178,13 +178,13 @@ export default function ReferDoctorsSidebar() {
         </Link>
       </div>
 
-      <h6 className="sidebarItem" onClick={() => setLabM(!LabM)}>
+      {/* <h6 className="sidebarItem" onClick={() => setLabM(!LabM)}>
         <FontAwesomeIcon
           icon={faVialVirus}
           style={{ marginRight: "5px", fontSize: "15px" }}
         />
         Lab {LabM ? <IoIosArrowUp /> : <IoIosArrowDown />}
-      </h6>
+      </h6> */}
 
       <div
         style={{
