@@ -9,6 +9,8 @@ import {
   Modal,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const LoginDiagnostic = () => {
   const navigate = useNavigate();
@@ -17,8 +19,21 @@ export const LoginDiagnostic = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const [show1, setShow1] = useState(false);
+  const handleClose1 = () => setShow1(false);
+  const handleShow1 = () => setShow1(true);
+
+  const [show2, setShow2] = useState(false);
+  const handleClose2 = () => setShow2(false);
+  const handleShow2 = () => setShow2(true);
+
   const [Number, setNumber] = useState("");
   const [password, setpassword] = useState("");
+
+  const [showPassword1, setShowPassword1] = useState(false);
+  const togglePasswordVisibility1 = () => {
+    setShowPassword1(!showPassword1);
+  };
 
   const Login = async (e) => {
     e.preventDefault();
@@ -48,6 +63,117 @@ export const LoginDiagnostic = () => {
       console.log(error.response);
       if (error.response) {
         alert(error.response.data.error);
+      }
+    }
+  };
+
+  const [email, setemail] = useState("");
+  const [OTP, setOTP] = useState();
+  const [PtientID, setPtientID] = useState("");
+  const [Ppassword, setPpassword] = useState("");
+  const [Pconpassword, setPconpassword] = useState("");
+
+  const [showPasswordPpassword, setShowPasswordPpassword] = useState(false);
+  const togglePasswordVisibilityPpassword = () => {
+    setShowPasswordPpassword(!showPasswordPpassword);
+  };
+
+  const [showPasswordPconpassword, setShowPasswordPconpassword] =
+    useState(false);
+  const togglePasswordVisibilityPconpassword = () => {
+    setShowPasswordPconpassword(!showPasswordPconpassword);
+  };
+
+  const VendorsendOtp = async (e) => {
+    if (!email) {
+      alert("Please enter email id");
+    } else {
+      try {
+        const config = {
+          url: "/email/PharmacysendOtp",
+          method: "post",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            email: email,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          alert("OTP sent to your registered email Id");
+          handleShow1();
+        } else {
+          alert(res.data.error);
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
+      }
+    }
+  };
+
+  const VerifyOtp = async (e) => {
+    if (!OTP) {
+      alert("Please enter valid OTP");
+    } else {
+      try {
+        const config = {
+          url: "/email/PharmacyVerifyOtp",
+          method: "post",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            email: email,
+            otp: OTP,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          alert("OTP verified successfully");
+          console.log(res.data);
+          setPtientID(res.data.success?._id);
+          handleShow2();
+        } else {
+          alert(res.data.error);
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
+      }
+    }
+  };
+  console.log("PtientID", PtientID);
+  const ChangePharmacyPassword = async (e) => {
+    if (Ppassword !== Pconpassword) {
+      alert("Password and Confirm Password should be same");
+    } else {
+      try {
+        const config = {
+          url: "/email/ChangePharmacyPassword",
+          method: "post",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            Id: PtientID,
+            password: Ppassword,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          alert("Your password changed successfully, Please login");
+          window.location.reload();
+        } else {
+          alert(res.data.error);
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
       }
     }
   };
@@ -116,9 +242,17 @@ export const LoginDiagnostic = () => {
                 label="Password"
               >
                 <Form.Control
-                  type="password"
+                  className="doctor-login-password"
+                  type={showPassword1 ? "text" : "password"}
                   placeholder="Password"
                   onChange={(e) => setpassword(e.target.value)}
+                />
+
+                <FontAwesomeIcon
+                  icon={showPassword1 ? faEye : faEyeSlash}
+                  className="doctor-login-eye"
+                  onClick={togglePasswordVisibility1}
+                  style={{ cursor: "pointer", left: "26rem" }}
                 />
               </FloatingLabel>
 
@@ -165,15 +299,15 @@ export const LoginDiagnostic = () => {
                 src="./img/hospital-plus-logo.png"
                 alt=""
               />
-              <h6 className="fw-bold mt-1" style={{ color: "#208b8c" }}>
-                JANANI DIAGNOSTIC
+              <h6 className="fw-bold mt-1" style={{ color: "white" }}>
+                JANANI
               </h6>
             </div>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p className="mb-2">
-            <span style={{ color: "#208b8c", cursor: "pointer" }}>
+            <span style={{ color: "white", cursor: "pointer" }}>
               RESET YOUR ACCOUNT
             </span>{" "}
             HERE!
@@ -185,10 +319,20 @@ export const LoginDiagnostic = () => {
             controlId="floatingEmail"
             label="Email"
           >
-            <Form.Control type="email" placeholder="Email" />
+            <Form.Control
+              type="email"
+              placeholder="Email"
+              onChange={(e) => setemail(e.target.value)}
+            />
           </FloatingLabel>
 
-          <Button className="all-bg-green w-100">SEND</Button>
+          <Button
+            variant="primary"
+            style={{ width: "100%" }}
+            onClick={VendorsendOtp}
+          >
+            SEND
+          </Button>
         </Modal.Body>
         {/* <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
@@ -198,6 +342,127 @@ export const LoginDiagnostic = () => {
                         Save Changes
                     </Button>
                 </Modal.Footer> */}
+      </Modal>
+
+      <Modal show={show1} onHide={handleClose1}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <div className="d-flex gap-2 justify-content-center">
+              <img
+                style={{ width: "30px", height: "30px" }}
+                src="./img/hospital-plus-logo.png"
+                alt=""
+              />
+              <h6 className="fw-bold mt-1" style={{ color: "white" }}>
+                JANANI
+              </h6>
+            </div>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-2">
+            <span style={{ color: "white", cursor: "pointer" }}>
+              VERIFY OTP
+            </span>
+          </p>
+          <FormLabel className="fw-bold text-dark">
+            Enter OTP sent to Email
+          </FormLabel>
+          <FloatingLabel
+            className="mb-3"
+            style={{ width: "100%" }}
+            controlId="floatingEmail"
+            label="OTP"
+          >
+            <Form.Control
+              type="text"
+              placeholder="OTP"
+              onChange={(e) => setOTP(e.target.value)}
+            />
+          </FloatingLabel>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose1}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={VerifyOtp}>
+            Verify
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={show2} onHide={handleClose2}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <div className="d-flex gap-2 justify-content-center">
+              <img
+                style={{ width: "30px", height: "30px" }}
+                src="./img/hospital-plus-logo.png"
+                alt=""
+              />
+              <h6 className="fw-bold mt-1" style={{ color: "white" }}>
+                JANANI
+              </h6>
+            </div>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-2">
+            <span style={{ color: "white", cursor: "pointer" }}>
+              RESET PASSWORD
+            </span>
+          </p>
+          <FormLabel className="fw-bold text-dark">New Password</FormLabel>
+          <FloatingLabel
+            className="mb-3"
+            style={{ width: "100%" }}
+            controlId="floatingEmail"
+            label="Password"
+          >
+            <Form.Control
+              className="doctor-login-password"
+              type={showPasswordPpassword ? "text" : "password"}
+              placeholder="Password"
+              onChange={(e) => setPpassword(e.target.value)}
+            />
+
+            <FontAwesomeIcon
+              icon={showPasswordPpassword ? faEye : faEyeSlash}
+              className="doctor-login-eye"
+              onClick={togglePasswordVisibilityPpassword}
+              style={{ cursor: "pointer", left: "26rem" }}
+            />
+          </FloatingLabel>
+          <FormLabel className="fw-bold text-dark">Confirm Password</FormLabel>
+          <FloatingLabel
+            className="mb-3"
+            style={{ width: "100%" }}
+            controlId="floatingEmail"
+            label="Confirm Password"
+          >
+            <Form.Control
+              className="doctor-login-password"
+              type={showPasswordPconpassword ? "text" : "password"}
+              placeholder="Confirm Password"
+              onChange={(e) => setPconpassword(e.target.value)}
+            />
+
+            <FontAwesomeIcon
+              icon={showPasswordPconpassword ? faEye : faEyeSlash}
+              className="doctor-login-eye"
+              onClick={togglePasswordVisibilityPconpassword}
+              style={{ cursor: "pointer", left: "26rem" }}
+            />
+          </FloatingLabel>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose2}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={ChangePharmacyPassword}>
+            Change Password
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );

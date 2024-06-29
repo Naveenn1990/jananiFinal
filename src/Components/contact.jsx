@@ -107,7 +107,7 @@ export const Contact = () => {
           </Breadcrumbs>
         </div>
 
-        <div>
+        {/* <div>
           <div className="row ">
             <div data-aos="fade-right" className="col-md-7 col-lg-8 mb-4">
               <iframe
@@ -241,7 +241,7 @@ export const Contact = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* form coding */}
 
         <div data-aos="fade-up" className="container">

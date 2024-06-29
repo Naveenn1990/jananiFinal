@@ -79,15 +79,16 @@ export const BlogDetails = () => {
                 className="col-lg-3 m-auto mb-3 p-0"
                 style={{ width: "15rem" }}
               >
-                <Card.Img
-                  variant="top"
-                  src={`http://localhost:8521/Blog/${item?.BlogImg}`}
-                  alt="service-img"
-                  className="card_img_0"
-                />
+                <Link to="/eventBlog" state={{ item: item }}>
+                  <Card.Img
+                    variant="top"
+                    src={`http://localhost:8521/Blog/${item?.BlogImg}`}
+                    alt="service-img"
+                    className="card_img_0"
+                  />
+                </Link>
                 <Card.Body>
                   <Card.Text>
-                    {" "}
                     <Link
                       to="/eventBlog"
                       state={{ item: item }}
