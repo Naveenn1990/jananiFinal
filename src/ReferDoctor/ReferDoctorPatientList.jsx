@@ -50,6 +50,10 @@ export const ReferDoctorPatientList = () => {
   const handleClose3 = () => setShow3(false);
   const handleShow3 = () => setShow3(true);
 
+  const [show4, setShow4] = useState(false);
+  const handleClose4 = () => setShow4(false);
+  const handleShow4 = () => setShow4(true);
+
   const [RefPatientList, setRefPatientList] = useState([]);
   const getRefPatientList = () => {
     axios
@@ -64,6 +68,8 @@ export const ReferDoctorPatientList = () => {
         console.log(error);
       });
   };
+
+  console.log("RefPatientList",RefPatientList);
 
   // Get Near By Lab List
   const [clinicalLabs, setclinicalLabs] = useState([]);
@@ -91,7 +97,6 @@ export const ReferDoctorPatientList = () => {
       console.log(error);
     }
   };
-console.log("TestCategoryList",TestCategoryList);
   //Search
   const [SearchItem, setSearchItem] = useState("");
 
@@ -191,26 +196,36 @@ console.log("TestCategoryList",TestCategoryList);
   const [SelectLab, setSelectLab] = useState("");
   const [SelectTest, setSelectTest] = useState("");
 
-  const ReferlabTest = async()=>{
+  const ReferlabTest = async () => {
+    if(!SelectPincode){
+     return alert("Please Select the pincode")
+    }
+    if(!SelectLab){
+      return alert("Please Select the Lab")
+    }
+     if(!SelectTest){
+      return alert("Please Select the Lab Test")
+    }
     try {
-      const config ={
-        url:"/",
-        method:"put",
-        baseURL:"http://localhost:8521/api/Clinic",
-        data:{
-
-        }      
-      }
+      const config = {
+        url: "/referlabtest/" + ViewData?._id,
+        method: "put",
+        baseURL: "http://localhost:8521/api/Clinic",
+        data: {
+          testid: SelectTest,
+          labid:SelectLab,
+        },
+      };
       let res = await axios(config);
-      if(res.status === 200){
-        alert(res.data.success)
+      if (res.status === 200) {
+        alert(res.data.success);
         handleClose3();
         getRefPatientList();
       }
     } catch (error) {
-      alert(error.response.data.error)
+      alert(error.response.data.error);
     }
-  }
+  };
 
   useEffect(() => {
     getRefPatientList();
@@ -302,14 +317,35 @@ console.log("TestCategoryList",TestCategoryList);
                     </td>
 
                     <td>
-                      <Button
-                        onClick={() => {
-                          handleShow3();
-                          setViewData(item);
-                        }}
-                      >
-                        Refer
-                      </Button>
+                      {item?.isRefer === true ?(<>
+                         <Button
+                         className="mb-2"
+                         onClick={() => {
+                           handleShow3();
+                           setViewData(item);
+                         }}
+                       >
+                         Refer
+                       </Button>
+                       <Button
+                       
+                       onClick={()=>{
+                         setViewData(item);
+                         handleShow4();
+                       }}
+                       >View list</Button>
+                      </>):(<>
+                        <Button
+                         onClick={() => {
+                           handleShow3();
+                           setViewData(item);
+                         }}
+                       >
+                         Refer
+                       </Button>
+                      </>                        
+                      )}
+                     
                     </td>
                     <td>
                       <div className="d-flex gap-3 ">
@@ -789,55 +825,99 @@ console.log("TestCategoryList",TestCategoryList);
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Please Select Pincode</Form.Label>
-              <Form.Select
-                onChange={(e)=>setSelectPincode(e.target.value)}
-              >
+              <Form.Select onChange={(e) => setSelectPincode(e.target.value)}>
                 <option>select Pincode</option>
-                {clinicalLabs?.map((item)=>{
-                  return(
-                      <option value={item?.zipcode}>{item?.zipcode}</option>
-                  )
+                {clinicalLabs?.map((item) => {
+                  return <option value={item?.zipcode}>{item?.zipcode}</option>;
                 })}
-                
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Please Select Lab</Form.Label>
-              <Form.Select
-                onChange={(e)=>setSelectLab(e.target.value)}
-              >
+              <Form.Select onChange={(e) => setSelectLab(e.target.value)}>
                 <option>select Lab</option>
-                {clinicalLabs?.filter((ele)=>ele.zipcode === SelectPincode)?.map((item)=>{
-                  return(
+                {clinicalLabs
+                  ?.filter((ele) => ele.zipcode === SelectPincode)
+                  ?.map((item) => {
+                    return (
                       <option value={item?._id}>{item?.ClinicLabName}</option>
-                  )
-                })}
-                
+                    );
+                  })}
               </Form.Select>
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label> Select Test</Form.Label>
-              <Form.Select
-                onChange={(e)=>setSelectTest(e.target.value)}
-              >
+              <Form.Select onChange={(e) => setSelectTest(e.target.value)}>
                 <option>select Test</option>
-                {TestCategoryList?.filter((ele)=>ele.LabId === SelectLab)?.map((item)=>{
-                  return(
-                      <option value={item?.testcatname}>{item?.testcatname}</option>
-                  )
+                {TestCategoryList?.filter(
+                  (ele) => ele.LabId === SelectLab
+                )?.map((item) => {
+                  return <option value={item?._id}>{item?.testcatname}</option>;
                 })}
-                
               </Form.Select>
             </Form.Group>
-          </Form>          
+          </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose3}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose3}>
+          <Button variant="primary" onClick={ReferlabTest}>
             Refer
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal size="md" show={show4} onHide={handleClose4}>
+        <Modal.Header closeButton>
+          <Modal.Title>Lab Test List</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{backgroundColor:"white",padding:"10px"}}>
+            <Table bordered>
+              <thead>
+                <tr>
+                  <th>Sl.No</th>
+                  <th>Test Name</th>
+                  <th>Refer lab</th>
+                  <th>Report</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ViewData?.Labtests?.map((item,i)=>{
+                  return(
+                    <tr>
+                    <td>{i+1}</td>
+                    <td>{item?.testid?.testcatname}</td>
+                    <td>{item?.labid?.ClinicLabName}</td>
+                    <td>
+                    <>
+                              <span>
+                                <a
+                                  href={`http://localhost:8521/Doctor/${item?.testReport}`}
+                                  target="blank_"
+                                >
+                                  View Doc
+                                </a>
+                                <img
+                                  src="./img/new.gif"
+                                  style={{ width: "40px", height: "30px" }}
+                                  alt=""
+                                />
+                              </span>
+                            </>
+                    </td>
+                  </tr>
+                  )
+                })}
+               
+              </tbody>
+            </Table>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose4}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>

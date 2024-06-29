@@ -34,9 +34,10 @@ import { AiFillDelete } from "react-icons/ai";
 import { MdDelete, MdEdit } from "react-icons/md";
 import axios from "axios";
 import moment from "moment";
+import { Pagination, Stack } from "@mui/material";
 
 function ReferHospitalpatientList() {
-    const [ViewData, setViewData] = useState()
+    const [ViewData, setViewData] = useState("")
   const ReferralDocDetails = JSON.parse(
     sessionStorage.getItem("RDoctorDetails")
   );
@@ -52,6 +53,10 @@ function ReferHospitalpatientList() {
   const ViewProfileClose = () => setShow2(false);
   const ViewProfileShow = () => setShow2(true);
 
+  const [show3, setShow3] = useState(false);
+  const handleClose3 = () => setShow3(false);
+  const handleShow3 = () => setShow3(true);
+
   const [RefHospitalPatientList, setRefHospitalPatientList] = useState([]);
   const getRefPatientList = () => {
     axios
@@ -60,6 +65,7 @@ function ReferHospitalpatientList() {
       )
       .then(function (response) {
         setRefHospitalPatientList(response.data.refpatient);
+        setPagination(response.data.refpatient);
       })
       .catch(function (error) {
         console.log(error);
@@ -81,6 +87,82 @@ function ReferHospitalpatientList() {
     }
   };
   const [SearchItem, setSearchItem] = useState("")
+  // Pagination
+      const [pagination, setPagination] = useState([]);
+      const [pageNumber, setPageNumber] = useState(0);
+      const usersPerPage = 5;
+      const pagesVisited = pageNumber * usersPerPage;
+      const pageCount = Math.ceil(pagination?.length / usersPerPage);
+      const changePage = ( selected ) => {
+          setPageNumber(selected);
+      };
+
+        //Edit Patient Details
+  const [patientfirstname, setpatientfirstname] = useState("");
+  const [patientlastname, setpatientlastname] = useState("");
+  const [gender, setgender] = useState("");
+  const [DOB, setDOB] = useState("");
+  const [Age, setAge] = useState("");
+  const [email, setemail] = useState("");
+  const [mobileno, setmobileno] = useState();
+  const [maritalStatus, setmaritalStatus] = useState("");
+  const [Address, setAddress] = useState();
+  const [bloodgroup, setbloodgroup] = useState();
+  const [Document, setDocument] = useState();
+  const [InjuryCondition, setInjuryCondition] = useState();
+  const [DateofAppointment, setDateofAppointment] = useState("");
+
+  useEffect(() => {
+    setpatientfirstname(ViewData?.PatientsFname || "");
+    setpatientlastname(ViewData?.PatientsLname || "");
+    setgender(ViewData?.Gender || "");
+    setmobileno(ViewData?.PhoneNumber || "");
+    setemail(ViewData?.Email || "");
+    setDOB(ViewData?.DOB || "");
+    setAge(ViewData?.Age || "");
+    setmaritalStatus(ViewData?.marritalStatus || "");
+    setbloodgroup(ViewData?.BloodGroup || "");
+    setAddress(ViewData?.Address1 || "");
+    setDateofAppointment(ViewData?.AppointmentDate || "");
+    setInjuryCondition(ViewData?.InjuryCondition || "");
+    setDocument(ViewData?.OldPrescription || "");
+  }, [ViewData]);
+
+  const EditPatientlabDetail = async () => {
+    const formdata = new FormData();
+    try {
+      formdata.set("PatientsFname", patientfirstname);
+      formdata.set("PatientsLname", patientlastname);
+      formdata.set("Gender", gender);
+      formdata.set("PhoneNumber", mobileno);
+      formdata.set("Email", email);
+      formdata.set("DOB", DOB);
+      formdata.set("Age", Age);
+      formdata.set("Address1", Address);
+      formdata.set("BloodGroup", bloodgroup);
+      formdata.set("marritalStatus", maritalStatus);
+      formdata.set("AppointmentDate", DateofAppointment);
+      formdata.set("InjuryCondition", InjuryCondition);
+      formdata.set("OldPrescription", Document);
+      const config = {
+        url: "/Clinic/editrefhospitalpatient/" + ViewData?._id,
+        method: "put",
+        baseURL: "http://localhost:8521/api",
+        data: formdata,
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        handleClose();
+        getRefPatientList();
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
 
   useEffect(() => {
     getRefPatientList();
@@ -156,7 +238,7 @@ function ReferHospitalpatientList() {
               </thead>
 
               <tbody>
-                {RefHospitalPatientList?.map((item) => {
+                {RefHospitalPatientList?.slice(pagesVisited, pagesVisited + usersPerPage)?.map((item) => {
                      if (
                         SearchItem === "" ||
                         Object.values(item).some((value) =>
@@ -180,7 +262,12 @@ function ReferHospitalpatientList() {
                         </div>
                       </td>
                       <td>
-                        <Button> Refer</Button>
+                        <Button
+                        onClick={()=>{
+                          handleShow3()
+                          setViewData(item)
+                        }}
+                        > Refer</Button>
                       </td>
                       <td>
                         <div className="d-flex gap-4">
@@ -190,7 +277,10 @@ function ReferHospitalpatientList() {
                             fontSize:"20px",
                             cursor:"pointer"
                             }}
-                            onClick={handleShow}
+                            onClick={()=>{
+                              handleShow();
+                              setViewData(item);
+                            }}
                             />
                         <MdDelete 
                         style={{
@@ -210,30 +300,21 @@ function ReferHospitalpatientList() {
                 })}
               </tbody>
             </Table>
+
+            <div style={{float:"right"}} className="my-3 d-flex justify-end">
+                        <Stack spacing={2}>
+                            <Pagination
+                                count={pageCount}
+                                onChange={(event, value)=>{
+                                    changePage(value-1)
+                                  }}
+                                color="primary"                          
+                            />
+                        </Stack>
+                    </div>
           </div>
 
-          {/* <div className="d-flex gap-3 align-items-center mb-3 ">
-            <Form.Select
-              className=" ms-auto"
-              style={{ width: "100px", height: "40px" }}
-              aria-label="Default select example"
-            >
-              <option value="1">5</option>
-              <option value="2">10</option>
-              <option value="3">15</option>
-            </Form.Select>
-            <div className="mt-2 align-items-center d-flex">
-              <span className="me-4 ">1-10 of 13 page</span>
-              <FontAwesomeIcon
-                icon={faAngleLeft}
-                className="me-4 page-change-btn"
-              />
-              <FontAwesomeIcon
-                icon={faAngleRight}
-                className="page-change-btn"
-              />
-            </div>
-          </div> */}
+         
         </div>
       </Container>
 
@@ -247,50 +328,31 @@ function ReferHospitalpatientList() {
         size="lg"
       >
         <Modal.Header closeButton>
-          <Modal.Title>
-            <div className="d-flex align-items-center gap-3 mb-3">
-              <img
-                style={{ width: "50px", height: "50px", borderRadius: "5px" }}
-                src="./img/Our-doctors-img-1.jpg"
-                alt=""
-              />
-              <h4 className="fw-bold " style={{ color: "rgb(32, 139, 140)" }}>
-                Edit Patient Detail
-              </h4>
-            </div>
-            <div
-              className="Diseases-btn"
-              style={{
-                color: "green",
-                border: "1px solid green",
-                width: "100px",
-              }}
-            >
-              Rajesh
-            </div>
-          </Modal.Title>
+          <Modal.Title> Edit Patient Details </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="row mb-2 ">
             <div className="col-lg-6">
               <FormLabel className="fw-bold text-dark">First Name* </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingEmail"
-                label="First Name"
-              >
-                <Form.Control type="text" placeholder="First Name" />
+              <FloatingLabel controlId="floatingEmail" label="First Name">
+                <Form.Control
+                  type="text"
+                  placeholder="First Name"
+                  onChange={(e) => setpatientfirstname(e.target.value)}
+                  value={patientfirstname}
+                />
               </FloatingLabel>
             </div>
 
             <div className="col-lg-6">
               <FormLabel className="fw-bold text-dark">Last Name* </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingName"
-                label="Last Name"
-              >
-                <Form.Control type="text" placeholder="Last Name" />
+              <FloatingLabel controlId="floatingName" label="Last Name">
+                <Form.Control
+                  type="text"
+                  placeholder="Last Name"
+                  onChange={(e) => setpatientlastname(e.target.value)}
+                  value={patientlastname}
+                />
               </FloatingLabel>
             </div>
           </div>
@@ -299,13 +361,13 @@ function ReferHospitalpatientList() {
             <div className="col-lg-6">
               <FormLabel className="fw-bold text-dark">Gender* </FormLabel>
               <Form.Select
-                style={{ width: "300px" }}
-                aria-label="Default select example"
+                onChange={(e) => setgender(e.target.value)}
+                value={gender}
               >
                 <option>Select gender</option>
-                <option value="1">Male</option>
-                <option value="2">Female</option>
-                <option value="3">Other</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
               </Form.Select>
             </div>
 
@@ -313,12 +375,13 @@ function ReferHospitalpatientList() {
               <FormLabel className="fw-bold text-dark">
                 Mobile Number*{" "}
               </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingNumber"
-                label="Phone Number"
-              >
-                <Form.Control type="number" placeholder="Phone Number" />
+              <FloatingLabel controlId="floatingNumber" label="Phone Number">
+                <Form.Control
+                  type="number"
+                  placeholder="Phone Number"
+                  onChange={(e) => setmobileno(e.target.value)}
+                  value={mobileno}
+                />
               </FloatingLabel>
             </div>
           </div>
@@ -326,23 +389,24 @@ function ReferHospitalpatientList() {
           <div className="row mb-2">
             <div className="col-lg-6">
               <FormLabel className="fw-bold text-dark">Email* </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingEmail"
-                label="Email"
-              >
-                <Form.Control type="Email" placeholder="Email" />
+              <FloatingLabel controlId="floatingEmail" label="Email">
+                <Form.Control
+                  type="Email"
+                  placeholder="Email"
+                  onChange={(e) => setemail(e.target.value)}
+                  value={email}
+                />
               </FloatingLabel>
             </div>
 
             <div className="col-lg-6">
               <FormLabel className="fw-bold text-dark">Birth Date* </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingEmail"
-                label=""
-              >
-                <Form.Control type="date" placeholder="" />
+              <FloatingLabel label="">
+                <Form.Control
+                  type="date"
+                  onChange={(e) => setDOB(e.target.value)}
+                  value={DOB}
+                />
               </FloatingLabel>
             </div>
           </div>
@@ -350,84 +414,92 @@ function ReferHospitalpatientList() {
           <div className="row mb-3">
             <div className="col-lg-6">
               <FormLabel className="fw-bold text-dark">Age* </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingAge"
-                label="Age"
-              >
-                <Form.Control type="number" placeholder="Age" />
-              </FloatingLabel>
-            </div>
-
-            <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">
-                Blood Presure*{" "}
-              </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingEmail"
-                label="Blood Presure"
-              >
-                <Form.Control type="text" placeholder="Blood Presure" />
-              </FloatingLabel>
-            </div>
-          </div>
-
-          <div className="row mb-3">
-            <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">Marital* </FormLabel>
-              <Form.Select
-                style={{ width: "300px" }}
-                aria-label="Default select example"
-              >
-                <option>Marital Status </option>
-                <option value="1">Single</option>
-                <option value="2">Married</option>
-              </Form.Select>
-            </div>
-
-            <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">Blood Group* </FormLabel>
-              <Form.Select
-                style={{ width: "300px" }}
-                aria-label="Default select example"
-              >
-                <option>Blood Group</option>
-                <option value="1">A+</option>
-                <option value="2">A-</option>
-                <option value="3">B+</option>
-                <option value="4">B-</option>
-                <option value="5">AB+</option>
-                <option value="6">AB-</option>
-                <option value="7">O+</option>
-                <option value="8">O-</option>
-              </Form.Select>
-            </div>
-          </div>
-
-          <div className="row mb-3">
-            <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">
-                Injury/Contion*{" "}
-              </FormLabel>
-              <FloatingLabel className="mb-5" label="Injury/Contion">
+              <FloatingLabel controlId="floatingAge" label="Age">
                 <Form.Control
-                  style={{ width: "300px" }}
-                  type="text"
-                  placeholder="Injury/Contion"
+                  type="number"
+                  placeholder="Age"
+                  onChange={(e) => setAge(e.target.value)}
+                  value={Age}
                 />
               </FloatingLabel>
             </div>
-
             <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">Sugar Level* </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingEmail"
-                label="Sugar Level"
+              <FormLabel className="fw-bold text-dark">Marital* </FormLabel>
+              <Form.Select
+                onChange={(e) => setmaritalStatus(e.target.value)}
+                value={maritalStatus}
               >
-                <Form.Control type="text" placeholder="Sugar Level" />
+                <option>Marital Status </option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+              </Form.Select>
+            </div>
+          </div>
+
+          <div className="row mb-3">
+            <div className="col-lg-6">
+              <FormLabel className="fw-bold text-dark">Blood Group* </FormLabel>
+              <Form.Select
+                onChange={(e) => setbloodgroup(e.target.value)}
+                value={bloodgroup}
+              >
+                <option>Blood Group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </Form.Select>
+            </div>
+            <div className="col-lg-6">
+              <FormLabel className="fw-bold text-dark">
+                Appointment Date*{" "}
+              </FormLabel>
+              <FloatingLabel label="">
+                <Form.Control
+                  type="date"
+                  onChange={(e) => setDateofAppointment(e.target.value)}
+                  value={DateofAppointment}
+                />
               </FloatingLabel>
+            </div>
+          </div>
+          <div className="row mb-3">
+            <Form.Group className="mb-3">
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                onChange={(e) => setAddress(e.target.value)}
+                value={Address}
+              />
+            </Form.Group>
+          </div>
+
+          <div className="row mb-3">
+            <FormLabel className="fw-bold text-dark">
+              Injury/Contion*{" "}
+            </FormLabel>
+            <FloatingLabel className="mb-5" label="Injury/Contion">
+              <Form.Control
+                type="text"
+                placeholder="Injury/Contion"
+                onChange={(e) => setInjuryCondition(e.target.value)}
+                value={InjuryCondition}
+              />
+            </FloatingLabel>
+            <div className="col-lg-6">
+              <FormLabel className="fw-bold text-dark">
+                Old Prescription*{" "}
+              </FormLabel>
+
+              <Form.Control
+                type="file"
+                onChange={(e) => setDocument(e.target.files[0])}
+              />
             </div>
           </div>
         </Modal.Body>
@@ -435,10 +507,9 @@ function ReferHospitalpatientList() {
           <Button variant="secondary" onClick={handleClose}>
             Cancle
           </Button>
-          {/* <Button  variant="danger"><FontAwesomeIcon icon={faCancel} className='fs-5 me-2' />Reject</Button> */}
-          <Button variant="success">
+          <Button onClick={EditPatientlabDetail} variant="success">
             <FontAwesomeIcon icon={faCheck} className="fs-5 me-2" />
-            Save
+            Update
           </Button>
         </Modal.Footer>
       </Modal>
@@ -481,9 +552,7 @@ function ReferHospitalpatientList() {
           </Button>
           <Button variant="success" onClick={deleteBtnClose}>
             Cancle
-          </Button>
-
-          {/* <Button variant="success"><FontAwesomeIcon icon={faCheck} className='fs-5 me-2' />Save</Button> */}
+          </Button>         
         </Modal.Footer>
       </Modal>
 
@@ -630,6 +699,25 @@ function ReferHospitalpatientList() {
             </tbody>
           </Table>
         </Modal.Body>
+      </Modal>
+
+      <Modal show={show3} onHide={handleClose3}>
+        <Modal.Header closeButton>
+          <Modal.Title>Refer To Hospital</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <p>Are You Sure refer To Hospital...!</p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose3}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleClose3}>
+            Refer
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );
