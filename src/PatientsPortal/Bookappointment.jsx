@@ -54,6 +54,7 @@ export const Bookappointment = () => {
   const [DocDept, setDocDept] = useState("");
   console.log("BookingStatus", BookingStatus);
   console.log("ConsultantDr", ConsultantDr);
+
   const BookAppointment = async (e) => {
     e.preventDefault();
     formdata.append("token", prefix + randomNumber);
@@ -76,7 +77,6 @@ export const Bookappointment = () => {
     formdata.append("medicalReason", medicalReason);
     formdata.append("bookingstatus", SelectedTime?.bookingstatus);
     formdata.append("appointmentType", Others ? "OTHERS" : "SELF");
-
     try {
       const config = {
         url: "/user/addappointment",

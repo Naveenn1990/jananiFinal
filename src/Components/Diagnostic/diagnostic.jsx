@@ -4,9 +4,10 @@ import { Container, FloatingLabel, Form, Modal, Col } from "react-bootstrap";
 import { Card, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import LabCard from "./labCard";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Select from "react-select";
+import parse from "html-react-parser";
 
 export const Diagnostic = () => {
   const navigate = useNavigate();
@@ -86,6 +87,9 @@ export const Diagnostic = () => {
   useEffect(() => {
     HospitallabCategories();
     getHospitallabList();
+    getService();
+    getDoctors();
+    getLabBan();
   }, []);
 
   const [patientname, setpatientname] = useState("");
@@ -179,6 +183,51 @@ export const Diagnostic = () => {
     }
   };
 
+  const [Service, setService] = useState([]);
+  const getService = () => {
+    axios
+      .get("http://localhost:8521/api/admin/getService")
+      .then(function (response) {
+        // handle success
+        setService(response.data.Service);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+  };
+
+  const [Doctors, setDoctors] = useState([]);
+  const getDoctors = () => {
+    axios
+      .get("http://localhost:8521/api/Doctor/getDoctorsList")
+      .then(function (response) {
+        // handle success
+        setDoctors(
+          response.data.DoctorsInfo?.filter(
+            (data) => data.DoctorType === "hospital"
+          )
+        );
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+        setDoctors(error.response.data.DoctorsInfo);
+      });
+  };
+
+  const [GetLabData, setGetLabData] = useState([]);
+  const getLabBan = async () => {
+    try {
+      const res = await axios.get("http://localhost:8521/api/lab/getLabbanner");
+      if (res.status === 200) {
+        setGetLabData(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <h1
@@ -188,33 +237,31 @@ export const Diagnostic = () => {
         DIAGNOSTIC
       </h1>
       <Carousel fade>
-        <Carousel.Item>
-          <img
-            className="d-block w-100 lab-carousel"
-            style={{ height: "450px" }}
-            src="./img/diagnostic-slide-1.jpg"
-            alt="First slide"
-          />
-          <Carousel.Caption className=" diagnostic-slide">
-            <Container>
-              <div>
-                <div className=" me-auto text-light fw-bold  lab-carousel-text  ">
-                  <h3 className="fs-1 fw-bold">
-                    {" "}
-                    TAKE CARE OF <br /> YOUR HEALTH
-                  </h3>
-                  <p className="mb-3">
-                    At Hospital, We are dedicated to dignosing all kind of
-                    diseases
-                  </p>
-                  <Button onClick={handleShow} className="green-btn-2"></Button>
+        {GetLabData?.map((lab) => (
+          <Carousel.Item>
+            <img
+              className="d-block w-100 lab-carousel"
+              style={{ height: "450px" }}
+              src={`http://localhost:8521/Labbanner/${lab?.LabBan}`}
+              alt="First slide"
+            />
+            <Carousel.Caption className=" diagnostic-slide">
+              <Container>
+                <div>
+                  <div className=" me-auto text-light fw-bold  lab-carousel-text  ">
+                    <h3 className="fs-1 fw-bold">{lab?.LabTitle}</h3>
+                    <p className="mb-3">{lab?.LabSubTitle}</p>
+                    <Button
+                      onClick={handleShow}
+                      className="green-btn-2"
+                    ></Button>
+                  </div>
                 </div>
-              </div>
-            </Container>
-          </Carousel.Caption>
-        </Carousel.Item>
-
-        <Carousel.Item>
+              </Container>
+            </Carousel.Caption>
+          </Carousel.Item>
+        ))}
+        {/* <Carousel.Item>
           <img
             className="d-block w-100 lab-carousel "
             style={{ height: "450px" }}
@@ -262,7 +309,7 @@ export const Diagnostic = () => {
               </div>
             </Container>
           </Carousel.Caption>
-        </Carousel.Item>
+        </Carousel.Item> */}
       </Carousel>
 
       <Container className="margin-top align-items-center justify-content-center">
@@ -313,241 +360,55 @@ export const Diagnostic = () => {
               OUR SERVICES
             </h4>
             <div className="row">
-              <Card
-                className=" col-md-6 col-lg-3 m-auto mb-3 p-0"
-                style={{ width: "15rem" }}
-              >
-                <Card.Img
-                  variant="top"
-                  src="./img/service-img-1.jpg"
-                  alt="service-img"
-                />
-                <Card.Body>
-                  <Card.Title>
-                    {" "}
-                    <a
+              {Service?.map((item) => (
+                <>
+                  <Card
+                    data-aos="fade-up"
+                    data-aos-duration="1500"
+                    className="col-lg-3 col-md-6 m-auto mb-3 p-0"
+                    style={{ maxWidth: "15rem", height: "360px" }}
+                  >
+                    <Link
                       className="fw-semibold"
                       style={{
                         textDecoration: "none",
                         color: "rgb(32 139 140)",
                       }}
-                      href="#"
+                      to="/service_details"
+                      state={{ item: item }}
                     >
-                      Nephrologist Care
-                    </a>{" "}
-                  </Card.Title>
-                  <Card.Text>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Reiciendis,
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-
-              <Card
-                className="col-md-6 col-lg-3 m-auto mb-3 p-0"
-                style={{ width: "15rem" }}
-              >
-                <Card.Img
-                  variant="top"
-                  src="./img/service-img-2.jpg"
-                  alt="service-img"
-                />
-                <Card.Body>
-                  <Card.Title>
-                    <a
-                      className="fw-semibold"
-                      style={{
-                        textDecoration: "none",
-                        color: "rgb(32 139 140)",
-                      }}
-                      href="#"
-                    >
-                      Eye Care
-                    </a>
-                  </Card.Title>
-                  <Card.Text>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Reiciendis,
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-
-              <Card
-                className="col-md-6 col-lg-3 m-auto mb-3 p-0"
-                style={{ width: "15rem" }}
-              >
-                <Card.Img
-                  variant="top"
-                  src="./img/service-img-3.jpg"
-                  alt="service-img"
-                />
-                <Card.Body>
-                  <Card.Title>
-                    <a
-                      className="fw-semibold"
-                      style={{
-                        textDecoration: "none",
-                        color: "rgb(32 139 140)",
-                      }}
-                      href="#"
-                    >
-                      Pediatrician Clinic
-                    </a>
-                  </Card.Title>
-                  <Card.Text>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Reiciendis,
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-
-              <Card
-                className="col-md-6 col-lg-3 m-auto mb-3 p-0"
-                style={{ width: "15rem" }}
-              >
-                <Card.Img
-                  variant="top"
-                  src="./img/service-img-4.jpg"
-                  alt="service-img"
-                />
-                <Card.Body>
-                  <Card.Title>
-                    <a
-                      className="fw-semibold"
-                      style={{
-                        textDecoration: "none",
-                        color: "rgb(32 139 140)",
-                      }}
-                      href="#"
-                    >
-                      Prenatal Care
-                    </a>
-                  </Card.Title>
-                  <Card.Text>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Reiciendis,
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-
-            <div className="row mt-5">
-              <Card
-                className=" col-lg-3 m-auto mb-3 p-0"
-                style={{ width: "15rem" }}
-              >
-                <Card.Img
-                  variant="top"
-                  src="./img/service-img-4.jpg"
-                  alt="service-img"
-                />
-                <Card.Body>
-                  <Card.Title>
-                    {" "}
-                    <a
-                      className="fw-semibold"
-                      style={{
-                        textDecoration: "none",
-                        color: "rgb(32 139 140)",
-                      }}
-                      href="#"
-                    >
-                      Medical Counseling
-                    </a>{" "}
-                  </Card.Title>
-                  <Card.Text>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Reiciendis,
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-
-              <Card
-                className=" col-lg-3 m-auto mb-3 p-0"
-                style={{ width: "15rem" }}
-              >
-                <Card.Img
-                  variant="top"
-                  src="./img/service-img-3.jpg"
-                  alt="service-img"
-                />
-                <Card.Body>
-                  <Card.Title>
-                    <a
-                      className="fw-semibold"
-                      style={{
-                        textDecoration: "none",
-                        color: "rgb(32 139 140)",
-                      }}
-                      href="#"
-                    >
-                      Elder Care
-                    </a>
-                  </Card.Title>
-                  <Card.Text>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Reiciendis,
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-
-              <Card
-                className=" col-lg-3 m-auto mb-3 "
-                style={{ width: "15rem" }}
-              >
-                <Card.Img
-                  variant="top"
-                  src="./img/service-img-2.jpg"
-                  alt="service-img"
-                />
-                <Card.Body>
-                  <Card.Title>
-                    <a
-                      className="fw-semibold"
-                      style={{
-                        textDecoration: "none",
-                        color: "rgb(32 139 140)",
-                      }}
-                      href="#"
-                    >
-                      Competetive Doctors
-                    </a>
-                  </Card.Title>
-                  <Card.Text>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Reiciendis,
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-
-              <Card
-                className=" col-lg-3 m-auto mb-3 p-0"
-                style={{ width: "15rem" }}
-              >
-                <Card.Img
-                  variant="top"
-                  src="./img/service-img-1.jpg"
-                  alt="service-img"
-                />
-                <Card.Body>
-                  <Card.Title>
-                    <a
-                      className="fw-semibold"
-                      style={{
-                        textDecoration: "none",
-                        color: "rgb(32 139 140)",
-                      }}
-                      href="#"
-                    >
-                      Rehabilation Center
-                    </a>
-                  </Card.Title>
-                  <Card.Text>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Reiciendis,
-                  </Card.Text>
-                </Card.Body>
-              </Card>
+                      <Card.Img
+                        variant="top"
+                        src={`http://localhost:8521/ServiceManagement/${item?.ServiceImage}`}
+                        alt="service-img"
+                      />
+                    </Link>
+                    <Card.Body>
+                      <Card.Title>
+                        <Link
+                          className="fw-semibold"
+                          style={{
+                            textDecoration: "none",
+                            color: "rgb(32 139 140)",
+                          }}
+                          to="/service_details"
+                          state={{ item: item }}
+                        >
+                          {item?.ServiceTitle}
+                        </Link>
+                      </Card.Title>
+                      <Card.Text>
+                        {parse(
+                          `<div>${item?.ServiceDescription?.slice(
+                            0,
+                            100
+                          )}...</div>`
+                        )}
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </>
+              ))}
             </div>
           </div>
         </Container>
@@ -559,118 +420,97 @@ export const Diagnostic = () => {
           >
             OUR DOCTORS
           </h4>
-          <div className="row ">
-            <Card className="col-lg-3 m-auto  mb-3" style={{ width: "17rem" }}>
-              <Card.Img variant="top" />
-              <a href="/drNamee">
-                <img
-                  style={{ width: "100%", height: "200px" }}
-                  src="./img/Our-doctors-img-1.jpg"
-                  alt="Doctor-img"
-                />
-              </a>
-              <Card.Body>
-                <Card.Title className="text-center">
-                  <a
-                    className="fw-semibold "
-                    style={{ textDecoration: "none", color: "rgb(32 139 140)" }}
-                    href="/drNamee"
+          <div className="row align-items-center ">
+            {Doctors?.slice(0, 4)?.map((item) => {
+              return (
+                <>
+                  <Card
+                    data-aos="fade-up"
+                    data-aos-duration="1500"
+                    className="col-sm-12 col-md-6 col-lg-3 m-auto p-0 mb-3"
+                    style={{ maxWidth: "17rem", height: "360px" }}
                   >
-                    Dr.Veranda Tanum
-                  </a>
-                </Card.Title>
-                <p className="text-center fw-bold">"Pulomanry"</p>
-                <Card.Text style={{ textAlign: "justify" }}>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Accusamus adfaa inventore necessitatibus dolorem odit
-                  recusandae earum?
-                </Card.Text>
-              </Card.Body>
-            </Card>
+                    <Card.Img variant="top" />
+                    <Link state={{ item: item }} to="/Doctor_Details">
+                      <img
+                        style={{ width: "100%", height: "200px" }}
+                        src={`http://localhost:8521/Doctor/${item?.ProfileImg}`}
+                        alt="Doctor-img"
+                      />
+                    </Link>
+                    <Card.Body>
+                      <Card.Title>
+                        <Link
+                          state={{ item: item }}
+                          className="fw-semibold"
+                          style={{
+                            textDecoration: "none",
+                            color: "rgb(32 139 140)",
+                            whiteSpace: "nowrap",
+                          }}
+                          to="/Doctor_Details"
+                        >
+                          Dr.{item?.Firstname} {item?.Lastname}
+                        </Link>
+                      </Card.Title>
+                      <p className="fw-bold">"{item?.Department}"</p>
+                      <Card.Text>
+                        <div style={{ textAlign: "justify" }}>
+                          {item?.Description?.slice(0, 96)}
+                        </div>
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </>
+              );
+            })}
 
-            <Card className="col-lg-3 m-auto  mb-3" style={{ width: "17rem" }}>
-              <Card.Img variant="top" />
-              <a href="/drName2">
-                <img
-                  style={{ width: "100%", height: "200px" }}
-                  src="./img/Our-doctors-img-2.jpg"
-                  alt="Doctor-img"
-                />
-              </a>
-              <Card.Body>
-                <Card.Title className="text-center">
-                  <a
-                    className="fw-semibold"
-                    style={{ textDecoration: "none", color: "rgb(32 139 140)" }}
-                    href="/drName2"
-                  >
-                    Dr. Kathryn Wood
-                  </a>
-                </Card.Title>
-                <p className="text-center fw-bold">"Cardiology"</p>
-                <Card.Text style={{ textAlign: "justify" }}>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Accusamus adfaa inventore necessitatibus dolorem odit
-                  recusandae earum?
-                </Card.Text>
-              </Card.Body>
-            </Card>
+            {/* <Card data-aos="fade-up" data-aos-duration="2000" className='col-sm-12 col-md-6 col-lg-3 m-auto p-0 mb-3' style={{ width: '17rem' }}>
+                        <Card.Img variant="top" />
+                        <a href="/drName2"><img style={{ width: "100%", height: "200px" }} src="./img/Our-doctors-img-2.jpg" alt="Doctor-img" /></a>
+                        <Card.Body>
 
-            <Card className="col-lg-3 m-auto mb-3" style={{ width: "17rem" }}>
-              <Card.Img variant="top" />
-              <a href="/drName3">
-                <img
-                  style={{ width: "100%", height: "200px" }}
-                  src="./img/Our-doctors-img-3.jpg"
-                  alt="Doctor-img"
-                />
-              </a>
-              <Card.Body>
-                <Card.Title className="text-center">
-                  <a
-                    className="fw-semibold"
-                    style={{ textDecoration: "none", color: "rgb(32 139 140)" }}
-                    href="/drName3"
-                  >
-                    Dr. Hooman Azmi
-                  </a>
-                </Card.Title>
-                <p className="text-center fw-bold">"Dental"</p>
-                <Card.Text style={{ textAlign: "justify" }}>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Accusamus adfaa inventore necessitatibus dolorem odit
-                  recusandae earum?
-                </Card.Text>
-              </Card.Body>
-            </Card>
+                            <Card.Title>
+                                <a className='fw-semibold' style={{ textDecoration: "none", color: "rgb(32 139 140)" }} href='/drName2'>Dr. Kathryn Wood</a>
+                            </Card.Title>
+                            <p className='fw-bold'>"Pulomanry"</p>
+                            <Card.Text>
+                                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maxime, ipsa.
+                            </Card.Text>
+                        </Card.Body>
+                    </Card>
 
-            <Card className="col-lg-3 m-auto mb-3" style={{ width: "17rem" }}>
-              <Card.Img variant="top" />
-              <a href="/drName4">
-                <img
-                  style={{ width: "100%", height: "200px" }}
-                  src="./img/Our-doctors-img-4.jpg"
-                  alt="Doctor-img"
-                />
-              </a>
-              <Card.Body>
-                <Card.Title className="text-center">
-                  <a
-                    className="fw-semibold"
-                    style={{ textDecoration: "none", color: "rgb(32 139 140)" }}
-                    href="/drName4"
-                  >
-                    Dr. Peter Parker
-                  </a>
-                </Card.Title>
-                <p className="text-center fw-bold">"Neurologist"</p>
-                <Card.Text style={{ textAlign: "justify" }}>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Accusamus adfaa inventore necessitatibus dolorem odit
-                  recusandae earum?
-                </Card.Text>
-              </Card.Body>
-            </Card>
+
+
+                    <Card data-aos="fade-up" data-aos-duration="2500" className='col-sm-12 col-md-6 col-lg-3 m-auto p-0 mb-3' style={{ width: '17rem' }}>
+                        <Card.Img variant="top" />
+                        <a href="/drName3"><img style={{ width: "100%", height: "200px" }} src="./img/Our-doctors-img-3.jpg" alt="Doctor-img" /></a>
+                        <Card.Body>
+
+                            <Card.Title>
+                                <a className='fw-semibold' style={{ textDecoration: "none", color: "rgb(32 139 140)" }} href='/drName3'>Dr. Hooman Azmi</a>
+                            </Card.Title>
+                            <p className='fw-bold'>"Dental"</p>
+                            <Card.Text>
+                                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maxime, ipsa.                               </Card.Text>
+                        </Card.Body>
+                    </Card>
+
+
+
+                    <Card data-aos="fade-up" data-aos-duration="3000" className='col-sm-12 col-md-6 col-lg-3 m-auto p-0 mb-3' style={{ width: '17rem' }}>
+                        <Card.Img variant="top" />
+                        <a href="/drName4"><img style={{ width: "100%", height: "200px" }} src="./img/Our-doctors-img-4.jpg" alt="Doctor-img" /></a>
+                        <Card.Body>
+
+                            <Card.Title>
+                                <a className='fw-semibold' style={{ textDecoration: "none", color: "rgb(32 139 140)" }} href='/drName4'>Dr. Peter Parker</a>
+                            </Card.Title>
+                            <p className='fw-bold'>"Neurologist"</p>
+                            <Card.Text>
+                                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maxime, ipsa.</Card.Text>
+                        </Card.Body>
+                    </Card> */}
           </div>
           <a href="/doctors">
             <Button className="mt-5 m-auto d-flex justify-content-center all-bg-green">

@@ -261,6 +261,8 @@ import LabProductInvoice from "./Admin/LabProductInvoice";
 import { HospitalLabRecepPanel } from "./Admin/HospitalLabRecepPanel";
 import AddPatientRefHospital from "./ReferDoctor/AddPatientRefHospital";
 import ReferHospitalpatientList from "./ReferDoctor/ReferHospitalpatientList";
+import { VendorNotification } from "./Vendor/VendorNotification";
+import DoctorReferPatientList from "./ReferLab/DoctorReferPatientList";
 
 function App() {
   return (
@@ -1485,6 +1487,18 @@ function App() {
                 />
               }
             />
+            <Route
+              path="/VendorNotification"
+              element={
+                <VendorCommanDashboard
+                  children={
+                    <>
+                      <VendorNotification />
+                    </>
+                  }
+                />
+              }
+            />
 
             {/* Refer Lab */}
             <Route
@@ -1554,6 +1568,18 @@ function App() {
                   children={
                     <>
                       <ReferLabTest />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/doctorfeferpatientlist"
+              element={
+                <ReferLabCommanDashboard
+                  children={
+                    <>
+                      <DoctorReferPatientList />
                     </>
                   }
                 />

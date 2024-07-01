@@ -109,9 +109,10 @@ export default function ReferDoctorsSidebar() {
           backgroundColor: "#d0f7f4",
         }}
       >
+        <Link to={"/referaddpatient"}>
         <h6
           className="sidebarItem1"
-          onClick={() => window.location.assign("/referaddpatient")}
+          // onClick={() => window.location.assign("/referaddpatient")}
         >
           <FontAwesomeIcon
             icon={faPlus}
@@ -119,10 +120,12 @@ export default function ReferDoctorsSidebar() {
           />
           Add Patient
         </h6>
-
+        </Link>
+        
+        <Link to={"/referdoctorpatientlist"}>
         <h6
           className="sidebarItem1"
-          onClick={() => window.location.assign("/referdoctorpatientlist")}
+          // onClick={() => window.location.assign("/referdoctorpatientlist")}
         >
           <FontAwesomeIcon
             icon={faList}
@@ -130,6 +133,8 @@ export default function ReferDoctorsSidebar() {
           />
           Patients List
         </h6>
+        </Link>
+        
       </div>
 
       <h6 className="sidebarItem" onClick={() => setRefHospital(!RefHospital)}>
@@ -173,13 +178,13 @@ export default function ReferDoctorsSidebar() {
         </Link>
       </div>
 
-      <h6 className="sidebarItem" onClick={() => setLabM(!LabM)}>
+      {/* <h6 className="sidebarItem" onClick={() => setLabM(!LabM)}>
         <FontAwesomeIcon
           icon={faVialVirus}
           style={{ marginRight: "5px", fontSize: "15px" }}
         />
         Lab {LabM ? <IoIosArrowUp /> : <IoIosArrowDown />}
-      </h6>
+      </h6> */}
 
       <div
         style={{

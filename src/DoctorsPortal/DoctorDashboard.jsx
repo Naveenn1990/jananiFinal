@@ -166,7 +166,7 @@ console.log(today);
                     return(
                       <tr className="admin-table-row">
                       <td className=" me-2">
-                       {item?.PatientId.slice(1,6)}
+                       {item?.PatientId?.slice(1,6)}
                       </td>
                       <td>{item?.Firstname} {item?.Lastname}</td>
                       <td>{item?.Gender}</td>

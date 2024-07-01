@@ -6,14 +6,14 @@ import { Link } from "react-router-dom";
 
 export const VendorHeader = () => {
   const VendorDetails = JSON.parse(sessionStorage.getItem("VendorDetails"));
-  console.log("VendorDetailsforHeader",VendorDetails);
+  console.log("VendorDetailsforHeader", VendorDetails);
   return (
     <div>
       <Navbar expand="lg">
         <Container fluid>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
-            <Form className="d-flex m-auto  ">
+            {/* <Form className="d-flex m-auto  ">
               <Form.Control
                 type="search"
                 placeholder="Search"
@@ -23,13 +23,17 @@ export const VendorHeader = () => {
               <a href="#">
                 <Button className="red-btn-7"></Button>
               </a>
-            </Form>
+            </Form> */}
 
             <Nav className="ms-auto my-2 my-lg-0" navbarScroll>
-              <FontAwesomeIcon icon={faBell} className="notification-icon" />
+              <FontAwesomeIcon
+                icon={faBell}
+                className="notification-icon"
+                onClick={() => window.location.assign("VendorNotification")}
+              />
               <div className="dropdown">
                 <button className="dropbtn navigation-all fs-6">
-                {`${VendorDetails?.fname}`}
+                  {`${VendorDetails?.fname}`}
                   <img
                     style={{
                       width: "40px ",

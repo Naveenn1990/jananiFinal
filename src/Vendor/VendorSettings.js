@@ -1,7 +1,8 @@
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
-import { Container } from "react-bootstrap";
+import axios from "axios";
+import React, { useState } from "react";
+import { Container, FormLabel } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
@@ -10,6 +11,104 @@ import { useNavigate } from "react-router-dom";
 
 export const VendorSettings = () => {
   const navigate = useNavigate();
+  const Vendor = JSON.parse(sessionStorage.getItem("VendorDetails"));
+
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const [showPassword1, setShowPassword1] = useState(false);
+  const togglePasswordVisibility1 = () => {
+    setShowPassword1(!showPassword1);
+  };
+
+  const [password, setpassword] = useState("");
+  const [conpassword, setconpassword] = useState("");
+
+  const [Fname, setFname] = useState("");
+  const [Lname, setLname] = useState("");
+  const [Email, setEmail] = useState("");
+  const [City, setCity] = useState("");
+  const [State, setState] = useState("");
+  const [Address, setAddress] = useState("");
+
+  const ChangeVendorPassword = async (e) => {
+    e.preventDefault();
+    if (!password) {
+      alert("Please enter password");
+    } else if (!conpassword) {
+      alert("Please enter confirm password");
+    } else if (password !== conpassword) {
+      alert("Password and Confirm Password should be same");
+    } else {
+      try {
+        const config = {
+          url: "/vendor/ChangeVendorPassword",
+          method: "post",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            VendorId: Vendor?.vendorId,
+            password: password,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          sessionStorage.setItem(
+            "VendorDetails",
+            JSON.stringify(res.data.Vendor)
+          );
+          alert("Password changed successfully");
+          window.location.reload();
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
+      }
+    }
+  };
+
+  const UpdateVendor = async (e) => {
+    e.preventDefault();
+    if (!Fname && !Lname && !Email && !City && !State && !Address) {
+      alert("There is no changes to update");
+    } else {
+      try {
+        const config = {
+          url: "/vendor/UpdateVendor",
+          method: "post",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            VendorId: Vendor?.vendorId,
+            fname: Fname ? Fname : Vendor?.fname,
+            lname: Lname ? Lname : Vendor?.lname,
+            email: Email ? Email : Vendor?.email,
+            city: City ? City : Vendor?.city,
+            state: State ? State : Vendor?.state,
+            address1: Address ? Address : Vendor?.address1,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          sessionStorage.setItem(
+            "VendorDetails",
+            JSON.stringify(res.data.Vendor)
+          );
+          alert("Data updated successfully");
+          window.location.reload();
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
+      }
+    }
+  };
 
   return (
     <div>
@@ -18,16 +117,16 @@ export const VendorSettings = () => {
       </h4>
       <Container className="">
         <Form style={{ marginLeft: "100px", marginTop: "50px" }}>
-          <h4 className=" fw-bold mb-4">Security Settings</h4>
+          <h4 className=" fw-bold mb-4">Change Password</h4>
 
-          <FloatingLabel
+          {/* <FloatingLabel
             className="mb-4"
             style={{ width: "600px" }}
             controlId="floatingEmail"
             label="Username"
           >
             <Form.Control type="text" placeholder="Username" />
-          </FloatingLabel>
+          </FloatingLabel> */}
 
           <FloatingLabel
             className="mb-4"
@@ -37,10 +136,16 @@ export const VendorSettings = () => {
           >
             <Form.Control
               className="create-account-password-1"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
+              onChange={(e) => setpassword(e.target.value)}
             />
-            <FontAwesomeIcon icon={faEye} className="password-eye-1" />
+            <FontAwesomeIcon
+              icon={showPassword ? faEye : faEyeSlash}
+              className="doctor-login-eye"
+              onClick={togglePasswordVisibility}
+              style={{ cursor: "pointer", left: "35rem" }}
+            />
           </FloatingLabel>
 
           <FloatingLabel
@@ -51,10 +156,16 @@ export const VendorSettings = () => {
           >
             <Form.Control
               className="create-account-password-2"
-              type="password"
+              type={showPassword1 ? "text" : "password"}
               placeholder="Confirm Password"
+              onChange={(e) => setconpassword(e.target.value)}
             />
-            <FontAwesomeIcon icon={faEye} className="password-eye-2" />
+            <FontAwesomeIcon
+              icon={showPassword1 ? faEye : faEyeSlash}
+              className="doctor-login-eye"
+              onClick={togglePasswordVisibility1}
+              style={{ cursor: "pointer", left: "35rem" }}
+            />
           </FloatingLabel>
 
           <div>
@@ -66,8 +177,8 @@ export const VendorSettings = () => {
                 fontSize: "16px",
                 backgroundColor: "rgb(32 139 140)",
               }}
-              onClick={() => {
-                navigate("#");
+              onClick={(e) => {
+                ChangeVendorPassword(e);
               }}
             >
               Save
@@ -79,58 +190,93 @@ export const VendorSettings = () => {
           <h4 className=" mb-4 fw-bold">Account Settings</h4>
 
           <div className="d-flex gap-4 mb-4">
-            <FloatingLabel
-              style={{ width: "290px" }}
-              controlId="floatingInput"
-              label="First name"
-              className="mb-3"
-            >
-              <Form.Control type="text" placeholder="First Name" />
-            </FloatingLabel>
-
-            <FloatingLabel
-              style={{ width: "290px" }}
-              controlId="floatingName"
-              label="Last name"
-            >
-              <Form.Control type="text" placeholder="Last Name" />
-            </FloatingLabel>
+            <div>
+              <FormLabel>First name</FormLabel>
+              <FloatingLabel
+                style={{ width: "290px" }}
+                controlId="floatingInput"
+                label={Vendor?.fname}
+                className="mb-3"
+              >
+                <Form.Control
+                  type="text"
+                  placeholder={Vendor?.fname}
+                  onChange={(e) => setFname(e.target.value)}
+                />
+              </FloatingLabel>
+            </div>
+            <div>
+              <FormLabel>Last name</FormLabel>
+              <FloatingLabel
+                style={{ width: "290px" }}
+                controlId="floatingName"
+                label={Vendor?.lname}
+              >
+                <Form.Control
+                  type="text"
+                  placeholder={Vendor?.lname}
+                  onChange={(e) => setLname(e.target.value)}
+                />
+              </FloatingLabel>
+            </div>
           </div>
 
+          <FormLabel>Email</FormLabel>
           <FloatingLabel
             className="mb-5"
             style={{ width: "600px" }}
             controlId="floatingEmail"
-            label="Email"
+            label={Vendor?.email}
           >
-            <Form.Control type="Email" placeholder="Email" />
+            <Form.Control
+              type="Email"
+              placeholder={Vendor?.email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </FloatingLabel>
 
           <div className="d-flex gap-2 mb-5">
-            <FloatingLabel
-              style={{ width: "290px" }}
-              controlId="floatingCity"
-              label="City"
-            >
-              <Form.Control type="text" placeholder="City" />
-            </FloatingLabel>
-
-            <FloatingLabel
-              style={{ width: "290px" }}
-              controlId="floatingState"
-              label="State/Province"
-            >
-              <Form.Control type="text" placeholder="State/Province" />
-            </FloatingLabel>
+            <div>
+              <FormLabel>City</FormLabel>
+              <FloatingLabel
+                style={{ width: "290px" }}
+                controlId="floatingCity"
+                label={Vendor?.city}
+              >
+                <Form.Control
+                  type="text"
+                  placeholder={Vendor?.city}
+                  onChange={(e) => setCity(e.target.value)}
+                />
+              </FloatingLabel>
+            </div>
+            <div>
+              <FormLabel>State/Province</FormLabel>
+              <FloatingLabel
+                style={{ width: "290px" }}
+                controlId="floatingState"
+                label={Vendor?.state}
+              >
+                <Form.Control
+                  type="text"
+                  placeholder={Vendor?.state}
+                  onChange={(e) => setState(e.target.value)}
+                />
+              </FloatingLabel>
+            </div>
           </div>
-
+          <FormLabel>Street Address</FormLabel>
           <FloatingLabel
             className="mb-5"
             style={{ width: "600px" }}
             controlId="floatingStreetAddress"
-            label="Street Address"
+            label={Vendor?.address1}
           >
-            <Form.Control type="text" placeholder="Street Address" />
+            <Form.Control
+              type="text"
+              placeholder={Vendor?.address1}
+              onChange={(e) => setAddress(e.target.value)}
+            />
           </FloatingLabel>
 
           <div>
@@ -142,8 +288,8 @@ export const VendorSettings = () => {
                 fontSize: "16px",
                 backgroundColor: "rgb(32 139 140)",
               }}
-              onClick={() => {
-                navigate("#");
+              onClick={(e) => {
+                UpdateVendor(e);
               }}
             >
               Save Changes

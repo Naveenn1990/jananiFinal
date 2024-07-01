@@ -32,6 +32,14 @@ import { MdCancel } from "react-icons/md";
 import { faCircleInfo, faTag } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
+import { FaUserMd } from "react-icons/fa";
 
 export const VendorOrders = () => {
   const navigate = useNavigate();
@@ -84,7 +92,7 @@ export const VendorOrders = () => {
       });
   };
 
-  console.log("OrderList",OrderList);
+  console.log("OrderList", OrderList);
   const getLabOrderList = () => {
     axios
       .get(
@@ -376,6 +384,69 @@ export const VendorOrders = () => {
 
   const [Payment, setPayment] = useState();
 
+  const [data, setdata] = useState([]);
+
+  useEffect(() => {
+    if (ViewNewOrder && OrderList?.length > 0) {
+      const xyz = OrderList?.filter(
+        (data) => data.orderStatus == "PLACED_ORDER"
+      );
+      setdata(xyz);
+    } else if (ViewOutForDelivery && OrderList?.length > 0) {
+      const abc = OrderList?.filter(
+        (data) => data.orderStatus == "OUT_FOR_DELIVERY"
+      );
+      setdata(abc);
+    } else if (ViewDelivered && OrderList?.length > 0) {
+      const srt = OrderList?.filter((data) => data.orderStatus == "DELIVERED");
+      setdata(srt);
+    }
+  }, [ViewNewOrder, ViewOutForDelivery, ViewDelivered]);
+
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Products");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
   return (
     <div>
       <div
@@ -468,6 +539,36 @@ export const VendorOrders = () => {
           Delivered
         </h3>
 
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            margin: "2%",
+          }}
+        >
+          <input
+            placeholder="Search as per order id"
+            style={{
+              padding: "5px 10px",
+              border: "1px solid #20958c",
+              borderRadius: "0px",
+            }}
+            onChange={handleFilter}
+          />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
+        </div>
+
         <Table
           className="table "
           responsive
@@ -487,75 +588,149 @@ export const VendorOrders = () => {
           </thead>
 
           <tbody>
-            {OrderList?.filter(
-              (data) => data.orderStatus == "PLACED_ORDER"
-            )?.map((item) => {
-              return (
-                <>
-                  <tr className="admin-table-row">
-                    <td>{item?._id}</td>
-                    <td>{moment(item?.createdAt)?.format("DD-MM-YYYY")}</td>
-                    <td>{item.adminId?.name}</td>
-                    <td> {item.adminId?.email}</td>
-                    <td>{item.items?.length}</td>
-                    <td>{item.totalAmount}</td>
-                    <td>
-                      <FontAwesomeIcon
-                        icon={faCircleInfo}
-                        style={{ color: "#20958c", fontSize: "25px" }}
-                        onClick={() => {
-                          handleShow2();
-                          setSelectedProduct(item);
-                        }}
-                      />
-                    </td>
-                    <td>
-                      <div style={{ display: "flex", gap: "10px" }}>
-                        <button
-                          onClick={() => {
-                            Vendor?.VendorType === "Lab" ? (
-                              AcceptLabOrder(item)
-                            ) : Vendor?.VendorType === "Pharmacy" ? (
-                              AcceptOrder(item)
-                            ) : (
-                              <></>
-                            );
-                          }}
-                          style={{
-                            backgroundColor: "green",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "20px",
-                          }}
-                        >
-                          ACCEPT
-                        </button>{" "}
-                        /
-                        <button
-                          onClick={() => {
-                            Vendor?.VendorType === "Lab" ? (
-                              CANCELLEDLABORDER(item)
-                            ) : Vendor?.VendorType === "Pharmacy" ? (
-                              CANCELLEDORDER(item)
-                            ) : (
-                              <></>
-                            );
-                          }}
-                          style={{
-                            backgroundColor: "#d32728",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "20px",
-                          }}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </>
-              );
-            })}
+            {search.length > 0
+              ? tableFilter
+                  .slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item) => {
+                    return (
+                      <>
+                        <tr className="admin-table-row">
+                          <td>{item?._id}</td>
+                          <td>
+                            {moment(item?.createdAt)?.format("DD-MM-YYYY")}
+                          </td>
+                          <td>{item.adminId?.name}</td>
+                          <td> {item.adminId?.email}</td>
+                          <td>{item.items?.length}</td>
+                          <td>{item.totalAmount}</td>
+                          <td>
+                            <FontAwesomeIcon
+                              icon={faCircleInfo}
+                              style={{ color: "#20958c", fontSize: "25px" }}
+                              onClick={() => {
+                                handleShow2();
+                                setSelectedProduct(item);
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <div style={{ display: "flex", gap: "10px" }}>
+                              <button
+                                onClick={() => {
+                                  Vendor?.VendorType === "Lab" ? (
+                                    AcceptLabOrder(item)
+                                  ) : Vendor?.VendorType === "Pharmacy" ? (
+                                    AcceptOrder(item)
+                                  ) : (
+                                    <></>
+                                  );
+                                }}
+                                style={{
+                                  backgroundColor: "green",
+                                  color: "white",
+                                  border: "none",
+                                  borderRadius: "20px",
+                                }}
+                              >
+                                ACCEPT
+                              </button>{" "}
+                              /
+                              <button
+                                onClick={() => {
+                                  Vendor?.VendorType === "Lab" ? (
+                                    CANCELLEDLABORDER(item)
+                                  ) : Vendor?.VendorType === "Pharmacy" ? (
+                                    CANCELLEDORDER(item)
+                                  ) : (
+                                    <></>
+                                  );
+                                }}
+                                style={{
+                                  backgroundColor: "#d32728",
+                                  color: "white",
+                                  border: "none",
+                                  borderRadius: "20px",
+                                }}
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </>
+                    );
+                  })
+              : OrderList?.filter((data) => data.orderStatus == "PLACED_ORDER")
+                  .slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item) => {
+                    return (
+                      <>
+                        <tr className="admin-table-row">
+                          <td>{item?._id}</td>
+                          <td>
+                            {moment(item?.createdAt)?.format("DD-MM-YYYY")}
+                          </td>
+                          <td>{item.adminId?.name}</td>
+                          <td> {item.adminId?.email}</td>
+                          <td>{item.items?.length}</td>
+                          <td>{item.totalAmount}</td>
+                          <td>
+                            <FontAwesomeIcon
+                              icon={faCircleInfo}
+                              style={{ color: "#20958c", fontSize: "25px" }}
+                              onClick={() => {
+                                handleShow2();
+                                setSelectedProduct(item);
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <div style={{ display: "flex", gap: "10px" }}>
+                              <button
+                                onClick={() => {
+                                  Vendor?.VendorType === "Lab" ? (
+                                    AcceptLabOrder(item)
+                                  ) : Vendor?.VendorType === "Pharmacy" ? (
+                                    AcceptOrder(item)
+                                  ) : (
+                                    <></>
+                                  );
+                                }}
+                                style={{
+                                  backgroundColor: "green",
+                                  color: "white",
+                                  border: "none",
+                                  borderRadius: "20px",
+                                }}
+                              >
+                                ACCEPT
+                              </button>{" "}
+                              /
+                              <button
+                                onClick={() => {
+                                  Vendor?.VendorType === "Lab" ? (
+                                    CANCELLEDLABORDER(item)
+                                  ) : Vendor?.VendorType === "Pharmacy" ? (
+                                    CANCELLEDORDER(item)
+                                  ) : (
+                                    <></>
+                                  );
+                                }}
+                                style={{
+                                  backgroundColor: "#d32728",
+                                  color: "white",
+                                  border: "none",
+                                  borderRadius: "20px",
+                                }}
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </>
+                    );
+                  })}
           </tbody>
         </Table>
 
@@ -580,47 +755,91 @@ export const VendorOrders = () => {
             </tr>
           </thead>
           <tbody>
-            {OrderList?.filter(
-              (data) => data.orderStatus == "OUT_FOR_DELIVERY"
-            )?.map((item) => {
-              return (
-                <tr className="admin-table-row">
-                  <td>{item?._id}</td>
-                  <td>{moment(item?.createdAt)?.format("DD-MM-YYYY")}</td>
-                  <td>{item.adminId?.username}</td>
-                  <td> {item.adminId?.email}</td>
-                  <td>{item.items?.length}</td>
-                  <td>{item.totalAmount}</td>
-                  <td>
-                    <FontAwesomeIcon
-                      icon={faCircleInfo}
-                      style={{ color: "#20958c", fontSize: "25px" }}
-                      onClick={() => {
-                        handleShow2();
-                        setSelectedProduct(item);
-                      }}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      onClick={() => {
-                        // DeliverOrder(item);
-                        setShow(true);
-                        setSelecteddata(item);
-                      }}
-                      style={{
-                        backgroundColor: "green",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "20px",
-                      }}
-                    >
-                      DELIVER
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
+            {search.length > 0
+              ? tableFilter
+                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item) => {
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{item?._id}</td>
+                        <td>{moment(item?.createdAt)?.format("DD-MM-YYYY")}</td>
+                        <td>{item.adminId?.username}</td>
+                        <td> {item.adminId?.email}</td>
+                        <td>{item.items?.length}</td>
+                        <td>{item.totalAmount}</td>
+                        <td>
+                          <FontAwesomeIcon
+                            icon={faCircleInfo}
+                            style={{ color: "#20958c", fontSize: "25px" }}
+                            onClick={() => {
+                              handleShow2();
+                              setSelectedProduct(item);
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => {
+                              // DeliverOrder(item);
+                              setShow(true);
+                              setSelecteddata(item);
+                            }}
+                            style={{
+                              backgroundColor: "green",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "20px",
+                            }}
+                          >
+                            DELIVER
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+              : OrderList?.filter(
+                  (data) => data.orderStatus == "OUT_FOR_DELIVERY"
+                )
+                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item) => {
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{item?._id}</td>
+                        <td>{moment(item?.createdAt)?.format("DD-MM-YYYY")}</td>
+                        <td>{item.adminId?.username}</td>
+                        <td> {item.adminId?.email}</td>
+                        <td>{item.items?.length}</td>
+                        <td>{item.totalAmount}</td>
+                        <td>
+                          <FontAwesomeIcon
+                            icon={faCircleInfo}
+                            style={{ color: "#20958c", fontSize: "25px" }}
+                            onClick={() => {
+                              handleShow2();
+                              setSelectedProduct(item);
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => {
+                              // DeliverOrder(item);
+                              setShow(true);
+                              setSelecteddata(item);
+                            }}
+                            style={{
+                              backgroundColor: "green",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "20px",
+                            }}
+                          >
+                            DELIVER
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
           </tbody>
         </Table>
 
@@ -643,66 +862,141 @@ export const VendorOrders = () => {
             </tr>
           </thead>
           <tbody>
-            {OrderList?.filter((data) => data.orderStatus == "DELIVERED")?.map(
-              (item) => {
-                return (
-                  <tr className="admin-table-row">
-                    <td>{item?._id}</td>
-                    <td>{moment(item?.createdAt)?.format("DD-MM-YYYY")}</td>
-                    <td>{item.adminId?.username}</td>
-                    <td> {item.adminId?.email}</td>
-                    <td>{item.items?.length}</td>
-                    <td>{item.totalAmount}</td>
-                    <td>
-                      <FontAwesomeIcon
-                        icon={faCircleInfo}
-                        style={{ color: "#20958c", fontSize: "25px" }}
-                        onClick={() => {
-                          handleShow2();
-                          setSelectedProduct(item);
-                        }}
-                      />
-                    </td>
-                    <td>
-                      {item?.orderPayment == "DONE" ? (
-                        <button
-                          style={{
-                            backgroundColor: "green",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "20px",
-                          }}
-                        >
-                          DONE
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            Vendor?.VendorType === "Lab" ? (
-                              MakeLabPayment(item)
-                            ) : Vendor?.VendorType === "Pharmacy" ? (
-                              MakePayment(item)
-                            ) : (
-                              <></>
-                            );
-                          }}
-                          style={{
-                            backgroundColor: "green",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "20px",
-                          }}
-                        >
-                          PENDING
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              }
-            )}
+            {search.length > 0
+              ? tableFilter
+                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item) => {
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{item?._id}</td>
+                        <td>{moment(item?.createdAt)?.format("DD-MM-YYYY")}</td>
+                        <td>{item.adminId?.name}</td>
+                        <td> {item.adminId?.email}</td>
+                        <td>{item.items?.length}</td>
+                        <td>{item.totalAmount}</td>
+                        <td>
+                          <FontAwesomeIcon
+                            icon={faCircleInfo}
+                            style={{ color: "#20958c", fontSize: "25px" }}
+                            onClick={() => {
+                              handleShow2();
+                              setSelectedProduct(item);
+                            }}
+                          />
+                        </td>
+                        <td>
+                          {item?.orderPayment == "DONE" ? (
+                            <button
+                              style={{
+                                backgroundColor: "green",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "20px",
+                              }}
+                            >
+                              DONE
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                Vendor?.VendorType === "Lab" ? (
+                                  MakeLabPayment(item)
+                                ) : Vendor?.VendorType === "Pharmacy" ? (
+                                  MakePayment(item)
+                                ) : (
+                                  <></>
+                                );
+                              }}
+                              style={{
+                                backgroundColor: "green",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "20px",
+                              }}
+                            >
+                              PENDING
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+              : OrderList?.filter((data) => data.orderStatus == "DELIVERED")
+                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item) => {
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{item?._id}</td>
+                        <td>{moment(item?.createdAt)?.format("DD-MM-YYYY")}</td>
+                        <td>{item.adminId?.name}</td>
+                        <td> {item.adminId?.email}</td>
+                        <td>{item.items?.length}</td>
+                        <td>{item.totalAmount}</td>
+                        <td>
+                          <FontAwesomeIcon
+                            icon={faCircleInfo}
+                            style={{ color: "#20958c", fontSize: "25px" }}
+                            onClick={() => {
+                              handleShow2();
+                              setSelectedProduct(item);
+                            }}
+                          />
+                        </td>
+                        <td>
+                          {item?.orderPayment == "DONE" ? (
+                            <button
+                              style={{
+                                backgroundColor: "green",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "20px",
+                              }}
+                            >
+                              DONE
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                Vendor?.VendorType === "Lab" ? (
+                                  MakeLabPayment(item)
+                                ) : Vendor?.VendorType === "Pharmacy" ? (
+                                  MakePayment(item)
+                                ) : (
+                                  <></>
+                                );
+                              }}
+                              style={{
+                                backgroundColor: "green",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "20px",
+                              }}
+                            >
+                              PENDING
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
           </tbody>
         </Table>
+        <div style={{ display: "flex" }}>
+          <p style={{ width: "100%", marginTop: "20px" }}>
+            Total Count: {data?.length}
+          </p>
+          <ReactPaginate
+            previousLabel={"Back"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
+        </div>
       </Container>
 
       {/* Delete Modal */}

@@ -17,6 +17,14 @@ import {
   Table,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
+import { FaUserMd } from "react-icons/fa";
 
 export const VendorAddProducts = () => {
   const navigate = useNavigate();
@@ -35,14 +43,14 @@ export const VendorAddProducts = () => {
   const deleteBtnClose = () => setShow2(false);
   const deleteBtnShow = () => setShow2(true);
 
-  const [ProductList, setProductList] = useState([]);
+  const [data, setdata] = useState([]);
 
   const getProductList = () => {
     axios
       .get("http://localhost:8521/api/vendor/productList")
       .then(function (response) {
         // handle success
-        setProductList(
+        setdata(
           response.data.allProducts?.filter(
             (item) => item?.vendorid?.vendorId === Vendor?.vendorId
           )
@@ -58,7 +66,51 @@ export const VendorAddProducts = () => {
     getProductList();
   }, []);
 
-  console.log("ProductList", ProductList);
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Products");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
+  console.log("ProductList", data);
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
@@ -66,7 +118,7 @@ export const VendorAddProducts = () => {
       </h4>
 
       <Container>
-        <div className="row mb-3">
+        {/* <div className="row mb-3">
           <div className="col-lg-4 d-flex gap-2">
             <Dropdown>
               <Dropdown.Toggle variant="warning" id="dropdown-basic">
@@ -78,12 +130,6 @@ export const VendorAddProducts = () => {
                 <Dropdown.Item href="#">Export JSON</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-
-            {/* <p>
-              <Button variant="danger" size="md" active>
-                <FontAwesomeIcon icon={faDownload} /> Import
-              </Button>
-            </p> */}
           </div>
 
           <div className="col-lg-8  d-flex gap-2">
@@ -95,7 +141,6 @@ export const VendorAddProducts = () => {
                 className="me-2"
                 aria-label="Search"
               />
-              {/* <Button variant="outline-primary">Search</Button> */}
             </Form>
 
             <Dropdown>
@@ -117,8 +162,54 @@ export const VendorAddProducts = () => {
               <FontAwesomeIcon icon={faPlus} /> Add Product
             </Button>
           </div>
-        </div>
+        </div> */}
 
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            margin: "2%",
+          }}
+        >
+          <input
+            placeholder="Search Hospital doctors"
+            style={{
+              padding: "5px 10px",
+              border: "1px solid #20958c",
+              borderRadius: "0px",
+            }}
+            onChange={handleFilter}
+          />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
+
+          <Button
+            className="all-bg-green"
+            onClick={() => navigate("/VendorAddProductsModal")}
+          >
+            <FontAwesomeIcon icon={faPlus} /> Add Product
+          </Button>
+          {/* <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              position: "relative",
+              zIndex: "999",
+            }}
+          >
+            <FaUserMd className="AddIcon1" onClick={() => handleShow()} />
+          </div> */}
+        </div>
         <Table className="table " responsive style={{ width: "1500px" }}>
           <thead>
             <tr className="admin-table-head">
@@ -149,47 +240,107 @@ export const VendorAddProducts = () => {
           </thead>
 
           <tbody>
-            {ProductList?.map((item) => {
-              return (
-                <tr className="admin-table-row">
-                  <td>{item?.productName}</td>
+            {search.length > 0
+              ? tableFilter
+                  .slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item) => {
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{item?.productName}</td>
 
-                  <td>{item?.currencyFormat}</td>
-                  <td>{item?.productType}</td>
-                  <td>{item?.manufacturingDate}</td>
-                  <td>{item?.expiryDate}</td>
-                  <td>{item?.productPrice}</td>
-                  <td>{item?.discount}</td>
-                  <td>{item?.CGST}</td>
-                  <td>{item?.SGST}</td>
-                  <td>{item?.MRP}</td>
-                  <td>
-                    {item?.productPrice +
-                      (item?.productPrice * item?.CGST) / 100 +
-                      (item?.productPrice * item?.SGST) / 100 -
-                      (item?.productPrice * item?.discount) / 100}
-                  </td>
-                  <td>{item?.productSize}</td>
-                  <td>{item?.packSize}</td>
-                  <td>{item?.colour}</td>
-                  <td>{item?.flavour}</td>
-                  <td>{item?.fragrance}</td>
-                  <td>{item?.variant}</td>
-                  <td>
-                    <p style={{ height: "100px", overflowX: "scroll" }}>
-                      {item?.description}
-                    </p>
-                  </td>
-                  <td>{item?.brand}</td>
-                  <td>{item?.countryOfOrigin}</td>
-                  <td>{item?.manufacturercompanyname}</td>
-                  <td>{item?.manufactureraddress}</td>
-                  <td>{item?.stock}</td>
-                </tr>
-              );
-            })}
+                        <td>{item?.currencyFormat}</td>
+                        <td>{item?.productType}</td>
+                        <td>{item?.manufacturingDate}</td>
+                        <td>{item?.expiryDate}</td>
+                        <td>{item?.productPrice}</td>
+                        <td>{item?.discount}</td>
+                        <td>{item?.CGST}</td>
+                        <td>{item?.SGST}</td>
+                        <td>{item?.MRP}</td>
+                        <td>
+                          {item?.productPrice +
+                            (item?.productPrice * item?.CGST) / 100 +
+                            (item?.productPrice * item?.SGST) / 100 -
+                            (item?.productPrice * item?.discount) / 100}
+                        </td>
+                        <td>{item?.productSize}</td>
+                        <td>{item?.packSize}</td>
+                        <td>{item?.colour}</td>
+                        <td>{item?.flavour}</td>
+                        <td>{item?.fragrance}</td>
+                        <td>{item?.variant}</td>
+                        <td>
+                          <p style={{ height: "100px", overflowX: "scroll" }}>
+                            {item?.description}
+                          </p>
+                        </td>
+                        <td>{item?.brand}</td>
+                        <td>{item?.countryOfOrigin}</td>
+                        <td>{item?.manufacturercompanyname}</td>
+                        <td>{item?.manufactureraddress}</td>
+                        <td>{item?.stock}</td>
+                      </tr>
+                    );
+                  })
+              : data
+                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item) => {
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{item?.productName}</td>
+
+                        <td>{item?.currencyFormat}</td>
+                        <td>{item?.productType}</td>
+                        <td>{item?.manufacturingDate}</td>
+                        <td>{item?.expiryDate}</td>
+                        <td>{item?.productPrice}</td>
+                        <td>{item?.discount}</td>
+                        <td>{item?.CGST}</td>
+                        <td>{item?.SGST}</td>
+                        <td>{item?.MRP}</td>
+                        <td>
+                          {item?.productPrice +
+                            (item?.productPrice * item?.CGST) / 100 +
+                            (item?.productPrice * item?.SGST) / 100 -
+                            (item?.productPrice * item?.discount) / 100}
+                        </td>
+                        <td>{item?.productSize}</td>
+                        <td>{item?.packSize}</td>
+                        <td>{item?.colour}</td>
+                        <td>{item?.flavour}</td>
+                        <td>{item?.fragrance}</td>
+                        <td>{item?.variant}</td>
+                        <td>
+                          <p style={{ height: "100px", overflowX: "scroll" }}>
+                            {item?.description}
+                          </p>
+                        </td>
+                        <td>{item?.brand}</td>
+                        <td>{item?.countryOfOrigin}</td>
+                        <td>{item?.manufacturercompanyname}</td>
+                        <td>{item?.manufactureraddress}</td>
+                        <td>{item?.stock}</td>
+                      </tr>
+                    );
+                  })}
           </tbody>
         </Table>
+        <div style={{ display: "flex" }}>
+          <p style={{ width: "100%", marginTop: "20px" }}>
+            Total Count: {data?.length}
+          </p>
+          <ReactPaginate
+            previousLabel={"Back"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
+        </div>
       </Container>
 
       {/* VIEW MODAL */}
