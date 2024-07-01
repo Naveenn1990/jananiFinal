@@ -102,12 +102,10 @@ function PatientCaseStudy() {
               <thead>
                 <tr>
                   <th>Sl No</th>
-                  <th>Medicine Type</th>
-                  <th>Generic Name</th>
+                  <th>Medicine</th>
+                  <th>Quantity</th>
+                  <th>Medicine Taking Time</th>
                   <th>Dosage</th>
-                  <th>Duration</th>
-                  <th>Instruction</th>
-                  <th>Result</th>
                 </tr>
               </thead>
               <tbody>
@@ -115,16 +113,15 @@ function PatientCaseStudy() {
                   return (
                     <tr>
                       <td>{i + 1}</td>
-                      <td>{item1?.medicineType}</td>
-                      <td>{item1?.genericName}</td>
+                      <td>{item1?.medicineName}</td>
+                      <td>{item1?.Quantity}</td>
+                      <td>{item1?.medicineTakingTime}</td>
                       <td>
                         <p>Morning: {item1?.morningDose}</p>
                         <p>Afternoon: {item1?.noonDose}</p>
+                        <p>Evening: {item1?.eveDose}</p>
                         <p>Night: {item1?.nightDose}</p>
                       </td>
-                      <td>{item1?.duration}</td>
-                      <td>{item1?.medicineTakingTime}</td>
-                      <td>{item1?.result}</td>
                     </tr>
                   );
                 })}
@@ -141,28 +138,25 @@ function PatientCaseStudy() {
                 <tr>
                   <th>Sl No</th>
                   <th>Invastigation Name</th>
-                  <th>Description</th>
-                  <th>Image(Investigation)</th>
-                  <th>Remark</th>
+                  <th>Unit</th>
+                  <th>General Reference Value</th>
                 </tr>
               </thead>
               <tbody>
                 {item?.investigationList?.map((item2, i) => {
                   return (
-                    <tr>
-                      <td>{i + 1}</td>
-                      <td>{item2?.investigationName}</td>
-                      <td>{item2?.investigationDescription}</td>
-                      <td>
-                        <a
-                          href={`http://localhost:8521/Patient/${item2.investigationIncludeInReport}`}
-                          target="blank_"
-                        >
-                          View Documents
-                        </a>
-                      </td>
-                      <td>{item2?.notes}</td>
-                    </tr>
+                    <>
+                      {item2.labid.Labtests?.map((val) => {
+                        return (
+                          <tr>
+                            <td>{i + 1}</td>
+                            <td>{val?.testName}</td>
+                            <td>{val?.unit}</td>
+                            <td>{val?.generalRefVal}</td>
+                          </tr>
+                        );
+                      })}
+                    </>
                   );
                 })}
               </tbody>
@@ -251,7 +245,10 @@ function PatientCaseStudy() {
           </div>
         </div>
       </div>
-      <div className="mb-3" style={{ display: "flex", justifyContent: "center" }}>
+      <div
+        className="mb-3"
+        style={{ display: "flex", justifyContent: "center" }}
+      >
         <Button onClick={createPDF}>Download</Button>
       </div>
     </div>

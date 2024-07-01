@@ -50,12 +50,7 @@ export const AppointmentList = () => {
   };
 
   const [DateFilter, setDateFilter] = useState("");
-  console.log(
-    "AppointmentList: ",
-    AppointmentList,
-    typeof appointmentCompleted,
-    appointmentCompleted
-  );
+
   return (
     <div>
       <Navbar expand="lg" style={{ backgroundColor: "#dae1f3" }}>
@@ -86,17 +81,15 @@ export const AppointmentList = () => {
                   Clear
                 </Button>
               </div>
-              <div className="d-flex gap-3 align-items-center">
-                {/* <label style={{ width: "68%" }}>Filter : </label> */}
+              <div className="d-flex gap-1 align-items-center">
+                <label style={{ width: "68%" }}>Filter : </label>
                 <Form.Select
                   // type="date"
                   className="me-2"
-                  onChange={(e) =>
-                    setappointmentCompleted(Boolean(e.target.value))
-                  }
+                  onChange={(e) => setappointmentCompleted(e.target.value)}
                 >
-                  <option value={false}>Pending</option>
-                  <option value={true}>Completed</option>
+                  <option value={"false"}>Pending</option>
+                  <option value={"true"}>Completed</option>
                 </Form.Select>
               </div>
             </div>
@@ -120,11 +113,11 @@ export const AppointmentList = () => {
           <tbody>
             {AppointmentList?.filter(
               (item) => !DateFilter || item?.Dateofappointment === DateFilter
-              // &&
-              //   item?.isAppointmentCompleted === appointmentCompleted
             )
               ?.filter(
-                (data) => data.isAppointmentCompleted === appointmentCompleted
+                (val) =>
+                  val?.isAppointmentCompleted.toString() ===
+                  appointmentCompleted.toString()
               )
               ?.map((item) => {
                 return (
@@ -148,22 +141,26 @@ export const AppointmentList = () => {
                       </div>
                     </td>
 
-                    <td>
-                      {item?.payment === "unpaid" ? (
-                        <>
-                          <p>Payment Pending</p>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            className="table-details-btn"
-                            onClick={() => CaseStudy(item?._id)}
-                          >
-                            Case Study
-                          </button>
-                        </>
-                      )}
-                    </td>
+                    {!item.isAppointmentCompleted ? (
+                      <td>
+                        {item?.payment === "unpaid" ? (
+                          <>
+                            <p>Payment Pending</p>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              className="table-details-btn"
+                              onClick={() => CaseStudy(item?._id)}
+                            >
+                              Case Study
+                            </button>
+                          </>
+                        )}
+                      </td>
+                    ) : (
+                      <div style={{ textAlign: "center" }}>--/--</div>
+                    )}
                     <td>
                       <div
                         onClick={() =>
