@@ -20,10 +20,8 @@ import {
 import { Link } from "react-router-dom";
 
 export default function ReferDoctorsSidebar() {
-  const ReferralDocDetails = JSON.parse(
-    sessionStorage.getItem("RDoctorDetails")
-  );
-  console.log("ReferralDocDetails", ReferralDocDetails);
+  const ReferralDocDetails = JSON?.parse( sessionStorage?.getItem("RDoctorDetails"));
+
   const [LabM, setLabM] = useState(false);
   const [PharM, setPharM] = useState(false);
   const [RefHospital, setRefHospital] = useState(false);
@@ -110,31 +108,24 @@ export default function ReferDoctorsSidebar() {
         }}
       >
         <Link to={"/referaddpatient"}>
-        <h6
-          className="sidebarItem1"
-          // onClick={() => window.location.assign("/referaddpatient")}
-        >
-          <FontAwesomeIcon
-            icon={faPlus}
-            style={{ marginRight: "5px", fontSize: "15px" }}
-          />
-          Add Patient
-        </h6>
+          <h6 className="sidebarItem1">
+            <FontAwesomeIcon
+              icon={faPlus}
+              style={{ marginRight: "5px", fontSize: "15px" }}
+            />
+            Add Patient
+          </h6>
         </Link>
-        
+
         <Link to={"/referdoctorpatientlist"}>
-        <h6
-          className="sidebarItem1"
-          // onClick={() => window.location.assign("/referdoctorpatientlist")}
-        >
-          <FontAwesomeIcon
-            icon={faList}
-            style={{ marginRight: "5px", fontSize: "15px" }}
-          />
-          Patients List
-        </h6>
+          <h6 className="sidebarItem1">
+            <FontAwesomeIcon
+              icon={faList}
+              style={{ marginRight: "5px", fontSize: "15px" }}
+            />
+            Patients List
+          </h6>
         </Link>
-        
       </div>
 
       <h6 className="sidebarItem" onClick={() => setRefHospital(!RefHospital)}>
@@ -152,10 +143,7 @@ export default function ReferDoctorsSidebar() {
         }}
       >
         <Link to={"/addpatientrefhospital"}>
-          <h6
-            className="sidebarItem1"
-            // onClick={() => window.location.assign("/addpatientrefhospital")}
-          >
+          <h6 className="sidebarItem1">
             <FontAwesomeIcon
               icon={faPlus}
               style={{ marginRight: "5px", fontSize: "15px" }}
@@ -165,10 +153,7 @@ export default function ReferDoctorsSidebar() {
         </Link>
 
         <Link to={"/referhospitalpatientlist"}>
-          <h6
-            className="sidebarItem1"
-            // onClick={() => window.location.assign("/referhospitalpatientlist")}
-          >
+          <h6 className="sidebarItem1">
             <FontAwesomeIcon
               icon={faList}
               style={{ marginRight: "5px", fontSize: "15px" }}
@@ -225,18 +210,16 @@ export default function ReferDoctorsSidebar() {
           Lab Test Report
         </h6>
       </div>
-
-      <h6
-        className="sidebarItem"
-        onClick={() => window.location.assign("/refersettings")}
-      >
-        {" "}
-        <FontAwesomeIcon
-          icon={faGear}
-          style={{ color: "", marginRight: "5px" }}
-        />
-        Settings
-      </h6>
+      <Link to={"/refersettings"}>
+        <h6 className="sidebarItem">
+          {" "}
+          <FontAwesomeIcon
+            icon={faGear}
+            style={{ color: "", marginRight: "5px" }}
+          />
+          Settings
+        </h6>
+      </Link>
 
       {/* <h6
         className="sidebarItem"

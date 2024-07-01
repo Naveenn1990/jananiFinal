@@ -4,6 +4,7 @@ import {
   faFilePdf,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Pagination, Stack } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
@@ -50,14 +51,22 @@ export const ReferLabPatientList = () => {
         `http://localhost:8521/api/ClinicLab/getLabPatientList/${ReferalLAB?._id}`
       );
       setLabPatientList(res.data.patientList);
+      setPagination(res.data.patientList);
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log("LabPatientList", LabPatientList);
   const [SearchItem, setSearchItem] = useState("");
-
+  // Pagination
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = ( selected ) => {
+      setPageNumber(selected);
+  };
   const [LabPatientId, setLabPatientId] = useState("");
   const DeleteLabpatient = async () => {
     try {
@@ -88,7 +97,7 @@ export const ReferLabPatientList = () => {
         setHospitalLabList([]);
       });
   };
-  console.log("LabPatientId", LabPatientId);
+
 
   const [firstname, setfirstname] = useState("");
   const [lastname, setlastname] = useState("");
@@ -205,7 +214,7 @@ export const ReferLabPatientList = () => {
               </tr>
             </thead>
             <tbody>
-              {LabPatientList?.map((item, i) => {
+              {LabPatientList?.slice(pagesVisited, pagesVisited + usersPerPage)?.map((item, i) => {
                 if (
                   SearchItem === "" ||
                   Object.values(item).some((value) =>
@@ -291,6 +300,17 @@ export const ReferLabPatientList = () => {
               })}
             </tbody>
           </Table>
+          <div style={{justifyContent:"end"}} className="my-3 d-flex justify-end">
+                        <Stack spacing={2}>
+                            <Pagination
+                                count={pageCount}
+                                onChange={(event, value)=>{
+                                    changePage(value-1)
+                                  }}
+                                color="primary"                          
+                            />
+                        </Stack>
+                    </div>
         </div>
       </Container>
 

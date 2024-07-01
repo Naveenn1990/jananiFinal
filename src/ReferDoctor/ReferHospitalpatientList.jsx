@@ -29,15 +29,14 @@ import {
   ProgressBar,
   Table,
 } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
-import { AiFillDelete } from "react-icons/ai";
+import { Link } from "react-router-dom";
 import { MdDelete, MdEdit } from "react-icons/md";
 import axios from "axios";
 import moment from "moment";
 import { Pagination, Stack } from "@mui/material";
 
 function ReferHospitalpatientList() {
-    const [ViewData, setViewData] = useState("")
+  const [ViewData, setViewData] = useState("");
   const ReferralDocDetails = JSON.parse(
     sessionStorage.getItem("RDoctorDetails")
   );
@@ -86,18 +85,18 @@ function ReferHospitalpatientList() {
       alert(error.response.data.error);
     }
   };
-  const [SearchItem, setSearchItem] = useState("")
+  const [SearchItem, setSearchItem] = useState("");
   // Pagination
-      const [pagination, setPagination] = useState([]);
-      const [pageNumber, setPageNumber] = useState(0);
-      const usersPerPage = 5;
-      const pagesVisited = pageNumber * usersPerPage;
-      const pageCount = Math.ceil(pagination?.length / usersPerPage);
-      const changePage = ( selected ) => {
-          setPageNumber(selected);
-      };
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = (selected) => {
+    setPageNumber(selected);
+  };
 
-        //Edit Patient Details
+  //Edit Patient Details
   const [patientfirstname, setpatientfirstname] = useState("");
   const [patientlastname, setpatientlastname] = useState("");
   const [gender, setgender] = useState("");
@@ -164,6 +163,25 @@ function ReferHospitalpatientList() {
     }
   };
 
+  const ReferpatientHospital = async () => {
+    try {
+      const config = {
+        url: "/Clinic/referpatienttohospital/" + ViewData?._id,
+        method: "put",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        getRefPatientList();
+        handleClose3();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
   useEffect(() => {
     getRefPatientList();
   }, []);
@@ -177,7 +195,7 @@ function ReferHospitalpatientList() {
       <Container>
         <div className="row">
           {/* <div className="col-lg-4 d-flex gap-2"> */}
-            {/* <Dropdown>
+          {/* <Dropdown>
                             <Dropdown.Toggle variant="warning" id="dropdown-basic">
                                 <FontAwesomeIcon icon={faUpload} />  Export
                             </Dropdown.Toggle>
@@ -201,7 +219,7 @@ function ReferHospitalpatientList() {
                 placeholder="Search"
                 className="me-2"
                 aria-label="Search"
-                onChange={(e)=>setSearchItem(e.target.value)}
+                onChange={(e) => setSearchItem(e.target.value)}
               />
               {/* <Button variant="outline-primary">Search</Button> */}
             </Form>
@@ -238,83 +256,97 @@ function ReferHospitalpatientList() {
               </thead>
 
               <tbody>
-                {RefHospitalPatientList?.slice(pagesVisited, pagesVisited + usersPerPage)?.map((item) => {
-                     if (
-                        SearchItem === "" ||
-                        Object.values(item).some((value) =>
-                        String(value).toLowerCase().includes(SearchItem.toLowerCase())
-                    ))
-                  return (
-                    <tr className="admin-table-row">
-                      <td>{`${item?.PatientsFname} ${item?.PatientsLname}`}</td>
-                      <td>{item?.Gender}</td>
-                      <td>{item?.Address1}</td>
-                      <td>{item?.PhoneNumber}</td>
-                      <td>{moment(item?.DOB).format("DD-MM-YYYY")}</td>
-                      <td>{item?.BloodGroup}</td>
+                {RefHospitalPatientList?.slice(
+                  pagesVisited,
+                  pagesVisited + usersPerPage
+                )?.map((item) => {
+                  if (
+                    SearchItem === "" ||
+                    Object.values(item).some((value) =>
+                      String(value)
+                        .toLowerCase()
+                        .includes(SearchItem.toLowerCase())
+                    )
+                  )
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{`${item?.PatientsFname} ${item?.PatientsLname}`}</td>
+                        <td>{item?.Gender}</td>
+                        <td>{item?.Address1}</td>
+                        <td>{item?.PhoneNumber}</td>
+                        <td>{moment(item?.DOB).format("DD-MM-YYYY")}</td>
+                        <td>{item?.BloodGroup}</td>
 
-                      <td>
-                        <div
-                          className="Diseases-btn"
-                          style={{ color: "green", border: "1px solid green" }}
-                        >
-                          {item?.InjuryCondition}
-                        </div>
-                      </td>
-                      <td>
-                        <Button
-                        onClick={()=>{
-                          handleShow3()
-                          setViewData(item)
-                        }}
-                        > Refer</Button>
-                      </td>
-                      <td>
-                        <div className="d-flex gap-4">
-                        <MdEdit  
-                        style={{
-                            color:"green", 
-                            fontSize:"20px",
-                            cursor:"pointer"
+                        <td>
+                          <div
+                            className="Diseases-btn"
+                            style={{
+                              color: "green",
+                              border: "1px solid green",
                             }}
-                            onClick={()=>{
-                              handleShow();
-                              setViewData(item);
-                            }}
+                          >
+                            {item?.InjuryCondition}
+                          </div>
+                        </td>
+                        <td>
+                          {item?.isRefer === false ? (
+                            <Button
+                              onClick={() => {
+                                handleShow3();
+                                setViewData(item);
+                              }}
+                            >
+                              {" "}
+                              Refer
+                            </Button>
+                          ) : (
+                            <p>Refered</p>
+                          )}
+                        </td>
+                        <td>
+                          <div className="d-flex gap-4">
+                            <MdEdit
+                              style={{
+                                color: "green",
+                                fontSize: "20px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                handleShow();
+                                setViewData(item);
+                              }}
                             />
-                        <MdDelete 
-                        style={{
-                            color:"red", 
-                            fontSize:"20px",
-                            cursor:"pointer"
-                            }}
-                            onClick={()=>{
+                            <MdDelete
+                              style={{
+                                color: "red",
+                                fontSize: "20px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
                                 deleteBtnShow();
-                                setViewData(item)
-                            }}
+                                setViewData(item);
+                              }}
                             />
-                        </div>                      
-                      </td>
-                    </tr>
-                  );
+                          </div>
+                        </td>
+                      </tr>
+                    );
                 })}
               </tbody>
             </Table>
 
-            <div style={{float:"right"}} className="my-3 d-flex justify-end">
-                        <Stack spacing={2}>
-                            <Pagination
-                                count={pageCount}
-                                onChange={(event, value)=>{
-                                    changePage(value-1)
-                                  }}
-                                color="primary"                          
-                            />
-                        </Stack>
-                    </div>
+            <div style={{ float: "right" }} className="my-3 d-flex justify-end">
+              <Stack spacing={2}>
+                <Pagination
+                  count={pageCount}
+                  onChange={(event, value) => {
+                    changePage(value - 1);
+                  }}
+                  color="primary"
+                />
+              </Stack>
+            </div>
           </div>
-
-         
         </div>
       </Container>
 
@@ -523,8 +555,7 @@ function ReferHospitalpatientList() {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>          
-          </Modal.Title>
+          <Modal.Title></Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -544,15 +575,13 @@ function ReferHospitalpatientList() {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button 
-          onClick={()=>DeleteReferHospitalpatient()}
-          variant="danger">
+          <Button onClick={() => DeleteReferHospitalpatient()} variant="danger">
             <FontAwesomeIcon icon={faCancel} className=" me-2" />
             Delet
           </Button>
           <Button variant="success" onClick={deleteBtnClose}>
             Cancle
-          </Button>         
+          </Button>
         </Modal.Footer>
       </Modal>
 
@@ -714,7 +743,7 @@ function ReferHospitalpatientList() {
           <Button variant="secondary" onClick={handleClose3}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose3}>
+          <Button variant="primary" onClick={ReferpatientHospital}>
             Refer
           </Button>
         </Modal.Footer>
