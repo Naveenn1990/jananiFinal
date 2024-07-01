@@ -25,6 +25,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import parse from "html-react-parser";
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 export const Home = () => {
   const settings = {
@@ -261,51 +262,113 @@ export const Home = () => {
   const [DOA, setDOA] = useState("");
   const [TOA, setTOA] = useState("");
 
-  // const BookAppointment = async (e) => {
-  //     e.preventDefault();
-  //     formdata.append("token", prefix + randomNumber);
-  //     formdata.append("PatientId", user?._id);
-  //     formdata.append("patientDBId", user?._id);
-  //     formdata.append("Firstname", Others ? patientfirstname : user?.Firstname);
-  //     formdata.append("Lastname", Others ? patientlastname : user?.Lastname);
-  //     formdata.append("Gender", Others ? gender : user?.Gender);
-  //     formdata.append("DOB", Others ? DOB : user?.DOB);
-  //     formdata.append("PhoneNumber", Others ? mobileno : user?.PhoneNumber);
-  //     formdata.append("Email", Others ? email : user?.Email);
-  //     formdata.append("Address1", Others ? Address : user?.Address1);
-  //     formdata.append("ConsultantDoctor", ConsultantDr);
-  //     formdata.append("Dateofappointment", DateofApp);
-  //     formdata.append("starttime", SelectedTime?.startTime);
-  //     formdata.append("endtime", SelectedTime?.endTime);
-  //     formdata.append("Condition", Condition);
-  //     formdata.append("Note", Note);
-  //     formdata.append("Document", Document);
-  //     formdata.append("medicalReason", medicalReason);
-  //     formdata.append("bookingstatus", SelectedTime?.bookingstatus);
-  //     formdata.append("appointmentType", Others ? "OTHERS" : "SELF");
-  //     try {
-  //       const config = {
-  //         url: "/user/addappointment",
-  //         method: "post",
-  //         baseURL: "http://localhost:8521/api",
-  //         headers: { "content-type": "multipart/form-data" },
-  //         data: formdata,
-  //       };
-  //       let res = await axios(config);
-  //       if (res.status === 200) {
-  //         console.log(res.data);
-  //         console.log(res.data.success);
-  //         alert("Appointment Added");
-  //         navigate("/yourappointment");
-  //       }
-  //     } catch (error) {
-  //       console.log(error.response);
-  //       if (error.response) {
-  //         alert(error.response.data.error);
-  //       }
-  //     }
-  //   };
+  const [selectedDoctorList1, setselectedDoctorList1] = useState([]);
+  useEffect(() => {
+    if (Department && Doctors?.length > 0) {
+      const xyz = Doctors?.filter((doc) => doc?.Department === Department);
+      setselectedDoctorList1(xyz);
+    }
+  }, [Department]);
 
+  const Doctorschedule = Doctors?.find((doc) => doc._id === Doctor);
+
+  const formdata = new FormData();
+  const generateRandomNumber = () => {
+    // Generate a random number between 1000 and 9999
+    const randomNumber = Math.floor(Math.random() * 9000) + 1000;
+    return randomNumber;
+  };
+  const prefix = "JAN";
+  const randomNumber = generateRandomNumber();
+
+  function ValidateEmail(mail) {
+    if (
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+        mail
+      )
+    ) {
+      return true;
+    }
+    alert("You have entered an invalid email address!");
+    return false;
+  }
+
+  function validatename(inputtxt) {
+    var phoneno = /^[a-zA-Z ]{2,30}$/; // var no = /^\d{10}$/;
+    if (inputtxt.match(phoneno)) {
+      return true;
+    } else {
+      alert("You have entered an invalid name!");
+      return false;
+    }
+  }
+
+  function phonenumber(inputtxt) {
+    var phoneno = /^[6-9]\d{9}$/; // var no = /^\d{10}$/;
+    if (inputtxt.match(phoneno)) {
+      return true;
+    } else {
+      alert("You have entered an invalid mobile number!");
+      return false;
+    }
+  }
+
+  const BookAppointment = async (e) => {
+    e.preventDefault();
+    if (
+      !Fname ||
+      !Lname ||
+      !Gender ||
+      !DOB ||
+      !Pnum ||
+      !Email ||
+      !address ||
+      !Doctor ||
+      !DOA ||
+      !TOA
+    ) {
+      alert("Please fill all the fields");
+    } else {
+      const srt = TOA?.split("-");
+      formdata.append("token", prefix + randomNumber);
+      formdata.append("Firstname", Fname);
+      formdata.append("Lastname", Lname);
+      formdata.append("Gender", Gender);
+      formdata.append("DOB", DOB);
+      formdata.append("PhoneNumber", Pnum);
+      formdata.append("Email", Email);
+      formdata.append("Address1", address);
+      formdata.append("ConsultantDoctor", Doctor);
+      formdata.append("Dateofappointment", DOA);
+      formdata.append("starttime", srt[0]);
+      formdata.append("endtime", srt[1]);
+      try {
+        if (validatename(Fname) && ValidateEmail(Email) && phonenumber(Pnum)) {
+          const config = {
+            url: "/user/addappointment",
+            method: "post",
+            baseURL: "http://localhost:8521/api",
+            headers: { "content-type": "multipart/form-data" },
+            data: formdata,
+          };
+          let res = await axios(config);
+          if (res.status === 200) {
+            console.log(res.data);
+            console.log(res.data.success);
+            alert("Appointment Added");
+            window.location.reload();
+          }
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
+      }
+    }
+  };
+  const uniqueDates = new Set();
+  console.log("Doctors", Doctor, Doctorschedule, TOA.split("-"));
   return (
     <div>
       <ProgressLine
@@ -485,7 +548,13 @@ export const Home = () => {
                   <br />
                   <input
                     className="home-input mb-2"
-                    type="number"
+                    type="tele"
+                    maxLength={10}
+                    onKeyPress={(event) => {
+                      if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
                     placeholder="9123456789"
                     onChange={(e) => setPnum(e.target.value)}
                   />
@@ -498,11 +567,12 @@ export const Home = () => {
                     aria-label="Default select example"
                     onChange={(e) => setDepartment(e.target.value)}
                   >
-                    <option>Neurologist</option>
-                    <option value="2">Cardiology</option>
-                    <option value="3">Dental</option>
-                    <option value="6">Urology</option>
-                    <option value="5">Peditric</option>
+                    <option>Select</option>
+                    {GetDepartmentData?.map((dep) => (
+                      <option value={dep?.DepartmentName}>
+                        {dep?.DepartmentName}
+                      </option>
+                    ))}
                   </Form.Select>
                 </form>
               </div>
@@ -527,10 +597,12 @@ export const Home = () => {
                     aria-label="Default select example"
                     onChange={(e) => setDoctor(e.target.value)}
                   >
-                    <option value="2">Cardiology</option>
-                    <option value="3">Dental</option>
-                    <option value="6">Urology</option>
-                    <option value="5">Peditric</option>
+                    <option>Select</option>
+                    {selectedDoctorList1?.map((doc) => (
+                      <option value={doc?._id}>
+                        {doc?.Firstname}&nbsp;{doc?.Lastname}
+                      </option>
+                    ))}
                   </Form.Select>
                 </form>
               </div>
@@ -544,10 +616,31 @@ export const Home = () => {
                     aria-label="Default select example"
                     onChange={(e) => setDOA(e.target.value)}
                   >
-                    <option value="2">Cardiology</option>
-                    <option value="3">Dental</option>
-                    <option value="6">Urology</option>
-                    <option value="5">Peditric</option>
+                    <option>Select</option>
+                    {Doctorschedule?.scheduleList
+                      ?.filter(
+                        (schedd) =>
+                          moment(schedd?.scheduleDate).format("DD-MM-YYYY") >=
+                            moment().format("DD-MM-YYYY") &&
+                          schedd?.bookingstatus === "Vacant"
+                      )
+                      ?.map((shedul) => {
+                        const formattedDate = moment(
+                          shedul?.scheduleDate
+                        ).format("DD-MM-YYYY");
+                        if (!uniqueDates.has(formattedDate)) {
+                          uniqueDates.add(formattedDate);
+                          return (
+                            <option
+                              value={shedul?.scheduleDate}
+                              key={shedul?.scheduleDate}
+                            >
+                              {shedul?.scheduleDate}
+                            </option>
+                          );
+                        }
+                        return null; // Return null for duplicates, so they are not rendered
+                      })}
                   </Form.Select>
                 </form>
               </div>
@@ -561,10 +654,21 @@ export const Home = () => {
                     aria-label="Default select example"
                     onChange={(e) => setTOA(e.target.value)}
                   >
-                    <option value="2">Cardiology</option>
-                    <option value="3">Dental</option>
-                    <option value="6">Urology</option>
-                    <option value="5">Peditric</option>
+                    <option>Select</option>
+                    {Doctorschedule?.scheduleList
+                      ?.filter(
+                        (schedd) =>
+                          moment(schedd?.scheduleDate).format("DD-MM-YYYY") >=
+                            moment().format("DD-MM-YYYY") &&
+                          schedd?.bookingstatus === "Vacant"
+                      )
+                      ?.map((shedul) => (
+                        <option
+                          value={`${shedul?.startTime}-${shedul?.endTime}`}
+                        >
+                          {shedul?.startTime}-{shedul?.endTime}
+                        </option>
+                      ))}
                   </Form.Select>
                 </form>
               </div>
@@ -584,7 +688,10 @@ export const Home = () => {
               </div>
               <div className="col-lg-12 text-center">
                 <a href="#">
-                  <Button className="red-btn-2 mt-4 mb-2"></Button>
+                  <Button
+                    className="red-btn-2 mt-4 mb-2"
+                    onClick={(e) => BookAppointment(e)}
+                  ></Button>
                 </a>
               </div>
             </div>
@@ -696,7 +803,7 @@ export const Home = () => {
                   data-aos="fade-up"
                   data-aos-duration="1500"
                   className="col-sm-12 col-md-6 col-lg-3 m-auto p-0 mb-3"
-                  style={{ maxWidth: "17rem" }}
+                  style={{ maxWidth: "17rem", height: "360px" }}
                 >
                   <Card.Img variant="top" />
                   <Link state={{ item: item }} to="/Doctor_Details">
@@ -714,6 +821,7 @@ export const Home = () => {
                         style={{
                           textDecoration: "none",
                           color: "rgb(32 139 140)",
+                          whiteSpace: "nowrap",
                         }}
                         to="/Doctor_Details"
                       >
@@ -722,7 +830,9 @@ export const Home = () => {
                     </Card.Title>
                     <p className="fw-bold">"{item?.Department}"</p>
                     <Card.Text>
-                      <div>{item?.Description?.slice(0, 75)}</div>
+                      <div style={{ textAlign: "justify" }}>
+                        {item?.Description?.slice(0, 96)}
+                      </div>
                     </Card.Text>
                   </Card.Body>
                 </Card>
@@ -814,7 +924,7 @@ export const Home = () => {
                   data-aos="fade-up"
                   data-aos-duration="1500"
                   className=" col-lg-3 m-auto mb-2 p-0"
-                  style={{ width: "16rem" }}
+                  style={{ maxWidth: "17rem", height: "360px" }}
                 >
                   <Card.Img
                     variant="top"
@@ -837,11 +947,11 @@ export const Home = () => {
                       </Link>
                     </Card.Title>
                     <Card.Text>
-                      <div>
+                      <div style={{ height: "50px" }}>
                         {parse(
                           `<div>${item?.ServiceDescription?.slice(
                             0,
-                            100
+                            70
                           )}...</div>`
                         )}
                       </div>

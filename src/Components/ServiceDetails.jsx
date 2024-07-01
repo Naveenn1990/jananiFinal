@@ -186,10 +186,13 @@ export const ServiceDetails = () => {
             Other Services{" "}
           </h3>
           <Slider {...settings}>
-            {Service?.map((item) => (
+            {Service?.filter((ser) => ser?._id !== item?._id)?.map((item) => (
               <>
                 <div>
-                  <Card className="m-auto" style={{ width: "15rem" }}>
+                  <Card
+                    className="m-auto"
+                    style={{ maxWidth: "15rem", height: "360px" }}
+                  >
                     <Card.Img variant="top" />
                     <Link
                       to="/service_details"
@@ -221,7 +224,7 @@ export const ServiceDetails = () => {
                         {parse(
                           `<div>${item?.ServiceDescription?.slice(
                             0,
-                            115
+                            100
                           )}...</div>`
                         )}
                       </Card.Text>

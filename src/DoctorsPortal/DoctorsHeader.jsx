@@ -19,7 +19,7 @@ export const DoctorsHeader = () => {
           <Navbar.Toggle aria-controls="navbarScroll" />
           {/* <FontAwesomeIcon icon={faBars} /> */}
           <Navbar.Collapse id="navbarScroll">
-            <Form className="d-flex m-auto  ">
+            {/* <Form className="d-flex m-auto  ">
               <Form.Control
                 type="search"
                 placeholder="Search"
@@ -30,7 +30,7 @@ export const DoctorsHeader = () => {
               <a href="#">
                 <Button className="red-btn-7"></Button>
               </a>
-            </Form>
+            </Form> */}
 
             <Nav className="ms-auto my-2 my-lg-0" navbarScroll>
               <FontAwesomeIcon

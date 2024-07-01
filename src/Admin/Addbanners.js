@@ -21,6 +21,10 @@ export default function AddBanner() {
   const [PharmacyTitle, setPharmacyTitle] = useState("");
   const [PharmacyBanLink, setPharmacyBanLink] = useState("");
 
+  const [LabBan, setLabBan] = useState("");
+  const [LabSubTitle, setLabSubTitle] = useState("");
+  const [LabTitle, setLabTitle] = useState("");
+
   // Post
   const AddBanner = async () => {
     try {
@@ -139,9 +143,73 @@ export default function AddBanner() {
     }
   };
 
+  ////LAb
+
+  // Post
+  const AddLabBan = async () => {
+    if (!LabBan || !LabSubTitle || !LabTitle) {
+      alert("Please fill all the fields");
+    } else {
+      try {
+        const config = {
+          url: "/lab/addLabbanner",
+          baseURL: "http://localhost:8521/api",
+          method: "post",
+          headers: { "Content-Type": "multipart/form-data" },
+          data: {
+            LabBan: LabBan,
+            LabSubTitle: LabSubTitle,
+            LabTitle: LabTitle,
+          },
+        };
+        const res = await axios(config);
+        if (res.status === 200) {
+          alert(res.data.success);
+          handleClose();
+          getLabBan();
+        }
+      } catch (error) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
+  // get
+  const [GetLabData, setGetLabData] = useState([]);
+  const getLabBan = async () => {
+    try {
+      const res = await axios.get("http://localhost:8521/api/lab/getLabbanner");
+      if (res.status === 200) {
+        setGetLabData(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Delete
+  const DeleteLabBan = async (id) => {
+    try {
+      const config = {
+        url: "/lab/deletLabbanner/" + id,
+        baseURL: "http://localhost:8521/api",
+        method: "delete",
+        header: { "Content-Type": "application/json" },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        getLabBan();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
   useEffect(() => {
     getBanner();
     getPharmacyBan();
+    getLabBan();
   }, []);
 
   const [selectedOption, setSelectedOption] = useState("option1");
@@ -269,6 +337,57 @@ export default function AddBanner() {
         </Table>
       </div>
 
+      {/* Lab Bannner */}
+      <div>
+        <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
+          Lab Banner
+        </h6>
+        <Table responsive="md" style={{ marginTop: "1%" }}>
+          <thead>
+            <tr style={{ fontSize: "15px", textAlign: "center" }}>
+              <th>S.No</th>
+              <th>Lab Banner </th>
+              <th>Lab SubTitle</th>
+              <th>Lab Title</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {GetLabData?.map((item, i) => {
+              return (
+                <>
+                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                    <td>{i + 1}</td>
+                    <td>
+                      <img
+                        src={`http://localhost:8521/Labbanner/${item?.LabBan}`}
+                        style={{ width: "160px", height: "140" }}
+                      />
+                    </td>
+                    <td>{item?.LabTitle}</td>
+                    <td>{item?.LabSubTitle}</td>
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          textAlign: "center",
+                          justifyContent: "space-evenly",
+                        }}
+                      >
+                        <AiFillDelete
+                          onClick={() => DeleteLabBan(item?._id)}
+                          className="text-danger"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </>
+              );
+            })}
+          </tbody>
+        </Table>
+      </div>
+
       <Modal size="md" show={show} onHide={handleClose}>
         <Modal.Header className="d-flex justify-content-between">
           <div className="fs-6 d-flex gap-2 ">
@@ -289,6 +408,15 @@ export default function AddBanner() {
               onChange={handleOptionChange}
             />
             Pharmacy Banner
+          </div>
+          <div className="fs-6 d-flex gap-2 radio_01">
+            <input
+              type="radio"
+              value="option3"
+              checked={selectedOption === "option3"}
+              onChange={handleOptionChange}
+            />
+            Lab Banner
           </div>
         </Modal.Header>
 
@@ -341,7 +469,7 @@ export default function AddBanner() {
               </div>
             </Modal.Footer>
           </>
-        ) : (
+        ) : selectedOption === "option2" ? (
           <>
             <Modal.Body>
               <div className="row">
@@ -418,6 +546,71 @@ export default function AddBanner() {
                 </Button>
                 <Button variant="warning" onClick={AddPharmacyBan}>
                   Add Pharmacy Banner
+                </Button>
+              </div>
+            </Modal.Footer>
+          </>
+        ) : (
+          <>
+            <Modal.Body>
+              <div className="row">
+                <div className="col-lg-12" htmlFor="upload">
+                  <input
+                    id="upload"
+                    type="file"
+                    accept="image/*"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    onChange={(e) => setLabBan(e.target.files[0])}
+                  ></input>
+                </div>
+
+                <div className="col-lg-12">
+                  <input
+                    type="text"
+                    placeholder="Sub Title"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    onChange={(e) => setLabSubTitle(e.target.value)}
+                  ></input>
+                </div>
+
+                <div className="col-lg-12">
+                  <input
+                    type="text"
+                    placeholder="Title"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    onChange={(e) => setLabTitle(e.target.value)}
+                  ></input>
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <div className="d-flex gap-2">
+                <Button variant="secondary" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button variant="warning" onClick={AddLabBan}>
+                  Add Lab Banner
                 </Button>
               </div>
             </Modal.Footer>

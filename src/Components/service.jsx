@@ -95,13 +95,23 @@ export const Service = () => {
                   data-aos="fade-up"
                   data-aos-duration="1500"
                   className="col-lg-3 col-md-6 m-auto mb-3 p-0"
-                  style={{ width: "15rem" }}
+                  style={{ maxWidth: "15rem", height: "360px" }}
                 >
-                  <Card.Img
-                    variant="top"
-                    src={`http://localhost:8521/ServiceManagement/${item?.ServiceImage}`}
-                    alt="service-img"
-                  />
+                  <Link
+                    className="fw-semibold"
+                    style={{
+                      textDecoration: "none",
+                      color: "rgb(32 139 140)",
+                    }}
+                    to="/service_details"
+                    state={{ item: item }}
+                  >
+                    <Card.Img
+                      variant="top"
+                      src={`http://localhost:8521/ServiceManagement/${item?.ServiceImage}`}
+                      alt="service-img"
+                    />
+                  </Link>
                   <Card.Body>
                     <Card.Title>
                       <Link
@@ -120,7 +130,7 @@ export const Service = () => {
                       {parse(
                         `<div>${item?.ServiceDescription?.slice(
                           0,
-                          115
+                          100
                         )}...</div>`
                       )}
                     </Card.Text>

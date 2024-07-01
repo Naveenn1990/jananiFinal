@@ -10,6 +10,8 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Headerpharmacy } from "./headerpharmacy";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const RegisterPharmacy = () => {
   const navigate = useNavigate();
@@ -76,55 +78,83 @@ export const RegisterPharmacy = () => {
   const [password, setpassword] = useState("");
   const [conpassword, setconpassword] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const [showPassword1, setShowPassword1] = useState(false);
+  const togglePasswordVisibility1 = () => {
+    setShowPassword1(!showPassword1);
+  };
+
   const signup = async (e) => {
     e.preventDefault();
-    // if (!patientfirstname | !patientlastname | !conpassword | !gender | !DOB | !) {
-    //   alert("Please Fill All The Field");
-    // } else if (password !== conpassword) {
-    //   alert("Password and ConfirmPassword should be same");
-    // } else {
-    try {
-      if (
-        validatename(patientfirstname) &&
-        ValidateEmail(email) &&
-        phonenumber(mobileno) &&
-        CheckPassword(password)
-      ) {
-        const config = {
-          url: "/user/addPatient",
-          method: "post",
-          baseURL: "http://localhost:8521/api",
-          headers: { "content-type": "application/json" },
-          data: {
-            Firstname: patientfirstname,
-            Lastname: patientlastname,
-            Gender: gender,
-            DOB: DOB,
-            PhoneNumber: mobileno,
-            Email: email,
-            Address1: Address,
-            Address2: Address1,
-            City: City,
-            State: State,
-            Zipcode: Zipcode,
-            MaritalStatus: Marital,
-            Password: password,
-            ConfirmPassword: conpassword,
-            registeredFrom: "pharmacy",
-          },
-        };
-        let res = await axios(config);
-        if (res.status === 200) {
-          console.log(res.data);
-          console.log(res.data.success);
-          alert("Signup Success");
-          window.location.assign("/loginpharmacy");
+    if (
+      !patientfirstname ||
+      !patientlastname ||
+      !password ||
+      !conpassword ||
+      !gender ||
+      !DOB ||
+      !mobileno ||
+      !email ||
+      !Address ||
+      !Address1 ||
+      !City ||
+      !State ||
+      !Zipcode ||
+      !Marital ||
+      !password ||
+      !conpassword
+    ) {
+      alert("Please Fill All The Field");
+    } else if (password !== conpassword) {
+      alert("Password and ConfirmPassword should be same");
+    } else {
+      try {
+        if (
+          validatename(patientfirstname) &&
+          ValidateEmail(email) &&
+          phonenumber(mobileno) &&
+          CheckPassword(password)
+        ) {
+          const config = {
+            url: "/user/addPatient",
+            method: "post",
+            baseURL: "http://localhost:8521/api",
+            headers: { "content-type": "application/json" },
+            data: {
+              Firstname: patientfirstname,
+              Lastname: patientlastname,
+              Gender: gender,
+              DOB: DOB,
+              PhoneNumber: mobileno,
+              Email: email,
+              Address1: Address,
+              Address2: Address1,
+              City: City,
+              State: State,
+              Zipcode: Zipcode,
+              MaritalStatus: Marital,
+              Password: password,
+              ConfirmPassword: conpassword,
+              registeredFrom: "pharmacy",
+            },
+          };
+          let res = await axios(config);
+          if (res.status === 200) {
+            console.log(res.data);
+            console.log(res.data.success);
+            alert("Signup Success");
+            window.location.assign("/loginpharmacy");
+          }
         }
-      }
-    } catch (error) {
-      console.log(error.response);
-      if (error.response) {
-        alert(error.response.data.error);
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
       }
     }
   };
@@ -348,9 +378,16 @@ export const RegisterPharmacy = () => {
                   label="Password"
                 >
                   <Form.Control
-                    type="password"
+                    className="doctor-login-password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Password"
                     onChange={(e) => setpassword(e.target.value)}
+                  />
+                  <FontAwesomeIcon
+                    icon={showPassword ? faEye : faEyeSlash}
+                    className="doctor-login-eye"
+                    onClick={togglePasswordVisibility}
+                    style={{ cursor: "pointer", left: "11rem" }}
                   />
                 </FloatingLabel>
               </div>
@@ -362,9 +399,16 @@ export const RegisterPharmacy = () => {
                   label="Confirm Password"
                 >
                   <Form.Control
-                    type="password"
+                    className="doctor-login-password"
+                    type={showPassword1 ? "text" : "password"}
                     placeholder="Confirm Password"
                     onChange={(e) => setconpassword(e.target.value)}
+                  />
+                  <FontAwesomeIcon
+                    icon={showPassword1 ? faEye : faEyeSlash}
+                    className="doctor-login-eye"
+                    onClick={togglePasswordVisibility1}
+                    style={{ cursor: "pointer", left: "11rem" }}
                   />
                 </FloatingLabel>
               </div>
