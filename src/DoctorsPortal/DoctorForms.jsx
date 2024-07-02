@@ -3,12 +3,20 @@ import { useLocation } from "react-router-dom";
 import { Button, Table } from "react-bootstrap";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
-import { Form } from "react-bootstrap";
+import { Form, FloatingLabel, Row } from "react-bootstrap";
 import { Checkbox } from "@mui/material";
 import moment from "moment";
 import axios from "axios";
+import Select from "react-select";
 
 const DoctorForms = () => {
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      // Adjust the width here
+      minHeight: "60px", // Adjust the height here
+    }),
+  };
   let doctorDetails = JSON.parse(sessionStorage.getItem("DoctorDetails"));
   const location = useLocation();
   const { item, causeId } = location.state;
@@ -28,6 +36,121 @@ const DoctorForms = () => {
   }
 
   const [CauseDetails, setCauseDetails] = useState([]);
+  const [PatientType, setPatientType] = useState("IPD");
+  const [patientObj, setpatientObj] = useState("");
+  const [causeid, setcauseid] = useState("");
+  const [patientname, setpatientname] = useState("");
+  const [Phoneno, setPhoneno] = useState("");
+  const [email, setemail] = useState("");
+  const [testDate, settestDate] = useState("");
+
+  const [patientlist, setpatientlist] = useState([]);
+
+  const [Labtests1, setLabtests1] = useState([]);
+  const hasSelectedOptions = Labtests1 && Labtests1.length > 0;
+  let [selectedOptions, setSelectedOptions] = useState([]);
+
+  const AddLabTest = (Labtests) => {
+    setSelectedOptions(
+      Labtests?.map((val) => {
+        return {
+          testid: val._id,
+          testName: val.testName,
+          priceNonInsurance: val.priceNonInsurance,
+          priceInsurance: val.priceInsurance,
+          unit: val.unit,
+          generalRefVal: val.generalRefVal,
+        };
+      })
+    );
+    setLabtests1(Labtests);
+  };
+
+  const getPatientlist = () => {
+    axios
+      .get("http://localhost:8521/api/user/getPatientList")
+      .then(function (response) {
+        setpatientlist(response.data.UsersInfo);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  const [HospitalLabList, setHospitalLabList] = useState([]);
+  const HospitallabListFn = () => {
+    axios
+      .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
+      .then(function (response) {
+        // handle success
+        if (response.status === 200) {
+          const data = response.data.HospitalLabTests;
+          data.forEach((item) => {
+            item.label = item.testName;
+            item.value = item.testName;
+          });
+          setHospitalLabList(data);
+        }
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+        setHospitalLabList([]);
+      });
+  };
+
+  const bookLabTest = async () => {
+    let obj;
+
+    obj = {
+      causeid: causeid,
+      patientid: patientObj?._id,
+      patientname: patientObj?.Firstname,
+      Phoneno: patientObj?.PhoneNumber,
+      email: patientObj?.Email,
+      testDate: testDate,
+      Labtests: selectedOptions,
+      hospitallabRefferedBy: `${doctorDetails?.Firstname} ${doctorDetails?.Lastname}`,
+    };
+
+    try {
+      const config = {
+        url: "/user/bookHospitalLabTest",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: obj,
+      };
+      let res = await axios(config);
+      if (res.status === 200 || res.status === 201) {
+        alert(res.data.success);
+        console.log("res.data76ty67: ", res.data);
+        const config = {
+          url: "/addRecommendedLabReports",
+          method: "put",
+          baseURL: "http://localhost:8521/api/staff",
+          headers: { "content-type": "application/json" },
+          data: {
+            patientId: item?._id,
+            causeId: CauseDetails?._id,
+            labTestBookingId: res.data?.bookingLabTest?._id,
+          },
+        };
+        let res1 = await axios(config);
+        if (res1.status === 200) {
+          alert(res1.data.success);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      return alert(error.response.data.error);
+    }
+  };
+
+  useEffect(() => {
+    getPatientlist();
+    HospitallabListFn();
+  }, []);
 
   useEffect(() => {
     const assignedPatients = item?.cause?.filter((val) => val._id === causeId);
@@ -88,6 +211,7 @@ const DoctorForms = () => {
   const [DocTreatChart, setDocTreatChart] = useState(true);
   const [DocNotes, setDocNotes] = useState(false);
   const [SurgeryReport, setSurgeryReport] = useState(false);
+  const [LabTestsRequirements, setLabTestsRequirements] = useState(false);
 
   // DOCTORS NOTES
 
@@ -140,7 +264,6 @@ const DoctorForms = () => {
         setDNDate("");
         setDNTime("");
         setDNOtes("");
-       
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -184,6 +307,32 @@ const DoctorForms = () => {
     }
   };
 
+  // const addRecommendedLabTest = async () => {
+  //   try {
+  //     const config = {
+  //       url: "/addRecommendedLabReports",
+  //       method: "put",
+  //       baseURL: "http://localhost:8521/api/staff",
+  //       headers: { "content-type": "application/json" },
+  //       data: {
+  //         patientId: item?._id,
+  //         causeId: CauseDetails?._id,
+  //         labTestBookingId: labTestBookingId,
+  //       },
+  //     };
+  //     let res = await axios(config);
+  //     if (res.status === 200) {
+  //       alert(res.data.success);
+  //       setNameofOperation("");
+  //       setProcedure("");
+  //       setFindings("");
+  //       setReportCheck("");
+  //     }
+  //   } catch (error) {
+  //     alert(error.response.data.error);
+  //   }
+  // };
+
   return (
     <div>
       <div className="d-flex justify-content-around p-5">
@@ -199,6 +348,7 @@ const DoctorForms = () => {
             setDocTreatChart(true);
             setDocNotes(false);
             setSurgeryReport(false);
+            setLabTestsRequirements(false);
           }}
         >
           <div>
@@ -219,6 +369,7 @@ const DoctorForms = () => {
             setDocTreatChart(false);
             setDocNotes(true);
             setSurgeryReport(false);
+            setLabTestsRequirements(false);
           }}
         >
           Doctors Notes
@@ -237,9 +388,31 @@ const DoctorForms = () => {
             setDocTreatChart(false);
             setDocNotes(false);
             setSurgeryReport(true);
+            setLabTestsRequirements(false);
           }}
         >
           Surgery Report
+        </button>
+
+        <button
+          style={{
+            padding: "6px",
+            border: "1px solid white",
+            backgroundColor: "#20958c",
+            color: "white",
+            borderRadius: "0px",
+          }}
+          onClick={() => {
+            setDocTreatChart(false);
+            setDocNotes(false);
+            setSurgeryReport(false);
+            setLabTestsRequirements(true);
+          }}
+        >
+          <div>
+            {/* <RiBillFill style={{fontSize:"38px"}}/>   */}
+            Lab Tests
+          </div>
         </button>
       </div>
 
@@ -731,7 +904,6 @@ const DoctorForms = () => {
                           >
                             Doctor's sign
                           </th>
-                         
                         </tr>
                       </thead>
                       <tbody>
@@ -789,9 +961,7 @@ const DoctorForms = () => {
                               style={{ width: "100%" }}
                             />
                           </td>
-                        
                         </tr>
-                      
                       </tbody>
                     </Table>
                   </div>
@@ -1197,7 +1367,198 @@ const DoctorForms = () => {
                   </div>
                 </>
               ) : (
-                <></>
+                <>
+                  {LabTestsRequirements ? (
+                    <>
+                      <div className="text-center mt-1">
+                        {" "}
+                        <h6
+                          className="fw-bold mt-2"
+                          style={{ color: "#20958C", fontSize: "30px" }}
+                        >
+                          LAB TEST
+                        </h6>
+                      </div>
+                      <div
+                        id="pdf"
+                        style={{
+                          padding: "15px",
+                          overflow: "scroll",
+                        }}
+                      >
+                        <div
+                          style={{
+                            padding: "30px",
+                            border: "2px solid #20958C",
+                            margin: "auto",
+                            borderRadius: "20px",
+                          }}
+                        >
+                          <Row>
+                            {/* <FloatingLabel
+                              className="col-md-6 p-2"
+                              controlId="floatingName"
+                              label="Type"
+                            >
+                              <Form.Select
+                                onChange={(e) => setPatientType(e.target.value)}
+                              >
+                                <option>Choose Options</option>
+                                <option value={"IPD"}>IPD</option>
+                                <option value={"OPD"}>OPD</option>
+                                <option value={"GENERAL"}>General</option>
+                              </Form.Select>
+                            </FloatingLabel> */}
+
+                            <FloatingLabel
+                              className="col-md-6 p-2"
+                              controlId="floatingName"
+                              label="Patient List"
+                            >
+                              <Form.Select
+                                onChange={(e) =>
+                                  setpatientObj(JSON.parse(e.target.value))
+                                }
+                              >
+                                <option>Choose Options</option>
+                                {patientlist
+                                  ?.filter(
+                                    (itemdata) =>
+                                      itemdata?.registrationType ===
+                                        PatientType &&
+                                      item?._id?.toString() ===
+                                        itemdata?._id?.toString()
+                                  )
+                                  ?.map((val) => {
+                                    return (
+                                      <option value={JSON.stringify(val)}>
+                                        {val?.Firstname} {val?.Lastname}
+                                      </option>
+                                    );
+                                  })}
+                              </Form.Select>
+                            </FloatingLabel>
+
+                            <FloatingLabel
+                              className="col-md-6 p-2"
+                              controlId="floatingName"
+                              label="Cause"
+                            >
+                              <Form.Select
+                                onChange={(e) => setcauseid(e.target.value)}
+                              >
+                                <option>Choose Options</option>
+                                {patientObj?.cause
+                                  ?.filter(
+                                    (data) =>
+                                      data?._id?.toString() ===
+                                      CauseDetails?._id?.toString()
+                                  )
+                                  ?.map((val) => {
+                                    return (
+                                      <option value={val?._id}>
+                                        {val?.CauseName}
+                                      </option>
+                                    );
+                                  })}
+                              </Form.Select>
+                            </FloatingLabel>
+
+                            <FloatingLabel
+                              className="col-md-6 p-2"
+                              controlId="floatingName"
+                              label="Name"
+                            >
+                              <Form.Control
+                                type="text"
+                                value={patientObj?.Firstname}
+                                placeholder="Name"
+                                disabled
+                                onChange={(e) => setpatientname(e.target.value)}
+                              />
+                            </FloatingLabel>
+                            <FloatingLabel
+                              className="  col-md-6 p-2"
+                              controlId="floatingMobile"
+                              label="Mobile"
+                            >
+                              <Form.Control
+                                type="number"
+                                value={patientObj?.PhoneNumber}
+                                placeholder="Mobile"
+                                disabled
+                                onChange={(e) => setPhoneno(e.target.value)}
+                              />
+                            </FloatingLabel>
+
+                            <FloatingLabel
+                              className="col-md-6 p-2"
+                              controlId="floatingEmail"
+                              label="Email"
+                            >
+                              <Form.Control
+                                type="email"
+                                value={patientObj?.Email}
+                                placeholder="Email"
+                                disabled
+                                onChange={(e) => setemail(e.target.value)}
+                              />
+                            </FloatingLabel>
+                            <FloatingLabel
+                              className="col-md-6 p-2"
+                              controlId="floatingName"
+                              label={
+                                hasSelectedOptions ? "" : "Select Lab Tests"
+                              }
+                            >
+                              <Select
+                                isMulti
+                                name="labTests"
+                                options={HospitalLabList}
+                                className="basic-multi-select"
+                                classNamePrefix=""
+                                value={Labtests1}
+                                onChange={AddLabTest}
+                                styles={customStyles}
+                                placeholder=""
+                              />
+                            </FloatingLabel>
+                            <FloatingLabel
+                              className="col-md-6 p-2"
+                              controlId="floatingEmail"
+                              label=""
+                            >
+                              <Form.Control
+                                type="date"
+                                placeholder=""
+                                value={testDate}
+                                min={`${new Date().getFullYear()}-${String(
+                                  new Date().getMonth() + 1
+                                ).padStart(2, "0")}-${String(
+                                  new Date().getDate()
+                                ).padStart(2, "0")}`}
+                                onChange={(e) => settestDate(e.target.value)}
+                              />
+                            </FloatingLabel>
+                          </Row>
+                        </div>
+                      </div>
+                      <div className="text-center mt-2 mb-2">
+                        <button
+                          className="btn btn-success"
+                          // onClick={submitSurgeryReport}
+                          onClick={() => {
+                            bookLabTest();
+                          }}
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </>
               )}
             </>
           )}
