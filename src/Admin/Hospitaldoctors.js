@@ -2953,7 +2953,7 @@ export default function Hospitaldoctors() {
         </Modal>
 
         <div style={{ overflow: "hidden", overflowX: "scroll" }}>
-          <Table style={{ marginTop: "1%" }}>
+          <Table style={{ marginTop: "1%" }} bordered>
             <thead>
               <tr style={{ fontSize: "15px", textAlign: "center" }}>
                 <th>Sl.No</th>
@@ -2979,6 +2979,7 @@ export default function Hospitaldoctors() {
                           <td>{++index}</td>
                           <td>
                             <img
+                            alt=""
                               src={`http://localhost:8521/Doctor/${item?.ProfileImg}`}
                               style={{
                                 width: "50px",
@@ -2986,6 +2987,7 @@ export default function Hospitaldoctors() {
                                 borderRadius: "50%",
                               }}
                             />
+                            {item?.DoctorId}
                           </td>
                           <td>
                             {item?.Firstname} {item?.Lastname}
@@ -3236,6 +3238,7 @@ export default function Hospitaldoctors() {
                           <td>{++index}</td>
                           <td>
                             <img
+                            alt=""
                               src={`http://localhost:8521/Doctor/${item?.ProfileImg}`}
                               style={{
                                 width: "50px",
@@ -3243,6 +3246,7 @@ export default function Hospitaldoctors() {
                                 borderRadius: "50%",
                               }}
                             />
+                               {item?.DoctorId}
                           </td>
                           <td>
                             {item?.Firstname} {item?.Lastname}

@@ -12,24 +12,22 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { Headerpharmacy } from "./headerpharmacy";
 import { Container } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoMdHeart } from "react-icons/io";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { faCartShopping, faHeart } from "@fortawesome/free-solid-svg-icons";
 import Slider from "@mui/material/Slider";
 import Box from "@mui/material/Box";
 
-const PharmacyProducts = ({ min, max }) => {
+const PharmacyCategoryProducts = ({ min, max }) => {
   const navigate = useNavigate();
   let pharmacyUser = JSON.parse(sessionStorage.getItem("pharmacyUser"));
+  const location = useLocation();
 
-  // bar
-  const handleSliderChange = (value) => {
-    // const filtered = StaysDetails2.filter(
-    //   (item) => item.startingprice <= value
-    // );
-    // setStaysDetails(filtered);
-  };
+  const { CategoryName } = location.state;
+
+  console.log("CategoryName", CategoryName);
+
   const [value, setValue] = React.useState([0, 1000000]);
   const changePrice = (event, newValue) => {
     setValue(newValue);
@@ -212,30 +210,35 @@ const PharmacyProducts = ({ min, max }) => {
 
   const [newarray, setnewarray] = useState([]);
   useEffect(() => {
-    let filteredProducts = ProductList;
+    if (CategoryName) {
+      let filteredProducts = ProductList;
 
-    if (SelectedCategory) {
-      filteredProducts = filteredProducts?.filter(
-        (prod) => prod?.categoryid?.categoryName === SelectedCategory
-      );
+      if (SelectedCategory) {
+        filteredProducts = filteredProducts?.filter(
+          (prod) => prod?.categoryid?.categoryName === SelectedCategory
+        );
+      } else if (CategoryName) {
+        filteredProducts = filteredProducts?.filter(
+          (prod) => prod?.categoryid?.categoryName === CategoryName
+        );
+      }
+
+      if (SelectedBrand) {
+        filteredProducts = filteredProducts?.filter(
+          (prod) => prod?.brand === SelectedBrand
+        );
+      }
+
+      if (value && value.length === 2) {
+        filteredProducts = filteredProducts?.filter((prod) => {
+          const finalPrice =
+            prod?.productPrice - (prod?.productPrice * prod?.discount) / 100;
+          return value[0] <= finalPrice && value[1] >= finalPrice;
+        });
+      }
+      setnewarray(filteredProducts);
     }
-
-    if (SelectedBrand) {
-      filteredProducts = filteredProducts?.filter(
-        (prod) => prod?.brand === SelectedBrand
-      );
-    }
-
-    if (value && value.length === 2) {
-      filteredProducts = filteredProducts?.filter((prod) => {
-        const finalPrice =
-          prod?.productPrice - (prod?.productPrice * prod?.discount) / 100;
-        return value[0] <= finalPrice && value[1] >= finalPrice;
-      });
-    }
-
-    setnewarray(filteredProducts);
-  }, [ProductList, SelectedCategory, SelectedBrand, value]);
+  }, [CategoryName, ProductList, SelectedCategory, SelectedBrand, value]);
 
   console.log("categoryList", SelectedCategory, SelectedBrand, value);
   console.log("newarray", newarray);
@@ -308,14 +311,20 @@ const PharmacyProducts = ({ min, max }) => {
                   return (
                     <li
                       style={{
-                        backgroundColor:
-                          SelectedCategory === item?.categoryName
+                        backgroundColor: SelectedCategory
+                          ? SelectedCategory === item?.categoryName
                             ? "#208B8C"
-                            : "white",
-                        color:
-                          SelectedCategory === item?.categoryName
+                            : "white"
+                          : CategoryName === item?.categoryName
+                          ? "#208B8C"
+                          : "white",
+                        color: SelectedCategory
+                          ? SelectedCategory === item?.categoryName
                             ? "white"
-                            : "black",
+                            : "black"
+                          : CategoryName === item?.categoryName
+                          ? "white"
+                          : "black",
                       }}
                       onClick={() =>
                         setSelectedCategory((prev) =>
@@ -372,7 +381,9 @@ const PharmacyProducts = ({ min, max }) => {
                 className="fw-bold  ms-3 text-center"
                 style={{ color: "white" }}
               >
-                Health Products
+                Health Products -{" "}
+                {SelectedCategory ? SelectedCategory : CategoryName}
+                {SelectedBrand ? "-" + SelectedBrand : ""}
               </h3>
 
               <div className="row">
@@ -479,4 +490,4 @@ const PharmacyProducts = ({ min, max }) => {
   );
 };
 
-export default PharmacyProducts;
+export default PharmacyCategoryProducts;

@@ -5,7 +5,6 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function Sidebar1() {
   const navigate = useNavigate();
-  // const Subadmin = JSON.parse(sessionStorage.getItem("Subadmin"));
   const admin = JSON.parse(sessionStorage.getItem("adminDetails"));
 
   const [DoctorM, setDoctorM] = useState(false);
@@ -15,10 +14,6 @@ export default function Sidebar1() {
   const [PharM, setPharM] = useState(false);
   const [HosM, setHosM] = useState(false);
 
-  // function logoutFn() {
-  //   sessionStorage.removeItem("Subadmin");
-  //   navigate("/subadmin-login");
-  // }
   function logoutAdmin() {
     sessionStorage.removeItem("adminDetails");
     navigate("/admin");
@@ -72,6 +67,13 @@ export default function Sidebar1() {
           >
             Clinical doctors
           </h6>
+          <Link to={"/admin/referfromclinicpatientlist"}>
+          <h6
+            className="sidebarItem1"
+          >
+           Refer Patient List
+          </h6>
+          </Link>
         </div>
 
         {/* {admin?.staffManagement === true ? (
@@ -225,6 +227,7 @@ export default function Sidebar1() {
               Add Product Category
             </h6>
           </Link>
+
           <Link to={"/admin/ProductBrands"}>
             <h6
               className="sidebarItem1"
@@ -432,6 +435,14 @@ export default function Sidebar1() {
           </h6>
         ) : null}
 
+        {admin?.notification === true ? (
+          <Link to={"/admin/notificationlist"}>
+           <h6 className="sidebarItem">
+            Notification
+          </h6>
+          </Link>
+         
+        ) : null}
         {admin?.enqAndComplaints === true ? (
           <h6
             className="sidebarItem"

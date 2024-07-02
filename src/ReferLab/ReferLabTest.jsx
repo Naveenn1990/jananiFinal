@@ -269,7 +269,7 @@ export const ReferLabTest = () => {
             })}
           </tbody>
         </Table>
-        <div className="my-3 d-flex justify-end">
+        <div style={{float:"right"}} className="my-3 d-flex justify-end">
           <Stack spacing={2}>
             <Pagination
               count={pageCount}

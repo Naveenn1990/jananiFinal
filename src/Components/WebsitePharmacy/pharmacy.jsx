@@ -6,7 +6,14 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IoMdHeart } from "react-icons/io";
 import { IoMdHeartEmpty } from "react-icons/io";
-import { faHospital, faHouseMedical, faCapsules, faStethoscope, faBars, faArrowRight} from "@fortawesome/free-solid-svg-icons";
+import {
+  faHospital,
+  faHouseMedical,
+  faCapsules,
+  faStethoscope,
+  faBars,
+  faArrowRight,
+} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { Headerpharmacy } from "./headerpharmacy";
@@ -14,6 +21,33 @@ import { Headerpharmacy } from "./headerpharmacy";
 export const Pharmacy = () => {
   const navigate = useNavigate();
   let pharmacyUser = JSON.parse(sessionStorage.getItem("pharmacyUser"));
+
+  const [GetPharmBanner, setGetPharmBanner] = useState([]);
+  const getPharmacyBan = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/admin/getPharmacyBan"
+      );
+      if (res.status === 200) {
+        setGetPharmBanner(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [brands, setbrands] = useState([]);
+  const getBrands = async () => {
+    try {
+      const res = await axios.get("http://localhost:8521/api/admin/brandsList");
+      if (res.status === 200) {
+        setbrands(res.data.list);
+      }
+    } catch (error) {
+      console.log(error);
+      setbrands(error.response.data.list);
+    }
+  };
 
   const [categoryList, setcategoryList] = useState([]);
   const getAllCategory = async () => {
@@ -173,15 +207,33 @@ export const Pharmacy = () => {
     }
   };
 
+  const [GetPharmCatBan, setGetPharmCatBan] = useState([]);
+  const getPharmacyCatBan = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/admin/GetPharmacyCategoryBan"
+      );
+      if (res.status === 200) {
+        setGetPharmCatBan(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    getPharmacyBan();
     getAllCategory();
+    getBrands();
     getAllSubCategory();
     getAllProducts();
     getWishlist();
     getCartItems();
+    getPharmacyCatBan();
   }, []);
 
   console.log("CartItemsList2@@: ", CartItemsList);
+  console.log("ProductList", ProductList);
 
   return (
     <div>
@@ -193,146 +245,70 @@ export const Pharmacy = () => {
         {/* Left baar */}
 
         <div className="row ">
-         
           <div
             className="col-lg-3 p-4 mb-4 pharmacy-left-col"
             style={{ backgroundColor: "#208B8C" }}
           >
             <br />
             <br />
-            <a href="/pharmacy">
+            <div>
               <h4 className="fw-bold ps-4 text-light">
                 <FontAwesomeIcon icon={faBars} /> Category{" "}
               </h4>
-            </a>
-            <ul className="category-list" style={{ listStyle: "none" }}>
-              {categoryList?.map((item) => {
-                return (
+
+              <ul
+                className="category-list"
+                style={{
+                  listStyle: "none",
+                  height: "400px",
+                  overflowX: "scroll",
+                }}
+              >
+                {categoryList?.map((item) => {
+                  return (
+                    <li>
+                      <Link
+                        to="/PharmacyCategoryProducts"
+                        state={{ CategoryName: item?.categoryName }}
+                        className="text-light"
+                      >
+                        {item?.categoryName}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+            <div className="mb-5">
+              <br />
+              <br />
+              <h4 className="fw-bold ps-4 text-light">
+                <FontAwesomeIcon icon={faBars} /> Popular Brands{" "}
+              </h4>
+              <ul
+                className="category-list"
+                style={{
+                  listStyle: "none",
+                  height: "400px",
+                  overflowX: "scroll",
+                }}
+              >
+                {brands?.map((brans) => (
                   <li>
-                    <a href="/pharmacy" className="text-light"> {item?.categoryName} </a>
+                    <Link
+                      to="/PharmacyBrandProducts"
+                      state={{ BrandName: brans?.brandName }}
+                      className="text-light"
+                    >
+                      {brans?.brandName}
+                    </Link>
                   </li>
-                );
-              })}
-              {/* <li><a href="/pharmacy"> Health condition </a></li>
-                            <li> <a href="/pharmacy">Personal care</a> </li>
-                            <li> <a href="/pharmacy"> covid essentials</a> </li>
-                            <li> <a href="/pharmacy"> Fitness</a> </li>
-                            <li> <a href="/pharmacy"> Treatment</a> </li>
-                            <li> <a href="/pharmacy"> Personal</a> </li>
-                            <li> <a href="/pharmacy">essentials</a> </li> */}
-            </ul>
-
-            <div className="mb-4">
-            <br />
-            <br />
-              <ul className="category-list" style={{ listStyle: "none" }}>
-                <li>
-                  <FontAwesomeIcon
-                    icon={faHospital}
-                    className=" me-2 p-2 "
-                    style={{
-                      backgroundColor: "#41cdcf",
-                      color: "#fff",
-                      borderRadius: "5px",
-                    }}
-                  />
-                  <a href="/pharmacy" className="text-light"> Medicine </a>
-                </li>
-                <li>
-                  {" "}
-                  <FontAwesomeIcon
-                    icon={faStethoscope}
-                    className="me-2 p-2"
-                    style={{
-                      backgroundColor: "#f54f9a",
-                      color: "#fff",
-                      borderRadius: "5px",
-                    }}
-                  />
-                  <a href="/pharmacy" className="text-light"> Wellness</a>
-                </li>
-                <li>
-                  {" "}
-                  <FontAwesomeIcon
-                    icon={faHouseMedical}
-                    className="me-2 p-2"
-                    style={{
-                      backgroundColor: "#83c847",
-                      color: "#fff",
-                      borderRadius: "5px",
-                    }}
-                  />
-                  <a href="/diagnostic" className="text-light"> Diagnostic</a>{" "}
-                </li>
-                <li>
-                  {" "}
-                  <FontAwesomeIcon
-                    icon={faCapsules}
-                    className="me-2 p-2"
-                    style={{
-                      backgroundColor: "#51acf6",
-                      color: "#fff",
-                      borderRadius: "5px",
-                    }}
-                  />{" "}
-                  <a href="/pharmacy" className="text-light"> Health corener</a>{" "}
-                </li>
-                <li>
-                  {" "}
-                  <FontAwesomeIcon
-                    icon={faHouseMedical}
-                    className="me-2 p-2"
-                    style={{
-                      backgroundColor: "#ffb61b",
-                      color: "#fff",
-                      borderRadius: "5px",
-                    }}
-                  />{" "}
-                  <a href="/pharmacy" className="text-light"> Other</a>{" "}
-                </li>
+                ))}
               </ul>
             </div>
 
             <div className="mb-5">
-            <br />
-            <br />
-              <h4 className="fw-bold ps-4 text-light"> Popular Brands </h4>
-              <ul className="category-list" style={{ listStyle: "none" }}>
-                <li>
-                  <a href="/pharmacy" className="text-light"> Premier Value </a>
-                </li>
-                <li>
-                  <a href="/pharmacy" className="text-light"> Sunmark </a>
-                </li>
-                <li>
-                  {" "}
-                  <a href="/pharmacy" className="text-light">Nature value</a>{" "}
-                </li>
-                <li>
-                  {" "}
-                  <a href="/pharmacy" className="text-light"> Cover girl</a>{" "}
-                </li>
-                <li>
-                  {" "}
-                  <a href="/pharmacy" className="text-light"> Natures beauty</a>{" "}
-                </li>
-                <li>
-                  {" "}
-                  <a href="/pharmacy" className="text-light"> Sport aid</a>{" "}
-                </li>
-                <li>
-                  {" "}
-                  <a href="/pharmacy" className="text-light"> Neutrogena</a>{" "}
-                </li>
-                <li>
-                  {" "}
-                  <a href="/pharmacy" className="text-light">View all</a>{" "}
-                </li>
-              </ul>
-            </div>
-
-            <div className="mb-5">
-            <br />
+              <br />
               <h4 className="fw-bold ps-4 text-light">Hot Deals </h4>
               <Card
                 className="col-lg-4 m-auto mb-3 p-0"
@@ -373,7 +349,7 @@ export const Pharmacy = () => {
             </div>
 
             <div className="mb-5">
-            <br />
+              <br />
               <h4 className="fw-bold ps-4 text-light"> Hot Products</h4>
               <ul className="category-list" style={{ listStyle: "none" }}>
                 <li>
@@ -387,7 +363,10 @@ export const Pharmacy = () => {
                       />
                     </div>
                     <div className="p-2">
-                      <a href="/pharmacy" className="text-light"> Organic salmon collagen </a>
+                      <a href="/pharmacy" className="text-light">
+                        {" "}
+                        Organic salmon collagen{" "}
+                      </a>
                       <p
                         className="fw-bolder fs-4"
                         style={{ color: "#eb3a7b" }}
@@ -409,7 +388,10 @@ export const Pharmacy = () => {
                       />
                     </div>
                     <div className="p-2">
-                      <a href="/pharmacy" className="text-light"> Nutrilite Memory bulider </a>
+                      <a href="/pharmacy" className="text-light">
+                        {" "}
+                        Nutrilite Memory bulider{" "}
+                      </a>
                       <p
                         className="fw-bolder fs-4"
                         style={{ color: "#eb3a7b" }}
@@ -431,7 +413,10 @@ export const Pharmacy = () => {
                       />
                     </div>
                     <div className="p-2">
-                      <a href="/pharmacy" className="text-light"> Himalaya evecare </a>
+                      <a href="/pharmacy" className="text-light">
+                        {" "}
+                        Himalaya evecare{" "}
+                      </a>
                       <p
                         className="fw-bolder fs-4"
                         style={{ color: "#eb3a7b" }}
@@ -449,70 +434,42 @@ export const Pharmacy = () => {
 
           <div className="col-lg-9">
             <Carousel fade>
-              <Carousel.Item className="pharmacy-slide">
-                <img
-                  className="d-block w-100 img-fluid"
-                  style={{ height: "450px" }}
-                  src="./img/pharmacy-slide-1.jpg"
-                  alt="First slide"
-                />
-                <Carousel.Caption className="text-dark">
-                  <Container>
-                    <div className="d-flex gap-2 align-items-center justify-content-between">
-                      <div className="  m-auto text-light fw-bold  ">
-                        <p className=" pharmacy-slide-text">PRODUCTS</p>
-                        <h3 className="fw-bold  pharmacy-slide-text">
-                          FLAT 25% OFF <br /> MEDICINE ORDER
-                        </h3>
-                        <p className=" pharmacy-slide-text">
+              {GetPharmBanner?.map((banner) => (
+                <Carousel.Item className="pharmacy-slide">
+                  <img
+                    className="d-block w-100 img-fluid"
+                    style={{ height: "450px" }}
+                    src={`http://localhost:8521/PharmacyBanner/${banner?.PharmacyBanImg}`}
+                    alt="First slide"
+                  />
+                  <Carousel.Caption className="text-dark">
+                    <Container>
+                      <div className="d-flex gap-2 align-items-center justify-content-between">
+                        <div className="  m-auto text-light fw-bold  ">
+                          <p className=" pharmacy-slide-text">
+                            {" "}
+                            {banner?.PharmacySubTitle}
+                          </p>
+                          <h3 className="fw-bold  pharmacy-slide-text">
+                            {banner?.PharmacyTitle}
+                          </h3>
+                          {/* <p className=" pharmacy-slide-text">
                           Orignal Price $29.99
-                        </p>
+                        </p> */}
+                        </div>
+                        <div className="">
+                          <img
+                            className="img-fluid pharmacy-slide-img"
+                            style={{ width: "100%", height: "300px" }}
+                            src={`http://localhost:8521/PharmacyBanner/${banner?.pharmacyImage}`}
+                            alt=""
+                          />
+                        </div>
                       </div>
-                      <div className="">
-                        <img
-                          className="img-fluid pharmacy-slide-img"
-                          style={{ width: "100%", height: "300px" }}
-                          src="./img/pharmacy-img-2.png"
-                          alt=""
-                        />
-                      </div>
-                    </div>
-                  </Container>
-                </Carousel.Caption>
-              </Carousel.Item>
-
-              <Carousel.Item className="pharmacy-slide">
-                <img
-                  className="d-block w-100 "
-                  style={{ height: "450px" }}
-                  src="./img/pharmacy-slide-2.jpg"
-                  alt="Second slide"
-                />
-
-                <Carousel.Caption className="text-dark">
-                  <Container>
-                    <div className="d-flex align-items-center justify-content-between">
-                      <div className=" text-light fw-bold pharmacy-slide-text ">
-                        <p className=" pharmacy-slide-text">PRODUCTS</p>
-                        <h3 className=" fw-bold  pharmacy-slide-text">
-                          FLAT 25% OFF <br /> MEDICINE ORDER
-                        </h3>
-                        <p className=" pharmacy-slide-text">
-                          Orignal Price $29.99
-                        </p>
-                      </div>
-                      <div>
-                        <img
-                          className="img-fluid pharmacy-slide-img"
-                          style={{ width: "100%", height: "400px" }}
-                          src="./img/pharmacy-img-4.png"
-                          alt=""
-                        />
-                      </div>
-                    </div>
-                  </Container>
-                </Carousel.Caption>
-              </Carousel.Item>
+                    </Container>
+                  </Carousel.Caption>
+                </Carousel.Item>
+              ))}
             </Carousel>
 
             <Container className="mt-2">
@@ -521,7 +478,9 @@ export const Pharmacy = () => {
                   <div
                     className="text-light d-flex align-items-center radius-img"
                     style={{
-                      backgroundImage: "url(./img/pharmacy-img-11.png)",
+                      backgroundImage: `url(
+                        http://localhost:8521/PharmacyCategoryBanner/${GetPharmCatBan[0]?.pharmacyCatbannerImage}
+                      )`,
                       width: "100%",
                       height: "300px",
                       backgroundRepeat: "no-repeat",
@@ -531,12 +490,17 @@ export const Pharmacy = () => {
                     }}
                   >
                     <div className="ms-3">
-                      <h3 className="fw-bold">
-                        Medlife <br /> products
+                      <h3 className="fw-bold" style={{ width: "250px" }}>
+                        {GetPharmCatBan[0]?.PharmacyCatName}
                       </h3>
-                      <p className="mb-2">up to 30% off</p>
-                      <a
-                        href="/pharmacy"
+                      <p className="mb-2">
+                        up to {GetPharmCatBan[0]?.PharmacyCatDiscount}% off
+                      </p>
+                      <Link
+                        to="/PharmacyCategoryProducts"
+                        state={{
+                          CategoryName: GetPharmCatBan[0]?.PharmacyCatName,
+                        }}
                         className="text-light d-flex align-items-center gap-2"
                       >
                         <FontAwesomeIcon
@@ -549,16 +513,18 @@ export const Pharmacy = () => {
                           }}
                         />
                         Shop Now
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
 
-                <div className="col-lg-6 mobile-padding-0">
+                <div className="col-lg-6 mb-3 mobile-padding-0 ">
                   <div
                     className="text-light d-flex align-items-center radius-img"
                     style={{
-                      backgroundImage: "url(./img/pharmacy-img-12.png)",
+                      backgroundImage: `url(
+                        http://localhost:8521/PharmacyCategoryBanner/${GetPharmCatBan[1]?.pharmacyCatbannerImage}
+                      )`,
                       width: "100%",
                       height: "300px",
                       backgroundRepeat: "no-repeat",
@@ -568,12 +534,18 @@ export const Pharmacy = () => {
                     }}
                   >
                     <div className="ms-3">
-                      <h3 className="fw-bold">
-                        Medlife <br /> products
+                      <h3 className="fw-bold" style={{ width: "250px" }}>
+                        {GetPharmCatBan[1]?.PharmacyCatName}
                       </h3>
-                      <p className="mb-2">up to 30% off</p>
-                      <a
-                        href="/pharmacy"
+                      <p className="mb-2">
+                        up to {GetPharmCatBan[1]?.PharmacyCatDiscount}% off
+                      </p>
+
+                      <Link
+                        to="/PharmacyCategoryProducts"
+                        state={{
+                          CategoryName: GetPharmCatBan[1]?.PharmacyCatName,
+                        }}
                         className="text-light d-flex align-items-center gap-2"
                       >
                         <FontAwesomeIcon
@@ -586,7 +558,7 @@ export const Pharmacy = () => {
                           }}
                         />
                         Shop Now
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -595,18 +567,22 @@ export const Pharmacy = () => {
 
             <Container className="mt-4">
               <div className="d-flex justify-content-between">
-              <h3
-                className="fw-bold  ms-3 "
-                style={{ color: "rgb(32 139 140)" }}
-              >
-                Health Products
-              </h3>
-              <div>
-              <Button className="green-btn-1-viewmore" onClick={()=>{navigate("/pharmacyproducts")}}></Button>
+                <h3
+                  className="fw-bold  ms-3 "
+                  style={{ color: "rgb(32 139 140)" }}
+                >
+                  Health Products
+                </h3>
+                <div>
+                  <Button
+                    className="green-btn-1-viewmore"
+                    onClick={() => {
+                      navigate("/pharmacyproducts");
+                    }}
+                  ></Button>
+                </div>
               </div>
 
-              </div>
-             
               <div className="row">
                 {ProductList?.map((item) => {
                   return (
@@ -621,11 +597,11 @@ export const Pharmacy = () => {
                           height: "200px",
                           padding: "10px",
                         }}
-                        src={`http://localhost:8521/AdminInventory/${item?.productImgs[0]}`}
+                        src={`http://localhost:8521/VendorProduct/${item?.vendorIdProductId?.productImgs[0]}`}
                         alt="pharmacy-img"
                       />
                       <Card.Body style={{ padding: "6px" }}>
-                        <Card.Title className="row" style={{ height: "75px" }}>
+                        <Card.Title className="row" style={{ height: "25px" }}>
                           <div className="col-md-10">
                             <Link
                               to="/pharmacydesc"
@@ -658,12 +634,14 @@ export const Pharmacy = () => {
                                 onClick={() => AddToWishlist(item)}
                               />
                             )}
-                            
                           </div>
                         </Card.Title>
 
                         <Card.Text>
                           by {item?.manufacturercompanyname}
+                        </Card.Text>
+                        <Card.Text>
+                          {item?.description.slice(0, 60)} ...
                         </Card.Text>
                         <Card.Text
                           className="fw-bolder fs-4"
@@ -671,8 +649,12 @@ export const Pharmacy = () => {
                         >
                           ₹
                           {item?.productPrice -
-                            item?.productPrice / item?.discount}
-                          <strike></strike>
+                            (item?.productPrice * item?.discount) / 100}
+                          <strike
+                            style={{ color: "black", marginLeft: "10px" }}
+                          >
+                            {item?.productPrice}
+                          </strike>
                         </Card.Text>
                         <a onClick={() => AddToCart(item)}>
                           <Button className="green-btn-1"></Button>{" "}
@@ -686,11 +668,13 @@ export const Pharmacy = () => {
 
             <Container className="mt-2">
               <div className="row justify-content-between">
-                <div className="col-lg-6 mb-3 mobile-padding-0">
+                <div className="col-lg-6 mb-3 mobile-padding-0 ">
                   <div
-                    className=" text-light  d-flex align-items-center radius-img"
+                    className="text-light d-flex align-items-center radius-img"
                     style={{
-                      backgroundImage: "url(./img/pharmacy-img-13.png)",
+                      backgroundImage: `url(
+                        http://localhost:8521/PharmacyCategoryBanner/${GetPharmCatBan[2]?.pharmacyCatbannerImage}
+                      )`,
                       width: "100%",
                       height: "300px",
                       backgroundRepeat: "no-repeat",
@@ -700,12 +684,17 @@ export const Pharmacy = () => {
                     }}
                   >
                     <div className="ms-3">
-                      <h3 className="fw-bold">
-                        Medlife <br /> products
+                      <h3 className="fw-bold" style={{ width: "250px" }}>
+                        {GetPharmCatBan[2]?.PharmacyCatName}
                       </h3>
-                      <p className="mb-2">up to 30% off</p>
-                      <a
-                        href="/pharmacy"
+                      <p className="mb-2">
+                        up to {GetPharmCatBan[2]?.PharmacyCatDiscount}% off
+                      </p>
+                      <Link
+                        to="/PharmacyCategoryProducts"
+                        state={{
+                          CategoryName: GetPharmCatBan[2]?.PharmacyCatName,
+                        }}
                         className="text-light d-flex align-items-center gap-2"
                       >
                         <FontAwesomeIcon
@@ -718,16 +707,18 @@ export const Pharmacy = () => {
                           }}
                         />
                         Shop Now
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
 
-                <div className="col-lg-6 mobile-padding-0">
+                <div className="col-lg-6 mb-3 mobile-padding-0 ">
                   <div
-                    className=" text-light  d-flex align-items-center radius-img"
+                    className="text-light d-flex align-items-center radius-img"
                     style={{
-                      backgroundImage: "url(./img/pharmacy-img-14.png)",
+                      backgroundImage: `url(
+                        http://localhost:8521/PharmacyCategoryBanner/${GetPharmCatBan[3]?.pharmacyCatbannerImage}
+                      )`,
                       width: "100%",
                       height: "300px",
                       backgroundRepeat: "no-repeat",
@@ -737,12 +728,17 @@ export const Pharmacy = () => {
                     }}
                   >
                     <div className="ms-3">
-                      <h3 className="fw-bold">
-                        Medlife <br /> products
+                      <h3 className="fw-bold" style={{ width: "250px" }}>
+                        {GetPharmCatBan[3]?.PharmacyCatName}
                       </h3>
-                      <p className="mb-2">up to 30% off</p>
-                      <a
-                        href="/pharmacy"
+                      <p className="mb-2">
+                        up to {GetPharmCatBan[3]?.PharmacyCatDiscount}% off
+                      </p>
+                      <Link
+                        to="/PharmacyCategoryProducts"
+                        state={{
+                          CategoryName: GetPharmCatBan[3]?.PharmacyCatName,
+                        }}
                         className="text-light d-flex align-items-center gap-2"
                       >
                         <FontAwesomeIcon
@@ -755,7 +751,7 @@ export const Pharmacy = () => {
                           }}
                         />
                         Shop Now
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -773,14 +769,20 @@ export const Pharmacy = () => {
                 {categoryList?.map((item) => {
                   return (
                     <div className="col-lg-3 mb-2">
-                      <a href="/pharmacy" className="text-dark">
+                      <Link
+                        to="/PharmacyCategoryProducts"
+                        state={{
+                          CategoryName: item?.categoryName,
+                        }}
+                        className="text-dark"
+                      >
                         <img
                           src={`http://localhost:8521/productcategory/${item?.catImg}`}
                           alt=""
                           style={{ width: "150px", height: "150px" }}
                         />
                         <h6 className="fw-bold">{item?.categoryName}</h6>
-                      </a>
+                      </Link>
                     </div>
                   );
                 })}

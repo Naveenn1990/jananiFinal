@@ -59,6 +59,7 @@ export default function ProductBrands() {
       setbrandList(error.response.data.list);
     }
   };
+
   useEffect(() => {
     adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
     if (!adminDetails) {

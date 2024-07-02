@@ -65,7 +65,7 @@ export default function VendorAddedProductsStatus() {
     }
   };
 
-  console.log("orderedProductsList9090: ", orderedProductsList);
+  // console.log("orderedProductsList9090: ", orderedProductsList);
 
   const [search, setSearch] = useState("");
   const [tableFilter, settableFilter] = useState([]);
@@ -85,8 +85,8 @@ export default function VendorAddedProductsStatus() {
     }
   };
 
-  console.log("orderedProductsList", orderedProductsList);
-  console.log("SelectedProduct", SelectedProduct);
+  // console.log("orderedProductsList", orderedProductsList);
+  // console.log("SelectedProduct", SelectedProduct);
 
   return (
     <div>

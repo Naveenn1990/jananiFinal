@@ -1,5 +1,6 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Pagination, Stack } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Form, Modal, Table } from "react-bootstrap";
@@ -16,26 +17,26 @@ function ReferalPatientList() {
         "http://localhost:8521/api/ClinicLab/allreferalpatients"
       );
       setLabPatientList(res.data.patientList);
+      setPagination(res.data.patientList);
     } catch (error) {
       console.log(error);
     }
   };
-  console.log("LabPatientList", LabPatientList);
   const [SearchItem, setSearchItem] = useState("");
   const [PatientDetails, setPatientDetails] = useState("");
 
   const bookLabTest = async () => {
-    const  obj = {
-        patientname:` ${PatientDetails?.LabPatientsFname} ${PatientDetails?.LabPatientsLname}`,
-        Phoneno: PatientDetails?.PhoneNumber,
-        email: PatientDetails?.Email,
-        testDate: PatientDetails?.AppointmentDate,
-        patientType:"REFERRAL-LAB",
-        Labtests: PatientDetails?.Labtests,
-        ReferLabId:PatientDetails?.LabId?._id,
-        ReferLabName:PatientDetails?.LabId?.ClinicLabName,
-      };
-    
+    const obj = {
+      patientname: ` ${PatientDetails?.LabPatientsFname} ${PatientDetails?.LabPatientsLname}`,
+      Phoneno: PatientDetails?.PhoneNumber,
+      email: PatientDetails?.Email,
+      testDate: PatientDetails?.AppointmentDate,
+      patientType: "REFERRAL-LAB",
+      Labtests: PatientDetails?.Labtests,
+      ReferLabId: PatientDetails?.LabId?._id,
+      ReferLabName: PatientDetails?.LabId?.ClinicLabName,
+    };
+
     try {
       const config = {
         url: "/user/bookHospitalLabTest",
@@ -49,6 +50,7 @@ function ReferalPatientList() {
         alert("Lab test booked");
         handleClose();
         getlabregisterpatient();
+        LabTestApprove()
       }
     } catch (error) {
       console.log(error);
@@ -56,7 +58,33 @@ function ReferalPatientList() {
     }
   };
 
-  console.log("PatientDetails",PatientDetails);
+  const LabTestApprove = async()=>{
+    try {
+      const config = {
+        url:"/labtestapproved/" + PatientDetails?._id,
+        method:"put",
+        baseURL:"http://localhost:8521/api/ClinicLab",
+        headers:{"content-type":"application/json"}
+      }
+      const res = await axios(config);
+      if(res.status === 200){
+        getlabregisterpatient();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // Pagination
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 2;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = (selected) => {
+    setPageNumber(selected);
+  };
+
   useEffect(() => {
     getlabregisterpatient();
   }, []);
@@ -76,86 +104,101 @@ function ReferalPatientList() {
             />
           </Form>
         </div>
-
-        <Table bordered>
-          <thead>
-            <tr>
-              <th>Sl.No</th>
-              <th>Lab Name</th>
-              <th>Test Name</th>
-              <th>Patient Name</th>
-              <th>Gender</th>
-              <th>Address</th>
-              <th>Mobile</th>
-              <th>Age</th>
-              <th>Blood Group </th>
-              <th>Diesease </th>
-              <th>Approve </th>
-            </tr>
-          </thead>
-          <tbody>
-            {LabPatientList?.filter((ele) => ele?.isRefer === true)?.map(
-              (item, i) => {
-                if (
-                  SearchItem === "" ||
-                  Object.values(item).some((value) =>
-                    String(value)
-                      .toLowerCase()
-                      .includes(SearchItem.toLowerCase())
+        <div style={{ overflowX: "scroll" }}>
+          <Table bordered>
+            <thead>
+              <tr>
+                <th>Sl.No</th>
+                <th>Lab Name</th>
+                <th>Test Name</th>
+                <th>Patient Name</th>
+                <th>Gender</th>
+                <th>Address</th>
+                <th>Mobile</th>
+                <th>Age</th>
+                <th>Blood Group </th>
+                <th>Diesease </th>
+                <th>Approve </th>
+              </tr>
+            </thead>
+            <tbody>
+              {LabPatientList?.filter((ele) => ele?.isRefer === true)?.slice(pagesVisited, pagesVisited + usersPerPage)?.map(
+                (item, i) => {
+                  if (
+                    SearchItem === "" ||
+                    Object.values(item).some((value) =>
+                      String(value)
+                        .toLowerCase()
+                        .includes(SearchItem.toLowerCase())
+                    )
                   )
-                )
-                  return (
-                    <tr className="admin-table-row">
-                      <td>{i + 1} </td>
-                      <td>
-                        <p style={{ color: "red", fontWeight: "800" }}>
-                          {item?.LabId?.ClinicLabName}
-                        </p>{" "}
-                      </td>
-                      <td>
-                        {item?.Labtests?.map((item1,i)=>{
-                          return(
-                            <p><span>{i+1}).</span><b>{item1?.testName}</b></p>
-                          )
-                        })}
-                      </td>
-                      <td>{`${item?.LabPatientsFname} ${item?.LabPatientsLname}`}</td>
-                      <td>{item?.Gender}</td>
-                      <td>{item?.Address}</td>
-                      <td>{item?.PhoneNumber}</td>
-                      <td>{item?.Age}</td>
-                      <td>{item?.BloodGroup}</td>
-                      <td>
-                        <div
-                          className="Diseases-btn"
-                          style={{ color: "red", border: "1px solid green" }}
-                        >
-                          {item?.InjuryCondition}
-                        </div>
-                      </td>
-                      <td>
-                        <div>
-                          <Button
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{i + 1} </td>
+                        <td>
+                          <p style={{ color: "red", fontWeight: "800" }}>
+                            {item?.LabId?.ClinicLabName}
+                          </p>{" "}
+                        </td>
+                        <td>
+                          {item?.Labtests?.map((item1, i) => {
+                            return (
+                              <p>
+                                <span>{i + 1}).</span>
+                                <b>{item1?.testName}</b>
+                              </p>
+                            );
+                          })}
+                        </td>
+                        <td>{`${item?.LabPatientsFname} ${item?.LabPatientsLname}`}</td>
+                        <td>{item?.Gender}</td>
+                        <td>{item?.Address}</td>
+                        <td>{item?.PhoneNumber}</td>
+                        <td>{item?.Age}</td>
+                        <td>{item?.BloodGroup}</td>
+                        <td>
+                          <div
+                            className="Diseases-btn"
+                            style={{ color: "red", border: "1px solid green" }}
+                          >
+                            {item?.InjuryCondition}
+                          </div>
+                        </td>
+                        <td>
+                          {item?.isApproved === false ? (
+                            <Button
                             variant="success"
                             onClick={() => {
                               handleShow();
                               setPatientDetails(item);
                             }}
-                          >
-                            {/* <FontAwesomeIcon
-                            icon={faCheck}
-                            className="fs-5 me-2"
-                          /> */}
+                          >                              
                             Approve
                           </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-              }
-            )}
-          </tbody>
-        </Table>
+                          ):(
+                            <p>Approve Successfully</p>
+                          )}
+                            
+                          
+                        </td>
+                      </tr>
+                    );
+                }
+              )}
+            </tbody>
+          </Table>
+          <div style={{float:"right"}} className="my-3 d-flex justify-end">
+                        <Stack spacing={2}>
+                            <Pagination
+                                count={pageCount}
+                                onChange={(event, value)=>{
+                                    changePage(value-1)
+                                  }}
+                                color="primary"                          
+                            />
+                        </Stack>
+                    </div>
+        </div>
       </div>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -178,9 +221,7 @@ function ReferalPatientList() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="success"
-          onClick={()=>bookLabTest()}
-          >
+          <Button variant="success" onClick={() => bookLabTest()}>
             <FontAwesomeIcon icon={faCheck} className="fs-5 me-2" />
             Approve
           </Button>

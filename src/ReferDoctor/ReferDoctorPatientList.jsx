@@ -279,7 +279,7 @@ export const ReferDoctorPatientList = () => {
               <th className="fw-bold">DOB</th>
               <th className="fw-bold">Blood Group </th>
               <th className="fw-bold">Diesease </th>
-              <th>Refer</th>
+              <th className="fw-bold">Refer</th>
               <th className="fw-bold">Actions </th>
             </tr>
           </thead>
@@ -891,21 +891,24 @@ export const ReferDoctorPatientList = () => {
                     <td>{item?.testid?.testcatname}</td>
                     <td>{item?.labid?.ClinicLabName}</td>
                     <td>
-                    <>
-                              <span>
-                                <a
-                                  href={`http://localhost:8521/Doctor/${item?.testReport}`}
-                                  target="blank_"
-                                >
-                                  View Doc
-                                </a>
-                                <img
-                                  src="./img/new.gif"
-                                  style={{ width: "40px", height: "30px" }}
-                                  alt=""
-                                />
-                              </span>
-                            </>
+                      {item?.testReport ? (
+                         <>
+                         <span>
+                           <a
+                             href={`http://localhost:8521/Doctor/${item?.testReport}`}
+                             target="blank_"
+                           >
+                             View Doc
+                           </a>
+                           <img
+                             src="./img/new.gif"
+                             style={{ width: "40px", height: "30px" }}
+                             alt=""
+                           />
+                         </span>
+                       </>
+                      ):(<p>Processing</p>)}
+                   
                     </td>
                   </tr>
                   )

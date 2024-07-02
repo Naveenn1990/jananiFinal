@@ -176,7 +176,7 @@ function AddPatientRefHospital() {
               <option value="O-">O-</option>
             </Form.Select>
           </div>
-          <div className=" mb-5">           
+          <div className="d-flex gap-4 mb-5">           
             <FloatingLabel
               style={{ width: "400px" }}
               controlId="floatingNumber"
@@ -193,7 +193,8 @@ function AddPatientRefHospital() {
               label="Appointment Date"
             >
               <Form.Control
-                type="date"                
+                type="date"   
+                min={new Date().toISOString().split('T')[0]}              
                 onChange={(e) => setAppointmentdate(e.target.value)}
               />
             </FloatingLabel>
