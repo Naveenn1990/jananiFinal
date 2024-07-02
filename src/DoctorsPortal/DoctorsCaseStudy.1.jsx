@@ -416,7 +416,6 @@ export const DoctorsCaseStudy = () => {
       }
     }
   };
-  console.log("AppointmentList: ", AppointmentList);
   return (
     <div>
       <Container className="p-4">

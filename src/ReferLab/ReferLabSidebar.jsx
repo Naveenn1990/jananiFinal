@@ -105,7 +105,6 @@ export default function ReferLabSidebar() {
         <Link to={"/referlabtest"}>
           <h6
             className="sidebarItem1"
-            // onClick={() => window.location.assign("/referlabtest")}
           >
             <FontAwesomeIcon
               icon={faMicroscope}
@@ -115,10 +114,9 @@ export default function ReferLabSidebar() {
           </h6>
         </Link>
 
-        <Link to={"/referlabtestlist"}>
+        {/* <Link to={"/referlabtestlist"}>
           <h6
             className="sidebarItem1"
-            // onClick={() => window.location.assign("/referlabtestlist")}
           >
             <FontAwesomeIcon
               icon={faClipboardList}
@@ -126,12 +124,11 @@ export default function ReferLabSidebar() {
             />
             Lab Test List
           </h6>
-        </Link>
+        </Link> */}
 
-        <Link to={"/referlabtestreport"}>
+        {/* <Link to={"/referlabtestreport"}>
           <h6
             className="sidebarItem1"
-            // onClick={() => window.location.assign("/referlabtestreport")}
           >
             <FontAwesomeIcon
               icon={faFilePdf}
@@ -139,7 +136,7 @@ export default function ReferLabSidebar() {
             />
             Lab Test Report
           </h6>
-        </Link>
+        </Link> */}
       </div>
 
       <h6 className="sidebarItem" onClick={() => setPharM(!PharM)}>

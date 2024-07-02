@@ -6,7 +6,6 @@ import {
   Form,
   FormLabel,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import { CkEditorComponent } from "../CkEditor/CkEditorComponent";
 import axios from "axios";
 import Select from "react-select";
@@ -76,6 +75,65 @@ export const AddPatient = () => {
   console.log("selectedOptions",selectedOptions);
   const AddRefPatient = async (e) => {
     e.preventDefault();
+    const nameRegex = /^[A-Za-z]{2,30}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\d{10}$/;
+    if (!nameRegex.test(patientfirstname)) {
+      alert('Invalid first name. Only letters are allowed, and it should be between 2 and 30 characters long.');
+      return;
+    }
+    if (!nameRegex.test(patientlastname)) {
+      alert('Invalid last name. Only letters are allowed, and it should be between 2 and 30 characters long.');
+      return;
+    }
+    if (!gender) {
+      alert('select gender');
+      return;
+    }
+    if (!phoneRegex.test(mobileno)) {
+      alert('Invalid phone number. It should be exactly 10 digits long.');
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      alert('Invalid email address.');
+      return;
+    }
+    if (!DOB) {
+      alert('Select Date Of Birth.');
+      return;
+    }
+    if (!Age) {
+      alert('Enter age.');
+      return;
+    }
+    if (!maritalStatus) {
+      alert('Select marital Status.');
+      return;
+    }
+    if (!maritalStatus) {
+      alert('Select marital Status.');
+      return;
+    }
+    if (!bloodgroup) {
+      alert('Select blood group.');
+      return;
+    }
+    if (!Address) {
+      alert('Enter Address.');
+      return;
+    }
+    if (!DateofAppointment) {
+      alert('Select Date Of Appointment.');
+      return;
+    }
+    if (!InjuryCondition) {
+      alert('Enter Injury Condition.');
+      return;
+    }
+    if (!Document) {
+      alert('upload Old medical Prescription.');
+      return;
+    }
     try {
     formdata.set("ClinicId", ReferralDocDetails?._id);
     formdata.append("Firstname", patientfirstname);

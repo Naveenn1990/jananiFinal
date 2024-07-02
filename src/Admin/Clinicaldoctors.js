@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
-import {
-  BsFillCalendar2PlusFill,
-  BsFillCalendarCheckFill,
-} from "react-icons/bs";
 import { FaUserMd } from "react-icons/fa";
 import { HiDocumentText } from "react-icons/hi";
 import axios from "axios";
@@ -582,6 +578,7 @@ export default function Clinicaldoctors() {
                         }}
                         alt=""
                       />
+                      {item?.ClinicDocId}
                     </td>
                     <td>
                       {item?.Firstname} {item?.Lastname}
@@ -710,6 +707,8 @@ export default function Clinicaldoctors() {
           >Delete</Button>
         </Modal.Footer>
         </Modal>
+
+
         <Modal size="lg" show={show3} onHide={handleClose3}>
           <Modal.Header>
             <Modal.Title>Edit Clinical Doctor</Modal.Title>
@@ -967,7 +966,9 @@ export default function Clinicaldoctors() {
           </Modal.Body>
        
           <Modal.Footer>
-          <Button variant="secondary">Close</Button>
+          <Button variant="secondary"
+          onClick={handleClose3}
+          >Close</Button>
           <Button 
           variant="primary"
           onClick={()=>EditDocClinic()}

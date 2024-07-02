@@ -265,6 +265,8 @@ import { VendorNotification } from "./Vendor/VendorNotification";
 import DoctorReferPatientList from "./ReferLab/DoctorReferPatientList";
 import PharmacyCategoryProducts from "./Components/WebsitePharmacy/PharmacyCategoryProducts";
 import PharmacyBrandProducts from "./Components/WebsitePharmacy/PharmacyBrandProducts";
+import ReferFromClinicPatientList from "./Admin/ReferFromClinicPatientList";
+import NotificationList from "./Admin/NotificationList";
 
 function App() {
   return (
@@ -2018,6 +2020,15 @@ function App() {
               }
             />
             <Route
+              path="/admin/notificationlist"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<NotificationList />} />
+                </>
+              }
+            />
+            <Route
               path="/Subadmin-login"
               element={
                 <>
@@ -2050,6 +2061,15 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<Clinicaldoctors />} />
+                </>
+              }
+            />
+            <Route
+              path="/admin/referfromclinicpatientlist"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<ReferFromClinicPatientList />} />
                 </>
               }
             />
