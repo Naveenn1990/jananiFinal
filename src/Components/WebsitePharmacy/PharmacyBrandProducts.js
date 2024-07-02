@@ -12,24 +12,22 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { Headerpharmacy } from "./headerpharmacy";
 import { Container } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoMdHeart } from "react-icons/io";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { faCartShopping, faHeart } from "@fortawesome/free-solid-svg-icons";
 import Slider from "@mui/material/Slider";
 import Box from "@mui/material/Box";
 
-const PharmacyProducts = ({ min, max }) => {
+const PharmacyBrandProducts = ({ min, max }) => {
   const navigate = useNavigate();
   let pharmacyUser = JSON.parse(sessionStorage.getItem("pharmacyUser"));
+  const location = useLocation();
 
-  // bar
-  const handleSliderChange = (value) => {
-    // const filtered = StaysDetails2.filter(
-    //   (item) => item.startingprice <= value
-    // );
-    // setStaysDetails(filtered);
-  };
+  const { BrandName } = location.state;
+
+  console.log("BrandName", BrandName);
+
   const [value, setValue] = React.useState([0, 1000000]);
   const changePrice = (event, newValue) => {
     setValue(newValue);
@@ -212,30 +210,34 @@ const PharmacyProducts = ({ min, max }) => {
 
   const [newarray, setnewarray] = useState([]);
   useEffect(() => {
-    let filteredProducts = ProductList;
+    if (BrandName) {
+      let filteredProducts = ProductList;
+      if (SelectedBrand) {
+        filteredProducts = filteredProducts?.filter(
+          (prod) => prod?.brand === SelectedBrand
+        );
+      } else if (BrandName) {
+        filteredProducts = filteredProducts?.filter(
+          (prod) => prod?.brand === BrandName
+        );
+      }
 
-    if (SelectedCategory) {
-      filteredProducts = filteredProducts?.filter(
-        (prod) => prod?.categoryid?.categoryName === SelectedCategory
-      );
+      if (SelectedCategory) {
+        filteredProducts = filteredProducts?.filter(
+          (prod) => prod?.categoryid?.categoryName === SelectedCategory
+        );
+      }
+
+      if (value && value.length === 2) {
+        filteredProducts = filteredProducts?.filter((prod) => {
+          const finalPrice =
+            prod?.productPrice - (prod?.productPrice * prod?.discount) / 100;
+          return value[0] <= finalPrice && value[1] >= finalPrice;
+        });
+      }
+      setnewarray(filteredProducts);
     }
-
-    if (SelectedBrand) {
-      filteredProducts = filteredProducts?.filter(
-        (prod) => prod?.brand === SelectedBrand
-      );
-    }
-
-    if (value && value.length === 2) {
-      filteredProducts = filteredProducts?.filter((prod) => {
-        const finalPrice =
-          prod?.productPrice - (prod?.productPrice * prod?.discount) / 100;
-        return value[0] <= finalPrice && value[1] >= finalPrice;
-      });
-    }
-
-    setnewarray(filteredProducts);
-  }, [ProductList, SelectedCategory, SelectedBrand, value]);
+  }, [BrandName, ProductList, SelectedCategory, SelectedBrand, value]);
 
   console.log("categoryList", SelectedCategory, SelectedBrand, value);
   console.log("newarray", newarray);
@@ -290,6 +292,49 @@ const PharmacyProducts = ({ min, max }) => {
             </p>
             <br />
             {/* bar */}
+            <div className="mb-5">
+              <h4 className="fw-bold ps-4 text-dark">
+                <FontAwesomeIcon icon={faBars} style={{ color: "#208B8C" }} />{" "}
+                <span style={{ color: "#208B8C" }}>Popular Brands</span>{" "}
+              </h4>
+
+              <ul
+                className="category-list"
+                style={{
+                  listStyle: "none",
+                  height: "400px",
+                  overflowX: "scroll",
+                }}
+              >
+                {brands?.map((brand) => (
+                  <li
+                    style={{
+                      backgroundColor: SelectedBrand
+                        ? SelectedBrand === brand?.brandName
+                          ? "#208B8C"
+                          : "white"
+                        : BrandName === brand?.brandName
+                        ? "#208B8C"
+                        : "white",
+                      color: SelectedBrand
+                        ? SelectedBrand === brand?.brandName
+                          ? "white"
+                          : "black"
+                        : BrandName === brand?.brandName
+                        ? "white"
+                        : "black",
+                    }}
+                    onClick={() =>
+                      setSelectedBrand((prev) =>
+                        prev === brand?.brandName ? "" : brand?.brandName
+                      )
+                    }
+                  >
+                    {brand?.brandName}
+                  </li>
+                ))}
+              </ul>
+            </div>
             <div className="mt-4">
               <h4 className="fw-bold ps-4 text-dark">
                 <FontAwesomeIcon icon={faBars} style={{ color: "#208B8C" }} />{" "}
@@ -329,41 +374,6 @@ const PharmacyProducts = ({ min, max }) => {
                 })}
               </ul>
             </div>
-            <div className="mb-5">
-              <h4 className="fw-bold ps-4 text-dark">
-                <FontAwesomeIcon icon={faBars} style={{ color: "#208B8C" }} />{" "}
-                <span style={{ color: "#208B8C" }}>Popular Brands</span>{" "}
-              </h4>
-
-              <ul
-                className="category-list"
-                style={{
-                  listStyle: "none",
-                  height: "400px",
-                  overflowX: "scroll",
-                }}
-              >
-                {brands?.map((brand) => (
-                  <li
-                    style={{
-                      backgroundColor:
-                        SelectedBrand === brand?.brandName
-                          ? "#208B8C"
-                          : "white",
-                      color:
-                        SelectedBrand === brand?.brandName ? "white" : "black",
-                    }}
-                    onClick={() =>
-                      setSelectedBrand((prev) =>
-                        prev === brand?.brandName ? "" : brand?.brandName
-                      )
-                    }
-                  >
-                    {brand?.brandName}
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
           {/* Right Bar */}
           <div className="col-lg-9 p-4">
@@ -372,7 +382,8 @@ const PharmacyProducts = ({ min, max }) => {
                 className="fw-bold  ms-3 text-center"
                 style={{ color: "white" }}
               >
-                Health Products
+                Health Products - {SelectedBrand ? SelectedBrand : BrandName}
+                {SelectedCategory ? "-" + SelectedCategory : ""}
               </h3>
 
               <div className="row">
@@ -479,4 +490,4 @@ const PharmacyProducts = ({ min, max }) => {
   );
 };
 
-export default PharmacyProducts;
+export default PharmacyBrandProducts;

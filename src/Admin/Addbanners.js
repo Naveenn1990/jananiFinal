@@ -16,10 +16,17 @@ export default function AddBanner() {
 
   const [bannerImg, setbannerImg] = useState("");
   const [bannerLink, setbannerLink] = useState("");
-  const [PharmacyBan, setPharmacyBan] = useState("");
+
+  const [PharmacyBanImg, setPharmacyBanImg] = useState("");
+  const [pharmacyImage, setpharmacyImage] = useState("");
   const [PharmacySubTitle, setPharmacySubTitle] = useState("");
   const [PharmacyTitle, setPharmacyTitle] = useState("");
   const [PharmacyBanLink, setPharmacyBanLink] = useState("");
+
+  // const [PharmacyCatbannerbgImg, setPharmacyCatbannerbgImg] = useState("");
+  const [pharmacyCatbannerImage, setpharmacyCatbannerImage] = useState("");
+  const [PharmacyCatName, setPharmacyCatName] = useState("");
+  const [PharmacyCatDiscount, setPharmacyCatDiscount] = useState();
 
   const [LabBan, setLabBan] = useState("");
   const [LabSubTitle, setLabSubTitle] = useState("");
@@ -92,7 +99,8 @@ export default function AddBanner() {
         method: "post",
         headers: { "Content-Type": "multipart/form-data" },
         data: {
-          PharmacyBan: PharmacyBan,
+          PharmacyBanImg: PharmacyBanImg,
+          pharmacyImage: pharmacyImage,
           PharmacySubTitle: PharmacySubTitle,
           PharmacyTitle: PharmacyTitle,
           PharmacyBanLink: PharmacyBanLink,
@@ -124,6 +132,8 @@ export default function AddBanner() {
     }
   };
 
+  console.log("GetPharmBanData", GetPharmBanData);
+
   // Delete
   const DeletePharmacyBan = async (id) => {
     try {
@@ -137,6 +147,84 @@ export default function AddBanner() {
       if (res.status === 200) {
         alert(res.data.success);
         getPharmacyBan();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
+  ////// Pharmacy Cat Banner
+
+  const [categoryList, setcategoryList] = useState([]);
+  const getAllCategory = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/admin/getcategoryList"
+      );
+      if (res.status === 200) {
+        setcategoryList(res.data.allcategory);
+      }
+    } catch (error) {
+      console.log(error);
+      setcategoryList(error.response.data.allcategory);
+    }
+  };
+
+  // Post
+  const AddPharmacyCatBan = async () => {
+    try {
+      const config = {
+        url: "/admin/AddPharmacyCategoryBan",
+        baseURL: "http://localhost:8521/api",
+        method: "post",
+        headers: { "Content-Type": "multipart/form-data" },
+        data: {
+          // PharmacyCatbannerbgImg: PharmacyCatbannerbgImg,
+          pharmacyCatbannerImage: pharmacyCatbannerImage,
+          PharmacyCatName: PharmacyCatName,
+          PharmacyCatDiscount: PharmacyCatDiscount,
+        },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        handleClose();
+        getPharmacyCatBan();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
+  // get
+  const [GetPharmCatBan, setGetPharmCatBan] = useState([]);
+  const getPharmacyCatBan = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/admin/GetPharmacyCategoryBan"
+      );
+      if (res.status === 200) {
+        setGetPharmCatBan(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Delete
+  const DeletePharmacyCatBan = async (id) => {
+    try {
+      const config = {
+        url: "/admin/DeletePharmacyCategoryBan/" + id,
+        baseURL: "http://localhost:8521/api",
+        method: "delete",
+        header: { "Content-Type": "application/json" },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        getPharmacyCatBan();
+        handleClose();
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -209,7 +297,9 @@ export default function AddBanner() {
   useEffect(() => {
     getBanner();
     getPharmacyBan();
+    getPharmacyCatBan();
     getLabBan();
+    getAllCategory();
   }, []);
 
   const [selectedOption, setSelectedOption] = useState("option1");
@@ -293,6 +383,7 @@ export default function AddBanner() {
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
               <th>S.No</th>
+              <th>Pharmacy Background Image </th>
               <th>Pharmacy Banner </th>
               <th>Pharmacy SubTitle</th>
               <th>Pharmacy Title</th>
@@ -308,7 +399,13 @@ export default function AddBanner() {
                     <td>{i + 1}</td>
                     <td>
                       <img
-                        src={`http://localhost:8521/PharmacyBanner/${item?.PharmacyBan}`}
+                        src={`http://localhost:8521/PharmacyBanner/${item?.PharmacyBanImg}`}
+                        style={{ width: "160px", height: "140" }}
+                      />
+                    </td>
+                    <td>
+                      <img
+                        src={`http://localhost:8521/PharmacyBanner/${item?.pharmacyImage}`}
                         style={{ width: "160px", height: "140" }}
                       />
                     </td>
@@ -325,6 +422,64 @@ export default function AddBanner() {
                       >
                         <AiFillDelete
                           onClick={() => DeletePharmacyBan(item?._id)}
+                          className="text-danger"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </>
+              );
+            })}
+          </tbody>
+        </Table>
+      </div>
+
+      {/* Pharmacy Cat Bannner */}
+      <div>
+        <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
+          Pharmacy Top Discount category Banner
+        </h6>
+        <Table responsive="md" style={{ marginTop: "1%" }}>
+          <thead>
+            <tr style={{ fontSize: "15px", textAlign: "center" }}>
+              <th>S.No</th>
+              {/* <th>Background Image </th> */}
+              <th>Banner </th>
+              <th>Category</th>
+              <th>Discount</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {GetPharmCatBan?.map((item, i) => {
+              return (
+                <>
+                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                    <td>{i + 1}</td>
+                    {/* <td>
+                      <img
+                        src={`http://localhost:8521/PharmacyCategoryBanner/${item?.PharmacyCatbannerbgImg}`}
+                        style={{ width: "160px", height: "140" }}
+                      />
+                    </td> */}
+                    <td>
+                      <img
+                        src={`http://localhost:8521/PharmacyCategoryBanner/${item?.pharmacyCatbannerImage}`}
+                        style={{ width: "160px", height: "140" }}
+                      />
+                    </td>
+                    <td>{item?.PharmacyCatName}</td>
+                    <td>{item?.PharmacyCatDiscount}</td>
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          textAlign: "center",
+                          justifyContent: "space-evenly",
+                        }}
+                      >
+                        <AiFillDelete
+                          onClick={() => DeletePharmacyCatBan(item?._id)}
                           className="text-danger"
                         />
                       </div>
@@ -397,7 +552,7 @@ export default function AddBanner() {
               checked={selectedOption === "option1"}
               onChange={handleOptionChange}
             />
-            Home Banner
+            Home
           </div>
 
           <div className="fs-6 d-flex gap-2 radio_01">
@@ -407,16 +562,29 @@ export default function AddBanner() {
               checked={selectedOption === "option2"}
               onChange={handleOptionChange}
             />
-            Pharmacy Banner
+            Pharmacy
           </div>
+          {GetPharmCatBan?.length < 4 ? (
+            <div className="fs-6 d-flex gap-2 radio_01">
+              <input
+                type="radio"
+                value="option3"
+                checked={selectedOption === "option3"}
+                onChange={handleOptionChange}
+              />
+              Pharmacy category
+            </div>
+          ) : (
+            ""
+          )}
           <div className="fs-6 d-flex gap-2 radio_01">
             <input
               type="radio"
-              value="option3"
-              checked={selectedOption === "option3"}
+              value="option4"
+              checked={selectedOption === "option4"}
               onChange={handleOptionChange}
             />
-            Lab Banner
+            Lab
           </div>
         </Modal.Header>
 
@@ -474,6 +642,9 @@ export default function AddBanner() {
             <Modal.Body>
               <div className="row">
                 <div className="col-lg-12" htmlFor="upload">
+                  <p style={{ marginBottom: "0px", color: "white" }}>
+                    Background Image
+                  </p>
                   <input
                     id="upload"
                     type="file"
@@ -484,9 +655,32 @@ export default function AddBanner() {
                       borderRadius: "0px",
                       border: "1px solid #ebebeb",
                       backgroundColor: "#ebebeb",
+                    }}
+                    onChange={(e) => setPharmacyBanImg(e.target.files[0])}
+                  ></input>
+                </div>
+                <div className="col-lg-12" htmlFor="upload">
+                  <p
+                    style={{
+                      marginBottom: "0px",
+                      color: "white",
                       marginTop: "4%",
                     }}
-                    onChange={(e) => setPharmacyBan(e.target.files[0])}
+                  >
+                    Image
+                  </p>
+                  <input
+                    id="upload"
+                    type="file"
+                    accept="image/*"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                    }}
+                    onChange={(e) => setpharmacyImage(e.target.files[0])}
                   ></input>
                 </div>
 
@@ -546,6 +740,106 @@ export default function AddBanner() {
                 </Button>
                 <Button variant="warning" onClick={AddPharmacyBan}>
                   Add Pharmacy Banner
+                </Button>
+              </div>
+            </Modal.Footer>
+          </>
+        ) : selectedOption === "option3" ? (
+          <>
+            <Modal.Body>
+              <div className="row">
+                {/* <div className="col-lg-12" htmlFor="upload">
+                  <p style={{ marginBottom: "0px", color: "white" }}>
+                    Background Image
+                  </p>
+                  <input
+                    id="upload"
+                    type="file"
+                    accept="image/*"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                    }}
+                    onChange={(e) =>
+                      setPharmacyCatbannerbgImg(e.target.files[0])
+                    }
+                  ></input>
+                </div> */}
+                <div className="col-lg-12" htmlFor="upload">
+                  <p
+                    style={{
+                      marginBottom: "0px",
+                      color: "white",
+                      marginTop: "4%",
+                    }}
+                  >
+                    Image
+                  </p>
+                  <input
+                    id="upload"
+                    type="file"
+                    accept="image/*"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                    }}
+                    onChange={(e) =>
+                      setpharmacyCatbannerImage(e.target.files[0])
+                    }
+                  ></input>
+                </div>
+
+                <div className="col-lg-12">
+                  <select
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    onChange={(e) => setPharmacyCatName(e.target.value)}
+                  >
+                    <option>Select</option>
+                    {categoryList?.map((cat) => (
+                      <option value={cat?.categoryName}>
+                        {cat?.categoryName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="col-lg-12">
+                  <input
+                    type="number"
+                    placeholder="Discount %"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    onChange={(e) => setPharmacyCatDiscount(e.target.value)}
+                  ></input>
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <div className="d-flex gap-2">
+                <Button variant="secondary" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button variant="warning" onClick={AddPharmacyCatBan}>
+                  Add Pharmacy Category Banner
                 </Button>
               </div>
             </Modal.Footer>

@@ -55,10 +55,10 @@ export const Headerpharmacy = React.memo(({ wishlistData, CartItemsList }) => {
   //   };
 
   console.log("asfasfalksfasf: ", wishlistData, CartItemsList);
-  const logout =()=>{
-    sessionStorage.removeItem("pharmacyUser")
+  const logout = () => {
+    sessionStorage.removeItem("pharmacyUser");
     window.location.href = "/pharmacy";
-  }
+  };
   return (
     <div>
       <Navbar
@@ -136,9 +136,7 @@ export const Headerpharmacy = React.memo(({ wishlistData, CartItemsList }) => {
                       My Order
                     </Dropdown.Item>
                     {/* <Dropdown.Item href="/pharmacymyprofile">Profile</Dropdown.Item> */}
-                    <Dropdown.Item
-                      onClick={() =>logout()}
-                    >
+                    <Dropdown.Item onClick={() => logout()}>
                       Logout
                     </Dropdown.Item>
                   </Dropdown.Menu>
