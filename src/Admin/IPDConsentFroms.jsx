@@ -1,13 +1,14 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useEffect } from "react";
-import {Button, Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FiDownload } from "react-icons/fi";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { useParams } from "react-router-dom";
 import moment from "moment";
+import SignatureCanvas from "react-signature-canvas";
 
 const IPDConsentFroms = () => {
   const user = JSON.parse(sessionStorage.getItem("adminDetails"));
@@ -35,7 +36,7 @@ const IPDConsentFroms = () => {
     }
   };
 
-  console.log("HServicesList",HServicesList);
+  console.log("HServicesList", HServicesList);
 
   useEffect(() => {
     getHospitalServiceList();
@@ -44,7 +45,6 @@ const IPDConsentFroms = () => {
   useEffect(() => {
     setpatientAllergies(patientAllergies);
     setclickedAddAllergyBtn("");
-   
   }, [clickedAddAllergyBtn]);
 
   const [userdetail, setuserdetail] = useState([]);
@@ -163,7 +163,7 @@ const IPDConsentFroms = () => {
   // Hospitalization Consent Form
   const [NameOfSurgery, setNameOfSurgery] = useState("");
   const [SurgeryEstimatePrice, setSurgeryEstimatePrice] = useState();
-  console.log("SurgeryEstimatePrice",SurgeryEstimatePrice);
+  console.log("SurgeryEstimatePrice", SurgeryEstimatePrice);
   const [SurgeryRemark, setSurgeryRemark] = useState("");
   const [SurgeryPackages, setSurgeryPackages] = useState([]);
   const surgeryDetails = () => {
@@ -175,18 +175,24 @@ const IPDConsentFroms = () => {
     setSurgeryPackages((prevState) => [...prevState, obj]);
   };
   const removeSurgery = (indexToRemove) => {
-    setSurgeryPackages(prevState => {
-      const updatedState = prevState.filter((_, index) => index !== indexToRemove);
+    setSurgeryPackages((prevState) => {
+      const updatedState = prevState.filter(
+        (_, index) => index !== indexToRemove
+      );
       return updatedState;
     });
   };
 
   useEffect(() => {
     if (NameOfSurgery) {
-      const estimatecost = HServicesList
-        ?.filter((ele) => ele.hSurgeryService === NameOfSurgery)
-        ?.map((item) => Number(item.hServicePriceInsuredPeople) + Number(item.hServicePriceNonInsuredPeople));
-        setSurgeryEstimatePrice(estimatecost);
+      const estimatecost = HServicesList?.filter(
+        (ele) => ele.hSurgeryService === NameOfSurgery
+      )?.map(
+        (item) =>
+          Number(item.hServicePriceInsuredPeople) +
+          Number(item.hServicePriceNonInsuredPeople)
+      );
+      setSurgeryEstimatePrice(estimatecost);
     }
   }, [NameOfSurgery]);
 
@@ -197,21 +203,22 @@ const IPDConsentFroms = () => {
   const [ProcedurRemark, setProcedurRemark] = useState("");
   const [ProcedureDetails, setProcedureDetails] = useState([]);
 
-  const ProcedureCharges = ()=>{
-    const obj ={
-      NameofProcedure:NameofProcedure,
-      ProcedureCost:ProcedureCost,
-      ProcedurRemark:ProcedurRemark,
-    }
-    setProcedureDetails((prevState) => [...prevState, obj])
-  }
+  const ProcedureCharges = () => {
+    const obj = {
+      NameofProcedure: NameofProcedure,
+      ProcedureCost: ProcedureCost,
+      ProcedurRemark: ProcedurRemark,
+    };
+    setProcedureDetails((prevState) => [...prevState, obj]);
+  };
   const removeProcedure = (indexToRemove) => {
-    setProcedureDetails(prevState => {
-      const updatedState = prevState.filter((_, index) => index !== indexToRemove);
+    setProcedureDetails((prevState) => {
+      const updatedState = prevState.filter(
+        (_, index) => index !== indexToRemove
+      );
       return updatedState;
     });
   };
-
 
   // Special Investigation Charges
 
@@ -219,32 +226,30 @@ const IPDConsentFroms = () => {
   const [InvestigationCost, setInvestigationCost] = useState("");
   const [InvestigationRemark, setInvestigationRemark] = useState("");
 
-  const [InvestigationChargeList, setInvestigationChargeList] = useState([])
+  const [InvestigationChargeList, setInvestigationChargeList] = useState([]);
 
-  const InvestigationCharges = ()=>{
+  const InvestigationCharges = () => {
     const obj = {
-      InvestigationName:InvestigationName,
-      InvestigationCost:InvestigationCost,
-      InvestigationRemark:InvestigationRemark
-    }
-    setInvestigationChargeList((prevState) => [...prevState, obj])
-  }
+      InvestigationName: InvestigationName,
+      InvestigationCost: InvestigationCost,
+      InvestigationRemark: InvestigationRemark,
+    };
+    setInvestigationChargeList((prevState) => [...prevState, obj]);
+  };
 
   const removeInvestigation = (indexToRemove) => {
-    setInvestigationChargeList(prevState => {
-      const updatedState = prevState.filter((_, index) => index !== indexToRemove);
+    setInvestigationChargeList((prevState) => {
+      const updatedState = prevState.filter(
+        (_, index) => index !== indexToRemove
+      );
       return updatedState;
     });
   };
 
-
   const [PatientName, setPatientName] = useState("");
   useEffect(() => {
-    setPatientName(`${userdetail?.Firstname} ${userdetail?.Lastname}` || "")
-  },[userdetail])
-
-
-
+    setPatientName(`${userdetail?.Firstname} ${userdetail?.Lastname}` || "");
+  }, [userdetail]);
 
   const [Patientage, setPatientage] = useState("");
   const [OpNumber, setOpNumber] = useState("");
@@ -261,10 +266,9 @@ const IPDConsentFroms = () => {
   const [Doctor2, setDoctor2] = useState("");
   const [Date4, setDate4] = useState("");
   const [Time3, setTime3] = useState("");
-  const [Guardian1, setGuardian1] = useState("")
+  const [Guardian1, setGuardian1] = useState("");
   const [Date5, setDate5] = useState("");
   const [Time4, setTime4] = useState("");
-  
 
   const [WardRoomCharges, setWardRoomCharges] = useState("");
   const [WardRemark, setWardRemark] = useState("");
@@ -302,38 +306,37 @@ const IPDConsentFroms = () => {
           PatientRelation: PatientRelation,
           Date: Date0,
 
-          WardRoomCharges:WardRoomCharges,
-          WardRemark:WardRemark,
-          WardText1:WardText1,
-          WardText2:WardText2,
-          Witness1:Witness1,
-          Witness2:Witness2,
-          Witness1Number:Witness1Number,
-          Witness2Number:Witness2Number,
-          SurgeryPackages:SurgeryPackages,
-          ProcedureDetails:ProcedureDetails,
-          InvestigationChargeList:InvestigationChargeList,
+          WardRoomCharges: WardRoomCharges,
+          WardRemark: WardRemark,
+          WardText1: WardText1,
+          WardText2: WardText2,
+          Witness1: Witness1,
+          Witness2: Witness2,
+          Witness1Number: Witness1Number,
+          Witness2Number: Witness2Number,
+          SurgeryPackages: SurgeryPackages,
+          ProcedureDetails: ProcedureDetails,
+          InvestigationChargeList: InvestigationChargeList,
 
-
-          Patientage:Patientage,
-          OpNumber:OpNumber,
-          IpNumber:IpNumber,
-          StaffName:StaffName,
-          ConDoctorName2:ConDoctorName2,
-          Diagnosis:Diagnosis,
-          OperativeProce:OperativeProce,
-          PatientSurrogate:PatientSurrogate,
-          Date2:Date2,
-          Time1:Time1,
-          Date3:Date3,
-          Time2:Time2,
-          Doctor2:Doctor2,
-          Date4:Date4,
-          Time3:Time3,
-          Guardian1:Guardian1,
-          Date5:Date5,
-          Time4:Time4,
-          NameOfSurgery:NameOfSurgery,
+          Patientage: Patientage,
+          OpNumber: OpNumber,
+          IpNumber: IpNumber,
+          StaffName: StaffName,
+          ConDoctorName2: ConDoctorName2,
+          Diagnosis: Diagnosis,
+          OperativeProce: OperativeProce,
+          PatientSurrogate: PatientSurrogate,
+          Date2: Date2,
+          Time1: Time1,
+          Date3: Date3,
+          Time2: Time2,
+          Doctor2: Doctor2,
+          Date4: Date4,
+          Time3: Time3,
+          Guardian1: Guardian1,
+          Date5: Date5,
+          Time4: Time4,
+          NameOfSurgery: NameOfSurgery,
         },
       };
       let res = await axios(config);
@@ -345,7 +348,6 @@ const IPDConsentFroms = () => {
       alert(error.response.data.error);
     }
   };
-
 
   const dobString = userdetail?.DOB;
   const dob = new Date(dobString);
@@ -361,7 +363,7 @@ const IPDConsentFroms = () => {
     ageOutput = `${ageYears} years`;
   }
 
-  // Doctors List 
+  // Doctors List
 
   const [Doctors, setDoctors] = useState([]);
   const getDoctors = () => {
@@ -379,11 +381,35 @@ const IPDConsentFroms = () => {
         setDoctors(error.response.data.DoctorsInfo);
       });
   };
-  console.log("Doctors",Doctors);
-  
+  console.log("Doctors", Doctors);
+
   useEffect(() => {
     getDoctors();
   }, []);
+
+  const [signature, setSignature] = useState(null);
+  const sigCanvas = useRef({});
+
+  const clear = () => sigCanvas.current.clear();
+
+  const save = () => {
+    const signature = sigCanvas.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setSignature(signature);
+  };
+
+  const [signature1, setSignature1] = useState(null);
+  const sigCanvas1 = useRef({});
+
+  const clear1 = () => sigCanvas1.current.clear();
+
+  const save1 = () => {
+    const signature1 = sigCanvas1.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setSignature1(signature1);
+  };
 
   return (
     <div>
@@ -477,10 +503,10 @@ const IPDConsentFroms = () => {
         </div>
       </div>
       <div className="d-flex mt-2 align-items-center">
-        <div style={{width:"15%"}}>Please Select Cause : </div>
+        <div style={{ width: "15%" }}>Please Select Cause : </div>
         <Form.Select
           onChange={(e) => setCauseId(e.target.value)}
-         style={{width:"25%"}}
+          style={{ width: "25%" }}
         >
           <option>Select The Cause</option>
           {userdetail?.cause?.map((item) => {
@@ -602,13 +628,12 @@ const IPDConsentFroms = () => {
                   my own free will, authorize the hospital to admit myself/ my
                   relative.{" "}
                 </p>
-              </div>             
+              </div>
               <div className="container">
                 <div className="row" style={{ border: "1px solid #20958C" }}>
                   <div
                     className="col-md-4"
                     style={{
-                     
                       border: "1px solid #20958C",
                       paddingLeft: "unset",
                       paddingRight: "unset",
@@ -620,36 +645,54 @@ const IPDConsentFroms = () => {
                         fontSize: "18px",
                       }}
                     >
-                      Doctor                    
+                      Doctor
                     </h6>
                     <div className="d-flex align-items-center mb-2">
-                    <b style={{ fontSize: "18px" }}>Name : </b>
-                    <span>
-                      <input
-                        type="text"
-                        className="vi_0"
-                        style={{ width: "276px" }}
-                        onChange={(e) => setConDoctorName(e.target.value)}
-                      />
-                    </span>
-                    </div>                   
-                   
+                      <b style={{ fontSize: "18px" }}>Name : </b>
+                      <span>
+                        <input
+                          type="text"
+                          className="vi_0"
+                          style={{ width: "276px" }}
+                          onChange={(e) => setConDoctorName(e.target.value)}
+                        />
+                      </span>
+                    </div>
+
                     <h6
                       style={{
                         borderTop: "1px solid #20958C",
                         fontSize: "18px",
                       }}
                     >
-                      <div className="d-flex align-items-center mt-2" >
-                      <b>Sign :</b>
-                      <span>
-                        <input
-                          type="text"
-                          className="vi_0"
-                          style={{ width: "270px" }}
-                        />
-                      </span>
-                      </div>                     
+                      <div className="align-items-center mt-2">
+                        <p>
+                          {" "}
+                          <b>Sign :</b>
+                        </p>
+                        {!signature ? (
+                          <div
+                            style={{
+                              border: "1px solid #dee2e6",
+                              margin: "10px",
+                            }}
+                          >
+                            <SignatureCanvas
+                              ref={sigCanvas}
+                              penColor="black"
+                              canvasProps={{
+                                width: 500,
+                                height: 200,
+                                className: "sigCanvas",
+                              }}
+                            />
+                            <button onClick={clear}>Clear</button>
+                            <button onClick={save}>Save</button>
+                          </div>
+                        ) : (
+                          <img src={signature} alt="Signature" />
+                        )}
+                      </div>
                     </h6>
                   </div>
                   <div
@@ -667,7 +710,7 @@ const IPDConsentFroms = () => {
                         fontSize: "18px",
                       }}
                     >
-                      Tenant/ Relative                      
+                      Tenant/ Relative
                     </h6>
                     <h6 style={{ fontSize: "20px" }}>Name : </h6>
                     <span style={{ borderBottom: "1px solid black" }}>
@@ -724,18 +767,36 @@ const IPDConsentFroms = () => {
                         />
                       </span>
                     </h6>
-                    <br />
-                    <br />
-                    <h6 style={{ fontSize: "18px" }}>
-                      Sign :
-                      <span>
-                        <input
-                          type="text"
-                          className="vi_0"
-                          style={{ width: "344px" }}
-                        />
-                      </span>
-                    </h6>
+
+                    <div className="align-items-center">
+                      <p>
+                        {" "}
+                        <b style={{ fontSize: "18px" }}>Sign :</b>
+                      </p>
+                      {!signature1 ? (
+                        <div
+                          style={{
+                            border: "1px solid #dee2e6",
+                            margin: "10px",
+                          }}
+                        >
+                          <SignatureCanvas
+                            ref={sigCanvas1}
+                            penColor="black"
+                            canvasProps={{
+                              width: 500,
+                              height: 200,
+                              className: "sigCanvas",
+                            }}
+                          />
+                          <button onClick={clear1}>Clear</button>
+                          <button onClick={save1}>Save</button>
+                        </div>
+                      ) : (
+                        <img src={signature1} alt="Signature" />
+                      )}
+                    </div>
+
                     <br />
                     <br />
                   </div>
@@ -858,11 +919,13 @@ const IPDConsentFroms = () => {
                               paddingRight: "unset",
                             }}
                           >
-                            <textarea                              
+                            <textarea
                               cols="27"
                               rows="4"
                               className="vi_0"
-                              onChange={(e)=>setWardRoomCharges(e.target.value)}
+                              onChange={(e) =>
+                                setWardRoomCharges(e.target.value)
+                              }
                             ></textarea>
                           </div>
                           <div
@@ -902,11 +965,11 @@ const IPDConsentFroms = () => {
                               Remark
                             </h6>
                             <textarea
-                             placeholder="enter remarks"
+                              placeholder="enter remarks"
                               cols="27"
                               rows="3"
                               className="vi_0"
-                              onChange={(e)=>setWardRemark(e.target.value)}
+                              onChange={(e) => setWardRemark(e.target.value)}
                             ></textarea>
                           </div>
                           <div
@@ -918,7 +981,7 @@ const IPDConsentFroms = () => {
                             }}
                           >
                             <textarea
-                             onChange={(e)=>setWardText1(e.target.value)}
+                              onChange={(e) => setWardText1(e.target.value)}
                               cols="90"
                               rows="1"
                               className="vi_0"
@@ -933,7 +996,7 @@ const IPDConsentFroms = () => {
                             }}
                           >
                             <textarea
-                              onChange={(e)=>setWardText2(e.target.value)}
+                              onChange={(e) => setWardText2(e.target.value)}
                               cols="90"
                               rows="1"
                               className="vi_0"
@@ -991,7 +1054,7 @@ const IPDConsentFroms = () => {
                               fontSize: "18px",
                             }}
                           >
-                           Action
+                            Action
                           </div>
                         </div>
 
@@ -1005,11 +1068,10 @@ const IPDConsentFroms = () => {
                             }}
                           >
                             <span style={{ borderBottom: "1px solid black" }}>
-                             
-                               <select
-                               onChange={(e) =>
-                                setNameOfSurgery(e.target.value)
-                              }
+                              <select
+                                onChange={(e) =>
+                                  setNameOfSurgery(e.target.value)
+                                }
                                 className="vi_0"
                                 style={{ width: "241px" }}
                               >
@@ -1033,8 +1095,7 @@ const IPDConsentFroms = () => {
                             }}
                           >
                             <span style={{ borderBottom: "1px solid black" }}>
-                              
-                             {SurgeryEstimatePrice?.[0]}
+                              {SurgeryEstimatePrice?.[0]}
                             </span>{" "}
                           </div>
                           <div
@@ -1069,7 +1130,7 @@ const IPDConsentFroms = () => {
                             </span>
                           </div>
                         </div>
-                        {SurgeryPackages?.map((item,i) => {
+                        {SurgeryPackages?.map((item, i) => {
                           return (
                             <div className="row">
                               <div
@@ -1080,11 +1141,7 @@ const IPDConsentFroms = () => {
                                   paddingRight: "unset",
                                 }}
                               >
-                                <span
-                                
-                                >
-                                  {item?.NameOfSurgery}
-                                </span>{" "}
+                                <span>{item?.NameOfSurgery}</span>{" "}
                               </div>
                               <div
                                 className="col-md-3"
@@ -1094,11 +1151,7 @@ const IPDConsentFroms = () => {
                                   paddingRight: "unset",
                                 }}
                               >
-                                <span
-                                
-                                >
-                                  {item?.SurgeryEstimatePrice}
-                                </span>{" "}
+                                <span>{item?.SurgeryEstimatePrice}</span>{" "}
                               </div>
                               <div
                                 className="col-md-3"
@@ -1108,11 +1161,7 @@ const IPDConsentFroms = () => {
                                   paddingRight: "unset",
                                 }}
                               >
-                                <span
-                                 
-                                >
-                                  {item?.SurgeryRemark}
-                                </span>{" "}
+                                <span>{item?.SurgeryRemark}</span>{" "}
                               </div>
                               <div
                                 className="col-md-3"
@@ -1123,9 +1172,12 @@ const IPDConsentFroms = () => {
                                 }}
                               >
                                 <span>
-                                <Button 
-                                onClick={()=>removeSurgery(i)}
-                                variant="danger">Delete</Button>
+                                  <Button
+                                    onClick={() => removeSurgery(i)}
+                                    variant="danger"
+                                  >
+                                    Delete
+                                  </Button>
                                 </span>
                               </div>
                             </div>
@@ -1201,7 +1253,9 @@ const IPDConsentFroms = () => {
                                 className="vi_0"
                                 style={{ width: "241px" }}
                                 placeholder="enter procedure name"
-                                onChange={(e)=>setNameofProcedure(e.target.value)}
+                                onChange={(e) =>
+                                  setNameofProcedure(e.target.value)
+                                }
                               />
                             </span>{" "}
                           </div>
@@ -1215,11 +1269,13 @@ const IPDConsentFroms = () => {
                           >
                             <span style={{ borderBottom: "1px solid black" }}>
                               <input
-                              placeholder="enter producer cost"
+                                placeholder="enter producer cost"
                                 type="number"
                                 className="vi_0"
                                 style={{ width: "241px" }}
-                                onChange={(e)=>setProcedureCost(e.target.value)}
+                                onChange={(e) =>
+                                  setProcedureCost(e.target.value)
+                                }
                               />
                             </span>{" "}
                           </div>
@@ -1233,11 +1289,13 @@ const IPDConsentFroms = () => {
                           >
                             <span style={{ borderBottom: "1px solid black" }}>
                               <input
-                              placeholder="enter procuder remark"
+                                placeholder="enter procuder remark"
                                 type="text"
                                 className="vi_0"
                                 style={{ width: "241px" }}
-                                onChange={(e)=>setProcedurRemark(e.target.value)}
+                                onChange={(e) =>
+                                  setProcedurRemark(e.target.value)
+                                }
                               />
                             </span>{" "}
                           </div>
@@ -1250,71 +1308,63 @@ const IPDConsentFroms = () => {
                             }}
                           >
                             <span style={{ borderBottom: "1px solid black" }}>
-                             <Button
-                             onClick={ProcedureCharges}
-                             >Add</Button>
+                              <Button onClick={ProcedureCharges}>Add</Button>
                             </span>
                           </div>
                         </div>
-                    {ProcedureDetails?.map((item,i)=>{
-                     return(
-                      <div className="row">
-                          <div
-                            className="col-md-3"
-                            style={{
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                            }}
-                          >
-                            <span>
-                             {item?.NameofProcedure}
-                            </span>
-                          </div>
-                          <div
-                            className="col-md-3"
-                            style={{
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                            }}
-                          >
-                            <span>
-                             {item?.ProcedureCost}
-                            </span>
-                          </div>
-                          <div
-                            className="col-md-3"
-                            style={{
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                            }}
-                          >
-                            <span>
-                              {item?.ProcedurRemark}
-                            </span>
-                          </div>
-                          <div
-                            className="col-md-3"
-                            style={{
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                            }}
-                          >
-                            <span>
-                             <Button 
-                             onClick={()=>removeProcedure(i)}
-                             variant="danger">
-                              delete
-                             </Button>
-                            </span>
-                          </div>
-                        </div>
-                              )
-                            })}
-                        
+                        {ProcedureDetails?.map((item, i) => {
+                          return (
+                            <div className="row">
+                              <div
+                                className="col-md-3"
+                                style={{
+                                  border: "1px solid #20958C",
+                                  paddingLeft: "unset",
+                                  paddingRight: "unset",
+                                }}
+                              >
+                                <span>{item?.NameofProcedure}</span>
+                              </div>
+                              <div
+                                className="col-md-3"
+                                style={{
+                                  border: "1px solid #20958C",
+                                  paddingLeft: "unset",
+                                  paddingRight: "unset",
+                                }}
+                              >
+                                <span>{item?.ProcedureCost}</span>
+                              </div>
+                              <div
+                                className="col-md-3"
+                                style={{
+                                  border: "1px solid #20958C",
+                                  paddingLeft: "unset",
+                                  paddingRight: "unset",
+                                }}
+                              >
+                                <span>{item?.ProcedurRemark}</span>
+                              </div>
+                              <div
+                                className="col-md-3"
+                                style={{
+                                  border: "1px solid #20958C",
+                                  paddingLeft: "unset",
+                                  paddingRight: "unset",
+                                }}
+                              >
+                                <span>
+                                  <Button
+                                    onClick={() => removeProcedure(i)}
+                                    variant="danger"
+                                  >
+                                    delete
+                                  </Button>
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </p>
                     <p style={{ fontSize: "18px" }}>
@@ -1382,7 +1432,9 @@ const IPDConsentFroms = () => {
                                 className="vi_0"
                                 style={{ width: "241px" }}
                                 placeholder="enter investigation "
-                                onChange={(e)=>setInvestigationName(e.target.value)}
+                                onChange={(e) =>
+                                  setInvestigationName(e.target.value)
+                                }
                               />
                               {/* <select
                                 name=""
@@ -1415,7 +1467,9 @@ const IPDConsentFroms = () => {
                                 className="vi_0"
                                 style={{ width: "241px" }}
                                 placeholder="enter cost"
-                                onChange={(e)=>setInvestigationCost(e.target.value)}
+                                onChange={(e) =>
+                                  setInvestigationCost(e.target.value)
+                                }
                               />
                             </span>{" "}
                           </div>
@@ -1429,11 +1483,13 @@ const IPDConsentFroms = () => {
                           >
                             <span style={{ borderBottom: "1px solid black" }}>
                               <input
-                              placeholder="enter remark"
+                                placeholder="enter remark"
                                 type="text"
                                 className="vi_0"
                                 style={{ width: "241px" }}
-                                onChange={(e)=>setInvestigationRemark(e.target.value)}
+                                onChange={(e) =>
+                                  setInvestigationRemark(e.target.value)
+                                }
                               />
                             </span>{" "}
                           </div>
@@ -1445,73 +1501,66 @@ const IPDConsentFroms = () => {
                               paddingRight: "unset",
                             }}
                           >
-                            <span >
-                              <Button 
-                              onClick={InvestigationCharges}
-                              >Add</Button>
+                            <span>
+                              <Button onClick={InvestigationCharges}>
+                                Add
+                              </Button>
                             </span>
                           </div>
                         </div>
-{InvestigationChargeList?.map((item,i)=>{
-  return(
-    <div className="row">
-    <div
-      className="col-md-3"
-      style={{
-        border: "1px solid #20958C",
-        paddingLeft: "unset",
-        paddingRight: "unset",
-      }}
-    >
-      <span>
-        {item?.InvestigationName}
-      </span>{" "}
-    </div>
-    <div
-      className="col-md-3"
-      style={{
-        border: "1px solid #20958C",
-        paddingLeft: "unset",
-        paddingRight: "unset",
-      }}
-    >
-      <span>
-      {item?.InvestigationCost}
-      </span>
-    </div>
-    <div
-      className="col-md-3"
-      style={{
-        border: "1px solid #20958C",
-        paddingLeft: "unset",
-        paddingRight: "unset",
-      }}
-    >
-      <span>
-      {item?.InvestigationRemark}
-      </span>
-    </div>
-    <div
-      className="col-md-3"
-      style={{
-        border: "1px solid #20958C",
-        paddingLeft: "unset",
-        paddingRight: "unset",
-      }}
-    >
-      <span>
-      <Button
-      variant="danger"
-      onClick={()=>removeInvestigation(i)}
-      >
-        delete
-      </Button>
-      </span>
-    </div>
-  </div>
-  )
-})}
-                     
+                        {InvestigationChargeList?.map((item, i) => {
+                          return (
+                            <div className="row">
+                              <div
+                                className="col-md-3"
+                                style={{
+                                  border: "1px solid #20958C",
+                                  paddingLeft: "unset",
+                                  paddingRight: "unset",
+                                }}
+                              >
+                                <span>{item?.InvestigationName}</span>{" "}
+                              </div>
+                              <div
+                                className="col-md-3"
+                                style={{
+                                  border: "1px solid #20958C",
+                                  paddingLeft: "unset",
+                                  paddingRight: "unset",
+                                }}
+                              >
+                                <span>{item?.InvestigationCost}</span>
+                              </div>
+                              <div
+                                className="col-md-3"
+                                style={{
+                                  border: "1px solid #20958C",
+                                  paddingLeft: "unset",
+                                  paddingRight: "unset",
+                                }}
+                              >
+                                <span>{item?.InvestigationRemark}</span>
+                              </div>
+                              <div
+                                className="col-md-3"
+                                style={{
+                                  border: "1px solid #20958C",
+                                  paddingLeft: "unset",
+                                  paddingRight: "unset",
+                                }}
+                              >
+                                <span>
+                                  <Button
+                                    variant="danger"
+                                    onClick={() => removeInvestigation(i)}
+                                  >
+                                    delete
+                                  </Button>
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </p>
                     <p style={{ fontSize: "18px" }}>
@@ -1523,7 +1572,6 @@ const IPDConsentFroms = () => {
                       and superSpecialists consultations, ventilator and oxygen,
                       Synringe pump, Patient transport and usages of any other
                       Equipments/ Materials as required.
-                      
                     </p>
                     <p
                       style={{
@@ -1550,7 +1598,7 @@ const IPDConsentFroms = () => {
                           className="vi_0"
                           style={{ width: "490px" }}
                           value={PatientName}
-                          onChange={(e)=>setPatientName(e.target.value)}
+                          onChange={(e) => setPatientName(e.target.value)}
                         />
                       </span>{" "}
                       have been explained in detail the above mentioned charges
@@ -1564,8 +1612,8 @@ const IPDConsentFroms = () => {
                           className="vi_0"
                           style={{ width: "270px" }}
                           value={RealivesName}
-                          onChange={(e)=>setRealivesName(e.target.value)}
-                        />                     
+                          onChange={(e) => setRealivesName(e.target.value)}
+                        />
                       </span>
                     </p>
 
@@ -1576,7 +1624,7 @@ const IPDConsentFroms = () => {
                           type="text"
                           className="vi_0"
                           style={{ width: "270px" }}
-                          onChange={(e)=>setWitness1(e.target.value)}
+                          onChange={(e) => setWitness1(e.target.value)}
                           placeholder=" Witness-1/ Relative-1"
                         />
                         Witness-2/ Relative-2{" "}
@@ -1584,7 +1632,7 @@ const IPDConsentFroms = () => {
                           type="text"
                           className="vi_0"
                           style={{ width: "270px" }}
-                          onChange={(e)=>setWitness2(e.target.value)}
+                          onChange={(e) => setWitness2(e.target.value)}
                           placeholder=" Witness-2/ Relative-2"
                         />
                       </span>
@@ -1599,7 +1647,7 @@ const IPDConsentFroms = () => {
                           className="vi_0"
                           style={{ width: "270px" }}
                           placeholder="enter number"
-                          onChange={(e)=>setWitness1Number(e.target.value)}
+                          onChange={(e) => setWitness1Number(e.target.value)}
                         />
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Phone No
@@ -1609,7 +1657,7 @@ const IPDConsentFroms = () => {
                           className="vi_0"
                           style={{ width: "270px" }}
                           placeholder="enter number"
-                          onChange={(e)=>setWitness2Number(e.target.value)}
+                          onChange={(e) => setWitness2Number(e.target.value)}
                         />
                       </span>
                     </p>
@@ -1631,8 +1679,8 @@ const IPDConsentFroms = () => {
                   </div>
                 </div>
                 <div className="mt-2 d-flex justify-content-center">
-              <Button onClick={() => GeneralConsentForm()}>Submit</Button>
-            </div>
+                  <Button onClick={() => GeneralConsentForm()}>Submit</Button>
+                </div>
               </div>
             </>
           ) : (
@@ -1758,8 +1806,9 @@ const IPDConsentFroms = () => {
                               >
                                 Date:{" "}
                                 <span>
-                                  
-                                  {moment(userdetail?.createdAt).format("DD-MM-YYYY")}
+                                  {moment(userdetail?.createdAt).format(
+                                    "DD-MM-YYYY"
+                                  )}
                                 </span>
                               </div>
                               <div
@@ -1771,10 +1820,7 @@ const IPDConsentFroms = () => {
                                   fontSize: "18px",
                                 }}
                               >
-                                Age:{" "}
-                                <span>
-                                 {ageOutput}
-                                </span>
+                                Age: <span>{ageOutput}</span>
                               </div>
                             </div>
                             <div className="row">
@@ -1831,10 +1877,7 @@ const IPDConsentFroms = () => {
                                   fontSize: "18px",
                                 }}
                               >
-                                Sex:{" "}
-                                <span>                                 
-                                {userdetail?.Gender}
-                                </span>
+                                Sex: <span>{userdetail?.Gender}</span>
                               </div>
                             </div>
                             <div className="row">
@@ -1858,7 +1901,9 @@ const IPDConsentFroms = () => {
                                       className="vi_0"
                                       style={{ width: "301px" }}
                                       value={StaffName}
-                                      onClick={(e)=>setStaffName(e.target.value)}
+                                      onClick={(e) =>
+                                        setStaffName(e.target.value)
+                                      }
                                     />
                                   </span>
                                   have been explained about the medical
@@ -1872,19 +1917,22 @@ const IPDConsentFroms = () => {
                                       value={ConDoctorName}
                                       onChange={(e)=>setConDoctorName(e.target.value)}
                                     /> */}
-                                      <Form.Select
+                                    <Form.Select
                                       className="vi_0"
                                       value={ConDoctorName}
-                                      onChange={(e)=>setConDoctorName(e.target.value)}
-                                      >
-                                          <option>Select Doctors</option>
-                                          {Doctors?.map((item)=>{
-                                            return(
-                                              <option value={`${item?.Firstname} ${item?.Lastname}`}>{`${item?.Firstname} ${item?.Lastname}`}</option>
-                                            )
-                                          })                                           
-                                          }                                          
-                                     </Form.Select>
+                                      onChange={(e) =>
+                                        setConDoctorName(e.target.value)
+                                      }
+                                    >
+                                      <option>Select Doctors</option>
+                                      {Doctors?.map((item) => {
+                                        return (
+                                          <option
+                                            value={`${item?.Firstname} ${item?.Lastname}`}
+                                          >{`${item?.Firstname} ${item?.Lastname}`}</option>
+                                        );
+                                      })}
+                                    </Form.Select>
                                     <br />
                                     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                                     &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -1898,21 +1946,22 @@ const IPDConsentFroms = () => {
                                       value={ConDoctorName2}
                                       onChange={(e)=>setConDoctorName2(e.target.value)}
                                     /> */}
-
-                                  <Form.Select
+                                    <Form.Select
                                       className="vi_0"
                                       value={ConDoctorName2}
-                                      onChange={(e)=>setConDoctorName2(e.target.value)}
-                                      >
-                                          <option>Select Doctors</option>
-                                          {Doctors?.map((item)=>{
-                                            return(
-                                              <option value={`${item?.Firstname} ${item?.Lastname}`}>{`${item?.Firstname} ${item?.Lastname}`}</option>
-                                            )
-                                          })                                           
-                                          }                                          
-                                     </Form.Select>
-
+                                      onChange={(e) =>
+                                        setConDoctorName2(e.target.value)
+                                      }
+                                    >
+                                      <option>Select Doctors</option>
+                                      {Doctors?.map((item) => {
+                                        return (
+                                          <option
+                                            value={`${item?.Firstname} ${item?.Lastname}`}
+                                          >{`${item?.Firstname} ${item?.Lastname}`}</option>
+                                        );
+                                      })}
+                                    </Form.Select>
                                   </span>
                                 </p>
 
@@ -1924,7 +1973,9 @@ const IPDConsentFroms = () => {
                                       className="vi_0"
                                       style={{ width: "670px" }}
                                       value={Diagnosis}
-                                      onChange={(e)=>setDiagnosis(e.target.value)}
+                                      onChange={(e) =>
+                                        setDiagnosis(e.target.value)
+                                      }
                                     />
                                   </span>
                                   Proposed operative Procedure:
@@ -1934,7 +1985,9 @@ const IPDConsentFroms = () => {
                                       className="vi_0"
                                       style={{ width: "684px" }}
                                       value={OperativeProce}
-                                      onChange={(e)=>setOperativeProce(e.target.value)}
+                                      onChange={(e) =>
+                                        setOperativeProce(e.target.value)
+                                      }
                                     />
                                   </span>{" "}
                                 </p>
@@ -1947,7 +2000,9 @@ const IPDConsentFroms = () => {
                                       className="vi_0"
                                       style={{ width: "200px" }}
                                       value={RealivesName}
-                                      onChange={(e)=>setRealivesName(e.target.value)}
+                                      onChange={(e) =>
+                                        setRealivesName(e.target.value)
+                                      }
                                     />
                                   </span>
                                   who is admitted on{" "}
@@ -1957,8 +2012,8 @@ const IPDConsentFroms = () => {
                                       className="vi_0"
                                       style={{ width: "200px" }}
                                       value={Date0}
-                                      onChange={(e)=>setDate(e.target.value)}
-                                    />                                    
+                                      onChange={(e) => setDate(e.target.value)}
+                                    />
                                   </span>
                                   have been explained in the languages
                                   understood by me/us, about the pros & cons of
@@ -2100,7 +2155,9 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={PatientSurrogate}
-                                    onChange={(e)=>setPatientSurrogate(e.target.value)}
+                                    onChange={(e) =>
+                                      setPatientSurrogate(e.target.value)
+                                    }
                                   />
                                 </span>
                               </div>
@@ -2134,7 +2191,7 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={Date2}
-                                    onChange={(e)=>setDate2(e.target.value)}
+                                    onChange={(e) => setDate2(e.target.value)}
                                   />
                                 </span>
                               </div>
@@ -2152,7 +2209,7 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={Time1}
-                                    onChange={(e)=>setTime1(e.target.value)}
+                                    onChange={(e) => setTime1(e.target.value)}
                                   />
                                 </span>
                               </div>
@@ -2183,7 +2240,9 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={Witness1}
-                                    onChange={(e)=>setWitness1(e.target.value)}
+                                    onChange={(e) =>
+                                      setWitness1(e.target.value)
+                                    }
                                   />
                                 </span>
                               </div>
@@ -2200,7 +2259,6 @@ const IPDConsentFroms = () => {
                                     type="text"
                                     className="vi_0"
                                     style={{ width: "161px" }}
-                                   
                                   />
                                 </span>
                               </div>
@@ -2218,7 +2276,7 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={Date3}
-                                    onChange={(e)=>setDate3(e.target.value)}
+                                    onChange={(e) => setDate3(e.target.value)}
                                   />
                                 </span>
                               </div>
@@ -2236,7 +2294,7 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={Time2}
-                                    onChange={(e)=>setTime2(e.target.value)}
+                                    onChange={(e) => setTime2(e.target.value)}
                                   />
                                 </span>
                               </div>
@@ -2267,7 +2325,7 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={Doctor2}
-                                    onChange={(e)=>setDoctor2(e.target.value)}
+                                    onChange={(e) => setDoctor2(e.target.value)}
                                   />
                                 </span>
                               </div>
@@ -2301,7 +2359,7 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={Date4}
-                                    onChange={(e)=>setDate4(e.target.value)}
+                                    onChange={(e) => setDate4(e.target.value)}
                                   />
                                 </span>
                               </div>
@@ -2319,7 +2377,7 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={Time3}
-                                    onChange={(e)=>setTime3(e.target.value)}
+                                    onChange={(e) => setTime3(e.target.value)}
                                   />
                                 </span>
                               </div>
@@ -2351,7 +2409,9 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={Guardian1}
-                                    onChange={(e)=>setGuardian1(e.target.value)}
+                                    onChange={(e) =>
+                                      setGuardian1(e.target.value)
+                                    }
                                   />
                                 </span>
                               </div>
@@ -2385,7 +2445,7 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={Date5}
-                                    onChange={(e)=>setDate5(e.target.value)}
+                                    onChange={(e) => setDate5(e.target.value)}
                                   />
                                 </span>
                               </div>
@@ -2403,7 +2463,7 @@ const IPDConsentFroms = () => {
                                     className="vi_0"
                                     style={{ width: "161px" }}
                                     value={Time4}
-                                    onChange={(e)=>setTime4(e.target.value)}
+                                    onChange={(e) => setTime4(e.target.value)}
                                   />
                                 </span>
                               </div>
@@ -2413,10 +2473,11 @@ const IPDConsentFroms = () => {
                       </div>
                     </div>
                     <div className="mt-2 d-flex justify-content-center">
-              <Button onClick={() => GeneralConsentForm()}>Submit</Button>
-            </div>
+                      <Button onClick={() => GeneralConsentForm()}>
+                        Submit
+                      </Button>
+                    </div>
                   </div>
-                 
                 </>
               ) : (
                 <>
@@ -2525,7 +2586,7 @@ const IPDConsentFroms = () => {
                                   >
                                     Patient Name:{" "}
                                     <span>
-                                     {`${userdetail?.Firstname} ${userdetail?.Lastname}`}
+                                      {`${userdetail?.Firstname} ${userdetail?.Lastname}`}
                                     </span>
                                   </div>
                                   <div
@@ -2539,7 +2600,9 @@ const IPDConsentFroms = () => {
                                   >
                                     Date:{" "}
                                     <span>
-                                      {moment(userdetail?.createdAt).format("DD-MM-YYYY")}
+                                      {moment(userdetail?.createdAt).format(
+                                        "DD-MM-YYYY"
+                                      )}
                                     </span>
                                   </div>
                                   <div
@@ -2552,9 +2615,7 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     Age:
-                                    <span>
-                                  23                                  
-                                    </span>
+                                    <span>23</span>
                                   </div>
                                 </div>
                                 <div className="row">
@@ -2567,10 +2628,7 @@ const IPDConsentFroms = () => {
                                       fontSize: "17px",
                                     }}
                                   >
-                                    OP No:{" "}
-                                    <span>
-                                      4546fgf
-                                    </span>
+                                    OP No: <span>4546fgf</span>
                                   </div>
                                   <div
                                     className="col-md-4"
@@ -2581,10 +2639,7 @@ const IPDConsentFroms = () => {
                                       fontSize: "17px",
                                     }}
                                   >
-                                    IP No:{" "}
-                                    <span>
-                                      asdads34
-                                    </span>
+                                    IP No: <span>asdads34</span>
                                   </div>
                                   <div
                                     className="col-md-4"
@@ -2596,9 +2651,7 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     Sex:
-                                    <span>
-                                      {userdetail?.Gender}
-                                    </span>
+                                    <span>{userdetail?.Gender}</span>
                                   </div>
                                 </div>
                                 <div className="row">
@@ -2618,7 +2671,9 @@ const IPDConsentFroms = () => {
                                         className="vi_0"
                                         style={{ width: "845px" }}
                                         value={Diagnosis}
-                                        onChange={(e)=>setDiagnosis(e.target.value)}
+                                        onChange={(e) =>
+                                          setDiagnosis(e.target.value)
+                                        }
                                       />
                                     </span>
                                   </div>
@@ -2636,11 +2691,13 @@ const IPDConsentFroms = () => {
                                     Operative Procedure/ Operation :{" "}
                                     <span>
                                       <input
-                                        type="text"                                      
+                                        type="text"
                                         className="vi_0"
                                         style={{ width: "650px" }}
                                         value={OperativeProce}
-                                        onChange={(e)=>setOperativeProce(e.target.value)}
+                                        onChange={(e) =>
+                                          setOperativeProce(e.target.value)
+                                        }
                                       />
                                     </span>
                                   </div>
@@ -2688,11 +2745,13 @@ const IPDConsentFroms = () => {
                                       of my own free will to undergo the
                                       following surgery / procedure
                                       <span>
-                                      <select                                          
+                                        <select
                                           className="vi_0"
                                           style={{ width: "331px" }}
                                           value={NameOfSurgery}
-                                          onChange={(e)=>setNameOfSurgery(e.target.value)}
+                                          onChange={(e) =>
+                                            setNameOfSurgery(e.target.value)
+                                          }
                                         >
                                           <option value="">
                                             select the surgery
@@ -2781,8 +2840,10 @@ const IPDConsentFroms = () => {
                                       Multispeciailty Hospital.
                                       <span>
                                         <select
-                                        value={NameOfSurgery}
-                                         onChange={(e)=>setNameOfSurgery(e.target.value)}
+                                          value={NameOfSurgery}
+                                          onChange={(e) =>
+                                            setNameOfSurgery(e.target.value)
+                                          }
                                           className="vi_0"
                                           style={{ width: "331px" }}
                                         >
@@ -2912,7 +2973,9 @@ const IPDConsentFroms = () => {
                                         className="vi_0"
                                         style={{ width: "161px" }}
                                         value={PatientSurrogate}
-                                        onChange={(e)=>setPatientSurrogate(e.target.value)}
+                                        onChange={(e) =>
+                                          setPatientSurrogate(e.target.value)
+                                        }
                                       />
                                     </span>
                                   </div>
@@ -2941,13 +3004,15 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="date"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Date2}
-                                    onChange={(e)=>setDate2(e.target.value)}
-                                  />
+                                      <input
+                                        type="date"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                        value={Date2}
+                                        onChange={(e) =>
+                                          setDate2(e.target.value)
+                                        }
+                                      />
                                     </span>
                                   </div>
                                   <div
@@ -2959,13 +3024,15 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="time"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Time1}
-                                    onChange={(e)=>setTime1(e.target.value)}
-                                  />
+                                      <input
+                                        type="time"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                        value={Time1}
+                                        onChange={(e) =>
+                                          setTime1(e.target.value)
+                                        }
+                                      />
                                     </span>
                                   </div>
                                 </div>
@@ -2990,13 +3057,15 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Witness1}
-                                    onChange={(e)=>setWitness1(e.target.value)}
-                                  />
+                                      <input
+                                        type="text"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                        value={Witness1}
+                                        onChange={(e) =>
+                                          setWitness1(e.target.value)
+                                        }
+                                      />
                                     </span>
                                   </div>
                                   <div
@@ -3024,13 +3093,15 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="date"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Date3}
-                                    onChange={(e)=>setDate3(e.target.value)}
-                                  />
+                                      <input
+                                        type="date"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                        value={Date3}
+                                        onChange={(e) =>
+                                          setDate3(e.target.value)
+                                        }
+                                      />
                                     </span>
                                   </div>
                                   <div
@@ -3042,13 +3113,15 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="time"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Time2}
-                                    onChange={(e)=>setTime2(e.target.value)}
-                                  />
+                                      <input
+                                        type="time"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                        value={Time2}
+                                        onChange={(e) =>
+                                          setTime2(e.target.value)
+                                        }
+                                      />
                                     </span>
                                   </div>
                                 </div>
@@ -3073,13 +3146,15 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Doctor2}
-                                    onChange={(e)=>setDoctor2(e.target.value)}
-                                  />
+                                      <input
+                                        type="text"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                        value={Doctor2}
+                                        onChange={(e) =>
+                                          setDoctor2(e.target.value)
+                                        }
+                                      />
                                     </span>
                                   </div>
                                   <div
@@ -3091,12 +3166,11 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  
-                                  />
+                                      <input
+                                        type="text"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                      />
                                     </span>
                                   </div>
                                   <div
@@ -3108,13 +3182,15 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="date"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Date4}
-                                    onChange={(e)=>setDate4(e.target.value)}
-                                  />
+                                      <input
+                                        type="date"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                        value={Date4}
+                                        onChange={(e) =>
+                                          setDate4(e.target.value)
+                                        }
+                                      />
                                     </span>
                                   </div>
                                   <div
@@ -3126,13 +3202,15 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="time"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Time3}
-                                    onChange={(e)=>setTime3(e.target.value)}
-                                  />
+                                      <input
+                                        type="time"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                        value={Time3}
+                                        onChange={(e) =>
+                                          setTime3(e.target.value)
+                                        }
+                                      />
                                     </span>
                                   </div>
                                 </div>
@@ -3158,13 +3236,15 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Guardian1}
-                                    onChange={(e)=>setGuardian1(e.target.value)}
-                                  />
+                                      <input
+                                        type="text"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                        value={Guardian1}
+                                        onChange={(e) =>
+                                          setGuardian1(e.target.value)
+                                        }
+                                      />
                                     </span>
                                   </div>
                                   <div
@@ -3192,13 +3272,15 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="date"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Date5}
-                                    onChange={(e)=>setDate5(e.target.value)}
-                                  />
+                                      <input
+                                        type="date"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                        value={Date5}
+                                        onChange={(e) =>
+                                          setDate5(e.target.value)
+                                        }
+                                      />
                                     </span>
                                   </div>
                                   <div
@@ -3210,13 +3292,15 @@ const IPDConsentFroms = () => {
                                     }}
                                   >
                                     <span>
-                                    <input
-                                    type="time"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Time4}
-                                    onChange={(e)=>setTime4(e.target.value)}
-                                  />
+                                      <input
+                                        type="time"
+                                        className="vi_0"
+                                        style={{ width: "161px" }}
+                                        value={Time4}
+                                        onChange={(e) =>
+                                          setTime4(e.target.value)
+                                        }
+                                      />
                                     </span>
                                   </div>
                                 </div>
@@ -3225,8 +3309,10 @@ const IPDConsentFroms = () => {
                           </div>
                         </div>
                         <div className="mt-2 d-flex justify-content-center">
-              <Button onClick={() => GeneralConsentForm()}>Submit</Button>
-            </div>
+                          <Button onClick={() => GeneralConsentForm()}>
+                            Submit
+                          </Button>
+                        </div>
                       </div>
                       {/* kannada */}
                       {/* <div className="mt-2 d-dlex text-end gap-2">
