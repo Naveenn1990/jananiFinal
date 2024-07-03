@@ -368,7 +368,19 @@ export const Home = () => {
     }
   };
   const uniqueDates = new Set();
-  console.log("Doctors", Doctor, Doctorschedule, TOA.split("-"));
+
+  const [selecteTimearray, setselecteTimearray] = useState([]);
+  useEffect(() => {
+    if (DOA) {
+      const asd = Doctorschedule?.scheduleList.filter(
+        (item) => item.scheduleDate == DOA && item.bookingstatus === "Vacant"
+      );
+      setselecteTimearray(asd);
+    }
+  }, [DOA]);
+
+  console.log("Doctors", Doctor, Doctorschedule, DOA, TOA.split("-"));
+  console.log("selecteTimearray", selecteTimearray);
   return (
     <div>
       <ProgressLine
@@ -617,7 +629,7 @@ export const Home = () => {
                     onChange={(e) => setDOA(e.target.value)}
                   >
                     <option>Select</option>
-                    {Doctorschedule?.scheduleList
+                    {/* {Doctorschedule?.scheduleList
                       ?.filter(
                         (schedd) =>
                           moment(schedd?.scheduleDate).format("DD-MM-YYYY") >=
@@ -640,6 +652,31 @@ export const Home = () => {
                           );
                         }
                         return null; // Return null for duplicates, so they are not rendered
+                      })} */}
+                    {Doctorschedule?.scheduleList
+                      ?.filter(
+                        (schedd) =>
+                          moment(schedd?.scheduleDate).isSameOrAfter(
+                            moment(),
+                            "day"
+                          ) && schedd?.bookingstatus === "Vacant"
+                      )
+                      ?.map((shedul) => {
+                        const formattedDate = moment(
+                          shedul?.scheduleDate
+                        ).format("DD-MM-YYYY");
+                        if (!uniqueDates.has(formattedDate)) {
+                          uniqueDates.add(formattedDate);
+                          return (
+                            <option
+                              value={shedul?.scheduleDate}
+                              key={shedul?.scheduleDate}
+                            >
+                              {formattedDate}
+                            </option>
+                          );
+                        }
+                        return null; // Return null for duplicates, so they are not rendered
                       })}
                   </Form.Select>
                 </form>
@@ -655,7 +692,7 @@ export const Home = () => {
                     onChange={(e) => setTOA(e.target.value)}
                   >
                     <option>Select</option>
-                    {Doctorschedule?.scheduleList
+                    {/* {Doctorschedule?.scheduleList
                       ?.filter(
                         (schedd) =>
                           moment(schedd?.scheduleDate).format("DD-MM-YYYY") >=
@@ -668,7 +705,13 @@ export const Home = () => {
                         >
                           {shedul?.startTime}-{shedul?.endTime}
                         </option>
-                      ))}
+                      ))} */}
+
+                    {selecteTimearray?.map((shedul) => (
+                      <option value={`${shedul?.startTime}-${shedul?.endTime}`}>
+                        {shedul?.startTime}-{shedul?.endTime}
+                      </option>
+                    ))}
                   </Form.Select>
                 </form>
               </div>

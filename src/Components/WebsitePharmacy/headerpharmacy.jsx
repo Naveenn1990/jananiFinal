@@ -108,7 +108,7 @@ export const Headerpharmacy = React.memo(({ wishlistData, CartItemsList }) => {
               style={{ maxHeight: "100px" }}
               navbarScroll
             >
-              <Form className="d-flex search-width">
+              {/* <Form className="d-flex search-width">
                 <Form.Control
                   type="search"
                   placeholder="Search"
@@ -119,7 +119,7 @@ export const Headerpharmacy = React.memo(({ wishlistData, CartItemsList }) => {
                 <a href="#">
                   <Button className="red-btn-7 search-btn"></Button>
                 </a>
-              </Form>
+              </Form> */}
 
               {JSON.parse(pharmacyUser) ? (
                 <Dropdown>

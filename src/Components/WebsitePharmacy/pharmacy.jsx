@@ -230,9 +230,62 @@ export const Pharmacy = () => {
     getWishlist();
     getCartItems();
     getPharmacyCatBan();
+    Allorders();
   }, []);
 
-  console.log("CartItemsList2@@: ", CartItemsList);
+  const highestDiscountProduct = ProductList?.reduce((max, obj) => {
+    return obj.discount > max.discount ? obj : max;
+  }, ProductList[0]);
+
+  const xyz = [];
+  for (let i = ProductList?.length - 1; i >= 0; --i) {
+    xyz.push(ProductList[i]);
+  }
+
+  const [Orders, setOrders] = useState([]);
+  const Allorders = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/pharmacy/orderList"
+      );
+      if (res.status === 200) {
+        setOrders(
+          res.data.orderList?.filter(
+            (order) => order?.orderStatus === "DELIVERED"
+          )
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const productCount = {};
+
+  // Count occurrences of each vendorIdProductId and store the associated data
+  Orders.forEach((order) => {
+    order.orderedItems.forEach((item) => {
+      const id = item.productid.vendorIdProductId;
+      if (productCount[id]) {
+        productCount[id].count++;
+      } else {
+        productCount[id] = { ...item.productid, count: 1 };
+      }
+    });
+  });
+
+  // Convert the productCount object to an array of objects for sorting
+  const productCountArray = Object.values(productCount);
+
+  // Sort the array based on the count in descending order
+  productCountArray.sort((a, b) => b.count - a.count);
+
+  // Get the top 2 repeated products
+  const top2RepeatedProducts = productCountArray.slice(0, 2);
+
+  console.log(top2RepeatedProducts, "gsfdg");
+  console.log("Orders", Orders);
+
   console.log("ProductList", ProductList);
 
   return (
@@ -309,39 +362,58 @@ export const Pharmacy = () => {
 
             <div className="mb-5">
               <br />
-              <h4 className="fw-bold ps-4 text-light">Hot Deals </h4>
+              <h4 className="fw-bold ps-4 text-light">
+                Hot Deals - {highestDiscountProduct?.discount}% Off
+              </h4>
               <Card
                 className="col-lg-4 m-auto mb-3 p-0"
                 style={{ width: "16rem" }}
               >
                 <Card.Img
                   variant="top"
-                  src="./img/pharmacy-img-15.png"
+                  src={`http://localhost:8521/VendorProduct/${highestDiscountProduct?.vendorIdProductId?.productImgs[0]}`}
                   alt="pharmacy-img"
                 />
                 <Card.Body>
                   <Card.Title>
-                    {" "}
-                    <a
+                    {/* <a
                       className="fw-semibold"
                       style={{ textDecoration: "none", color: "black" }}
                       href="/pharmacy"
+                    > */}
+                    <Link
+                      to="/pharmacydesc"
+                      className="fw-semibold"
+                      style={{
+                        textDecoration: "none",
+                        color: "black",
+                        fontSize: "15px",
+                      }}
+                      state={{ item: highestDiscountProduct }}
                     >
-                      Waterpik WP-100 Dental Care
-                    </a>{" "}
+                      {highestDiscountProduct?.productName}
+                    </Link>
+                    {/* </a>{" "} */}
                   </Card.Title>
                   <Card.Text>
-                    Covid essentials, device health condition
+                    {highestDiscountProduct?.description?.slice(0, 60)}
                   </Card.Text>
 
                   <Card.Text
                     className="fw-bolder fs-4"
                     style={{ color: "#eb3a7b" }}
                   >
-                    $82.00
+                    {highestDiscountProduct?.currencyFormat}
+                    {highestDiscountProduct?.productPrice -
+                      (highestDiscountProduct?.productPrice *
+                        highestDiscountProduct?.discount) /
+                        100}{" "}
+                    <strike style={{ fontSize: "18px", color: "black" }}>
+                      {highestDiscountProduct?.productPrice}
+                    </strike>
                   </Card.Text>
 
-                  <a href="/pharmacy">
+                  <a onClick={() => AddToCart(highestDiscountProduct)}>
                     <Button className="green-btn-1"></Button>{" "}
                   </a>
                 </Card.Body>
@@ -352,32 +424,57 @@ export const Pharmacy = () => {
               <br />
               <h4 className="fw-bold ps-4 text-light"> Hot Products</h4>
               <ul className="category-list" style={{ listStyle: "none" }}>
-                <li>
-                  <div className="d-flex">
-                    <div>
-                      <img
-                        className="img-fluid"
-                        style={{ width: "100%", height: "100px" }}
-                        src="./img/pharmacy-img-16.png"
-                        alt=""
-                      />
+                {xyz?.slice(0, 4)?.map((abc) => (
+                  <li>
+                    <div className="d-flex">
+                      <div>
+                        <Link
+                          to="/pharmacydesc"
+                          className="text-light"
+                          style={{
+                            textDecoration: "none",
+                          }}
+                          state={{ item: abc }}
+                        >
+                          <img
+                            className="img-fluid"
+                            style={{
+                              width: "100%",
+                              height: "100px",
+                              backgroundColor: "white",
+                            }}
+                            src={`http://localhost:8521/VendorProduct/${abc?.vendorIdProductId?.productImgs[0]}`}
+                            alt=""
+                          />
+                        </Link>
+                      </div>
+                      <div className="p-2">
+                        <Link
+                          to="/pharmacydesc"
+                          className="text-light"
+                          style={{
+                            textDecoration: "none",
+                          }}
+                          state={{ item: abc }}
+                        >
+                          {abc?.productName}
+                        </Link>
+                        <p
+                          className="fw-bolder fs-4"
+                          style={{ color: "#eb3a7b" }}
+                        >
+                          {abc?.currencyFormat}
+                          {abc?.productPrice -
+                            (abc?.productPrice * abc?.discount) / 100}{" "}
+                          <strike style={{ fontSize: "18px", color: "white" }}>
+                            {abc?.productPrice}
+                          </strike>
+                        </p>
+                      </div>
                     </div>
-                    <div className="p-2">
-                      <a href="/pharmacy" className="text-light">
-                        {" "}
-                        Organic salmon collagen{" "}
-                      </a>
-                      <p
-                        className="fw-bolder fs-4"
-                        style={{ color: "#eb3a7b" }}
-                      >
-                        $124.98
-                      </p>
-                    </div>
-                  </div>
-                </li>
-
-                <li>
+                  </li>
+                ))}
+                {/* <li>
                   <div className="d-flex">
                     <div>
                       <img
@@ -425,7 +522,7 @@ export const Pharmacy = () => {
                       </p>
                     </div>
                   </div>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
@@ -584,7 +681,7 @@ export const Pharmacy = () => {
               </div>
 
               <div className="row">
-                {ProductList?.map((item) => {
+                {ProductList?.slice(0, 4)?.map((item) => {
                   return (
                     <Card
                       className="col-lg-4 m-auto mb-3 p-0"
@@ -647,7 +744,7 @@ export const Pharmacy = () => {
                           className="fw-bolder fs-4"
                           style={{ color: "#eb3a7b" }}
                         >
-                          ₹
+                          {item?.currencyFormat}
                           {item?.productPrice -
                             (item?.productPrice * item?.discount) / 100}
                           <strike
@@ -797,65 +894,62 @@ export const Pharmacy = () => {
                 Popular Products
               </h4>
               <div className="row">
-                <div className=" col-lg-6 d-flex align-items-center flex-1">
-                  <img
-                    className="img-fluid"
-                    src="/img/pharmacy-img-19.png"
-                    alt=""
-                  />
-                  <div>
-                    <h6>
-                      {" "}
-                      <a
+                {top2RepeatedProducts?.map((PProduct) => (
+                  <div className=" col-lg-6 d-flex align-items-center flex-1">
+                    <div className="col-lg-6">
+                      <Link
+                        to="/pharmacydesc"
                         className="fw-semibold"
-                        style={{ textDecoration: "none", color: "black" }}
-                        href="/pharmacy"
+                        style={{
+                          textDecoration: "none",
+                          color: "black",
+                          fontSize: "15px",
+                        }}
+                        state={{ item: PProduct }}
                       >
+                        <img
+                          className="img-fluid"
+                          src={`http://localhost:8521/VendorProduct/${PProduct?.vendorIdProductId?.productImgs[0]}`}
+                          alt=""
+                        />
+                      </Link>
+                    </div>
+                    <div className="col-lg-6">
+                      <h6>
                         {" "}
-                        Water pik-Dental Care{" "}
-                      </a>
-                    </h6>
-                    <p className="pb-0">
-                      Covid essentials, device <br /> health condition
-                    </p>
-                    <p className="fw-bolder fs-4 " style={{ color: "#eb3a7b" }}>
-                      $124.98
-                    </p>
-                    <a href="/pharmacy">
-                      <Button className="green-btn-1"></Button>{" "}
-                    </a>
-                  </div>
-                </div>
-
-                <div className=" col-lg-6 d-flex align-items-center flex-1">
-                  <img
-                    className="img-fluid"
-                    src="/img/pharmacy-img-20.png"
-                    alt=""
-                  />
-                  <div>
-                    <h6>
-                      {" "}
-                      <a
-                        className="fw-semibold"
-                        style={{ textDecoration: "none", color: "black" }}
-                        href="/pharmacy"
+                        <Link
+                          to="/pharmacydesc"
+                          className="fw-semibold"
+                          style={{
+                            textDecoration: "none",
+                            color: "black",
+                            fontSize: "15px",
+                          }}
+                          state={{ item: PProduct }}
+                        >
+                          {PProduct?.productName}
+                        </Link>
+                      </h6>
+                      <p className="pb-0">
+                        {PProduct?.description?.slice(0, 60)}...
+                      </p>
+                      <p
+                        className="fw-bolder fs-4 "
+                        style={{ color: "#eb3a7b" }}
                       >
-                        {" "}
-                        Water pik-Dental Care{" "}
+                        {PProduct?.currencyFormat}
+                        {PProduct?.productPrice -
+                          (PProduct?.productPrice * PProduct?.discount) / 100}
+                        <strike style={{ color: "black", marginLeft: "10px" }}>
+                          {PProduct?.productPrice}
+                        </strike>
+                      </p>
+                      <a onClick={() => AddToCart(PProduct)}>
+                        <Button className="green-btn-1"></Button>{" "}
                       </a>
-                    </h6>
-                    <p className="pb-0">
-                      Covid essentials, device <br /> health condition
-                    </p>
-                    <p className="fw-bolder fs-4 " style={{ color: "#eb3a7b" }}>
-                      $124.98
-                    </p>
-                    <a href="/pharmacy">
-                      <Button className="green-btn-1"></Button>{" "}
-                    </a>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
             </Container>
           </div>

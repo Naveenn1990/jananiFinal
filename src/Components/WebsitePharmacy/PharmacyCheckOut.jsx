@@ -236,67 +236,72 @@ export const PharmacyCheckOut = () => {
     // if (CartList?.totalItems > 10) {
     //   return alert("Maximum order limit exceeds!!!");
     // }
-    let flag = 1;
-    CartList?.cartItems?.map((val) => {
-      if (val?.productid?.maxOrderlimit < val?.quantity) {
-        flag = 0;
-        return alert("Maximum order limit exceeds!");
-      }
-    });
-    if (!Object.keys(SelectedAddress).length) {
-      return alert("Please select the address");
-    }
-    if (flag) {
-      try {
-        const config = {
-          url: "/pharmacy/placeorder",
-          method: "post",
-          baseURL: "http://localhost:8521/api",
-          headers: { "content-type": "application/json" },
-          data: {
-            patientid: pharmacyUser?._id,
-            zipcode: SelectedAddress?.Pincode,
-            shippingAddress:
-              SelectedAddress?.houseno +
-              "," +
-              SelectedAddress?.landmark +
-              "," +
-              SelectedAddress?.state,
-            city: SelectedAddress?.city,
-            name: SelectedAddress?.Name,
-            number: SelectedAddress?.number,
-            email: SelectedAddress?.email,
-            paymentOption: PaymentType,
-            orderStatus: "PLACED_ORDER",
-            orderPayment: PaymentType === "PAY_ONLINE" ? "DONE" : "PENDING",
-            orderedItems: CartList?.cartItems,
-            totalOrderedItems: CartList?.totalItems,
-            totalOrderedPrice: CartList?.totalAmt,
-          },
-        };
-        let res = await axios(config);
-        if (res.status === 200) {
-          deleteCart();
-          alert("Order Placed");
-          getAllAddress();
-          setShow(false);
-          navigate("/pharmacytrackorder");
+    if (!PaymentType) {
+      alert("Please select Payment Method");
+    } else {
+      let flag = 1;
+      CartList?.cartItems?.map((val) => {
+        if (val?.productid?.maxOrderlimit < val?.quantity) {
+          flag = 0;
+          return alert("Maximum order limit exceeds!");
         }
-      } catch (error) {
-        console.log(error.response);
-        if (error.response) {
-          alert(error.response.data.error);
+      });
+      if (!Object.keys(SelectedAddress).length) {
+        return alert("Please select the address");
+      }
+      if (flag) {
+        try {
+          const config = {
+            url: "/pharmacy/placeorder",
+            method: "post",
+            baseURL: "http://localhost:8521/api",
+            headers: { "content-type": "application/json" },
+            data: {
+              patientid: pharmacyUser?._id,
+              zipcode: SelectedAddress?.Pincode,
+              shippingAddress:
+                SelectedAddress?.houseno +
+                "," +
+                SelectedAddress?.landmark +
+                "," +
+                SelectedAddress?.state,
+              city: SelectedAddress?.city,
+              name: SelectedAddress?.Name,
+              number: SelectedAddress?.number,
+              email: SelectedAddress?.email,
+              paymentOption: PaymentType,
+              orderStatus: "PLACED_ORDER",
+              orderPayment: PaymentType === "PAY_ONLINE" ? "DONE" : "PENDING",
+              orderedItems: CartList?.cartItems,
+              totalOrderedItems: CartList?.totalItems,
+              totalOrderedPrice: CartList?.totalAmt,
+            },
+          };
+          let res = await axios(config);
+          if (res.status === 200) {
+            deleteCart();
+            alert("Order Placed");
+            getAllAddress();
+            setShow(false);
+            navigate("/pharmacytrackorder");
+          }
+        } catch (error) {
+          console.log(error.response);
+          if (error.response) {
+            alert(error.response.data.error);
+          }
         }
       }
     }
   };
 
+  console.log("CartList", CartList);
   return (
     <div>
       <Headerpharmacy wishlistData={wishlistData} CartItemsList={CartList} />
       <Container className="mt-4">
         <div className="row">
-          <div className="col-lg-8">
+          <div className="col-lg-7">
             <div>
               <b>1) Address</b>
             </div>
@@ -411,12 +416,13 @@ export const PharmacyCheckOut = () => {
               </div>
             </div>
           </div>
-          <div className="col-lg-4 mt-3">
+          <div className="col-lg-5 mt-3">
             <div className="table-rspn">
               <Table>
                 <thead className="all-bg-green">
                   <tr style={{ textAlign: "center" }}>
                     <th className="text-light fw-bold">Sl.No</th>
+                    <th className="text-light fw-bold">Name</th>
                     <th className="text-light fw-bold">Image</th>
                     <th className="text-light fw-bold">Quantity</th>
                     <th className="text-light fw-bold">Price</th>
@@ -427,10 +433,11 @@ export const PharmacyCheckOut = () => {
                     return (
                       <tr style={{ textAlign: "center" }}>
                         <td>{index + 1}</td>
+                        <td>{item?.productid?.productName}</td>
                         <td>
                           <Image
                             className="check-img"
-                            src={`http://localhost:8521/AdminInventory/${item?.productid.productImgs[0]}`}
+                            src={`http://localhost:8521/VendorProduct/${item?.productid?.vendorIdProductId?.productImgs[0]}`}
                           />
                         </td>
                         <td>{item?.quantity}</td>

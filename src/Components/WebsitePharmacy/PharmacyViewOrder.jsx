@@ -131,7 +131,8 @@ export const PharmacyViewOrder = () => {
                   )}
                 </p>
                 <p>
-                  <span className="fw-bold">STATUS : </span>Order Placed
+                  <span className="fw-bold">STATUS : </span>
+                  {orderVal?.orderStatus}
                 </p>
                 <p>
                   <span className="fw-bold">Payment option : </span>
