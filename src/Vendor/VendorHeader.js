@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 
 export const VendorHeader = () => {
   const VendorDetails = JSON.parse(sessionStorage.getItem("VendorDetails"));
-  console.log("VendorDetailsforHeader", VendorDetails);
   return (
     <div>
       <Navbar expand="lg">
@@ -24,7 +23,7 @@ export const VendorHeader = () => {
                 <Button className="red-btn-7"></Button>
               </a>
             </Form> */}
-
+ <h2 class="referral-lab-panel">Vendor Panel</h2>
             <Nav className="ms-auto my-2 my-lg-0" navbarScroll>
               <FontAwesomeIcon
                 icon={faBell}

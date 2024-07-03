@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Container, Nav, Navbar, Form } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 export const ReferLabHeader = () => {
   const ReferalLAB = JSON.parse(sessionStorage.getItem("RLabDetails"));
@@ -25,7 +26,10 @@ export const ReferLabHeader = () => {
             <h2 class="referral-lab-panel">Referral Lab Panel</h2>
 
             <Nav className="ms-auto my-2 my-lg-0" navbarScroll>
+              <Link to={"/ReferLabNotification"}>
               <FontAwesomeIcon icon={faBell} className="notification-icon" />
+              </Link>
+             
               <div className="dropdown">
                 <button className="dropbtn navigation-all fs-6">
                   {ReferalLAB?.Firstname}
