@@ -342,6 +342,7 @@ export const Home = () => {
       formdata.append("Dateofappointment", DOA);
       formdata.append("starttime", srt[0]);
       formdata.append("endtime", srt[1]);
+      formdata.append("ScheduleId", srt[2]);
       try {
         if (validatename(Fname) && ValidateEmail(Email) && phonenumber(Pnum)) {
           const config = {
@@ -379,7 +380,7 @@ export const Home = () => {
     }
   }, [DOA]);
 
-  console.log("Doctors", Doctor, Doctorschedule, DOA, TOA.split("-"));
+  console.log("Doctors", Doctor, Doctorschedule, DOA);
   console.log("selecteTimearray", selecteTimearray);
   return (
     <div>
@@ -708,7 +709,10 @@ export const Home = () => {
                       ))} */}
 
                     {selecteTimearray?.map((shedul) => (
-                      <option value={`${shedul?.startTime}-${shedul?.endTime}`}>
+                      <option
+                        value={`${shedul?.startTime}-${shedul?.endTime}-${shedul?._id}`}
+                      >
+                        {/* <option value={shedul?._id}> */}
                         {shedul?.startTime}-{shedul?.endTime}
                       </option>
                     ))}
