@@ -2,6 +2,7 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Button, Container, Nav, Navbar, Form } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 export const ReferDoctorsHeader = () => {
   const ReferralDocDetails = JSON.parse(
@@ -27,7 +28,10 @@ export const ReferDoctorsHeader = () => {
             </Form> */}
             <h2 className="referral-lab-panel">Referral Clinic Panel</h2>
             <Nav className="ms-auto my-2 my-lg-0" navbarScroll>
+              <Link to={"/ReferDoctorNotification"}>
               <FontAwesomeIcon icon={faBell} className="notification-icon" />
+              </Link>
+            
               <div className="dropdown">
                 <button className="dropbtn navigation-all fs-6">
                   {`${ReferralDocDetails?.Firstname} ${ReferralDocDetails?.Lastname}`}

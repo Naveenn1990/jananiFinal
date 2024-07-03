@@ -267,6 +267,8 @@ import PharmacyCategoryProducts from "./Components/WebsitePharmacy/PharmacyCateg
 import PharmacyBrandProducts from "./Components/WebsitePharmacy/PharmacyBrandProducts";
 import ReferFromClinicPatientList from "./Admin/ReferFromClinicPatientList";
 import NotificationList from "./Admin/NotificationList";
+import ReferDoctorNotification from "./ReferDoctor/ReferDoctorNotification";
+import ReferLabNotification from "./ReferLab/ReferLabNotification";
 
 function App() {
   return (
@@ -1275,6 +1277,18 @@ function App() {
               }
             />
             <Route
+              path="/ReferDoctorNotification"
+              element={
+                <ReferDoctorCommanDashboard
+                  children={
+                    <>
+                      <ReferDoctorNotification />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
               path="/referaddpatient"
               element={
                 <ReferDoctorCommanDashboard
@@ -1532,6 +1546,18 @@ function App() {
                   children={
                     <>
                       <ReferLabDashboard />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/ReferLabNotification"
+              element={
+                <ReferLabCommanDashboard
+                  children={
+                    <>
+                      <ReferLabNotification />
                     </>
                   }
                 />
@@ -2064,6 +2090,7 @@ function App() {
                 </>
               }
             />
+           
             <Route
               path="/admin/referfromclinicpatientlist"
               element={

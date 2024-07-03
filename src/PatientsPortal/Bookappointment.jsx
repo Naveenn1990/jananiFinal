@@ -55,8 +55,59 @@ export const Bookappointment = () => {
   console.log("BookingStatus", BookingStatus);
   console.log("ConsultantDr", ConsultantDr);
 
+  useEffect(() => {
+   if(Others===false){
+    setpatientfirstname(user?.Firstname || "");
+    setpatientlastname(user?.patientlastname || "");
+    setgender(user?.patientlastname || "");
+    setmobileno(user?.patientlastname || "");
+    setAddress(user?.patientlastname || "");
+    setemail(user?.patientlastname || "");
+    setDOB(user?.patientlastname || "");
+   }else{
+    setpatientfirstname("");
+    setpatientlastname("");
+    setgender("");
+    setmobileno("");
+    setAddress("");
+    setemail("");
+    setDOB("");
+   }
+  }, [Others])
+  
+console.log("Others",Others);
   const BookAppointment = async (e) => {
     e.preventDefault();
+    const nameRegex = /^[A-Za-z]{2,30}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\d{10}$/;
+    if (!nameRegex.test(patientfirstname)) {
+      alert('Invalid first name. Only letters are allowed, and it should be between 2 and 30 characters long.');
+      return;
+    }
+    if (!nameRegex.test(patientlastname)) {
+      alert('Invalid last name. Only letters are allowed, and it should be between 2 and 30 characters long.');
+      return;
+    }
+    if(!gender){
+      alert("Please Select Gender")
+      return;
+    }
+    if (!phoneRegex.test(mobileno)) {
+      alert('Invalid phone number. It should be exactly 10 digits long.');
+      return;
+    }
+    if(!Address){
+      alert("Please Enter Your Address");
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      alert('Invalid email address.');
+      return;
+    }
+    if(!DOB){
+      alert("Please Select Date of Birth")
+    }
     formdata.append("token", prefix + randomNumber);
     formdata.append("PatientId", user?._id);
     formdata.append("patientDBId", user?._id);
