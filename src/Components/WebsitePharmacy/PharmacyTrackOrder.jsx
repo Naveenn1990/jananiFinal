@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Table, Modal } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Headerpharmacy } from "./headerpharmacy";
 import axios from "axios";
 import moment from "moment";
@@ -230,7 +230,8 @@ export const PharmacyTrackOrder = () => {
                           <li>
                             Shipping Address :{" "}
                             <span>
-                              {orderVal?.shippingAddress}, {orderVal?.zipcode}
+                              {orderVal?.shippingAddress},{orderVal?.city} -
+                              {orderVal?.zipcode}
                             </span>
                           </li>
 
@@ -274,7 +275,7 @@ export const PharmacyTrackOrder = () => {
                                 border: "1px solid black",
                               }}
                             >
-                              Product
+                              Product Name
                             </th>
                             {/* <th
                             style={{
@@ -299,6 +300,14 @@ export const PharmacyTrackOrder = () => {
                               }}
                             >
                               Total Price
+                            </th>
+                            <th
+                              style={{
+                                textAlign: "center",
+                                border: "1px solid black",
+                              }}
+                            >
+                              View Product details
                             </th>
                             <th
                               style={{
@@ -344,6 +353,21 @@ export const PharmacyTrackOrder = () => {
                                     /-
                                   </td>
                                   <td>
+                                    <Link
+                                      style={{
+                                        border: "none",
+                                        backgroundColor: "transparent",
+                                      }}
+                                      to="/pharmacydesc"
+                                      state={{ item: val?.productid }}
+                                    >
+                                      <i
+                                        class="fas fa-eye"
+                                        style={{ color: "#208b8c" }}
+                                      ></i>
+                                    </Link>
+                                  </td>
+                                  <td>
                                     <Button
                                       style={{ backgroundColor: "#d51212" }}
                                       onClick={() => {
@@ -362,7 +386,7 @@ export const PharmacyTrackOrder = () => {
                         </Table>
                       </div>
 
-                      <div className="col-lg-2">
+                      {/* <div className="col-lg-2">
                         <Button
                           onClick={() =>
                             navigate("/pharmacyvieworder", {
@@ -374,13 +398,11 @@ export const PharmacyTrackOrder = () => {
                             marginBottom: "10px",
                           }}
                         >
-                          View Order
+                          View Invoice
                         </Button>
                         <br />
-                        {/* <Button style={{ backgroundColor: "#d51212" }}>
-                          Cancel Order
-                        </Button> */}
-                      </div>
+                      
+                      </div> */}
                     </div>
                   );
                 })}
@@ -477,7 +499,7 @@ export const PharmacyTrackOrder = () => {
                               <li>
                                 Shipping Address :{" "}
                                 <span>
-                                  {orderVal?.shippingAddress},{" "}
+                                  {orderVal?.shippingAddress},{orderVal?.city} -
                                   {orderVal?.zipcode}
                                 </span>
                               </li>
@@ -714,8 +736,8 @@ export const PharmacyTrackOrder = () => {
                                   <li>
                                     Shipping Address :{" "}
                                     <span>
-                                      {orderVal?.shippingAddress},{" "}
-                                      {orderVal?.zipcode}
+                                      {orderVal?.shippingAddress},
+                                      {orderVal?.city} -{orderVal?.zipcode}
                                     </span>
                                   </li>
 
@@ -906,173 +928,194 @@ export const PharmacyTrackOrder = () => {
                         </div>
                       </div> */}
 
-                          {orderlistDetails?.map((orderVal) => {
-                            return (
-                              <div className="row align-items-center border border-secondary">
-                                <div className="col-lg-3">
-                                  <p
-                                    className="ms-4 fw-bold"
-                                    style={{
-                                      color: "#208b8c",
-                                      textDecoration: "underline",
-                                    }}
-                                  >
-                                    Product Details
-                                  </p>
-                                  <ul>
-                                    <li>
-                                      Order Placed :{" "}
-                                      <span>
-                                        {`${new Date(
-                                          orderVal?.createdAt
-                                        ).getDate()}-${
-                                          new Date(
+                          {orderlistDetails
+                            ?.filter(
+                              (item) => item?.orderStatus === "DELIVERED"
+                            )
+                            ?.map((orderVal) => {
+                              return (
+                                <div className="row align-items-center border border-secondary">
+                                  <div className="col-lg-3">
+                                    <p
+                                      className="ms-4 fw-bold"
+                                      style={{
+                                        color: "#208b8c",
+                                        textDecoration: "underline",
+                                      }}
+                                    >
+                                      Product Details
+                                    </p>
+                                    <ul>
+                                      <li>
+                                        Order Placed :{" "}
+                                        <span>
+                                          {`${new Date(
                                             orderVal?.createdAt
-                                          ).getMonth() + 1
-                                        }-${new Date(
-                                          orderVal?.createdAt
-                                        ).getFullYear()}`}{" "}
-                                        {`${new Date(
-                                          orderVal?.createdAt
-                                        ).getHours()}:${new Date(
-                                          orderVal?.createdAt
-                                        ).getMinutes()}`}
-                                      </span>
-                                    </li>
-                                    <li>
-                                      Shipping Address :{" "}
-                                      <span>
-                                        {orderVal?.shippingAddress},{" "}
-                                        {orderVal?.zipcode}
-                                      </span>
-                                    </li>
+                                          ).getDate()}-${
+                                            new Date(
+                                              orderVal?.createdAt
+                                            ).getMonth() + 1
+                                          }-${new Date(
+                                            orderVal?.createdAt
+                                          ).getFullYear()}`}{" "}
+                                          {`${new Date(
+                                            orderVal?.createdAt
+                                          ).getHours()}:${new Date(
+                                            orderVal?.createdAt
+                                          ).getMinutes()}`}
+                                        </span>
+                                      </li>
+                                      <li>
+                                        Shipping Address :{" "}
+                                        <span>
+                                          {orderVal?.shippingAddress},
+                                          {orderVal?.city} -{orderVal?.zipcode}
+                                        </span>
+                                      </li>
 
-                                    <li>
-                                      Total Ordered Items :{" "}
-                                      <span>{orderVal?.totalOrderedItems}</span>
-                                    </li>
-                                    <li>
-                                      Total Ordered Price :{" "}
-                                      <span>
-                                        {orderVal?.totalOrderedPrice}/-
-                                      </span>
-                                    </li>
-                                    <li>
-                                      Payment Option :{" "}
-                                      <span>
-                                        {orderVal?.paymentOption ==
-                                        "PAY_ON_DELIVERY" ? (
-                                          <>Cash On Delivery</>
-                                        ) : (
-                                          <>Online Paid</>
-                                        )}
-                                      </span>
-                                    </li>
-                                    <li>
-                                      Payment Status :{" "}
-                                      <span>
-                                        {orderVal?.orderPayment == "DONE" ? (
-                                          <span style={{ color: "green" }}>
-                                            Paid
-                                          </span>
-                                        ) : (
-                                          <span style={{ color: "red" }}>
-                                            Not Paid
-                                          </span>
-                                        )}
-                                      </span>
-                                    </li>
-                                  </ul>
-                                </div>
+                                      <li>
+                                        Total Ordered Items :{" "}
+                                        <span>
+                                          {orderVal?.totalOrderedItems}
+                                        </span>
+                                      </li>
+                                      <li>
+                                        Total Ordered Price :{" "}
+                                        <span>
+                                          {orderVal?.totalOrderedPrice}/-
+                                        </span>
+                                      </li>
+                                      <li>
+                                        Payment Option :{" "}
+                                        <span>
+                                          {orderVal?.paymentOption ==
+                                          "PAY_ON_DELIVERY" ? (
+                                            <>Cash On Delivery</>
+                                          ) : (
+                                            <>Online Paid</>
+                                          )}
+                                        </span>
+                                      </li>
+                                      <li>
+                                        Payment Status :{" "}
+                                        <span>
+                                          {orderVal?.orderPayment == "DONE" ? (
+                                            <span style={{ color: "green" }}>
+                                              Paid
+                                            </span>
+                                          ) : (
+                                            <span style={{ color: "red" }}>
+                                              Not Paid
+                                            </span>
+                                          )}
+                                        </span>
+                                      </li>
+                                    </ul>
+                                  </div>
 
-                                <div className="col-lg-7">
-                                  <Table>
-                                    <thead>
-                                      <th
-                                        style={{
-                                          textAlign: "center",
-                                          border: "1px solid black",
-                                        }}
-                                      >
-                                        Product
-                                      </th>
-                                      <th
-                                        style={{
-                                          textAlign: "center",
-                                          border: "1px solid black",
-                                        }}
-                                      >
-                                        Price
-                                      </th>
-                                      <th
-                                        style={{
-                                          textAlign: "center",
-                                          border: "1px solid black",
-                                        }}
-                                      >
-                                        Quantity
-                                      </th>
-                                      <th
-                                        style={{
-                                          textAlign: "center",
-                                          border: "1px solid black",
-                                        }}
-                                      >
-                                        Total Price
-                                      </th>
-                                    </thead>
-                                    <tbody>
-                                      {orderVal?.orderedItems?.map((val) => {
-                                        return (
-                                          <tr>
-                                            <td className="row">
-                                              <span className="col-md-2">
-                                                <img
-                                                  style={{ width: "50px" }}
-                                                  src={`http://localhost:8521/AdminInventory/${val?.productid?.productImgs[0]}`}
-                                                  alt=""
-                                                />
-                                              </span>{" "}
-                                              <span className="col-md-10">
-                                                {val?.productid?.productName}
-                                              </span>
-                                            </td>
-                                            <td>
-                                              {val?.productid?.productPrice -
-                                                (val?.productid?.productPrice *
-                                                  val?.productid?.discount) /
-                                                  100}
-                                              /-
-                                            </td>
-                                            <td>{val?.quantity}</td>
-                                            <td>
-                                              {(val?.productid?.productPrice -
-                                                (val?.productid?.productPrice *
-                                                  val?.productid?.discount) /
-                                                  100) *
-                                                val?.quantity}
-                                              /-
-                                            </td>
-                                          </tr>
-                                        );
-                                      })}
-                                    </tbody>
-                                  </Table>
-                                </div>
+                                  <div className="col-lg-7">
+                                    <Table>
+                                      <thead>
+                                        <th
+                                          style={{
+                                            textAlign: "center",
+                                            border: "1px solid black",
+                                          }}
+                                        >
+                                          Product
+                                        </th>
+                                        <th
+                                          style={{
+                                            textAlign: "center",
+                                            border: "1px solid black",
+                                          }}
+                                        >
+                                          Price
+                                        </th>
+                                        <th
+                                          style={{
+                                            textAlign: "center",
+                                            border: "1px solid black",
+                                          }}
+                                        >
+                                          Quantity
+                                        </th>
+                                        <th
+                                          style={{
+                                            textAlign: "center",
+                                            border: "1px solid black",
+                                          }}
+                                        >
+                                          Total Price
+                                        </th>
+                                      </thead>
+                                      <tbody>
+                                        {orderVal?.orderedItems?.map((val) => {
+                                          return (
+                                            <tr>
+                                              <td className="row">
+                                                <span className="col-md-2">
+                                                  <img
+                                                    style={{ width: "50px" }}
+                                                    src={`http://localhost:8521/AdminInventory/${val?.productid?.productImgs[0]}`}
+                                                    alt=""
+                                                  />
+                                                </span>{" "}
+                                                <span className="col-md-10">
+                                                  {val?.productid?.productName}
+                                                </span>
+                                              </td>
+                                              <td>
+                                                {val?.productid?.productPrice -
+                                                  (val?.productid
+                                                    ?.productPrice *
+                                                    val?.productid?.discount) /
+                                                    100}
+                                                /-
+                                              </td>
+                                              <td>{val?.quantity}</td>
+                                              <td>
+                                                {(val?.productid?.productPrice -
+                                                  (val?.productid
+                                                    ?.productPrice *
+                                                    val?.productid?.discount) /
+                                                    100) *
+                                                  val?.quantity}
+                                                /-
+                                              </td>
+                                            </tr>
+                                          );
+                                        })}
+                                      </tbody>
+                                    </Table>
+                                  </div>
 
-                                <div className="col-lg-2">
-                                  <Button
-                                    onClick={() =>
-                                      navigate("/pharmacyorderinvoice")
-                                    }
-                                    style={{ backgroundColor: "#09ab09" }}
-                                  >
-                                    Invoice
-                                  </Button>
+                                  <div className="col-lg-2">
+                                    {/* <Button
+                                      onClick={() =>
+                                        navigate("/pharmacyorderinvoice")
+                                      }
+                                      style={{ backgroundColor: "#09ab09" }}
+                                    >
+                                      Invoice
+                                    </Button> */}
+                                    <Button
+                                      onClick={() =>
+                                        navigate("/pharmacyvieworder", {
+                                          state: { orderVal: orderVal },
+                                        })
+                                      }
+                                      style={{
+                                        backgroundColor: "#208b8c",
+                                        marginBottom: "10px",
+                                      }}
+                                    >
+                                      View Invoice
+                                    </Button>
+                                  </div>
                                 </div>
-                              </div>
-                            );
-                          })}
+                              );
+                            })}
                         </div>
                       </>
                     ) : (

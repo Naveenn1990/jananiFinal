@@ -263,6 +263,8 @@ import AddPatientRefHospital from "./ReferDoctor/AddPatientRefHospital";
 import ReferHospitalpatientList from "./ReferDoctor/ReferHospitalpatientList";
 import { VendorNotification } from "./Vendor/VendorNotification";
 import DoctorReferPatientList from "./ReferLab/DoctorReferPatientList";
+import PharmacyCategoryProducts from "./Components/WebsitePharmacy/PharmacyCategoryProducts";
+import PharmacyBrandProducts from "./Components/WebsitePharmacy/PharmacyBrandProducts";
 import ReferFromClinicPatientList from "./Admin/ReferFromClinicPatientList";
 import NotificationList from "./Admin/NotificationList";
 import ReferDoctorNotification from "./ReferDoctor/ReferDoctorNotification";
@@ -462,6 +464,26 @@ function App() {
                 <>
                   {/* <Headerpharmacy /> */}
                   <PharmacyProducts />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/PharmacyCategoryProducts"
+              element={
+                <>
+                  {/* <Headerpharmacy /> */}
+                  <PharmacyCategoryProducts />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/PharmacyBrandProducts"
+              element={
+                <>
+                  {/* <Headerpharmacy /> */}
+                  <PharmacyBrandProducts />
                   <Footer />
                 </>
               }

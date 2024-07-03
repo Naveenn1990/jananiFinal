@@ -55,10 +55,10 @@ export const Headerpharmacy = React.memo(({ wishlistData, CartItemsList }) => {
   //   };
 
   console.log("asfasfalksfasf: ", wishlistData, CartItemsList);
-  const logout =()=>{
-    sessionStorage.removeItem("pharmacyUser")
+  const logout = () => {
+    sessionStorage.removeItem("pharmacyUser");
     window.location.href = "/pharmacy";
-  }
+  };
   return (
     <div>
       <Navbar
@@ -108,7 +108,7 @@ export const Headerpharmacy = React.memo(({ wishlistData, CartItemsList }) => {
               style={{ maxHeight: "100px" }}
               navbarScroll
             >
-              <Form className="d-flex search-width">
+              {/* <Form className="d-flex search-width">
                 <Form.Control
                   type="search"
                   placeholder="Search"
@@ -119,7 +119,7 @@ export const Headerpharmacy = React.memo(({ wishlistData, CartItemsList }) => {
                 <a href="#">
                   <Button className="red-btn-7 search-btn"></Button>
                 </a>
-              </Form>
+              </Form> */}
 
               {JSON.parse(pharmacyUser) ? (
                 <Dropdown>
@@ -136,9 +136,7 @@ export const Headerpharmacy = React.memo(({ wishlistData, CartItemsList }) => {
                       My Order
                     </Dropdown.Item>
                     {/* <Dropdown.Item href="/pharmacymyprofile">Profile</Dropdown.Item> */}
-                    <Dropdown.Item
-                      onClick={() =>logout()}
-                    >
+                    <Dropdown.Item onClick={() => logout()}>
                       Logout
                     </Dropdown.Item>
                   </Dropdown.Menu>

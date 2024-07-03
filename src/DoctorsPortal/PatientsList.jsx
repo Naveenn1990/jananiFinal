@@ -69,7 +69,7 @@ export const PatientsList = () => {
       });
   };
 
-  const [SelectTime, setSelectTime] = useState("")
+  const [SelectTime, setSelectTime] = useState("");
 
   const [Topic, setTopic] = useState("");
   const [description, setdescription] = useState("");
@@ -149,13 +149,14 @@ export const PatientsList = () => {
 
   useEffect(() => {
     getpatientlist();
-    getAppointmentList()
+    getAppointmentList();
   }, []);
 
   console.log("patientlist: ", patientlist);
   const [selectedcauseid, setselectedcauseid] = useState("");
   const [Patientcauseid, setPatientcauseid] = useState("");
-  console.log("selectedcauseid", selectedcauseid);
+  console.log("selectedcauseid43493:", selectedcauseid);
+  console.log("Patientcauseid43493: ", Patientcauseid);
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
@@ -246,13 +247,12 @@ export const PatientsList = () => {
                             <button
                               title="Daily Doctor report"
                               className="table-details-btn mb-2"
-                              
                               onClick={() => {
                                 handleShow6();
                                 setselectedcauseid(item);
                               }}
                             >
-                              Prescription 
+                              Prescription
                             </button>
                           ) : (
                             <></>
@@ -368,7 +368,7 @@ export const PatientsList = () => {
                 alt=""
                 // src="./img/department-img-1.jpg"
                 src={`http://localhost:8521/PatientREG/${ShowPatientData?.profilepic}`}
-                style={{ width: "100%",height:"300px" }}
+                style={{ width: "100%", height: "300px" }}
               />
               <div style={{ border: "1px solid lightgrey" }}>
                 <h6
@@ -712,8 +712,14 @@ export const PatientsList = () => {
             aria-label="Default select example"
           >
             <option>select date</option>
-            {AppointmentList?.filter((ele)=>ele?.PatientId === selectedcauseid?._id)?.map((item) => {
-              return <option value={JSON.stringify(item)}>{item?.Dateofappointment}</option>;
+            {AppointmentList?.filter(
+              (ele) => ele?.PatientId === selectedcauseid?._id
+            )?.map((item) => {
+              return (
+                <option value={JSON.stringify(item)}>
+                  {item?.Dateofappointment}
+                </option>
+              );
             })}
           </Form.Select>
         </Modal.Body>
@@ -737,8 +743,6 @@ export const PatientsList = () => {
           )}
         </Modal.Footer>
       </Modal>
-
-
     </div>
   );
 };

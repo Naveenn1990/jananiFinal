@@ -26,7 +26,7 @@ export const Footer = () => {
 
   return (
     <div>
-      <div className="margin-top me-0">
+      <div className="me-0">
         <MDBFooter className="text-white text-center text-lg-left all-bg-green">
           <MDBContainer className="p-4">
             <MDBRow className="gap-3">

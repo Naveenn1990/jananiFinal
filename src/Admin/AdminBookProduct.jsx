@@ -148,6 +148,8 @@ function AdminBookProduct() {
       setinventoryList([...inventoryList]);
     }
   };
+
+  console.log("inventoryList", inventoryList);
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -649,7 +651,7 @@ function AdminBookProduct() {
                         <td>
                           <img
                             alt=""
-                            src={`http://localhost:8521/AdminInventory/${details?.productImgs[0]}`}
+                            src={`http://localhost:8521/VendorProduct/${details?.vendorIdProductId?.productImgs[0]}`}
                             style={{ width: "100px", height: "100px" }}
                           />
                         </td>

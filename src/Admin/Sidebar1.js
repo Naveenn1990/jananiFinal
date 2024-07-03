@@ -227,6 +227,7 @@ export default function Sidebar1() {
               Add Product Category
             </h6>
           </Link>
+
           <Link to={"/admin/ProductBrands"}>
             <h6
               className="sidebarItem1"

@@ -2,7 +2,7 @@ import { Checkbox } from "@mui/material";
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import {Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 
 import { useLocation } from "react-router-dom";
 
@@ -32,6 +32,9 @@ function DoctorsViewForms() {
   const [DocTreatChart, setDocTreatChart] = useState(true);
   const [DocNotes, setDocNotes] = useState(false);
   const [SurgeryReport, setSurgeryReport] = useState(false);
+  const [LabTestsRequirements, setLabTestsRequirements] = useState(false);
+
+  console.log("CauseDetails44trt54555665435: ", CauseDetails);
   return (
     <div>
       <div className="d-flex justify-content-around p-5">
@@ -47,6 +50,7 @@ function DoctorsViewForms() {
             setDocTreatChart(true);
             setDocNotes(false);
             setSurgeryReport(false);
+            setLabTestsRequirements(false);
           }}
         >
           <div>
@@ -67,6 +71,7 @@ function DoctorsViewForms() {
             setDocTreatChart(false);
             setDocNotes(true);
             setSurgeryReport(false);
+            setLabTestsRequirements(false);
           }}
         >
           Doctors Notes
@@ -85,9 +90,29 @@ function DoctorsViewForms() {
             setDocTreatChart(false);
             setDocNotes(false);
             setSurgeryReport(true);
+            setLabTestsRequirements(false);
           }}
         >
           Surgery Report
+        </button>
+
+        <button
+          style={{
+            padding: "6px",
+            border: "1px solid white",
+            backgroundColor: "#20958c",
+            color: "white",
+            borderRadius: "0px",
+          }}
+          // onClick={() => navigate("/admin/SurgeryReport")}
+          onClick={() => {
+            setDocTreatChart(false);
+            setDocNotes(false);
+            setSurgeryReport(false);
+            setLabTestsRequirements(true);
+          }}
+        >
+          Lab Test
         </button>
       </div>
 
@@ -816,7 +841,7 @@ function DoctorsViewForms() {
                           return (
                             <>
                               <div>
-                                <b>Surgery : </b> {i+1}
+                                <b>Surgery : </b> {i + 1}
                               </div>
                               <Table>
                                 <tr>
@@ -826,15 +851,20 @@ function DoctorsViewForms() {
                                       border: "2px  solid #20958C",
                                     }}
                                   >
-                                    <div><b>Pre-Operative Operation : </b> {item?.PreOperativeDiagnosis}</div>
-                                   
+                                    <div>
+                                      <b>Pre-Operative Operation : </b>{" "}
+                                      {item?.PreOperativeDiagnosis}
+                                    </div>
                                   </td>
                                   <td
                                     style={{
                                       border: "2px  solid #20958C",
                                     }}
                                   >
-                                     <div><b>Name of Operaton : </b> {item?.NameofOperation}</div>
+                                    <div>
+                                      <b>Name of Operaton : </b>{" "}
+                                      {item?.NameofOperation}
+                                    </div>
                                   </td>
                                 </tr>
                                 <tr style={{ border: "2px  solid #20958C" }}>
@@ -847,10 +877,10 @@ function DoctorsViewForms() {
                                 </tr>
                                 <tr>
                                   <td style={{ border: "2px  solid #20958C" }}>
-                                   <b>Swab / Instruments : </b> {" "}
+                                    <b>Swab / Instruments : </b>{" "}
                                   </td>
                                   <td style={{ border: "2px  solid #20958C" }}>
-                                {item?.ReportCheck}
+                                    {item?.ReportCheck}
                                   </td>
                                   <td style={{ border: "2px  solid #20958C" }}>
                                     Doctor's Signature
@@ -863,11 +893,90 @@ function DoctorsViewForms() {
                       </div>
                     </div>
                   </div>
-
-                 
                 </>
               ) : (
-                <></>
+                <>
+                  {LabTestsRequirements ? (
+                    <>
+                      <div className="text-center mt-1">
+                        {" "}
+                        <h6
+                          className="fw-bold mt-2"
+                          style={{ color: "#20958C", fontSize: "30px" }}
+                        >
+                          LAB TESTS
+                        </h6>
+                      </div>
+                      <div
+                        id="pdf"
+                        style={{
+                          padding: "30px",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <Table bordered style={{ textAlign: "center" }}>
+                          <thead>
+                            <th>S.no.</th>
+                            <th>Date</th>
+                            <th>Details</th>
+                            {/* <th>General Ref Value</th>
+                            <th>Unit</th> */}
+                          </thead>
+                          <tbody>
+                            {CauseDetails?.RecommendedLabTest?.map(
+                              (dataval, index) => {
+                                return (
+                                  <tr>
+                                    <td>{index + 1}.</td>
+                                    <td>
+                                      {`${new Date(
+                                        dataval?.createdAt
+                                      )?.getDate()}-${
+                                        new Date(
+                                          dataval?.createdAt
+                                        )?.getMonth() + 1
+                                      }-${new Date(
+                                        dataval?.createdAt
+                                      )?.getFullYear()}`}
+                                    </td>
+                                    <td>
+                                      <Table bordered>
+                                        <thead>
+                                          <th>S.no.</th>
+                                          <th>Test Name</th>
+                                          <th>General Ref value</th>
+                                          <th>Unit</th>
+                                        </thead>
+                                        <tbody>
+                                          {dataval?.labTestBookingId?.Labtests?.map(
+                                            (valitem, i) => {
+                                              return (
+                                                <tr>
+                                                  <td>{i}.</td>
+                                                  <td>{valitem?.testName}</td>
+                                                  <td>
+                                                    {valitem?.generalRefVal}
+                                                  </td>
+                                                  <td>{valitem?.unit}</td>
+                                                </tr>
+                                              );
+                                            }
+                                          )}
+                                        </tbody>
+                                      </Table>
+                                    </td>
+                                  </tr>
+                                );
+                              }
+                            )}
+                          </tbody>
+                        </Table>
+                      </div>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </>
               )}
             </>
           )}

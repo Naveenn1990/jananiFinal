@@ -81,7 +81,8 @@ export default function ProductCustomerOrder() {
       if (res.status === 200) {
         // setOrders(res.data.updateStatus);
         orderList();
-        alert(res.data.success);
+        alert("Order Status changed successfully");
+        window.location.reload();
       }
     } catch (error) {
       console.log(error);
@@ -597,7 +598,7 @@ export default function ProductCustomerOrder() {
                         {Invoice?.orderedItems?.map((item, i) => {
                           return (
                             <tr>
-                              <td>{i+1}</td>
+                              <td>{i + 1}</td>
                               <td>{item?.productid?.productName}</td>
                               <td>&#8377;{item?.productid?.productPrice}</td>
                               <td>{item?.quantity}</td>
@@ -618,11 +619,15 @@ export default function ProductCustomerOrder() {
                             <td className="fw-bold p-0 text-start">
                               Total Quantity :
                             </td>
-                            <td className="p-0 text-end">{Invoice?.totalOrderedItems}</td>
+                            <td className="p-0 text-end">
+                              {Invoice?.totalOrderedItems}
+                            </td>
                           </tr>
                           <tr>
                             <td className="fw-bold p-0 text-start">Total :</td>
-                            <td className="p-0 text-end">&#8377;{Invoice?.totalOrderedPrice}</td>
+                            <td className="p-0 text-end">
+                              &#8377;{Invoice?.totalOrderedPrice}
+                            </td>
                           </tr>
                           {/* <tr>
                             <td className="fw-bold p-0 text-start">

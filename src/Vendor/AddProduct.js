@@ -294,13 +294,29 @@ export const AddProduct = () => {
       console.error(error);
     }
   };
+
+  const [brandList, setbrandList] = useState([]);
+  const getBrands = async () => {
+    try {
+      const res = await axios.get("http://localhost:8521/api/admin/brandsList");
+      if (res.status === 200) {
+        setbrandList(res.data.list);
+      }
+    } catch (error) {
+      console.log(error);
+      setbrandList(error.response.data.list);
+    }
+  };
+
   useEffect(() => {
     getAllCategory();
     getAllSubCategory();
     getAllData();
+    getBrands();
   }, []);
-  console.log("categoryList", categoryList);
-  console.log("subcategoryList", subcategoryList);
+
+  console.log("brandList", brandList);
+
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
@@ -642,12 +658,21 @@ export const AddProduct = () => {
           <div className="col-lg-3">
             <label className="fw-bold text-dark">Brand</label>
             <InputGroup className="mb-3">
-              <Form.Control
+              {/* <Form.Control
                 type="text"
                 placeholder="brand"
                 aria-describedby="basic-addon1"
                 onChange={(e) => setbrand(e.target.value)}
-              />
+              /> */}
+              <Form.Select
+                aria-label="Default select example"
+                onChange={(e) => setbrand(e.target.value)}
+              >
+                <option>Select Brand</option>
+                {brandList?.map((brand) => (
+                  <option value={brand?.brandName}>{brand?.brandName}</option>
+                ))}
+              </Form.Select>
             </InputGroup>
           </div>
 

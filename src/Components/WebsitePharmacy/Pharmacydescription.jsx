@@ -15,17 +15,21 @@ function Pharmacydescription(props) {
   const location = useLocation();
   const { item } = location.state;
 
+  console.log("item", item);
+
   const [showMore, setShowMore] = useState(false);
   const [RelatedProduct, setRelatedProduct] = useState([]);
 
   const [qty, setqty] = useState(1);
 
   const [previewImg, setPreviewImg] = useState(
-    "http://localhost:8521/AdminInventory/" + item?.productImgs[0]
+    "http://localhost:8521/VendorProduct/" +
+      item?.vendorIdProductId?.productImgs[0]
   );
   useEffect(() => {
     setPreviewImg(
-      "http://localhost:8521/AdminInventory/" + item?.productImgs[0]
+      "http://localhost:8521/VendorProduct/" +
+        item?.vendorIdProductId?.productImgs[0]
     );
     window.scrollTo(0, 0);
   }, [item]);
@@ -186,9 +190,7 @@ function Pharmacydescription(props) {
   };
 
   useEffect(() => {
-    if (!pharmacyUser) {
-      return alert("Please login first!!!");
-    } else {
+    if (pharmacyUser) {
       getWishlist();
       getCartItems();
     }
@@ -226,8 +228,8 @@ function Pharmacydescription(props) {
                           }`}
                           onClick={() => {
                             setPreviewImg(
-                              "http://localhost:8521/AdminInventory/" +
-                                item?.productImgs[0]
+                              "http://localhost:8521/VendorProduct/" +
+                                item?.vendorIdProductId?.productImgs[0]
                             );
                             setacc1(true);
                             setacc2(false);
@@ -237,8 +239,8 @@ function Pharmacydescription(props) {
                         >
                           <img
                             src={
-                              "http://localhost:8521/AdminInventory/" +
-                              item?.productImgs[0]
+                              "http://localhost:8521/VendorProduct/" +
+                              item?.vendorIdProductId?.productImgs[0]
                             }
                             alt=""
                             className=" img-fluid wt-50"
@@ -251,8 +253,8 @@ function Pharmacydescription(props) {
                           }`}
                           onClick={() => {
                             setPreviewImg(
-                              "http://localhost:8521/AdminInventory/" +
-                                item?.productImgs[1]
+                              "http://localhost:8521/VendorProduct/" +
+                                item?.vendorIdProductId?.productImgs[1]
                             );
                             setacc1(false);
                             setacc2(true);
@@ -262,8 +264,8 @@ function Pharmacydescription(props) {
                         >
                           <img
                             src={
-                              "http://localhost:8521/AdminInventory/" +
-                              item?.productImgs[1]
+                              "http://localhost:8521/VendorProduct/" +
+                              item?.vendorIdProductId?.productImgs[1]
                             }
                             alt=""
                             className="img-fluid wt-50"
@@ -277,8 +279,8 @@ function Pharmacydescription(props) {
                           }`}
                           onClick={() => {
                             setPreviewImg(
-                              "http://localhost:8521/AdminInventory/" +
-                                item?.productImgs[2]
+                              "http://localhost:8521/VendorProduct/" +
+                                item?.vendorIdProductId?.productImgs[2]
                             );
                             setacc1(false);
                             setacc2(false);
@@ -288,8 +290,8 @@ function Pharmacydescription(props) {
                         >
                           <img
                             src={
-                              "http://localhost:8521/AdminInventory/" +
-                              item?.productImgs[2]
+                              "http://localhost:8521/VendorProduct/" +
+                              item?.vendorIdProductId?.productImgs[2]
                             }
                             alt=""
                             className="img-fluid wt-50"
@@ -302,8 +304,8 @@ function Pharmacydescription(props) {
                           }`}
                           onClick={() => {
                             setPreviewImg(
-                              "http://localhost:8521/AdminInventory/" +
-                                item?.productImgs[3]
+                              "http://localhost:8521/VendorProduct/" +
+                                item?.vendorIdProductId?.productImgs[3]
                             );
                             setacc1(false);
                             setacc2(false);
@@ -313,8 +315,8 @@ function Pharmacydescription(props) {
                         >
                           <img
                             src={
-                              "http://localhost:8521/AdminInventory/" +
-                              item?.productImgs[3]
+                              "http://localhost:8521/VendorProduct/" +
+                              item?.vendorIdProductId?.productImgs[3]
                             }
                             alt=""
                             className="img-fluid wt-50"
@@ -332,7 +334,7 @@ function Pharmacydescription(props) {
                             {item?.productName} - {item?.productSize}
                           </h2>
                         </div>
-                        <div className="product-ratting mb-2">
+                        {/* <div className="product-ratting mb-2">
                           <span
                             className="spr-badge"
                             id="spr_badge_6820894441621"
@@ -346,7 +348,7 @@ function Pharmacydescription(props) {
                               <i class="fa fa-star" aria-hidden="true"></i>
                             </span>
                           </span>
-                        </div>
+                        </div> */}
                         <div class="pro-price-label mb-2">
                           <div class="price-box">
                             <span class="new-price" id="ProductPrice">
