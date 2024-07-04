@@ -220,7 +220,7 @@ export default function Hospitaldoctors() {
           // console.log(res.data.Success);
           setShow(false);
           getDoctors();
-          alert("Signup Success");
+          alert("Doctor Register Successfully");
           // window.location.assign("/patientPortal");
         }
       } catch (error) {
