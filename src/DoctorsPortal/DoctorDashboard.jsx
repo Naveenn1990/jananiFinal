@@ -2,21 +2,33 @@ import React, { useEffect } from "react";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 import { Container, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faC, faD, faM, faH, faL, faArrowUp, faArrowDown, faMinus, faFilePdf } from "@fortawesome/free-solid-svg-icons";
-import { BsFillPeopleFill, BsFillCalendar2CheckFill, BsFileEarmarkPdf } from "react-icons/bs";
+import {
+  faC,
+  faD,
+  faM,
+  faH,
+  faL,
+  faArrowUp,
+  faArrowDown,
+  faMinus,
+  faFilePdf,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  BsFillPeopleFill,
+  BsFillCalendar2CheckFill,
+  BsFileEarmarkPdf,
+} from "react-icons/bs";
 import { BiCut, BiLogoInternetExplorer } from "react-icons/bi";
-import { Modal, ProgressBar, } from 'react-bootstrap';
+import { Modal, ProgressBar } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
 import moment from "moment";
 
 export const DoctorDashboard = () => {
+  const [show, setShow] = useState();
 
-
-  const [show, setShow] = useState()
-
-  const ReadMoreClose = () => setShow(false)
-  const ReadMoreShow = () => setShow(true)
+  const ReadMoreClose = () => setShow(false);
+  const ReadMoreShow = () => setShow(true);
 
   const [patientlist, setpatientlist] = useState([]);
 
@@ -76,16 +88,15 @@ export const DoctorDashboard = () => {
   }, []);
 
   const today = moment().format("dddd"); // "dddd" format gives the full weekday name
-console.log(today);
+  console.log(today);
 
+  const TodayAppointmet = AppointmentList?.filter(
+    (appoint) => appoint.Dateofappointment === moment().format("YYYY-MM-DD")
+  );
+  console.log("AppointmentList", AppointmentList);
   return (
     <div>
-
-
       <Container fluid className="mt-5">
-
-
-
         <div className="row gap-2 align-items-center justify-content-center">
           <div
             className="col-lg-2 text-light p-3  "
@@ -110,7 +121,9 @@ console.log(today);
           >
             <h6 className="fs-4 fw-bold">Appointments</h6>
             <BsFillCalendar2CheckFill className="me-5 float-start fs-2 mt-2" />
-            <span className="fs-2 fw-bold ms-5 ">{AppointmentList?.length}</span>
+            <span className="fs-2 fw-bold ms-5 ">
+              {AppointmentList?.length}
+            </span>
             <p>21% Higher Then Last Month</p>
           </div>
 
@@ -128,7 +141,6 @@ console.log(today);
             <p>10% Higher Then Last Month</p>
           </div>
 
-
           <div
             className="col-lg-2 text-light p-3"
             style={{
@@ -139,11 +151,13 @@ console.log(today);
           >
             <h6 className="fs-4 fw-bold text-light">Online Appointment</h6>
             <BiLogoInternetExplorer className="me-5 float-start fs-2 mt-2" />
-            <span className="fs-2 fw-bold ms-5 "> {AppointmentList?.length}</span>
+            <span className="fs-2 fw-bold ms-5 ">
+              {" "}
+              {AppointmentList?.length}
+            </span>
             <p>37% Higher Then Last Month</p>
           </div>
         </div>
-
 
         <Container className="margin-top">
           <div className="row ">
@@ -151,8 +165,8 @@ console.log(today);
               <h3 className="fw-bold">Todays Appointment</h3>
               <Table responsive className="table table-borderless">
                 <thead>
-                  <tr className="admin-table-head" >
-                    <th className="fw-bold">#</th>
+                  <tr className="admin-table-head">
+                    <th className="fw-bold">PatientId</th>
                     <th className="fw-bold">Patient</th>
                     <th className="fw-bold">Gender</th>
                     {/* <th className="fw-bold">Last Visit Doc</th> */}
@@ -162,30 +176,44 @@ console.log(today);
                   </tr>
                 </thead>
                 <tbody>
-                  {AppointmentList?.map((item)=>{
-                    return(
+                  {TodayAppointmet?.map((item) => {
+                    return (
                       <tr className="admin-table-row">
-                      <td className=" me-2">
-                       {item?.PatientId?.slice(1,6)}
-                      </td>
-                      <td>{item?.Firstname} {item?.Lastname}</td>
-                      <td>{item?.Gender}</td>
-                      {/* <td>12/05/2016 </td> */}
-                      <td>
-                        <div className="Diseases-btn" style={{ color: 'red', border: '1px solid red' }}>{item?.medicalReason}</div>
-                      </td>
-                      <td>
-                        <a href="#"> <i className="fs-5 text-danger" ><BsFileEarmarkPdf /></i></a>
-                      </td>
-                      <td>
-                        <button onClick={ReadMoreShow} className="table-details-btn">
-                          Details
-                        </button>
-                      </td>
-                    </tr>
-                    )
+                        <td className=" me-2">
+                          {item?.PatientId ? item?.PatientId : "-"}
+                        </td>
+                        <td>
+                          {item?.Firstname} {item?.Lastname}
+                        </td>
+                        <td>{item?.Gender}</td>
+                        {/* <td>12/05/2016 </td> */}
+                        <td>
+                          <div
+                            className="Diseases-btn"
+                            style={{ color: "red", border: "1px solid red" }}
+                          >
+                            {item?.medicalReason}
+                          </div>
+                        </td>
+                        <td>
+                          <a href="#">
+                            {" "}
+                            <i className="fs-5 text-danger">
+                              <BsFileEarmarkPdf />
+                            </i>
+                          </a>
+                        </td>
+                        <td>
+                          <button
+                            onClick={ReadMoreShow}
+                            className="table-details-btn"
+                          >
+                            Details
+                          </button>
+                        </td>
+                      </tr>
+                    );
                   })}
-              
 
                   {/* <tr className="admin-table-row">
                     <td className="table-img">
@@ -310,58 +338,69 @@ console.log(today);
               </Table>
             </div>
 
-
-            <div className="col-lg-6" style={{ overflow: 'hidden ', overflowY: 'scroll' }}>
+            <div
+              className="col-lg-6"
+              style={{ overflow: "hidden ", overflowY: "scroll" }}
+            >
               <h5 className="fw-bold mb-4">Doctors List</h5>
               <Table responsive className="table table-borderless">
                 <thead>
-                  <tr className="admin-table-head" >
-                    <th className="fw-bold">#</th>
+                  <tr className="admin-table-head">
+                    <th className="fw-bold">Profile</th>
                     <th className="fw-bold">Doctors name</th>
-                    <th className="fw-bold">Status</th>
+                    <th className="fw-bold">Contact Number</th>
                   </tr>
                 </thead>
 
-
                 <tbody>
-                  {Doctors?.map((item)=>{
-                    return(
+                  {Doctors?.map((item) => {
+                    return (
                       <tr className="admin-table-row">
-                      <td className=" me-2">
-                        <img
-                          style={{ width: "30px", height: "30px", borderRadius: "5px" }}
-                          src={`http://localhost:8521/Doctor/${item?.ProfileImg}`}
-                          // src=""
-                          alt=""
-                        />
-                      </td>
-                      <td><a href="#">
-                        {item?.Firstname}&nbsp;
-                        {item?.Lastname}
-                        </a> ({item?.Education})</td>
-                      <td>{item?.mondayweekoff && today == "Monday" || item?.tuesdayweekoff && today == "Tuesday"  || item?.wednesdayweekoff && today == "Wednesday" || item?.thrusdayweekoff && today == "Thursday" || item?.fridayweekoff && today == "Friday" || item?.saturdayweekoff && today == "Saturday" || item?.sundayweekoff && today == "Sunday" ?   <button className="btn btn-outline-danger">
-                        Absend
-                      </button> :  <button className="btn btn-outline-success">
-                          Availible
-                        </button>}
-                       
-                      </td>
-                    </tr>
-                    )
+                        <td className=" me-2">
+                          <img
+                            style={{
+                              width: "30px",
+                              height: "30px",
+                              borderRadius: "5px",
+                            }}
+                            src={`http://localhost:8521/Doctor/${item?.ProfileImg}`}
+                            // src=""
+                            alt=""
+                          />
+                        </td>
+                        <td>
+                          <a href="#">
+                            {item?.Firstname}&nbsp;
+                            {item?.Lastname}
+                          </a>{" "}
+                          ({item?.Education})
+                        </td>
+                        <td>
+                          {/* {(item?.mondayweekoff && today == "Monday") ||
+                          (item?.tuesdayweekoff && today == "Tuesday") ||
+                          (item?.wednesdayweekoff && today == "Wednesday") ||
+                          (item?.thrusdayweekoff && today == "Thursday") ||
+                          (item?.fridayweekoff && today == "Friday") ||
+                          (item?.saturdayweekoff && today == "Saturday") ||
+                          (item?.sundayweekoff && today == "Sunday") ? (
+                            <button className="btn btn-outline-danger">
+                              Absend
+                            </button>
+                          ) : (
+                            <button className="btn btn-outline-success">
+                              Availible
+                            </button>
+                          )} */}
+                          {item?.PhoneNumber}
+                        </td>
+                      </tr>
+                    );
                   })}
-           
-
-            
-
                 </tbody>
-
-
               </Table>
             </div>
           </div>
         </Container>
-
-
 
         <Container className="mt-5">
           <div className="row">
@@ -506,17 +545,13 @@ console.log(today);
 
               </ul>
             </div> */}
-
-
-       
           </div>
         </Container>
-
       </Container>
 
-      <Modal size="lg" show={show} onHide={ReadMoreClose} >
+      <Modal size="lg" show={show} onHide={ReadMoreClose}>
         <Modal.Header className="all-bg-green text-light">
-          <Modal.Title >Patient Profile</Modal.Title>
+          <Modal.Title>Patient Profile</Modal.Title>
         </Modal.Header>
         <Modal.Body className="all-bg-green">
           <div className="row" style={{ color: "white" }}>
@@ -619,15 +654,21 @@ console.log(today);
               </div>
             </div>
           </div>
-          <h6 style={{ marginTop: "4%", color: 'white' }}>Past Visit History</h6>
-          <Table className='table-bordered border-secondary' responsive="md" style={{ marginTop: "1%", backgroundColor: '#F2EFFB' }}>
-            <thead >
+          <h6 style={{ marginTop: "4%", color: "white" }}>
+            Past Visit History
+          </h6>
+          <Table
+            className="table-bordered border-secondary"
+            responsive="md"
+            style={{ marginTop: "1%", backgroundColor: "#F2EFFB" }}
+          >
+            <thead>
               <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                <th className='fw-bold'>Date</th>
-                <th className='fw-bold'>Refer Doctor</th>
-                <th className='fw-bold'>Department</th>
-                <th className='fw-bold'>Report</th>
-                <th className='fw-bold'>Earning</th>
+                <th className="fw-bold">Date</th>
+                <th className="fw-bold">Refer Doctor</th>
+                <th className="fw-bold">Department</th>
+                <th className="fw-bold">Report</th>
+                <th className="fw-bold">Earning</th>
               </tr>
             </thead>
             <tbody style={{}}>
@@ -636,11 +677,14 @@ console.log(today);
 
                 <td>Dr.Devid</td>
                 <td>Cardiology</td>
-                <td><FontAwesomeIcon icon={faFilePdf} style={{ color: "#e0271a", }} /></td>
                 <td>
-
+                  <FontAwesomeIcon
+                    icon={faFilePdf}
+                    style={{ color: "#e0271a" }}
+                  />
+                </td>
+                <td>
                   $500
-
                   {/* {" "}
                                     <div
                                         style={{
@@ -695,9 +739,6 @@ console.log(today);
           </div>
         </Modal.Footer> */}
       </Modal>
-
-
-
     </div>
   );
 };

@@ -110,7 +110,7 @@ export const Bookappointment = () => {
     }
 
     formdata.append("token", prefix + randomNumber);
-    formdata.append("PatientId", user?._id);
+    formdata.append("PatientId", user?.PatientId);
     formdata.append("patientDBId", user?._id);
     formdata.append("Firstname", Others ? patientfirstname : user?.Firstname);
     formdata.append("Lastname", Others ? patientlastname : user?.Lastname);
