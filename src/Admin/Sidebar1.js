@@ -68,11 +68,7 @@ export default function Sidebar1() {
             Clinical doctors
           </h6>
           <Link to={"/admin/referfromclinicpatientlist"}>
-          <h6
-            className="sidebarItem1"
-          >
-           Refer Patient List
-          </h6>
+            <h6 className="sidebarItem1">Refer Patient List</h6>
           </Link>
         </div>
 
@@ -196,6 +192,17 @@ export default function Sidebar1() {
               // onClick={() => window.location.assign("/admin/HospitalLabPanel")}
             >
               Lab Receptionist
+            </h6>
+          </Link>
+        ) : null}
+
+        {admin?.labSampleCollector ? (
+          <Link to="/admin/HospitalLabSampleCollector">
+            <h6
+              className="sidebarItem"
+              // onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+            >
+              Lab Sample Collector
             </h6>
           </Link>
         ) : null}
@@ -437,11 +444,8 @@ export default function Sidebar1() {
 
         {admin?.notification === true ? (
           <Link to={"/admin/notificationlist"}>
-           <h6 className="sidebarItem">
-            Notification
-          </h6>
+            <h6 className="sidebarItem">Notification</h6>
           </Link>
-         
         ) : null}
         {admin?.enqAndComplaints === true ? (
           <h6

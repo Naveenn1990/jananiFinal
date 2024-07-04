@@ -387,6 +387,7 @@ function BookedLabTest() {
                 <th>Invoice</th>
                 {/* <th>View Report</th> */}
                 <th>Payment</th>
+                <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -522,6 +523,9 @@ function BookedLabTest() {
                           Done
                         </Button>
                       )}
+                    </td>
+                    <td>
+                      <b>{item?.labTestBookingStatus}</b>
                     </td>
                     <td>
                       {item?.paymentStatus === "PAID" ? (
