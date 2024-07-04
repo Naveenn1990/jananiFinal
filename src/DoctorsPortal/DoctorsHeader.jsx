@@ -12,6 +12,12 @@ export const DoctorsHeader = () => {
       return;
     }
   }, []);
+
+  function logout() {
+    window.location.assign("/loginforeveryone");
+    sessionStorage.removeItem("DoctorDetails");
+  }
+
   return (
     <div>
       <Navbar expand="lg">
@@ -33,7 +39,7 @@ export const DoctorsHeader = () => {
             </Form> */}
 
             <Nav className="ms-auto my-2 my-lg-0" navbarScroll>
-              <FontAwesomeIcon
+              {/* <FontAwesomeIcon
                 icon={faBell}
                 style={{
                   width: "30px",
@@ -41,7 +47,7 @@ export const DoctorsHeader = () => {
                   marginRight: "12px",
                   marginTop: "12px",
                 }}
-              />
+              /> */}
               <div className="dropdown">
                 <a href="#">
                   <button className="dropbtn navigation-all fs-6">
@@ -61,9 +67,9 @@ export const DoctorsHeader = () => {
                   </button>
                 </a>
                 <div className="dropdown-content">
-                  <a href="/adminsettings">Account</a>
-                  <a href="/adminsettings">Settings</a>
-                  <a href="#">Logout</a>
+                  {/* <a href="/adminsettings">Account</a> */}
+                  <a href="/doctorssettings">Settings</a>
+                  <a onClick={logout}>Logout</a>
                 </div>
               </div>
             </Nav>

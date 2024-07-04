@@ -36,6 +36,12 @@ export default function DoctorsSidebar() {
     }
   }, []);
 
+  function logout() {
+    window.location.assign("/loginforeveryone");
+    sessionStorage.removeItem("DoctorDetails");
+   
+  }
+
   return (
     <div className="sidebar">
       <Navbar.Brand href="#">
@@ -50,12 +56,10 @@ export default function DoctorsSidebar() {
         </span>
       </Navbar.Brand>
 
-      <div      
-        className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
-      >
+      <div className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
         <div className=" text-center m-3 ms-5">
           <img
-            src={`http://localhost:8521/Doctor/${doctorDetails.ProfileImg}`}            
+            src={`http://localhost:8521/Doctor/${doctorDetails.ProfileImg}`}
             alt=""
             style={{ width: "70px", height: "70px" }}
           />
@@ -115,7 +119,6 @@ export default function DoctorsSidebar() {
       <h6
         className="sidebarItem"
         onClick={() => window.location.assign("/patientslist")}
-        
       >
         {" "}
         <FontAwesomeIcon
@@ -124,8 +127,6 @@ export default function DoctorsSidebar() {
         />
         Patients
       </h6>
-
-    
 
       <h6
         className="sidebarItem"
@@ -175,26 +176,21 @@ export default function DoctorsSidebar() {
         Patient Reports
       </h6> */}
 
-     <Link to={"/doctorssettings"}>
-     <h6
-        className="sidebarItem"
-        // onClick={() => window.location.assign("/doctorssettings")}
-      >
-        {" "}
-        <FontAwesomeIcon
-          icon={faUserCircle}
-          style={{ color: "", marginRight: "5px" }}
-        />
-        Settings
-      </h6>
-     </Link>
-    
+      <Link to={"/doctorssettings"}>
+        <h6
+          className="sidebarItem"
+          // onClick={() => window.location.assign("/doctorssettings")}
+        >
+          {" "}
+          <FontAwesomeIcon
+            icon={faUserCircle}
+            style={{ color: "", marginRight: "5px" }}
+          />
+          Settings
+        </h6>
+      </Link>
 
-      <h6
-        className="sidebarItem"
-        onClick={() => window.location.assign("/loginforeveryone")}
-      >
-        {" "}
+      <h6 className="sidebarItem" onClick={logout}>
         <FontAwesomeIcon
           icon={faPowerOff}
           style={{ color: "", marginRight: "5px" }}
