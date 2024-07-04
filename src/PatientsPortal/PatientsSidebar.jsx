@@ -32,9 +32,14 @@ export default function PatientsSidebar() {
     patientDetails = JSON.parse(sessionStorage.getItem("PatientUser"));
     if (!patientDetails) {
       return alert("Login required!!! please login first...");
+   
     }
   }, []);
 
+  const Logout = ()=>{
+    sessionStorage.removeItem("PatientUser")
+    window.location.assign("/home")
+  }
   return (
     <div>
       {/* mobile sidebar */}
@@ -339,7 +344,7 @@ export default function PatientsSidebar() {
 
           <h6
             className="sidebarItem"
-            onClick={() => window.location.assign("/home")}
+            onClick={() =>Logout()}
           >
             {" "}
             <FontAwesomeIcon

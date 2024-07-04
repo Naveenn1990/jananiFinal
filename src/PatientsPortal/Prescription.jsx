@@ -1,5 +1,6 @@
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Pagination, Stack } from "@mui/material";
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -8,17 +9,15 @@ import { useReactToPrint } from "react-to-print";
 
 export const Prescription = () => {
   const user = JSON.parse(sessionStorage.getItem("PatientUser"));
-
   const [AppointmentList, setAppointmentList] = useState([]);
   const getAppointmentList = () => {
     axios
       .get("http://localhost:8521/api/user/getlist")
       .then(function (response) {
         const data = response.data.Info;
-        // .filter(
-        //   (item) => user?._id === item?.PatientId
-        // );
-        setAppointmentList(data);
+        const databyid = data.filter((item) => item?.patientDBId === user?._id);
+        setAppointmentList(databyid);
+        setPagination(databyid);
       })
       .catch(function (error) {
         console.log(error);
@@ -28,18 +27,27 @@ export const Prescription = () => {
     getAppointmentList();
   }, []);
 
-
+  console.log("AppointmentList", AppointmentList);
 
   const [show, setShow] = useState(false);
-  const handleClose = () => {
-    setShow(false);
-  };
+  const handleClose = () => setShow(false);
+
   const [modaldata, setmodaldata] = useState({});
 
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
+
+  // Pagination
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = (selected) => {
+    setPageNumber(selected);
+  };
   return (
     <div>
       <h4
@@ -61,7 +69,7 @@ export const Prescription = () => {
             </tr>
           </thead>
           <tbody>
-            {AppointmentList?.map((item, index) => {
+            {AppointmentList?.slice(pagesVisited, pagesVisited + usersPerPage)?.map((item, index) => {
               return (
                 <tr className="admin-table-row">
                   <td>{item?._id.slice(0, 6)}</td>
@@ -103,18 +111,17 @@ export const Prescription = () => {
             })}
           </tbody>
         </Table>
-
-        {/* <div className="container">
-          <div className="row">
-            <div className="col-md-12 ">
-              <span className="pagination" style={{ float: "right" }}>
-                <button className="btn2">Previous</button>
-                <button className="btn1">1</button>
-                <button className="btn3">Next</button>
-              </span>
-            </div>
-          </div>
-        </div> */}
+        <div style={{ float: "right" }} className="my-3 d-flex justify-end">
+          <Stack spacing={2}>
+            <Pagination
+              count={pageCount}
+              onChange={(event, value) => {
+                changePage(value - 1);
+              }}
+              color="primary"
+            />
+          </Stack>
+        </div>
       </Container>
 
       <Modal
@@ -129,7 +136,7 @@ export const Prescription = () => {
           <Modal.Title>Prescription</Modal.Title>
         </Modal.Header>
         <Modal.Body ref={componentRef}>
-          <div style={{backgroundColor:"white",padding:"5px"}}>
+          <div style={{ backgroundColor: "white", padding: "5px" }}>
             <h5>Consultant Doctor</h5>
             <h6 style={{ fontWeight: "bold" }}>
               Dr.{modaldata?.ConsultantDoctor?.Firstname}
@@ -141,7 +148,7 @@ export const Prescription = () => {
             </h6>
             <h6>Patient Name : {modaldata?.Firstname}</h6>
           </div>
-          <Table bordered style={{backgroundColor:"white"}}>
+          <Table bordered style={{ backgroundColor: "white" }}>
             <thead className="all-bg-green">
               <tr>
                 <th className="text-light fw-bold" width="5%">
@@ -201,10 +208,9 @@ export const Prescription = () => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button 
-          variant="success"
-          onClick={handlePrint}
-          >Print</Button>
+          <Button variant="success" onClick={handlePrint}>
+            Print
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

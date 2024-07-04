@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Container, FloatingLabel, Form } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 export const Bookappointment = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export const Bookappointment = () => {
   const [medicalReason, setmedicalReason] = useState();
   const [Others, setOthers] = useState(false);
   const [SelectedTime, setSelectedTime] = useState({});
-  console.log("SelectedTime", SelectedTime);
+  console.log("SelectedTime",SelectedTime);
   useEffect(() => {
     if (StatrtTime) {
       setSelectedTime(JSON?.parse(StatrtTime));
@@ -52,64 +53,64 @@ export const Bookappointment = () => {
   const randomNumber = generateRandomNumber();
   const [BookingStatus, setBookingStatus] = useState("");
   const [DocDept, setDocDept] = useState("");
-  console.log("BookingStatus", BookingStatus);
-  console.log("ConsultantDr", ConsultantDr);
 
-  useEffect(() => {
-   if(Others===false){
-    setpatientfirstname(user?.Firstname || "");
-    setpatientlastname(user?.patientlastname || "");
-    setgender(user?.patientlastname || "");
-    setmobileno(user?.patientlastname || "");
-    setAddress(user?.patientlastname || "");
-    setemail(user?.patientlastname || "");
-    setDOB(user?.patientlastname || "");
-   }else{
-    setpatientfirstname("");
-    setpatientlastname("");
-    setgender("");
-    setmobileno("");
-    setAddress("");
-    setemail("");
-    setDOB("");
-   }
-  }, [Others])
-  
-console.log("Others",Others);
   const BookAppointment = async (e) => {
     e.preventDefault();
     const nameRegex = /^[A-Za-z]{2,30}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^\d{10}$/;
-    if (!nameRegex.test(patientfirstname)) {
-      alert('Invalid first name. Only letters are allowed, and it should be between 2 and 30 characters long.');
-      return;
+ 
+    if (Others) {
+      if (!nameRegex.test(patientfirstname)) {
+        return alert('Invalid first name. Only letters are allowed, and it should be between 2 and 30 characters long.');
+      }
+      if (!nameRegex.test(patientlastname)) {
+        return alert('Invalid last name. Only letters are allowed, and it should be between 2 and 30 characters long.');
+      }
+      if (!gender) {
+        return alert("Please select gender.");
+      }
+      if (!phoneRegex.test(mobileno)) {
+        return alert('Invalid phone number. It should be exactly 10 digits long.');
+      }
+      if (!Address) {
+        return alert("Please enter your address.");
+      }
+      if (!emailRegex.test(email)) {
+        return alert('Invalid email address.');
+      }
+      if (!DOB) {
+        return alert("Please select date of birth.");
+      }
     }
-    if (!nameRegex.test(patientlastname)) {
-      alert('Invalid last name. Only letters are allowed, and it should be between 2 and 30 characters long.');
-      return;
+
+    if (!DocDept) {
+      return alert("Please Select Department");
     }
-    if(!gender){
-      alert("Please Select Gender")
-      return;
+    if (!ConsultantDr) {
+      return alert("Please Select Doctor");
     }
-    if (!phoneRegex.test(mobileno)) {
-      alert('Invalid phone number. It should be exactly 10 digits long.');
-      return;
+    if (!DateofApp) {
+      return alert("Please Select Appointment Date");
     }
-    if(!Address){
-      alert("Please Enter Your Address");
-      return;
+    if (!StatrtTime) {
+      return alert("Please Select Appointment Time");
     }
-    if (!emailRegex.test(email)) {
-      alert('Invalid email address.');
-      return;
+    if (!medicalReason) {
+      return alert("Please Enter Medical Reason");
     }
-    if(!DOB){
-      alert("Please Select Date of Birth")
+    if (!Condition) {
+      return alert("Please Enter Patient Condition");
     }
+    if (!Note) {
+      return alert("Please Write Note about Patient");
+    }
+    if (!Document) {
+      return alert("Please Upload Patient Medical Documnet");
+    }
+
     formdata.append("token", prefix + randomNumber);
-    formdata.append("PatientId", user?._id);
+    formdata.append("PatientId", user?.PatientId);
     formdata.append("patientDBId", user?._id);
     formdata.append("Firstname", Others ? patientfirstname : user?.Firstname);
     formdata.append("Lastname", Others ? patientlastname : user?.Lastname);
@@ -126,7 +127,7 @@ console.log("Others",Others);
     formdata.append("Note", Note);
     formdata.append("Document", Document);
     formdata.append("medicalReason", medicalReason);
-    formdata.append("bookingstatus", SelectedTime?.bookingstatus);
+    formdata.append("ScheduleId", SelectedTime?._id);
     formdata.append("appointmentType", Others ? "OTHERS" : "SELF");
     try {
       const config = {
@@ -138,9 +139,7 @@ console.log("Others",Others);
       };
       let res = await axios(config);
       if (res.status === 200) {
-        console.log(res.data);
-        console.log(res.data.success);
-        alert("Appointment Added");
+        alert("Appointment Booked Successfully");
         navigate("/yourappointment");
       }
     } catch (error) {
@@ -164,10 +163,37 @@ console.log("Others",Others);
         console.log(error);
       });
   };
-  console.log("Doctors", Doctors);
 
+  // Get Hospital Department
+  const [GetDepartmentData, setGetDepartmentData] = useState([]);
+  const GetDepartment = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/admin/getDepartment"
+      );
+      if (res.status === 200) {
+        setGetDepartmentData(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const Doctorschedule = Doctors?.find((doc) => doc?._id === ConsultantDr);
+  const uniqueDates = new Set();
+
+  const [selecteTimearray, setselecteTimearray] = useState([]);
+  useEffect(() => {
+    if (DateofApp) {
+      const asd = Doctorschedule?.scheduleList.filter(
+        (item) => item.scheduleDate == DateofApp && item.bookingstatus === "Vacant"
+      );
+      setselecteTimearray(asd);
+    }
+  }, [DateofApp]);
   useEffect(() => {
     getDoctors();
+    GetDepartment();
   }, []);
 
   return (
@@ -312,18 +338,16 @@ console.log("Others",Others);
                     onChange={(e) => setDocDept(e.target.value)}
                   >
                     <option value="">Select department</option>
-                    {/* {Doctors?.map((item) => {
-                      return (
-                        <option value={item?.Department}>
-                          {item?.Department}
-                        </option>
-                      );
-                    })} */}
-                    {[
+                    {/* {[
                       ...new Set(Doctors?.map((item) => item?.Department)),
                     ]?.map((department) => (
                       <option key={department} value={department}>
                         {department}
+                      </option>
+                    ))} */}
+                    {GetDepartmentData?.map((dep) => (
+                      <option value={dep?.DepartmentName}>
+                        {dep?.DepartmentName}
                       </option>
                     ))}
                   </Form.Select>
@@ -374,7 +398,7 @@ console.log("Others",Others);
                           ))
                       )} */}
 
-                      {[
+                      {/* {[
                         ...new Set(
                           Doctors.filter(
                             (ele) => ele?._id === ConsultantDr
@@ -388,7 +412,33 @@ console.log("Others",Others);
                         <option key={index} value={uniqueDate}>
                           {uniqueDate}
                         </option>
-                      ))}
+                      ))} */}
+
+                      {Doctorschedule?.scheduleList
+                        ?.filter(
+                          (schedd) =>
+                            moment(schedd?.scheduleDate).isSameOrAfter(
+                              moment(),
+                              "day"
+                            ) && schedd?.bookingstatus === "Vacant"
+                        )
+                        ?.map((shedul) => {
+                          const formattedDate = moment(
+                            shedul?.scheduleDate
+                          ).format("DD-MM-YYYY");
+                          if (!uniqueDates.has(formattedDate)) {
+                            uniqueDates.add(formattedDate);
+                            return (
+                              <option
+                                value={shedul?.scheduleDate}
+                                key={shedul?.scheduleDate}
+                              >
+                                {formattedDate}
+                              </option>
+                            );
+                          }
+                          return null; // Return null for duplicates, so they are not rendered
+                        })}
                     </Form.Select>
                   </div>
 
@@ -423,21 +473,29 @@ console.log("Others",Others);
                       }}
                     >
                       <option>Select Time</option>
-                      {Doctors?.filter(
-                        (ele) => ele?._id === ConsultantDr
+                      {/* {Doctors?.filter(
+                        (ele) => ele?._id === ConsultantDr || ele?.bookingstatus === "Vacant"
                       )?.flatMap((doctor) =>
                         doctor?.scheduleList
                           ?.filter((ele) => ele.scheduleDate === DateofApp)
                           ?.map((scheduleItem, index) => (
                             <option
                               key={index}
-                              // value={scheduleItem?.startTime}
                               value={JSON.stringify(scheduleItem)}
                             >
                               {`${scheduleItem?.startTime} to ${scheduleItem?.endTime}`}
                             </option>
                           ))
-                      )}
+                      )} */}
+
+                      {selecteTimearray?.map((shedul) => (
+                      <option
+                      value={JSON.stringify(shedul)}
+                      >
+                        {/* <option value={shedul?._id}> */}
+                        {shedul?.startTime}-{shedul?.endTime}
+                      </option>
+                    ))}
                     </Form.Select>
                   </div>
                   {/* <FloatingLabel
