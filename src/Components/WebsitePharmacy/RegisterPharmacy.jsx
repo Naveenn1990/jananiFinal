@@ -264,8 +264,14 @@ export const RegisterPharmacy = () => {
                   label="Phone Number"
                 >
                   <Form.Control
-                    type="number"
+                    type="tele"
                     placeholder="Phone Number"
+                    maxLength={10}
+                    onKeyPress={(event) => {
+                      if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
                     onChange={(e) => setmobileno(e.target.value)}
                   />
                 </FloatingLabel>

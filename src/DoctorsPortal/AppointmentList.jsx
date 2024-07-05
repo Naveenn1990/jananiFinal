@@ -16,6 +16,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
 
 export const AppointmentList = () => {
   const doctor = JSON.parse(sessionStorage.getItem("DoctorDetails"));
@@ -25,7 +32,7 @@ export const AppointmentList = () => {
   const handleShow = () => setShow(true);
 
   const [appointmentCompleted, setappointmentCompleted] = useState(false);
-  const [AppointmentList, setAppointmentList] = useState([]);
+  const [data, setdata] = useState([]);
   const getAppointmentList = () => {
     axios
       .get("http://localhost:8521/api/user/getlist")
@@ -33,7 +40,7 @@ export const AppointmentList = () => {
         const data = response.data.Info.filter(
           (item) => item?.ConsultantDoctor?._id == doctor?._id
         );
-        setAppointmentList(data);
+        setdata(data);
       })
       .catch(function (error) {
         console.log(error);
@@ -51,6 +58,50 @@ export const AppointmentList = () => {
 
   const [DateFilter, setDateFilter] = useState("");
 
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 10;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Doctors");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
   return (
     <div>
       <Navbar expand="lg" style={{ backgroundColor: "#dae1f3" }}>
@@ -67,8 +118,9 @@ export const AppointmentList = () => {
                   placeholder="Search"
                   className="me-2"
                   aria-label="Search"
+                  onChange={handleFilter}
                 />
-                <Button variant="outline-primary">Search</Button>
+                {/* <Button variant="outline-primary">Search</Button> */}
               </Form>
               <div className="d-flex gap-3 align-items-center">
                 <label style={{ width: "68%" }}>Select Date : </label>
@@ -81,7 +133,7 @@ export const AppointmentList = () => {
                   Clear
                 </Button>
               </div>
-              <div className="d-flex gap-1 align-items-center">
+              {/* <div className="d-flex gap-1 align-items-center">
                 <label style={{ width: "68%" }}>Filter : </label>
                 <Form.Select
                   // type="date"
@@ -91,7 +143,7 @@ export const AppointmentList = () => {
                   <option value={"false"}>Pending</option>
                   <option value={"true"}>Completed</option>
                 </Form.Select>
-              </div>
+              </div> */}
             </div>
           </Navbar.Collapse>
         </Container>
@@ -101,6 +153,7 @@ export const AppointmentList = () => {
         <Table responsive className="table" bordered>
           <thead>
             <tr className="admin-table-head">
+              <th className="fw-bold">Sl No.</th>
               <th className="fw-bold">Patient Name</th>
               <th className="fw-bold">Date & Time</th>
               <th className="fw-bold">Email</th>
@@ -111,72 +164,224 @@ export const AppointmentList = () => {
             </tr>
           </thead>
           <tbody>
-            {AppointmentList?.filter(
-              (item) => !DateFilter || item?.Dateofappointment === DateFilter
-            )
-              ?.filter(
-                (val) =>
-                  val?.isAppointmentCompleted.toString() ===
-                  appointmentCompleted.toString()
-              )
-              ?.map((item) => {
-                return (
-                  <tr className="admin-table-row">
-                    <td>
-                      {item?.Firstname}&nbsp;{item?.Lastname}
-                    </td>
-                    <td>
-                      {item?.Dateofappointment} <br />
-                      {item?.starttime} {item?.endtime}{" "}
-                    </td>
-                    <td>{item?.Email}</td>
+            {DateFilter
+              ? data
+                  ?.filter(
+                    (item) =>
+                      !DateFilter || item?.Dateofappointment === DateFilter
+                  )
+                  ?.filter(
+                    (val) =>
+                      val?.isAppointmentCompleted.toString() ===
+                      appointmentCompleted.toString()
+                  )
+                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item, index) => {
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{index + 1}</td>
+                        <td>
+                          {item?.Firstname}&nbsp;{item?.Lastname}
+                        </td>
+                        <td>
+                          {item?.Dateofappointment} <br />
+                          {item?.starttime} {item?.endtime}{" "}
+                        </td>
+                        <td>{item?.Email}</td>
 
-                    <td>{item?.PhoneNumber}</td>
-                    <td>
-                      <div
-                        className="Diseases-btn"
-                        style={{ color: "red", border: "1px solid red" }}
-                      >
-                        {item?.Condition}
-                      </div>
-                    </td>
-
-                    {!item.isAppointmentCompleted ? (
-                      <td>
-                        {item?.payment === "unpaid" ? (
-                          <>
-                            <p>Payment Pending</p>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              className="table-details-btn"
-                              onClick={() => CaseStudy(item?._id)}
+                        <td>{item?.PhoneNumber}</td>
+                        <td>
+                          {item?.Condition ? (
+                            <div
+                              className="Diseases-btn"
+                              style={{ color: "red", border: "1px solid red" }}
                             >
-                              Case Study
-                            </button>
-                          </>
+                              {item?.Condition}
+                            </div>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+
+                        {!item.isAppointmentCompleted ? (
+                          <td>
+                            {item?.payment === "unpaid" ? (
+                              <>
+                                <p>Payment Pending</p>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  className="table-details-btn"
+                                  onClick={() => CaseStudy(item?._id)}
+                                >
+                                  Case Study
+                                </button>
+                              </>
+                            )}
+                          </td>
+                        ) : (
+                          <div style={{ textAlign: "center" }}>--/--</div>
                         )}
-                      </td>
-                    ) : (
-                      <div style={{ textAlign: "center" }}>--/--</div>
-                    )}
-                    <td>
-                      <div
-                        onClick={() =>
-                          navigate("/patientcasestudy", {
-                            state: { item: item },
-                          })
-                        }
-                      >
-                        <Button>View Reports</Button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                        <td>
+                          <div
+                            onClick={() =>
+                              navigate("/patientcasestudy", {
+                                state: { item: item },
+                              })
+                            }
+                          >
+                            <Button>View Reports</Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+              : search.length > 0
+              ? tableFilter
+                  .slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item, index) => {
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{index + 1}</td>
+                        <td>
+                          {item?.Firstname}&nbsp;{item?.Lastname}
+                        </td>
+                        <td>
+                          {item?.Dateofappointment} <br />
+                          {item?.starttime} {item?.endtime}{" "}
+                        </td>
+                        <td>{item?.Email}</td>
+
+                        <td>{item?.PhoneNumber}</td>
+                        <td>
+                          {item?.Condition ? (
+                            <div
+                              className="Diseases-btn"
+                              style={{ color: "red", border: "1px solid red" }}
+                            >
+                              {item?.Condition}
+                            </div>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+
+                        {!item.isAppointmentCompleted ? (
+                          <td>
+                            {item?.payment === "unpaid" ? (
+                              <>
+                                <p>Payment Pending</p>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  className="table-details-btn"
+                                  onClick={() => CaseStudy(item?._id)}
+                                >
+                                  Case Study
+                                </button>
+                              </>
+                            )}
+                          </td>
+                        ) : (
+                          <div style={{ textAlign: "center" }}>--/--</div>
+                        )}
+                        <td>
+                          <div
+                            onClick={() =>
+                              navigate("/patientcasestudy", {
+                                state: { item: item },
+                              })
+                            }
+                          >
+                            <Button>View Reports</Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+              : data
+                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item, index) => {
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{index + 1}</td>
+                        <td>
+                          {item?.Firstname}&nbsp;{item?.Lastname}
+                        </td>
+                        <td>
+                          {item?.Dateofappointment} <br />
+                          {item?.starttime} {item?.endtime}{" "}
+                        </td>
+                        <td>{item?.Email}</td>
+
+                        <td>{item?.PhoneNumber}</td>
+                        <td>
+                          {item?.Condition ? (
+                            <div
+                              className="Diseases-btn"
+                              style={{ color: "red", border: "1px solid red" }}
+                            >
+                              {item?.Condition}
+                            </div>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+
+                        {!item.isAppointmentCompleted ? (
+                          <td>
+                            {item?.payment === "unpaid" ? (
+                              <>
+                                <p>Payment Pending</p>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  className="table-details-btn"
+                                  onClick={() => CaseStudy(item?._id)}
+                                >
+                                  Case Study
+                                </button>
+                              </>
+                            )}
+                          </td>
+                        ) : (
+                          <div style={{ textAlign: "center" }}>--/--</div>
+                        )}
+                        <td>
+                          <div
+                            onClick={() =>
+                              navigate("/patientcasestudy", {
+                                state: { item: item },
+                              })
+                            }
+                          >
+                            <Button>View Reports</Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
           </tbody>
         </Table>
+        <div style={{ display: "flex" }}>
+          <p style={{ width: "100%", marginTop: "20px" }}>
+            Total Count: {data?.length}
+          </p>
+          <ReactPaginate
+            previousLabel={"Back"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
+        </div>
       </Container>
 
       <Modal

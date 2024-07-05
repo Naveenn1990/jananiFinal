@@ -88,6 +88,7 @@ export const DoctorsCaseStudy = () => {
         setHospitalLabList([]);
       });
   };
+
   const [AppointmentList, setAppointmentList] = useState({});
   const getAppointmentList = () => {
     axios
@@ -416,6 +417,31 @@ export const DoctorsCaseStudy = () => {
       }
     }
   };
+
+  const dobDate = new Date(AppointmentList?.DOB);
+  const currentDate = new Date();
+
+  let years = currentDate.getFullYear() - dobDate.getFullYear();
+  let months = currentDate.getMonth() - dobDate.getMonth();
+  let day = currentDate.getDate() - dobDate.getDate();
+
+  // Adjust the months and years if necessary
+  if (day < 0) {
+    months--;
+    day += new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      0
+    ).getDate();
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  console.log("age", years, months, day);
+  console.log("AppointmentList", AppointmentList);
   return (
     <div>
       <Container className="p-4">
@@ -499,11 +525,12 @@ export const DoctorsCaseStudy = () => {
                   <span className="fw-bold text-dark">ID</span> :{" "}
                   {AppointmentList?.patientDBId?.PatientId
                     ? AppointmentList?.patientDBId?.PatientId
-                    : "NULL"}
+                    : "-"}
                 </p>
                 <p className="col-lg-2">
                   <span className="fw-bold text-dark">Age</span> :
-                  {moment().diff(AppointmentList?.DOB, "years", false)}
+                  {/* {moment().diff(AppointmentList?.DOB, "years", false)} */}
+                  {years}.{months} Year's
                 </p>
                 <p className="col-lg-2">
                   <span className="fw-bold text-dark">Gender</span> :{" "}
@@ -626,11 +653,15 @@ export const DoctorsCaseStudy = () => {
                 </p>
                 <p className="col-lg-2">
                   <span className="fw-bold text-dark">ID</span> :{" "}
-                  {AppointmentList?.PatientId?.slice(0, 10)}
+                  {/* {AppointmentList?.PatientId?.slice(0, 10)} */}
+                  {AppointmentList?.patientDBId?.PatientId
+                    ? AppointmentList?.patientDBId?.PatientId
+                    : "-"}
                 </p>
                 <p className="col-lg-2">
                   <span className="fw-bold text-dark">Age</span> :
-                  {moment().diff(AppointmentList?.DOB, "years", false)}
+                  {/* {moment().diff(AppointmentList?.DOB, "years", false)} */}
+                  {years}.{months} Year's
                 </p>
                 <p className="col-lg-2">
                   <span className="fw-bold text-dark">Gender</span> :{" "}
@@ -765,7 +796,12 @@ export const DoctorsCaseStudy = () => {
                         <tr>
                           <td>
                             <input
-                              type="text"
+                              onKeyPress={(event) => {
+                                if (!/[0-9]/.test(event.key)) {
+                                  event.preventDefault();
+                                }
+                              }}
+                              maxLength={1}
                               id="morning"
                               name="morning"
                               className="input-md form-control "
@@ -774,7 +810,12 @@ export const DoctorsCaseStudy = () => {
                           </td>
                           <td>
                             <input
-                              type="text"
+                              onKeyPress={(event) => {
+                                if (!/[0-9]/.test(event.key)) {
+                                  event.preventDefault();
+                                }
+                              }}
+                              maxLength={1}
                               id="afternoon"
                               name="afternoon"
                               className="input-md form-control "
@@ -783,7 +824,12 @@ export const DoctorsCaseStudy = () => {
                           </td>
                           <td>
                             <input
-                              type="text"
+                              onKeyPress={(event) => {
+                                if (!/[0-9]/.test(event.key)) {
+                                  event.preventDefault();
+                                }
+                              }}
+                              maxLength={1}
                               id="evening"
                               name="evening"
                               className="input-md form-control "
@@ -792,7 +838,12 @@ export const DoctorsCaseStudy = () => {
                           </td>
                           <td>
                             <input
-                              type="text"
+                              onKeyPress={(event) => {
+                                if (!/[0-9]/.test(event.key)) {
+                                  event.preventDefault();
+                                }
+                              }}
+                              maxLength={1}
                               id="night"
                               name="night"
                               className="input-md form-control "

@@ -163,59 +163,60 @@ export const DoctorDashboard = () => {
           <div className="row ">
             <div className="col-lg-6">
               <h3 className="fw-bold">Todays Appointment</h3>
-              <Table responsive className="table table-borderless">
-                <thead>
-                  <tr className="admin-table-head">
-                    <th className="fw-bold">PatientId</th>
-                    <th className="fw-bold">Patient</th>
-                    <th className="fw-bold">Gender</th>
-                    {/* <th className="fw-bold">Last Visit Doc</th> */}
-                    <th className="fw-bold">Diseases</th>
-                    <th className="fw-bold">Report</th>
-                    <th className="fw-bold">Details </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {TodayAppointmet?.map((item) => {
-                    return (
-                      <tr className="admin-table-row">
-                        <td className=" me-2">
-                          {item?.PatientId ? item?.PatientId : "-"}
-                        </td>
-                        <td>
-                          {item?.Firstname} {item?.Lastname}
-                        </td>
-                        <td>{item?.Gender}</td>
-                        {/* <td>12/05/2016 </td> */}
-                        <td>
-                          <div
-                            className="Diseases-btn"
-                            style={{ color: "red", border: "1px solid red" }}
-                          >
-                            {item?.medicalReason}
-                          </div>
-                        </td>
-                        <td>
-                          <a href="#">
-                            {" "}
-                            <i className="fs-5 text-danger">
-                              <BsFileEarmarkPdf />
-                            </i>
-                          </a>
-                        </td>
-                        <td>
-                          <button
-                            onClick={ReadMoreShow}
-                            className="table-details-btn"
-                          >
-                            Details
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
+              {TodayAppointmet?.length > 0 ? (
+                <Table responsive className="table table-borderless">
+                  <thead>
+                    <tr className="admin-table-head">
+                      <th className="fw-bold">PatientId</th>
+                      <th className="fw-bold">Patient</th>
+                      <th className="fw-bold">Gender</th>
+                      {/* <th className="fw-bold">Last Visit Doc</th> */}
+                      <th className="fw-bold">Diseases</th>
+                      <th className="fw-bold">Report</th>
+                      <th className="fw-bold">Details </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {TodayAppointmet?.map((item) => {
+                      return (
+                        <tr className="admin-table-row">
+                          <td className=" me-2">
+                            {item?.PatientId ? item?.PatientId : "-"}
+                          </td>
+                          <td>
+                            {item?.Firstname} {item?.Lastname}
+                          </td>
+                          <td>{item?.Gender}</td>
+                          {/* <td>12/05/2016 </td> */}
+                          <td>
+                            <div
+                              className="Diseases-btn"
+                              style={{ color: "red", border: "1px solid red" }}
+                            >
+                              {item?.medicalReason}
+                            </div>
+                          </td>
+                          <td>
+                            <a href="#">
+                              {" "}
+                              <i className="fs-5 text-danger">
+                                <BsFileEarmarkPdf />
+                              </i>
+                            </a>
+                          </td>
+                          <td>
+                            <button
+                              onClick={ReadMoreShow}
+                              className="table-details-btn"
+                            >
+                              Details
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
 
-                  {/* <tr className="admin-table-row">
+                    {/* <tr className="admin-table-row">
                     <td className="table-img">
                       <img
                         style={{ width: "30px", height: "30px", borderRadius: "5px" }}
@@ -334,8 +335,13 @@ export const DoctorDashboard = () => {
                       </button>
                     </td>
                   </tr> */}
-                </tbody>
-              </Table>
+                  </tbody>
+                </Table>
+              ) : (
+                <p style={{ marginTop: "20px" }}>
+                  There is no Booking's for Today
+                </p>
+              )}
             </div>
 
             <div

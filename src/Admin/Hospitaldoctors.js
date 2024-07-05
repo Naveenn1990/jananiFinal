@@ -2979,7 +2979,7 @@ export default function Hospitaldoctors() {
                           <td>{++index}</td>
                           <td>
                             <img
-                            alt=""
+                              alt=""
                               src={`http://localhost:8521/Doctor/${item?.ProfileImg}`}
                               style={{
                                 width: "50px",
@@ -3238,7 +3238,7 @@ export default function Hospitaldoctors() {
                           <td>{++index}</td>
                           <td>
                             <img
-                            alt=""
+                              alt=""
                               src={`http://localhost:8521/Doctor/${item?.ProfileImg}`}
                               style={{
                                 width: "50px",
@@ -3246,7 +3246,7 @@ export default function Hospitaldoctors() {
                                 borderRadius: "50%",
                               }}
                             />
-                               {item?.DoctorId}
+                            {item?.DoctorId}
                           </td>
                           <td>
                             {item?.Firstname} {item?.Lastname}
