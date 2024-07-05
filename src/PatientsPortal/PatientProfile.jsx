@@ -195,7 +195,7 @@ function PatientProfile() {
           <div className="d-flex justify-content-center mb-3">
             <div>
               <Barcode
-                value={`${patientDetails?.Firstname} ${patientDetails?.Lastname}`}
+                value={patientDetails?.PatientId}
                 width={1}
                 height={50}
               />
@@ -203,7 +203,7 @@ function PatientProfile() {
               {/* Generate a barcode with additional options */}
               {/* <Barcode value="987654321" width={1} height={50} /> */}
 
-              <p style={{ textAlign: "center" }}>Profile Details</p>
+              {/* <p style={{ textAlign: "center" }}>Profile Details</p> */}
             </div>
           </div>
         </div>

@@ -40,8 +40,6 @@ export const Bookappointment = () => {
     setConsultantDrInfo(docInfo);
   }
 
-  console.log("ConsultantDr", ConsultantDr);
-  console.log("ConsultantDrInfo", ConsultantDrInfo);
 
   const formdata = new FormData();
   const generateRandomNumber = () => {
@@ -51,7 +49,6 @@ export const Bookappointment = () => {
   };
   const prefix = "JAN";
   const randomNumber = generateRandomNumber();
-  const [BookingStatus, setBookingStatus] = useState("");
   const [DocDept, setDocDept] = useState("");
 
   const BookAppointment = async (e) => {

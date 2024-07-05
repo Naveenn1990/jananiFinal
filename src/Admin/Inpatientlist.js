@@ -203,8 +203,9 @@ export default function Inpatientlist() {
           console.log(res.data.success);
           setmedicinesTaking("");
           setpatientAllergies([]);
-          alert("Signup Success");
-          getcategory();
+          alert("IPD Patient Register Successfully.!");
+          getipdpatients();
+          handleClose2()
           // window.location.assign("/patientPortal");
         }
       }
@@ -216,13 +217,13 @@ export default function Inpatientlist() {
     }
   };
 
-  const [category, setcategory] = useState([]);
+  const [IPDPatientList, setIPDPatientList] = useState([]);
 
-  const getcategory = () => {
+  const getipdpatients = () => {
     axios
       .get("http://localhost:8521/api/user/getPatientList")
       .then(function (response) {
-        setcategory(response.data.UsersInfo);
+        setIPDPatientList(response.data.UsersInfo);
       })
       .catch(function (error) {
         console.log(error);
@@ -250,7 +251,7 @@ export default function Inpatientlist() {
   };
 
   useEffect(() => {
-    getcategory();
+    getipdpatients();
     getDoctors();
   }, []);
 
@@ -298,7 +299,7 @@ export default function Inpatientlist() {
       if (res.status === 200) {
         alert(res.data.message);
         handleClose3();
-        getcategory();
+        getipdpatients();
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -327,7 +328,7 @@ export default function Inpatientlist() {
       if (res.status === 200) {
         alert(res.data.message);
         setPatientVisitId(res.data.data);
-        getcategory();
+        getipdpatients();
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -408,7 +409,7 @@ export default function Inpatientlist() {
         <div className="d-flex gap-2">
           <AiOutlinePlusCircle
             className="AddIcon1"
-            onClick={() => setShow2(true)}
+            onClick={() => handleShow2()}
           />
           <input
             placeholder="Search In-Patient List"
@@ -1489,8 +1490,7 @@ export default function Inpatientlist() {
                 border: "1px solid white",
                 padding: "4px 10px",
               }}
-              onClick={(e) => {
-                setShow2(false);
+              onClick={(e) => {                
                 signup(e);
               }}
             >
@@ -1842,7 +1842,7 @@ export default function Inpatientlist() {
       </Modal>
 
       <div style={{ overflowX: "scroll" }}>
-        <Table responsive="md" style={{ marginTop: "1%" }}>
+        <Table responsive="md" style={{ marginTop: "1%" }} bordered>
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
               <th>Profile</th>
@@ -1863,7 +1863,7 @@ export default function Inpatientlist() {
             </tr>
           </thead>
           <tbody>
-            {category
+            {IPDPatientList
               ?.filter((val) => val?.registrationType === "IPD")
               ?.map((item) => {
                 return (

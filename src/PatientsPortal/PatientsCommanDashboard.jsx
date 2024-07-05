@@ -8,7 +8,7 @@ function PatientsCommanDashboard(props) {
   return (
     <div className="dash">
       <div className="row me-0">
-        <div className=" col-lg-2 left-side">
+        <div className=" col-lg-2 left-side" style={{height:"100%"}}>
             <PatientsSidebar  />
         </div>
 

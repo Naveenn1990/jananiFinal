@@ -269,6 +269,8 @@ import ReferFromClinicPatientList from "./Admin/ReferFromClinicPatientList";
 import NotificationList from "./Admin/NotificationList";
 import ReferDoctorNotification from "./ReferDoctor/ReferDoctorNotification";
 import ReferLabNotification from "./ReferLab/ReferLabNotification";
+import PrescriptionReport from "./PatientsPortal/PrescriptionReport";
+import HospitalLabSampleCollector from "./Admin/HospitalLabSampleCollector";
 
 function App() {
   return (
@@ -817,6 +819,18 @@ function App() {
                   children={
                     <>
                       <Prescription />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/PrescriptionReport"
+              element={
+                <PatientsCommanDashboard
+                  children={
+                    <>
+                      <PrescriptionReport />
                     </>
                   }
                 />
@@ -2090,7 +2104,7 @@ function App() {
                 </>
               }
             />
-           
+
             <Route
               path="/admin/referfromclinicpatientlist"
               element={
@@ -2593,6 +2607,15 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<HospitalLabRecepPanel />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/HospitalLabSampleCollector"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<HospitalLabSampleCollector />} />{" "}
                 </>
               }
             ></Route>
