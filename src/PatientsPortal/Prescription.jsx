@@ -5,17 +5,19 @@ import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Container, Modal, Table } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 
 export const Prescription = () => {
   const user = JSON.parse(sessionStorage.getItem("PatientUser"));
+  const navigate = useNavigate();
   const [AppointmentList, setAppointmentList] = useState([]);
   const getAppointmentList = () => {
     axios
       .get("http://localhost:8521/api/user/getlist")
       .then(function (response) {
         const data = response.data.Info;
-        const databyid = data.filter((item) => item?.patientDBId === user?._id);
+        const databyid = data.filter((item) => item?.patientDBId?._id === user?._id);
         setAppointmentList(databyid);
         setPagination(databyid);
       })
@@ -65,7 +67,7 @@ export const Prescription = () => {
               <th className="fw-bold">Created by</th>
               <th className="fw-bold">Date</th>
               <th className="fw-bold">Disease</th>
-              <th className="fw-bold">Actions </th>
+              <th className="fw-bold">Reports </th>
             </tr>
           </thead>
           <tbody>
@@ -86,14 +88,18 @@ export const Prescription = () => {
                   </td>
 
                   <td>
-                    <div className="d-flex gap-2">
-                      {/* <button
-                        className="me-2 fs-5"
-                        style={{ border: "none", color: "Orange" }}
-                      >
-                        <FontAwesomeIcon icon={faFilePdf} />
-                      </button> */}
-
+                    <div 
+                    onClick={() =>
+                      navigate("/PrescriptionReport", {
+                        state: { item: item },
+                      })
+                    }
+                    >
+                   <Button>
+                    View Reports
+                   </Button>
+                    </div>
+                    {/* <div className="d-flex gap-2">                     
                       <button
                         className="fs-5"
                         style={{ border: "none", color: "green" }}
@@ -104,7 +110,7 @@ export const Prescription = () => {
                       >
                         <FontAwesomeIcon icon={faEye} />
                       </button>
-                    </div>
+                    </div> */}
                   </td>
                 </tr>
               );

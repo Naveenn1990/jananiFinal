@@ -44,6 +44,8 @@ export const YourAppointment = () => {
       });
   };
 
+  console.log("AppointmentList",AppointmentList);
+
   const [AppointmentId, setAppointmentId] = useState({});
   const [DateofApp, setDateofApp] = useState("");
   const [StatrtTime, setStatrtTime] = useState(null);
@@ -117,7 +119,7 @@ export const YourAppointment = () => {
 
       <Container>
         <div className="row">
-          {AppointmentList?.filter((ele) => ele?.PatientId === user?._id)?.map(
+          {AppointmentList?.filter((ele) => ele?.patientDBId?._id === user?._id)?.map(
             (item) => {
               return (
                 <div className="col-lg-6 mt-3">
@@ -136,15 +138,34 @@ export const YourAppointment = () => {
                         alt=""
                       />
                       <div>
-                        <p className="mb-2 fw-bold">
-                          {item?.Firstname} {item?.Dateofappointment}
+                        <p className="mb-2">
+                         <span style={{fontWeight:"bold"}}>Patient Name :</span> 
+                         {`${item?.Firstname} ${item?.Lastname}`}
                         </p>
-                        <p className="mb-2 fw-bold">
-                          Time: {item?.starttime} to {item?.endtime}
+                        <p className="mb-2">
+                         <span style={{fontWeight:"bold"}}>Appointment Date :</span> 
+                          {item?.Dateofappointment}
                         </p>
-                        <p className="mb-2 fw-bold">Hospital service</p>
-                        <p className="mb-2 fw-bold">Token No : {item?.token}</p>
-                        <p className="mb-2 fw-bold">{item?.Condition}</p>
+                        <p className="mb-2 ">
+                          <span style={{fontWeight:"bold"}}>Time :</span> 
+                          {item?.starttime} to {item?.endtime}
+                        </p>
+                        <p className="mb-2 ">
+                          <span style={{fontWeight:"bold"}}>Token No : </span> 
+                          {item?.token}
+                        </p>
+                        <p className="mb-2 ">
+                          <span style={{fontWeight:"bold"}}>Reason/Disease : </span> 
+                          {item?.medicalReason}
+                        </p>
+                        <p className="mb-2 ">
+                          <span style={{fontWeight:"bold"}}>Injury/Condition : </span> 
+                          {item?.Condition}
+                        </p>
+                        <p className="mb-2 ">
+                          <span style={{fontWeight:"bold"}}>Doctor : </span> 
+                          {`${item?.ConsultantDoctor?.Firstname} ${item?.ConsultantDoctor?.Lastname}` }
+                        </p>                         
                       </div>
                       <p
                         style={{
@@ -231,8 +252,8 @@ export const YourAppointment = () => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button onClick={UpdateBookingAppointment} variant="primary">
-            Submit
+          <Button onClick={UpdateBookingAppointment} variant="success">
+            Reschedule
           </Button>
         </Modal.Footer>
       </Modal>

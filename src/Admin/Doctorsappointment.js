@@ -1,4 +1,4 @@
-import { Checkbox } from "@mui/material";
+import { Checkbox, Pagination, Stack } from "@mui/material";
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -76,6 +76,51 @@ export default function DoctorsAppointment() {
 
   const BookAppointment = async (e) => {
     e.preventDefault();
+    const nameRegex = /^[A-Za-z]{2,30}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\d{10}$/;
+    if (!nameRegex.test(patientfirstname)) {
+      return alert('Invalid first name. Only letters are allowed, and it should be between 2 and 30 characters long.');
+    }
+    if (!nameRegex.test(patientlastname)) {
+      return alert('Invalid last name. Only letters are allowed, and it should be between 2 and 30 characters long.');
+    }
+    if (!emailRegex.test(email)) {
+      return alert('Invalid email address.');
+    }
+    if (!DOB) {
+      return alert("Please select date of birth.");
+    }
+    if (!gender) {
+      return alert("Please select gender.");
+    }
+    if (!phoneRegex.test(mobileno)) {
+      return alert('Invalid phone number. It should be exactly 10 digits long.');
+    }
+    if (!DocDept) {
+      return alert("Please Select Department");
+    }
+    if (!ConsultantDr) {
+      return alert("Please Select Doctor");
+    }
+    if (!DateofApp) {
+      return alert("Please Select Appointment Date");
+    }
+    if (!StatrtTime) {
+      return alert("Please Select Appointment Time");
+    }
+    if (!medicalReason) {
+      return alert("Please Enter Medical Reason");
+    }
+    if (!Condition) {
+      return alert("Please Enter Patient Condition");
+    }
+    if (!Note) {
+      return alert("Please Write Note about Patient");
+    }
+    if (!Document) {
+      return alert("Please Upload Patient Medical Documnet");
+    }
     formdata.append("token", prefix + randomNumber);
     formdata.append("PatientId", "Admin");
     formdata.append("Firstname", patientfirstname);
@@ -93,6 +138,7 @@ export default function DoctorsAppointment() {
     formdata.append("Note", Note);
     formdata.append("Address1", Address);
     formdata.append("Document", Document);
+    formdata.append("ScheduleId", SelectedTime?._id);
     try {
       const config = {
         url: "/user/addappointment",
@@ -122,6 +168,7 @@ export default function DoctorsAppointment() {
       .get("http://localhost:8521/api/user/getlist")
       .then(function (response) {
         setAppointmentList(response.data.Info);
+        setPagination(response.data.Info);
       })
       .catch(function (error) {
         console.log(error);
@@ -141,6 +188,7 @@ export default function DoctorsAppointment() {
   };
 
   const [AppointmentId, setAppointmentId] = useState({});
+
   console.log("AppointmentId",AppointmentId);
   const UpdateBookingAppointment = async () => {
     try {
@@ -150,19 +198,23 @@ export default function DoctorsAppointment() {
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
         data: {
-          Id: AppointmentId?._id,
-          doctorId:AppointmentId?.ConsultantDoctor?._id,         
-          Dateofappointment: DateofApp,
-          starttime:SelectedTime?.startTime,
-          endtime:SelectedTime?.endTime,       
+          AppointmentId: AppointmentId?._id,
+          starttime: SelectedTime?.startTime,
+          endtime: SelectedTime?.endTime,
+          rescheduleId:SelectedTime?._id,
+
+          doctorId: AppointmentId?.ConsultantDoctor?._id,
+          bookedscheduleId: AppointmentId?.ScheduleId,
+          Dateofappointment: DateofApp,      
         },
       };
 
       let res = await axios(config);
       if (res.status === 200) {
-        alert("reschedule successfully");
+        alert(res.data.success);
         getAppointmentList();
         handleClose1();
+        window.location.assign("")
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -200,9 +252,64 @@ const PaymentUpdate = async()=>{
     }
   }
 
+  //Search
+  const [SearchItem, setSearchItem] = useState("");
+
+  // Pagination
+      const [pagination, setPagination] = useState([]);
+      const [pageNumber, setPageNumber] = useState(0);
+      const usersPerPage = 5;
+      const pagesVisited = pageNumber * usersPerPage;
+      const pageCount = Math.ceil(pagination?.length / usersPerPage);
+      const changePage = ( selected ) => {
+          setPageNumber(selected);
+      };
+
+    // Get Hospital Department
+    const [GetDepartmentData, setGetDepartmentData] = useState([]);
+    const GetDepartment = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8521/api/admin/getDepartment"
+        );
+        if (res.status === 200) {
+          setGetDepartmentData(res.data.success);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const Doctorschedule = Doctors?.find((doc) => doc?._id === ConsultantDr);
+    const uniqueDates = new Set();
+    const [selecteTimearray, setselecteTimearray] = useState([]);
+    useEffect(() => {
+      if (DateofApp) {
+        const asd = Doctorschedule?.scheduleList.filter(
+          (item) => item.scheduleDate == DateofApp && item.bookingstatus === "Vacant"
+        );
+        setselecteTimearray(asd);
+      }
+    }, [DateofApp]);
+
+    //Reschedule Appointemnt
+    const DoctorReschedule = Doctors?.find((doc) => doc?._id === AppointmentId?.ConsultantDoctor?._id);
+    const [selecteRescheduleTimearray, setselecteRescheduleTimearray] = useState([]);
+    useEffect(() => {
+      if (AppointmentId?.Dateofappointment) {
+        const asd = DoctorReschedule?.scheduleList.filter(
+          (item) =>
+            item.scheduleDate == AppointmentId?.Dateofappointment &&
+            item.bookingstatus === "Vacant"
+        );
+        setselecteRescheduleTimearray(asd);
+      }
+    }, [AppointmentId?.Dateofappointment]);
+
+
   useEffect(() => {
     getDoctors();
     getAppointmentList();
+    GetDepartment()
   }, []);
   return (
     <div>
@@ -230,6 +337,8 @@ const PaymentUpdate = async()=>{
                 border: "1px solid #20958c",
                 borderRadius: "0px",
               }}
+              type="search"
+              onChange={(e)=>setSearchItem(e.target.value)}
             />
           </div>
         </div>
@@ -266,7 +375,7 @@ const PaymentUpdate = async()=>{
                     backgroundColor: "#ebebeb",
                   }}
                   onChange={(e) => setpatientlastname(e.target.value)}
-                ></input>
+                />
               </div>
               <div className="col-lg-6">
                 <input
@@ -281,7 +390,7 @@ const PaymentUpdate = async()=>{
                     marginTop: "2%",
                   }}
                   onChange={(e) => setemail(e.target.value)}
-                ></input>
+                />
               </div>
               <div className="col-lg-6">
                 <input
@@ -296,7 +405,7 @@ const PaymentUpdate = async()=>{
                     marginTop: "2%",
                   }}
                   onChange={(e) => setDOB(e.target.value)}
-                ></input>
+                />
               </div>
               <div className="col-lg-6">
                 <select
@@ -343,14 +452,19 @@ const PaymentUpdate = async()=>{
                   }}
                   onChange={(e) => setDocDept(e.target.value)}
                 >
-                  <option>Select Deparment</option>
-                  {[...new Set(Doctors?.map((item) => item?.Department))]?.map(
+                  <option value="">Select Deparment</option>
+                  {/* {[...new Set(Doctors?.map((item) => item?.Department))]?.map(
                     (department) => (
                       <option key={department} value={department}>
                         {department}
                       </option>
                     )
-                  )}
+                  )} */}
+                   {GetDepartmentData?.map((dep) => (
+                      <option value={dep?.DepartmentName}>
+                        {dep?.DepartmentName}
+                        </option>
+                    ))}
                 </select>
               </div>
               <div className="col-lg-6">
@@ -395,7 +509,7 @@ const PaymentUpdate = async()=>{
                   }}
                 >
                   <option>Date of Appointment</option>
-                  {[
+                  {/* {[
                     ...new Set(
                       Doctors.filter(
                         (ele) => ele?._id === ConsultantDr
@@ -409,7 +523,32 @@ const PaymentUpdate = async()=>{
                     <option key={index} value={uniqueDate}>
                       {uniqueDate}
                     </option>
-                  ))}
+                  ))} */}
+                   {Doctorschedule?.scheduleList
+                        ?.filter(
+                          (schedd) =>
+                            moment(schedd?.scheduleDate).isSameOrAfter(
+                              moment(),
+                              "day"
+                            ) && schedd?.bookingstatus === "Vacant"
+                        )
+                        ?.map((shedul) => {
+                          const formattedDate = moment(
+                            shedul?.scheduleDate
+                          ).format("DD-MM-YYYY");
+                          if (!uniqueDates.has(formattedDate)) {
+                            uniqueDates.add(formattedDate);
+                            return (
+                              <option
+                                value={shedul?.scheduleDate}
+                                key={shedul?.scheduleDate}
+                              >
+                                {formattedDate}
+                              </option>
+                            );
+                          }
+                          return null; // Return null for duplicates, so they are not rendered
+                        })}
                 </select>
               </div>
               <div className="col-lg-6">
@@ -427,20 +566,27 @@ const PaymentUpdate = async()=>{
                   }}
                 >
                   <option>Select Time</option>
-                  {Doctors?.filter((ele) => ele?._id === ConsultantDr)?.flatMap(
+                  {/* {Doctors?.filter((ele) => ele?._id === ConsultantDr)?.flatMap(
                     (doctor) =>
                       doctor?.scheduleList
                         ?.filter((ele) => ele.scheduleDate === DateofApp)
                         ?.map((scheduleItem, index) => (
                           <option
                             key={index}
-                            // value={scheduleItem?.startTime}
                             value={JSON.stringify(scheduleItem)}
                           >
                             {`${scheduleItem?.startTime} to ${scheduleItem?.endTime}`}
                           </option>
                         ))
-                  )}
+                  )} */}
+                  {selecteTimearray?.map((shedul) => (
+                      <option
+                      value={JSON.stringify(shedul)}
+                      >
+                        {/* <option value={shedul?._id}> */}
+                        {shedul?.startTime}-{shedul?.endTime}
+                      </option>
+                    ))}
                 </select>
               </div>
               <div className="col-lg-6">
@@ -780,7 +926,12 @@ const PaymentUpdate = async()=>{
               </tr>
             </thead>
             <tbody>
-              {AppointmentList?.map((item, i) => {
+              {AppointmentList?.slice(pagesVisited, pagesVisited + usersPerPage)?.map((item, i) => {
+                 if (
+                  SearchItem === "" ||
+                  Object.values(item).some((value) =>
+                  String(value).toLowerCase().includes(SearchItem.toLowerCase())
+              ))
                 return (
                   <tr style={{ fontSize: "15px", textAlign: "center" }}>
                     <td>{i + 1}</td>
@@ -832,7 +983,9 @@ const PaymentUpdate = async()=>{
                           cursor: "pointer",
                         }}
                       >
-                        <FaEdit onClick={() => handleShow1(item)} />
+                        <FaEdit onClick={() => 
+                          handleShow1(item)
+                          } />
                       </p>
                     </td>
                   </tr>
@@ -840,6 +993,17 @@ const PaymentUpdate = async()=>{
               })}
             </tbody>
           </Table>
+          <div style={{float:"right"}} className="my-3 d-flex justify-end">
+                        <Stack spacing={2}>
+                            <Pagination
+                                count={pageCount}
+                                onChange={(event, value)=>{
+                                    changePage(value-1)
+                                  }}
+                                color="primary"                          
+                            />
+                        </Stack>
+                    </div>
         </div>
       </div>
       <Modal show={show2} onHide={handleClose2}>
@@ -1027,7 +1191,7 @@ const PaymentUpdate = async()=>{
               onChange={(e) => setDateofApp(e.target.value)}
             >
               <option>Date of Appointment</option>
-              {[
+              {/* {[
                     ...new Set(
                       Doctors.filter(
                         (ele) => ele?._id === AppointmentId?.ConsultantDoctor?._id
@@ -1041,7 +1205,32 @@ const PaymentUpdate = async()=>{
                     <option key={index} value={uniqueDate}>
                       {uniqueDate}
                     </option>
-                  ))}
+                  ))} */}
+                   {DoctorReschedule?.scheduleList
+                ?.filter(
+                  (schedd) =>
+                    moment(schedd?.scheduleDate).isSameOrAfter(
+                      moment(),
+                      "day"
+                    ) && schedd?.bookingstatus === "Vacant"
+                )
+                ?.map((shedul) => {
+                  const formattedDate = moment(shedul?.scheduleDate).format(
+                    "DD-MM-YYYY"
+                  );
+                  if (!uniqueDates.has(formattedDate)) {
+                    uniqueDates.add(formattedDate);
+                    return (
+                      <option
+                        value={shedul?.scheduleDate}
+                        key={shedul?.scheduleDate}
+                      >
+                        {formattedDate}
+                      </option>
+                    );
+                  }
+                  return null;
+                })}
             </Form.Select>
           </div>
           <div>
@@ -1053,20 +1242,11 @@ const PaymentUpdate = async()=>{
               onChange={(e) => setStatrtTime(e.target.value)}
             >
               <option>Time of Appointment</option>
-              {Doctors?.filter((ele) => ele?._id === AppointmentId?.ConsultantDoctor?._id)?.flatMap(
-                    (doctor) =>
-                      doctor?.scheduleList
-                        ?.filter((ele) => ele.scheduleDate === DateofApp)
-                        ?.map((scheduleItem, index) => (
-                          <option
-                            key={index}
-                            // value={scheduleItem?.startTime}
-                            value={JSON.stringify(scheduleItem)}
-                          >
-                            {`${scheduleItem?.startTime} to ${scheduleItem?.endTime}`}
-                          </option>
-                        ))
-                  )}
+              {selecteRescheduleTimearray?.map((shedul) => (
+                <option value={JSON.stringify(shedul)}>
+                  {shedul?.startTime}-{shedul?.endTime}
+                </option>
+              ))}
             </Form.Select>
           </div>
           
@@ -1075,8 +1255,8 @@ const PaymentUpdate = async()=>{
           <Button variant="secondary" onClick={handleClose1}>
             Close
           </Button>
-          <Button onClick={UpdateBookingAppointment} variant="primary">
-            Submit
+          <Button onClick={UpdateBookingAppointment} variant="success">
+          Reschedule
           </Button>
         </Modal.Footer>
       </Modal>
