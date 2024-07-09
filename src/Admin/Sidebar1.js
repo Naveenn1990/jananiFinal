@@ -130,16 +130,6 @@ export default function Sidebar1() {
           </h6>
         ) : null}
 
-        {admin?.labTechnician === true ? (
-          <Link to="/admin/HospitalLabPanel">
-            <h6
-              className="sidebarItem1"
-              // onClick={() => window.location.assign("/admin/HospitalLabPanel")}
-            >
-              Lab Technician
-            </h6>
-          </Link>
-        ) : null}
         <div
           style={{
             display: LabM ? "block" : "none",
@@ -203,6 +193,17 @@ export default function Sidebar1() {
               // onClick={() => window.location.assign("/admin/HospitalLabPanel")}
             >
               Lab Sample Collector
+            </h6>
+          </Link>
+        ) : null}
+
+        {admin?.labTechnician === true ? (
+          <Link to="/admin/HospitalLabtechnician">
+            <h6
+              className="sidebarItem"
+              // onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+            >
+              Lab Technician
             </h6>
           </Link>
         ) : null}
