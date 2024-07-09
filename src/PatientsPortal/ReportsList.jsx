@@ -24,16 +24,35 @@ function ReportsList() {
     patientInfo();
   }, []);
 
+
+
   console.log("PatientLabReport",PatientLabReport);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
   const [Labtests, setLabtests] = useState({});
   const componentRef = useRef();
   const handleprint = useReactToPrint({
     content: () => componentRef.current,
     documentTitle: "LabTestInvoice",
   });
+
+  
+  const dobString = Labtests?.patientid?.DOB;
+  const dob = new Date(dobString);
+  const currentDate = new Date();
+  const differenceMs = currentDate - dob;
+  const ageYears = Math.floor(differenceMs / (1000 * 60 * 60 * 24 * 365.25));
+
+  let ageOutput;
+  if (ageYears < 1) {
+    const ageMonths = Math.floor(ageYears * 12);
+    ageOutput = `${ageMonths} months`;
+  } else {
+    ageOutput = `${ageYears} years`;
+  }
+  
   return (
     <div>
       <h4
@@ -109,7 +128,7 @@ function ReportsList() {
                       <br />
                       <span>JananiPharmacy@gmail.com</span>
                       <br />
-                      <span>+1999212993</span>
+                      <span>+91 9921299308</span>
                       <br />
                       <span>Singapur Layout, Banglore</span>
                       <br />
@@ -122,18 +141,18 @@ function ReportsList() {
                   >
                     <div className="col-sm-4">
                       <div>
-                        <b>Patient Name : </b> {Labtests?.patientname}
+                        <b>Patient Name : </b> {`${Labtests?.patientid?.Firstname} ${Labtests?.patientid?.Lastname}`}
                       </div>
                       <div>
-                        <b>Patient Age : </b> 45 years
+                        <b>Patient Age : </b> {ageOutput}
                       </div>
                     </div>
                     <div className="col-sm-4">
                       <div>
-                        <b>Patient ID : </b> HJKD567
+                        <b>Patient ID : </b> {Labtests?.patientid?.PatientId}
                       </div>
                       <div>
-                        <b>Gender : </b> Male
+                        <b>Gender : </b> {Labtests?.patientid?.Gender}
                       </div>
                     </div>
                     <div className="col-sm-4">
@@ -157,7 +176,7 @@ function ReportsList() {
                         </tr>
                       </thead>
                       <tbody>
-                        {Labtests?.Labtests?.filter(
+                        {/* {Labtests?.Labtests?.filter(
                           (ele) => ele.patientReportVal
                         )?.map((item, i) => {
                           return (
@@ -168,7 +187,7 @@ function ReportsList() {
                               <td>{item?.generalRefVal} </td>
                             </tr>
                           );
-                        })}
+                        })} */}
                       </tbody>
                     </Table>
                   </div>

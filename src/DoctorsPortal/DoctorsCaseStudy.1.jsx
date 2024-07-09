@@ -1,4 +1,9 @@
-import { faCancel, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCancel,
+  faPlus,
+  faPenToSquare,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
@@ -262,46 +267,57 @@ export const DoctorsCaseStudy = () => {
 
   const Addmedicine = async (e) => {
     e.preventDefault();
-    try {
-      const config = {
-        url: "/user/addMedicineInfo/" + AppointmentList?._id,
-        method: "put",
-        baseURL: "http://localhost:8521/api",
-        headers: { "content-type": "multipart/form-data" },
-        data: {
-          medicineName: DocselectedMedicine?.productName,
-          // genericName: genericName,
-          // medicineType: medicineType,
-          // dosage: dosage,
-          morningDose: morningDose,
-          noonDose: noonDose,
-          eveDose: eveDose,
-          nightDose: nightDose,
-          medicineTakefrquency: medicineTakefrquency,
-          medicineTakingTime: medicineTakingTime,
-          // duration: duration,
-          // days: days,
-          // result: result,
-          Quantity: Quantity,
-          totalAmtToPay: Number(
-            (
-              DocselectedMedicine?.productPrice -
-              DocselectedMedicine?.productPrice *
-                (DocselectedMedicine?.discount / 100)
-            ).toFixed(2)
-          ),
-          advise: advise,
-        },
-      };
-      let res = await axios(config);
-      if (res.status === 200) {
-        getAppointmentList();
-        alert(res.data.success);
-      }
-    } catch (error) {
-      console.log(error.response);
-      if (error.response) {
-        alert(error.response.data.error);
+    if (
+      !DocselectedMedicine ||
+      !morningDose ||
+      !noonDose ||
+      !eveDose ||
+      !nightDose ||
+      !medicineTakingTime
+    ) {
+      alert("Please fill all the fields");
+    } else {
+      try {
+        const config = {
+          url: "/user/addMedicineInfo/" + AppointmentList?._id,
+          method: "put",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "multipart/form-data" },
+          data: {
+            medicineName: DocselectedMedicine?.productName,
+            // genericName: genericName,
+            // medicineType: medicineType,
+            // dosage: dosage,
+            morningDose: morningDose,
+            noonDose: noonDose,
+            eveDose: eveDose,
+            nightDose: nightDose,
+            medicineTakefrquency: medicineTakefrquency,
+            medicineTakingTime: medicineTakingTime,
+            // duration: duration,
+            // days: days,
+            // result: result,
+            Quantity: Quantity,
+            totalAmtToPay: Number(
+              (
+                DocselectedMedicine?.productPrice -
+                DocselectedMedicine?.productPrice *
+                  (DocselectedMedicine?.discount / 100)
+              ).toFixed(2)
+            ),
+            advise: advise,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          getAppointmentList();
+          alert(res.data.success);
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
       }
     }
   };
@@ -678,19 +694,6 @@ export const DoctorsCaseStudy = () => {
               <div className="row">
                 <div className="col-lg-6 ">
                   <InputGroup className="mb-3">
-                    {/* <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={ProductList[0]}
-                      isDisabled={isDisabled}
-                      isLoading={isLoading}
-                      isClearable={isClearable}
-                      isRtl={isRtl}
-                      isSearchable={isSearchable}
-                      name="color"
-                      options={ProductList}
-                      // onChange={(e) => setmedicineName(e.target.value)}
-                    /> */}
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -702,26 +705,6 @@ export const DoctorsCaseStudy = () => {
                         <TextField {...params} label="Medicines" />
                       )}
                     />
-                    {/* <Form.Select
-                      aria-label="Default select example"
-                      onChange={(e) => setmedicineName(e.target.value)}
-                    >
-                      <option>Open this select menu</option>
-                      {ProductList?.filter((val) => val?.stock > 1)?.map(
-                        (item) => {
-                          return (
-                            <option value={item?.productName}>
-                              {item?.productName}
-                            </option>
-                          );
-                        }
-                      )}
-                    </Form.Select> */}
-                    {/* <Form.Control
-                      placeholder="Medicine Name"
-                      aria-describedby="basic-addon1"
-                      onChange={(e) => setmedicineName(e.target.value)}
-                    /> */}
                   </InputGroup>
                   <InputGroup className="">
                     <FormLabel className="fw-bold text-dark">
@@ -851,7 +834,7 @@ export const DoctorsCaseStudy = () => {
                             />
                           </td>
                         </tr>
-                        <tr>
+                        {/* <tr>
                           <td colspan="4" align="center">
                             <strong>(or)</strong>
                           </td>
@@ -914,7 +897,7 @@ export const DoctorsCaseStudy = () => {
                               <option value="STAT">STAT</option>
                             </select>
                           </td>
-                        </tr>
+                        </tr> */}
 
                         <tr className="text-dark">
                           <td colspan="4">
@@ -990,7 +973,9 @@ export const DoctorsCaseStudy = () => {
                         <th className="text-light fw-bold">Frequency</th>
                         <th className="text-light fw-bold">Quantity</th>
 
-                        {/* <th className='text-light fw-bold' width="10%">Action</th> */}
+                        <th className="text-light fw-bold" width="10%">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1008,20 +993,72 @@ export const DoctorsCaseStudy = () => {
 
                             <td>{item?.Quantity}</td>
 
-                            {/* <td>
+                            <td style={{ display: "flex", gap: "10px" }}>
+                              <button
+                                style={{
+                                  border: "none",
+                                  backgroundColor: "transparent",
+                                }}
+                                onClick={handleShow}
+                              >
+                                <FontAwesomeIcon
+                                  icon={faPenToSquare}
+                                  className="me-2"
+                                  style={{
+                                    color: "blue",
+                                  }}
+                                />
+                              </button>
+                              <button
+                                style={{
+                                  border: "none",
+                                  backgroundColor: "transparent",
+                                }}
+                                onClick={deleteBtnShow}
+                              >
+                                <FontAwesomeIcon
+                                  icon={faTrash}
+                                  className="me-2"
+                                  style={{
+                                    color: "red",
+                                  }}
+                                />
+                              </button>
+                              {/* <Dropdown>
+                                <Dropdown.Toggle
+                                  className="medicine-list"
+                                  id="dropdown-basic"
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faEllipsis}
+                                    className="fs-3 "
+                                  />
+                                </Dropdown.Toggle>
 
-            <Dropdown>
-                <Dropdown.Toggle className='medicine-list' id="dropdown-basic">
-                    <FontAwesomeIcon icon={faEllipsis} className='fs-3 ' />
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu>
-                    <Dropdown.Item className='medicine-list-dropdown' onClick={handleShow}><FontAwesomeIcon icon={faPenToSquare} className='me-2' />Edit Selected</Dropdown.Item>
-                    <Dropdown.Item className='medicine-list-dropdown' onClick={deleteBtnShow}><FontAwesomeIcon icon={faTrash} className='me-2' />Remove Selected</Dropdown.Item>
-                </Dropdown.Menu>
-            </Dropdown>
-
-        </td> */}
+                                <Dropdown.Menu>
+                                  <Dropdown.Item
+                                    className="medicine-list-dropdown"
+                                    onClick={handleShow}
+                                  >
+                                    <FontAwesomeIcon
+                                      icon={faPenToSquare}
+                                      className="me-2"
+                                    />
+                                    Edit Selected
+                                  </Dropdown.Item>
+                                  <Dropdown.Item
+                                    className="medicine-list-dropdown"
+                                    onClick={deleteBtnShow}
+                                  >
+                                    <FontAwesomeIcon
+                                      icon={faTrash}
+                                      className="me-2"
+                                    />
+                                    Remove Selected
+                                  </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown> */}
+                            </td>
                           </tr>
                         );
                       })}
@@ -1557,131 +1594,145 @@ export const DoctorsCaseStudy = () => {
           <Modal.Title>Edit Medicine</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="row mb-2 ">
+          <div className="row mb-5 ">
             <div className="col-lg-6">
               <FormLabel className="fw-bold text-dark">
                 Medicine Name*{" "}
               </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingEmail"
-                label="Medicine Name"
-              >
-                <Form.Control type="text" placeholder="Medicine Name" />
-              </FloatingLabel>
+              <InputGroup>
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  options={updatedProductList}
+                  sx={{ width: 300, backgroundColor: "white" }}
+                  value={DocselectedMedicine}
+                  onChange={handleDocMedicineChange}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Medicines" />
+                  )}
+                />
+              </InputGroup>
             </div>
-
             <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">Genric Name* </FormLabel>
+              <FormLabel className="fw-bold text-dark">Quantity* </FormLabel>
               <FloatingLabel
                 style={{ width: "300px" }}
                 controlId="floatingName"
-                label="Genric Name"
+                label="Quantity"
               >
-                <Form.Control type="text" placeholder="Genric Name" />
+                <Form.Control
+                  type="number"
+                  value={Quantity}
+                  placeholder="Quantity"
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+              </FloatingLabel>
+            </div>
+          </div>
+
+          <div className="row mb-5 ">
+            <div className="col-lg-3">
+              <FormLabel className="fw-bold text-dark">Morning* </FormLabel>
+              <FloatingLabel
+                style={{ width: "100px" }}
+                controlId="floatingName"
+                label="Morning"
+              >
+                <Form.Control
+                  type="number"
+                  value={morningDose}
+                  placeholder="Morning"
+                  onChange={(e) => setmorningDose(e.target.value)}
+                />
+              </FloatingLabel>
+            </div>
+            <div className="col-lg-3">
+              <FormLabel className="fw-bold text-dark">Noon* </FormLabel>
+              <FloatingLabel
+                style={{ width: "100px" }}
+                controlId="floatingName"
+                label="Noon"
+              >
+                <Form.Control
+                  type="number"
+                  value={noonDose}
+                  placeholder="Noon"
+                  onChange={(e) => setnoonDose(e.target.value)}
+                />
+              </FloatingLabel>
+            </div>
+            <div className="col-lg-3">
+              <FormLabel className="fw-bold text-dark">Evening* </FormLabel>
+              <FloatingLabel
+                style={{ width: "100px" }}
+                controlId="floatingName"
+                label="Evening"
+              >
+                <Form.Control
+                  type="number"
+                  value={eveDose}
+                  placeholder="Evening"
+                  onChange={(e) => seteveDose(e.target.value)}
+                />
+              </FloatingLabel>
+            </div>
+            <div className="col-lg-3">
+              <FormLabel className="fw-bold text-dark">Night* </FormLabel>
+              <FloatingLabel
+                style={{ width: "100px" }}
+                controlId="floatingName"
+                label="Night"
+              >
+                <Form.Control
+                  type="number"
+                  value={nightDose}
+                  placeholder="Night"
+                  onChange={(e) => setnightDose(e.target.value)}
+                />
               </FloatingLabel>
             </div>
           </div>
 
           <div className="row mb-2 ">
-            <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">
-                Select Dablet*{" "}
-              </FormLabel>
-              <Form.Select
-                aria-label="Default select example"
-                className="mb-3"
-                style={{ width: "300px" }}
-              >
-                <option value="">Select</option>
-                <option value="Tablet">Tablet</option>
-                <option value="Capsule">Capsule</option>
-                <option value="Cream">Cream</option>
-                <option value="Drops">Drops</option>
-                <option value="Gel">Gel</option>
-                <option value="Inhaler">Inhaler</option>
-                <option value="Injection">Injection</option>
-                <option value="Lotion">Lotion</option>
-                <option value="MotherTincture">Mother Tincture</option>
-                <option value="Mouthwash">Mouthwash</option>
-                <option value="Oil">Oil</option>
-                <option value="Ointment">Ointment</option>
-                <option value="Pills">Pills</option>
-                <option value="Powder">Powder</option>
-                <option value="Shampoo">Shampoo</option>
-                <option value="Spray">Spray</option>
-                <option value="Suspension">Suspension</option>
-                <option value="Syringe">Syringe</option>
-                <option value="Syrup">Syrup</option>
-                <option value="Toothpaste">Toothpaste</option>
-              </Form.Select>
+            <div className="col-lg-3">
+              <input
+                type="radio"
+                id="beforefood"
+                name="beforeorafterfood"
+                value="Before Food"
+                onChange={(e) => setmedicineTakingTime(e.target.value)}
+              />
+              Before Food
             </div>
-
-            <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">Dosage* </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingName"
-                label="Dosage"
-              >
-                <Form.Control type="text" placeholder="Dosage" />
-              </FloatingLabel>
+            <div className="col-lg-3">
+              <input
+                type="radio"
+                id="afterfood"
+                name="beforeorafterfood"
+                value="After Food"
+                onChange={(e) => setmedicineTakingTime(e.target.value)}
+              />
+              After Food
             </div>
-          </div>
-
-          <div className="row mb-2 ">
-            <div className="col-lg-6">
-              <FormLabel className="fw-bold text-dark">Duration * </FormLabel>
-              <FloatingLabel
-                style={{ width: "300px" }}
-                controlId="floatingEmail"
-                label="Duration"
-              >
-                <Form.Control type="text" placeholder="Duration" />
-              </FloatingLabel>
+            <div className="col-lg-3">
+              <input
+                type="radio"
+                id="withoutfood"
+                name="beforeorafterfood"
+                value="With Food"
+                onChange={(e) => setmedicineTakingTime(e.target.value)}
+              />
+              With Food
             </div>
-
-            <div className="col-lg-6 mt-3">
-              <FormLabel className="fw-bold text-dark">Days* </FormLabel>
-              <Form.Select
-                style={{ width: "300px" }}
-                aria-label="Default select example"
-              >
-                <option>Select</option>
-                <option value="OO">Only Once</option>
-                <option value="OA">Only Afternoon</option>
-                <option value="QD">QD (Once a day)</option>
-                <option value="BID">BID (Twice a day)</option>
-                <option value="TID">TID (Three times a day)</option>
-                <option value="QID">QID (Four times a day)</option>
-                <option value="FID">FID (Five times a day)</option>
-                <option value="6x">Six times a day</option>
-                <option value="7x">Seven times a day</option>
-                <option value="8x">Eight times a day</option>
-                <option value="9x">Nine times a day</option>
-                <option value="10x">Ten times a day</option>
-                <option value="11x">Eleven times a day</option>
-                <option value="12x">Twelve times a day</option>
-                <option value="13x">Thirteen times a day</option>
-                <option value="14x">Fourteen times a day</option>
-                <option value="15x">Fifteen times a day</option>
-                <option value="Q4H">Q4H (Every 4 hours)</option>
-                <option value="Q6H">Q6H (Every 6 hours)</option>
-                <option value="Q2H">Q2H (Every 2 hours)</option>
-                <option value="QOD">QOD (Every other hour)</option>
-                <option value="QH">QH (Every hour)</option>
-                <option value="QAM">QAM (Every morning)</option>
-                <option value="QN">QN (Every night)</option>
-                <option value="QWK">QWK (Every week)</option>
-                <option value="QWK2">QWK2 (Every two weeks)</option>
-                <option value="BIS in 7d">BIS in 7d (Twice a week)</option>
-                <option value="TIW">TIW (Three times a week)</option>
-                <option value="OM">OM (Once in a month)</option>
-                <option value="SOS">SOS (If Necessary)</option>
-                <option value="Frequently">Frequently</option>
-                <option value="Dieb. Alt.">Dieb. Alt. (Alternate Days)</option>
-                <option value="STAT">STAT</option>
-              </Form.Select>
+            <div className="col-lg-3">
+              <input
+                type="radio"
+                id="nafood"
+                name="beforeorafterfood"
+                value="N/A"
+                onChange={(e) => setmedicineTakingTime(e.target.value)}
+              />
+              N/A
             </div>
           </div>
         </Modal.Body>

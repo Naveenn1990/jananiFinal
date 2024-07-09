@@ -269,6 +269,7 @@ import ReferFromClinicPatientList from "./Admin/ReferFromClinicPatientList";
 import NotificationList from "./Admin/NotificationList";
 import ReferDoctorNotification from "./ReferDoctor/ReferDoctorNotification";
 import ReferLabNotification from "./ReferLab/ReferLabNotification";
+import PrescriptionReport from "./PatientsPortal/PrescriptionReport";
 import HospitalLabSampleCollector from "./Admin/HospitalLabSampleCollector";
 import HospitalLabTechnician from "./Admin/HospitalLabTechnician";
 
@@ -819,6 +820,18 @@ function App() {
                   children={
                     <>
                       <Prescription />
+                    </>
+                  }
+                />
+              }
+            />
+            <Route
+              path="/PrescriptionReport"
+              element={
+                <PatientsCommanDashboard
+                  children={
+                    <>
+                      <PrescriptionReport />
                     </>
                   }
                 />

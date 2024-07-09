@@ -6,11 +6,12 @@ import { Table, Modal, ProgressBar, Button, Form, Card } from "react-bootstrap";
 import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { CiBarcode } from "react-icons/ci";
+import { CiBarcode, CiEdit } from "react-icons/ci";
 
 import { useReactToPrint } from "react-to-print";
 import { GrView } from "react-icons/gr";
 import moment from "moment";
+import { FaPlus } from "react-icons/fa";
 export default function Inpatientlist() {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
@@ -61,7 +62,14 @@ export default function Inpatientlist() {
   const handleClose9 = () => setShow9(false);
   const handleShow9 = () => setShow9(true);
 
-  console.log("VisitingCard", VisitingCard);
+  const [PatientDetailsView, setPatientDetailsView] = useState("");
+  const [show11, setShow11] = useState(false);
+  const handleClose11 = () => setShow11(false);
+  const handleShow11 = () => setShow11(true);
+
+  const [show12, setShow12] = useState(false);
+  const handleClose12 = () => setShow12(false);
+  const handleShow12 = () => setShow12(true);
 
   function ValidateEmail(mail) {
     if (
@@ -203,8 +211,9 @@ export default function Inpatientlist() {
           console.log(res.data.success);
           setmedicinesTaking("");
           setpatientAllergies([]);
-          alert("Signup Success");
-          getcategory();
+          alert("IPD Patient Register Successfully.!");
+          getipdpatients();
+          handleClose2();
           // window.location.assign("/patientPortal");
         }
       }
@@ -216,13 +225,13 @@ export default function Inpatientlist() {
     }
   };
 
-  const [category, setcategory] = useState([]);
+  const [IPDPatientList, setIPDPatientList] = useState([]);
 
-  const getcategory = () => {
+  const getipdpatients = () => {
     axios
       .get("http://localhost:8521/api/user/getPatientList")
       .then(function (response) {
-        setcategory(response.data.UsersInfo);
+        setIPDPatientList(response.data.UsersInfo);
       })
       .catch(function (error) {
         console.log(error);
@@ -250,7 +259,7 @@ export default function Inpatientlist() {
   };
 
   useEffect(() => {
-    getcategory();
+    getipdpatients();
     getDoctors();
   }, []);
 
@@ -298,7 +307,7 @@ export default function Inpatientlist() {
       if (res.status === 200) {
         alert(res.data.message);
         handleClose3();
-        getcategory();
+        getipdpatients();
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -327,7 +336,7 @@ export default function Inpatientlist() {
       if (res.status === 200) {
         alert(res.data.message);
         setPatientVisitId(res.data.data);
-        getcategory();
+        getipdpatients();
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -393,6 +402,57 @@ export default function Inpatientlist() {
   } else {
     ageOutput = `${ageYears} years`;
   }
+
+  // Add Cause
+  const [CauseName, setCauseName] = useState("");
+  const AddpatientCause = async () => {
+    if (!CauseName) {
+      alert("Please Enter Patient Cause");
+    }
+    try {
+      const config = {
+        url: "/addcause/" + PatientDetailsView?._id,
+        method: "put",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "application/json" },
+        data: {
+          CauseName: CauseName,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        handleClose11();
+        getipdpatients();
+        setCauseName("");
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
+  const DeleteCause = async (id) => {
+    try {
+      const config = {
+        url: "/deletecause/" + PatientDetailsView?._id,
+        method: "put",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "application/json" },
+        data: {
+          causeid: id,
+        },
+      };
+      let res = await axios(config);
+      if(res.status===200){
+        alert(res.data.success);
+        getipdpatients();
+        handleClose12()
+      }
+    } catch (error) {
+      alert(error.response.data.error)
+    }
+  };
+
   return (
     <div>
       <div
@@ -408,7 +468,7 @@ export default function Inpatientlist() {
         <div className="d-flex gap-2">
           <AiOutlinePlusCircle
             className="AddIcon1"
-            onClick={() => setShow2(true)}
+            onClick={() => handleShow2()}
           />
           <input
             placeholder="Search In-Patient List"
@@ -1490,7 +1550,6 @@ export default function Inpatientlist() {
                 padding: "4px 10px",
               }}
               onClick={(e) => {
-                setShow2(false);
                 signup(e);
               }}
             >
@@ -1842,17 +1901,17 @@ export default function Inpatientlist() {
       </Modal>
 
       <div style={{ overflowX: "scroll" }}>
-        <Table responsive="md" style={{ marginTop: "1%" }}>
+        <Table responsive="md" style={{ marginTop: "1%" }} bordered>
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
               <th>Profile</th>
-              <th>Patient-Id</th>
               <th>Name</th>
+              <th>Mobile</th>
               <th>Sex</th>
               <th>Address</th>
-              <th>Mobile</th>
-              <th>Age</th>
+              <th>D.O.B</th>
               <th>Bar-Code</th>
+              <th>Add-Cause</th>
               <th>Admission Form</th>
               <th>Visitors</th>
               <th>Consent Forms</th>
@@ -1863,87 +1922,116 @@ export default function Inpatientlist() {
             </tr>
           </thead>
           <tbody>
-            {category
-              ?.filter((val) => val?.registrationType === "IPD")
-              ?.map((item) => {
-                return (
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td>
-                      <img
-                        alt=""
-                        // src="/Images/doctor1.jpg"
-                        src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
+            {IPDPatientList?.filter(
+              (val) => val?.registrationType === "IPD"
+            )?.map((item) => {
+              return (
+                <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                  <td>
+                    <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        borderRadius: "50%",
+                      }}
+                    />
+                    {item?.PatientId}
+                  </td>
+                  <td>{`${item?.Firstname} ${item?.Lastname}`}</td>
+                  <td>{item?.PhoneNumber}</td>
+                  <td>{item?.Gender}</td>
+                  <td>{item?.Address1}</td>
+                  <td>{item?.DOB}</td>
+                  <td>
+                    <CiBarcode
+                      style={{ cursor: "pointer", fontSize: "35px" }}
+                      onClick={() => handleShow10(item)}
+                    />
+                  </td>
+                  <td>
+                    <Button
+                      onClick={() => {
+                        handleShow11();
+                        setPatientDetailsView(item);
+                      }}
+                    >
+                      <FaPlus /> Cause{" "}
+                    </Button>
+                    <div
+                      style={{
+                        backgroundColor: "#20958c",
+                        padding: "5px",
+                        marginTop: "14px",
+                        borderRadius: "6px",
+                      }}
+                    >
+                      <GrView
                         style={{
-                          width: "50px",
-                          height: "50px",
-                          borderRadius: "50%",
-                        }}
-                      />
-                    </td>
-                    <td>{item?.PatientId}</td>
-                    <td>{item?.Firstname}</td>
-                    <td>{item?.Gender}</td>
-                    <td>{item?.Address1}</td>
-                    <td>{item?.PhoneNumber}</td>
-                    <td>{item?.DOB}</td>
-                    <td>
-                      <CiBarcode
-                        style={{ cursor: "pointer", fontSize: "35px" }}
-                        onClick={() => handleShow10(item)}
-                      />
-                    </td>
-                    <td>
-                      <Button
-                        onClick={() => {
-                          handleShow9();
-                          setAdmissionForm(item);
-                        }}
-                      >
-                        Admission From
-                      </Button>
-                    </td>
-
-                    <td>
-                      {item?.visitor?.length === 4 ? (
-                        <p style={{ color: "red" }}>
-                          Four (4) visitors are allowed
-                        </p>
-                      ) : (
-                        <>
-                          <button
-                            style={{
-                              padding: "6px",
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "0px",
-                            }}
-                            onClick={() => {
-                              handleShow3();
-                              setPatientVisitId(item?._id);
-                            }}
-                          >
-                            Add Visitors
-                          </button>
-                        </>
-                      )}
-                      <br />
-                      <button
-                        style={{
-                          padding: "6px",
-                          border: "1px solid white",
-                          backgroundColor: "#20958c",
+                          cursor: "pointer",
+                          fontSize: "28px",
                           color: "white",
-                          borderRadius: "0px",
                         }}
                         onClick={() => {
-                          handleShow4();
-                          setPatientVisitId(item);
+                          handleShow12();
+                          setPatientDetailsView(item);
                         }}
-                      >
-                        View Visitors
-                      </button>
-                      {/* <b
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <Button
+                      onClick={() => {
+                        handleShow9();
+                        setAdmissionForm(item);
+                      }}
+                    >
+                      Admission From
+                    </Button>
+                  </td>
+
+                  <td>
+                    {item?.visitor?.length === 4 ? (
+                      <p style={{ color: "red" }}>
+                        Four (4) visitors are allowed
+                      </p>
+                    ) : (
+                      <>
+                        <button
+                          style={{
+                            padding: "6px",
+                            border: "none",
+                            backgroundColor: "#20958c",
+                            color: "white",
+                            borderRadius: "0px",
+                          }}
+                          onClick={() => {
+                            handleShow3();
+                            setPatientVisitId(item?._id);
+                          }}
+                        >
+                          Add Visitors
+                        </button>
+                      </>
+                    )}
+                    <br />
+                    <button
+                      style={{
+                        padding: "6px",
+                        border: "1px solid white",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "0px",
+                      }}
+                      onClick={() => {
+                        handleShow4();
+                        setPatientVisitId(item);
+                      }}
+                    >
+                      View Visitors
+                    </button>
+                    {/* <b
                         style={{ cursor: "pointer" }}
                         className="mt-3"
                         // variant="success"
@@ -1955,44 +2043,44 @@ export default function Inpatientlist() {
                         {" "}
                         View Visitors
                       </b> */}
-                    </td>
-                    <td>
-                      <button
-                        style={{
-                          padding: "6px",
-                          border: "none",
-                          backgroundColor: "#20958c",
-                          color: "white",
-                          borderRadius: "0px",
-                        }}
-                        onClick={() =>
-                          navigate(
-                            `/admin/InpatientlistConsentForms/${item?._id}`
-                          )
-                        }
-                      >
-                        Consent Forms
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        style={{
-                          padding: "6px",
-                          border: "1px solid white",
-                          backgroundColor: "#20958c",
-                          color: "white",
-                          borderRadius: "0px",
-                        }}
-                        // onClick={() => navigate("/admin/patientform",{state:item})}
-                        onClick={() => {
-                          handleShow6();
-                          setViewCause(item);
-                        }}
-                      >
-                        View Forms
-                      </button>
-                    </td>
-                    {/* <td>
+                  </td>
+                  <td>
+                    <button
+                      style={{
+                        padding: "6px",
+                        border: "none",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "0px",
+                      }}
+                      onClick={() =>
+                        navigate(
+                          `/admin/InpatientlistConsentForms/${item?._id}`
+                        )
+                      }
+                    >
+                      Consent Forms
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      style={{
+                        padding: "6px",
+                        border: "1px solid white",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "0px",
+                      }}
+                      // onClick={() => navigate("/admin/patientform",{state:item})}
+                      onClick={() => {
+                        handleShow6();
+                        setViewCause(item);
+                      }}
+                    >
+                      View Forms
+                    </button>
+                  </td>
+                  {/* <td>
                     <button
                         style={{
                           border: "none",
@@ -2006,71 +2094,69 @@ export default function Inpatientlist() {
                       </button>
 
                     </td> */}
-                    <td>
-                      <button
-                        style={{
-                          padding: "6px",
-                          border: "none",
-                          backgroundColor: "#20958c",
-                          color: "white",
-                          borderRadius: "5px",
-                        }}
-                        onClick={() => {
-                          handleShow7();
-                          setViewCause(item);
-                        }}
-                      >
-                        Assign
-                      </button>
-                      <button
-                        className="mt-2"
-                        style={{
-                          padding: "6px",
-                          border: "none",
-                          backgroundColor: "#20958c",
-                          color: "white",
-                          borderRadius: "5px",
-                        }}
-                        onClick={() => {
-                          handleShow8();
-                          setViewCause(item);
-                        }}
-                      >
-                        View List
-                      </button>
-                    </td>
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          textAlign: "center",
-                          justifyContent: "space-evenly",
-                        }}
-                      >
-                        <MdEdit
-                          style={{ color: "#20958c", marginRight: "1%" }}
-                        />
-                        <AiFillDelete style={{ color: "red" }} />
-                      </div>
-                    </td>
-                    <td>
-                      <button
-                        style={{
-                          border: "none",
-                          backgroundColor: "#20958c",
-                          color: "white",
-                          borderRadius: "0px",
-                        }}
-                        onClick={() =>
-                          navigate(`/admin/patientdetails/${item?._id}`)
-                        }
-                      >
-                        Read More
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+                  <td>
+                    <button
+                      style={{
+                        padding: "6px",
+                        border: "none",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "5px",
+                      }}
+                      onClick={() => {
+                        handleShow7();
+                        setViewCause(item);
+                      }}
+                    >
+                      Assign
+                    </button>
+                    <button
+                      className="mt-2"
+                      style={{
+                        padding: "6px",
+                        border: "none",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "5px",
+                      }}
+                      onClick={() => {
+                        handleShow8();
+                        setViewCause(item);
+                      }}
+                    >
+                      View List
+                    </button>
+                  </td>
+                  <td>
+                    <div
+                      style={{
+                        display: "flex",
+                        textAlign: "center",
+                        justifyContent: "space-evenly",
+                      }}
+                    >
+                      <MdEdit style={{ color: "#20958c", marginRight: "1%" }} />
+                      <AiFillDelete style={{ color: "red" }} />
+                    </div>
+                  </td>
+                  <td>
+                    <button
+                      style={{
+                        border: "none",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "0px",
+                      }}
+                      onClick={() =>
+                        navigate(`/admin/patientdetails/${item?._id}`)
+                      }
+                    >
+                      Read More
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </Table>
       </div>
@@ -2125,7 +2211,7 @@ export default function Inpatientlist() {
         </Modal.Header>
         <Modal.Body>
           <div
-          ref={componentRef2}
+            ref={componentRef2}
             style={{
               padding: "15px",
               overflow: "hidden",
@@ -2663,7 +2749,106 @@ export default function Inpatientlist() {
           <Button variant="secondary" onClick={handleClose9}>
             Close
           </Button>
-          <Button variant="primary" onClick={handlePrint2}>Print</Button>
+          <Button variant="primary" onClick={handlePrint2}>
+            Print
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={show11} onHide={handleClose11}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Add{" "}
+            <span style={{ color: "red" }}>
+              "
+              {`${PatientDetailsView?.Firstname} ${PatientDetailsView?.Lastname}`}
+              "
+            </span>{" "}
+            Causes
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label
+                style={{
+                  color: "white",
+                }}
+              >
+                Patient Cause
+                <span style={{ color: "red" }}>*</span>
+              </Form.Label>
+              <Form.Control
+                onChange={(e) => setCauseName(e.target.value)}
+                type="text"
+                placeholder="Cause..."
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose11}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={() => AddpatientCause()}>
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={show12} onHide={handleClose12}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Edit{" "}
+            <span style={{ color: "red" }}>
+              "
+              {`${PatientDetailsView?.Firstname} ${PatientDetailsView?.Lastname}`}
+              " S
+            </span>{" "}
+            Causes
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ padding: "5px", backgroundColor: "white" }}>
+            <Table bordered>
+              <thead>
+                <tr>
+                  <th>Sl.No</th>
+                  <th>Cause Name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {PatientDetailsView?.cause?.map((item, i) => {
+                  return (
+                    <tr>
+                      <td>{i + 1}</td>
+                      <td>{item?.CauseName}</td>
+                      <td>
+                        <div className="d-flex gap-3">
+                          <MdDelete
+                            onClick={() => {
+                              DeleteCause(item?._id);
+                            }}
+                            style={{
+                              color: "red",
+                              cursor: "pointer",
+                              fontSize: "18px",
+                            }}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose12}>
+            Close
+          </Button>
+     
         </Modal.Footer>
       </Modal>
     </div>

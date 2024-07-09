@@ -6,8 +6,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { Container, Form } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
 import { ImAttachment } from "react-icons/im";
+import { LuSend } from "react-icons/lu";
 
 export const PatientChat = () => {
   const patientdetails = sessionStorage.getItem("PatientUser");
@@ -104,6 +105,8 @@ export const PatientChat = () => {
     }
   }
 
+  //Search 
+  const [SearchItem, setSearchItem] = useState("")
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -122,7 +125,10 @@ export const PatientChat = () => {
             style={{
               overflow: "hidden ",
               overflowY: "scroll",
-              maxHeight: "600px",
+              maxHeight: "540px",
+              border: "1px solid #ddd",
+              padding: "5px",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
             }}
           >
             <Form className="d-flex">
@@ -131,47 +137,55 @@ export const PatientChat = () => {
                 placeholder="Search"
                 className="me-2"
                 aria-label="Search"
+                onChange={(e)=>setSearchItem(e.target.value)}
               />
             </Form>
             <ul style={{ listStyle: "none", paddingLeft: "0px" }}>
-              {doclist?.map((val) => (
-                <li key={val?._id}>
-                  <div
-                    className="d-flex align-items-center"
-                    onClick={() => {
-                      docFn(val);
-                    }}
-                  >
-                    <img
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        borderRadius: "50%",
-                        margin: "8px",
+              {doclist?.map((val) => {
+                 if (
+                  SearchItem === "" ||
+                  Object.values(val).some((value) =>
+                  String(value).toLowerCase().includes(SearchItem.toLowerCase())
+              ))
+                return (
+                  <li key={val?._id}>
+                    <div
+                      className="d-flex align-items-center"
+                      onClick={() => {
+                        docFn(val);
                       }}
-                      src={`http://localhost:8521/Doctor/${val?.ProfileImg}`}
-                      alt=""
-                    />
-                    <div>
-                      <span className="admin-chat">
-                        {val?.Firstname} {val?.Lastname}
-                      </span>{" "}
-                      <br />
-                      {/* <span className="admin-chat-online">
-                            <FontAwesomeIcon
-                              icon={faCircle}
-                              style={{
-                                color: "red",
-                                marginRight: "4px",
-                                fontSize: "8px",
-                              }}
-                            />
-                            left 7 mins ago
-                          </span> */}
+                    >
+                      <img
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          borderRadius: "50%",
+                          margin: "8px",
+                        }}
+                        src={`http://localhost:8521/Doctor/${val?.ProfileImg}`}
+                        alt=""
+                      />
+                      <div>
+                        <span className="admin-chat">
+                          {val?.Firstname} {val?.Lastname}
+                        </span>{" "}
+                        <br />
+                        {/* <span className="admin-chat-online">
+              <FontAwesomeIcon
+                icon={faCircle}
+                style={{
+                  color: "red",
+                  marginRight: "4px",
+                  fontSize: "8px",
+                }}
+              />
+              left 7 mins ago
+            </span> */}
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
@@ -207,7 +221,7 @@ export const PatientChat = () => {
                 <div
                   style={{
                     overflow: "hidden",
-                    height: "500px",
+                    height: "360px",
                     overflowY: "scroll",
                   }}
                 >
@@ -363,7 +377,7 @@ export const PatientChat = () => {
                   style={{
                     left: "534px",
                     position: "absolute",
-                    bottom: "15px",
+                    bottom: "30px",
                     borderRadius: "50px",
                     border: "0px",
                     fontSize: "20px",
@@ -392,7 +406,24 @@ export const PatientChat = () => {
                   value={chatinput}
                   onChange={(e) => setchatinput(e.target.value)}
                 />
-                <button onClick={sendMessage}>Send</button>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    border: "1px solid",
+                    padding: "12px",
+                    backgroundColor: "aliceblue",
+                  }}
+                  onClick={sendMessage}
+                >
+                  <LuSend
+                    style={{
+                      color: "blue",
+                      fontSize: "27px",
+                      cursor: "pointer",
+                    }}
+                  />
+                </div>
               </div>
               {/* <button
                   className="fw-bold fs-4  mt-3 me-4 "

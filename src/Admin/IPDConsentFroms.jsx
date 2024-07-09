@@ -418,14 +418,31 @@ const IPDConsentFroms = () => {
           display: "flex",
           justifyContent: "space-between",
           marginTop: "2%",
+          backgroundColor:"#20958c",
+          padding:"10px",
+          borderRadius:"5px",
         }}
       >
-        <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-          Consents Forms
+        <h6 style={{ fontSize: "22px", fontWeight: "600", color: "white" }}>
+         IPD Patient Consents Forms
         </h6>
         <div id="google_translate_element"></div>
       </div>
+      <hr/>
 
+      <div className="d-flex mt-2 align-items-center">
+        <div style={{ width: "15%" }}>Please Select Cause : </div>
+        <Form.Select
+          onChange={(e) => setCauseId(e.target.value)}
+          style={{ width: "25%" }}
+        >
+          <option>Select The Cause</option>
+          {userdetail?.cause?.map((item) => {
+            return <option value={item?._id}>{item?.CauseName}</option>;
+          })}
+        </Form.Select>
+      </div>
+      
       <div className="mt-3">
         <div className="d-flex gap-2">
           <button
@@ -502,23 +519,12 @@ const IPDConsentFroms = () => {
           </button>
         </div>
       </div>
-      <div className="d-flex mt-2 align-items-center">
-        <div style={{ width: "15%" }}>Please Select Cause : </div>
-        <Form.Select
-          onChange={(e) => setCauseId(e.target.value)}
-          style={{ width: "25%" }}
-        >
-          <option>Select The Cause</option>
-          {userdetail?.cause?.map((item) => {
-            return <option value={item?._id}>{item?.CauseName}</option>;
-          })}
-        </Form.Select>
-      </div>
+    
 
       {btn1 ? (
         <>
-          <div className="mt-2 d-dlex text-end gap-2">
-            <button
+          <div className="mt-2 d-dlex text-center gap-2">
+            {/* <button
               style={{
                 padding: "6px",
                 border: "none",
@@ -529,7 +535,8 @@ const IPDConsentFroms = () => {
               onClick={createPDF}
             >
               Print <FiDownload />
-            </button>
+            </button> */}
+            <h3>{ConsentFormName}</h3>
           </div>
           <div
             id="pdf"
