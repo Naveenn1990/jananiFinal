@@ -12,6 +12,11 @@ export default function CollectingSampleslist() {
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
 
+  // Sample collection confirmation...
+  const [show3, setShow3] = useState(false);
+  const handleClose3 = () => setShow3(false);
+  const handleShow3 = () => setShow3(true);
+
   const [ShowvialDetailsModal, setShowvialDetailsModal] = useState(false);
   const handleClosevialDetailsModal = () => setShowvialDetailsModal(false);
   const handleShowvialDetailsModal = () => setShowvialDetailsModal(true);
@@ -64,6 +69,26 @@ export default function CollectingSampleslist() {
         alert(res.data.success);
         GetLabtestList();
         handleClose2();
+      }
+    } catch (error) {
+      console.log(error);
+      return alert(error.response.data.error);
+    }
+  };
+
+  const sampleCollectionConfirmation = async () => {
+    try {
+      const config = {
+        url: `/confirmSampleCollection/${Labtests?._id}`,
+        method: "put",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "application/json" },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        GetLabtestList();
+        handleClose3();
       }
     } catch (error) {
       console.log(error);
@@ -191,6 +216,7 @@ export default function CollectingSampleslist() {
                 <th>Add Sample</th>
                 <th>Vials Needed</th>
                 <th>Barcode</th>
+                <th>Sample Collection confirmation</th>
               </tr>
             </thead>
             <tbody>
@@ -241,6 +267,17 @@ export default function CollectingSampleslist() {
                         }}
                       />
                     </td>
+                    <td>
+                      <Button
+                        variant="primary"
+                        onClick={() => {
+                          setLabtests(item);
+                          handleShow3();
+                        }}
+                      >
+                        Confirm
+                      </Button>
+                    </td>
                   </tr>
                 );
               })}
@@ -253,7 +290,14 @@ export default function CollectingSampleslist() {
             <Modal.Title>Add Sample</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div className="row p-3" style={{ backgroundColor: "white" }}>
+            <div
+              className="row p-3"
+              style={{
+                backgroundColor: "white",
+                overflow: "hidden",
+                overflowX: "scroll",
+              }}
+            >
               <Table bordered>
                 <thead className="">
                   <tr>
@@ -262,6 +306,7 @@ export default function CollectingSampleslist() {
                     <th>Test Price</th>
                     <th>Test Price(Insurance)</th>
                     <th>Sample name</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -275,11 +320,21 @@ export default function CollectingSampleslist() {
                         <td>
                           <input
                             type="text"
+                            placeholder={
+                              item?.sampleName
+                                ? item?.sampleName
+                                : "Enter Sample name"
+                            }
                             onChange={(e) => {
                               setlabtestid(item?._id);
                               setsampleName(e.target.value);
                             }}
                           />
+                        </td>
+                        <td>
+                          <Button variant="primary" onClick={AddSampleData}>
+                            Save
+                          </Button>
                         </td>
                       </tr>
                     );
@@ -292,8 +347,31 @@ export default function CollectingSampleslist() {
             <Button variant="secondary" onClick={handleClose2}>
               Close
             </Button>
-            <Button variant="primary" onClick={AddSampleData}>
+            {/* <Button variant="primary" onClick={AddSampleData}>
               Add Sample
+            </Button> */}
+          </Modal.Footer>
+        </Modal>
+
+        <Modal show={show3} onHide={handleClose3} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>Sample Submission confirmation</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="row p-3">
+              <b style={{ color: "white" }}>
+                Are you sure! You want to{" "}
+                <span style={{ color: "green" }}> submit</span> the collected
+                sample details?
+              </b>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose3}>
+              NO
+            </Button>
+            <Button variant="primary" onClick={sampleCollectionConfirmation}>
+              YES
             </Button>
           </Modal.Footer>
         </Modal>

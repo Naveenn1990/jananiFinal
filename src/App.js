@@ -271,6 +271,7 @@ import ReferDoctorNotification from "./ReferDoctor/ReferDoctorNotification";
 import ReferLabNotification from "./ReferLab/ReferLabNotification";
 import PrescriptionReport from "./PatientsPortal/PrescriptionReport";
 import HospitalLabSampleCollector from "./Admin/HospitalLabSampleCollector";
+import HospitalLabTechnician from "./Admin/HospitalLabTechnician";
 
 function App() {
   return (
@@ -2616,6 +2617,16 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<HospitalLabSampleCollector />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/HospitalLabtechnician"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<HospitalLabTechnician />} />{" "}
                 </>
               }
             ></Route>

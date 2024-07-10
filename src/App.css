@@ -2,6 +2,20 @@ p {
   margin-bottom: 0 !important;
   font-family: math;
 }
+.xxx .pagination{
+  display: flex !important;
+    gap: 15px !important;
+} 
+.xxx .pagination li{
+ border: 1px solid black;
+ padding:5px;
+}
+.xxx .pagination .active{
+  border: 1px solid #20958c;
+  padding:5px;
+  background-color: #20958c;
+  color: white;
+ }
 
 .yesButtonHover:hover {
   background-color: red !important;
