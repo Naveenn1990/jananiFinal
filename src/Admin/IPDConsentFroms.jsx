@@ -1,19 +1,14 @@
 import axios from "axios";
 import React, { useState, useRef } from "react";
 import { useEffect } from "react";
-import { Button, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { FiDownload } from "react-icons/fi";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
+import { Button, Form, Table } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import SignatureCanvas from "react-signature-canvas";
+import { Checkbox } from "@mui/material";
 
 const IPDConsentFroms = () => {
-  const user = JSON.parse(sessionStorage.getItem("adminDetails"));
   const { id } = useParams();
-
   const [btn1, setbtn1] = useState(true);
   const [btn2, setbtn2] = useState(true);
   const [btn3, setbtn3] = useState(true);
@@ -36,8 +31,6 @@ const IPDConsentFroms = () => {
     }
   };
 
-  console.log("HServicesList", HServicesList);
-
   useEffect(() => {
     getHospitalServiceList();
   }, []);
@@ -47,7 +40,7 @@ const IPDConsentFroms = () => {
     setclickedAddAllergyBtn("");
   }, [clickedAddAllergyBtn]);
 
-  const [userdetail, setuserdetail] = useState([]);
+  const [userdetail, setuserdetail] = useState({});
   const getpatientbyid = async () => {
     try {
       let res = await axios.get(
@@ -63,97 +56,6 @@ const IPDConsentFroms = () => {
   useEffect(() => {
     getpatientbyid();
   }, []);
-  console.log("userdetail", userdetail);
-
-  const createPDF = async () => {
-    // dynamic image is also adding in the PDF
-    const pdf = new jsPDF("portrait", "pt", "a4");
-    const data = await html2canvas(document.querySelector("#pdf"), {
-      useCORS: true,
-    });
-
-    const img = data.toDataURL("image/png");
-    const imgProperties = pdf.getImageProperties(img);
-
-    // Calculate the scaling factor to fit the image on A4 paper
-    const scaleFactor = pdf.internal.pageSize.getWidth() / imgProperties.width;
-
-    // Calculate the height after scaling
-    const pdfHeight = imgProperties.height * scaleFactor;
-
-    // Add the image to PDF with the calculated dimensions
-    pdf.addImage(img, "PNG", 0, 0, pdf.internal.pageSize.getWidth(), pdfHeight);
-
-    // Save the PDF
-    pdf.save("ServiceInvoice.pdf");
-  };
-  const createPDF1 = async () => {
-    // dynamic image is also adding in the PDF
-    const pdf = new jsPDF("portrait", "pt", "a4");
-    const data = await html2canvas(document.querySelector("#pdf"), {
-      useCORS: true,
-    });
-
-    const img = data.toDataURL("image/png");
-    const imgProperties = pdf.getImageProperties(img);
-
-    // Calculate the scaling factor to fit the image on A4 paper
-    const scaleFactor = pdf.internal.pageSize.getWidth() / imgProperties.width;
-
-    // Calculate the height after scaling
-    const pdfHeight = imgProperties.height * scaleFactor;
-
-    // Add the image to PDF with the calculated dimensions
-    pdf.addImage(img, "PNG", 0, 0, pdf.internal.pageSize.getWidth(), pdfHeight);
-
-    // Save the PDF
-    pdf.save("ServiceInvoice.pdf");
-  };
-  const createPDF2 = async () => {
-    // dynamic image is also adding in the PDF
-    const pdf = new jsPDF("portrait", "pt", "a4");
-    const data = await html2canvas(document.querySelector("#pdf"), {
-      useCORS: true,
-    });
-
-    const img = data.toDataURL("image/png");
-    const imgProperties = pdf.getImageProperties(img);
-
-    // Calculate the scaling factor to fit the image on A4 paper
-    const scaleFactor = pdf.internal.pageSize.getWidth() / imgProperties.width;
-
-    // Calculate the height after scaling
-    const pdfHeight = imgProperties.height * scaleFactor;
-
-    // Add the image to PDF with the calculated dimensions
-    pdf.addImage(img, "PNG", 0, 0, pdf.internal.pageSize.getWidth(), pdfHeight);
-
-    // Save the PDF
-    pdf.save("ServiceInvoice.pdf");
-  };
-
-  const createPDF4 = async () => {
-    // dynamic image is also adding in the PDF
-    const pdf = new jsPDF("portrait", "pt", "a4");
-    const data = await html2canvas(document.querySelector("#pdf"), {
-      useCORS: true,
-    });
-
-    const img = data.toDataURL("image/png");
-    const imgProperties = pdf.getImageProperties(img);
-
-    // Calculate the scaling factor to fit the image on A4 paper
-    const scaleFactor = pdf.internal.pageSize.getWidth() / imgProperties.width;
-
-    // Calculate the height after scaling
-    const pdfHeight = imgProperties.height * scaleFactor;
-
-    // Add the image to PDF with the calculated dimensions
-    pdf.addImage(img, "PNG", 0, 0, pdf.internal.pageSize.getWidth(), pdfHeight);
-
-    // Save the PDF
-    pdf.save("ServiceInvoice.pdf");
-  };
 
   useEffect(() => {
     setRealivesName(userdetail?.relativeName || "");
@@ -163,7 +65,6 @@ const IPDConsentFroms = () => {
   // Hospitalization Consent Form
   const [NameOfSurgery, setNameOfSurgery] = useState("");
   const [SurgeryEstimatePrice, setSurgeryEstimatePrice] = useState();
-  console.log("SurgeryEstimatePrice", SurgeryEstimatePrice);
   const [SurgeryRemark, setSurgeryRemark] = useState("");
   const [SurgeryPackages, setSurgeryPackages] = useState([]);
   const surgeryDetails = () => {
@@ -279,70 +180,238 @@ const IPDConsentFroms = () => {
   const [Witness1Number, setWitness1Number] = useState("");
   const [Witness2Number, setWitness2Number] = useState("");
 
+  const [TypeofAnesthesia, setTypeofAnesthesia] = useState("");
   const [ConDoctorName, setConDoctorName] = useState("");
   const [RealivesName, setRealivesName] = useState("");
   const [PatientRelation, setPatientRelation] = useState("");
   const [Date0, setDate] = useState("");
   const [ConsentFormName, setConsentFormName] = useState("GeneralConsentForms");
   const [CauseId, setCauseId] = useState("");
+  const formdata = new FormData();
   const GeneralConsentForm = async () => {
     if (!CauseId) {
       return alert("please select cause of this consent form");
     }
 
+    if (ConsentFormName === "GeneralConsentForms") {
+      if (!ConDoctorName) {
+        return alert("Select Doctor");
+      }
+      if (!signature) {
+        return alert("Doctor Sign is pending");
+      }
+      if (!signature1) {
+        return alert("Patient Sign is pending ");
+      }
+      if (!Date0) {
+        return alert("Select Date and Time");
+      }
+    }
+
+    if (ConsentFormName === "HighriskConsentForms") {
+      if (!StaffName) {
+        return alert("Please Enter Staff Name");
+      }
+      if (!ConDoctorName) {
+        return alert("Please Select surgery Doctor1");
+      }
+      if (!ConDoctorName2) {
+        return alert("Please Select surgery Doctor2");
+      }
+      if (!Diagnosis) {
+        return alert("Please Enter Medical Condition/Diagnosis");
+      }
+      if (!OperativeProce) {
+        return alert("Please Enter Proposed operative Procedure");
+      }
+      if (!Date0) {
+        return alert("Please Select Date");
+      }
+      if (!PatientSurrogate) {
+        return alert("Please Enter Patient/ Patient Surrogate Name");
+      }
+      if (!signature1) {
+        return alert("Patient Sign is pending ");
+      }
+      if (!Date2) {
+        return alert("Select date ");
+      }
+      if (!Time1) {
+        return alert("Select Time ");
+      }
+      if (!Witness1) {
+        return alert("Please Enter Witness Name");
+      }
+      if (!WitnessSign) {
+        return alert("Witness Sign is pending ");
+      }
+      if (!Date3) {
+        return alert("Witness Select date ");
+      }
+      if (!Time2) {
+        return alert("Witness Select Time ");
+      }
+      if (!Doctor2) {
+        return alert("Select Doctor");
+      }
+      if (!signature) {
+        return alert("Doctor Sign is pending ");
+      }
+      if (!Date4) {
+        return alert("Doctor Select date ");
+      }
+      if (!Time3) {
+        return alert("Doctor Select Time ");
+      }
+      if (!Guardian1) {
+        return alert("Please Enter Legal_guardian");
+      }
+      if (!LegalGuardian) {
+        return alert("Legal_guardian Sign is pending ");
+      }
+      if (!Date5) {
+        return alert("Legal_guardian Select date ");
+      }
+      if (!Time4) {
+        return alert("Legal_guardian Select Time ");
+      }
+    }
+
+    if (ConsentFormName === "AnesthesiaConsentForms") {
+      if (!Diagnosis) {
+        return alert("Please Enter Medical Condition/Diagnosis");
+      }
+      if (!OperativeProce) {
+        return alert("Please Enter Operative Procedure/ Operation");
+      }
+      if (!TypeofAnesthesia) {
+        return alert("Please check Type of Anesthesia ");
+      }
+      if (!NameOfSurgery) {
+        return alert("Please Select the Surgery");
+      }
+      if (!PatientSurrogate) {
+        return alert("Please Enter Patient/ Patient Surrogate Name");
+      }
+      if (!signature1) {
+        return alert("Patient Sign is pending ");
+      }
+      if (!Date2) {
+        return alert("Select date ");
+      }
+      if (!Time1) {
+        return alert("Select Time ");
+      }
+      if (!Witness1) {
+        return alert("Please Enter Witness Name");
+      }
+      if (!WitnessSign) {
+        return alert("Witness Sign is pending ");
+      }
+      if (!Date3) {
+        return alert("Witness Select date ");
+      }
+      if (!Time2) {
+        return alert("Witness Select Time ");
+      }
+      if (!Doctor2) {
+        return alert("Select Doctor");
+      }
+      if (!signature) {
+        return alert("Doctor Sign is pending ");
+      }
+      if (!Date4) {
+        return alert("Doctor Select date ");
+      }
+      if (!Time3) {
+        return alert("Doctor Select Time ");
+      }
+      if (!Guardian1) {
+        return alert("Please Enter Legal_guardian");
+      }
+      if (!LegalGuardian) {
+        return alert("Legal_guardian Sign is pending ");
+      }
+      if (!Date5) {
+        return alert("Legal_guardian Select date ");
+      }
+      if (!Time4) {
+        return alert("Legal_guardian Select Time ");
+      }
+    }
+
+    const DoctorSignature = await fetch(signature).then((res) => res.blob());
+    const PatientSignature1 = await fetch(signature1).then((res) => res.blob());
+    const WitnessSignature = await fetch(WitnessSign).then((res) => res.blob());
+    const LegalGuardianSignature = await fetch(LegalGuardian).then((res) =>
+      res.blob()
+    );
+
+    formdata.set("causeId", CauseId);
+    formdata.set("patientId", userdetail?._id);
+    formdata.set("formname", ConsentFormName);
+    formdata.set(
+      "patientname",
+      `${userdetail?.Firstname} ${userdetail?.Lastname}`
+    );
+    formdata.set("ConDoctorName", ConDoctorName);
+    formdata.set("RealivesName", RealivesName);
+    formdata.set("Date", Date0);
+
+    formdata.set("WardRoomCharges", WardRoomCharges);
+    formdata.set("WardRemark", WardRemark);
+    formdata.set("WardText1", WardText1);
+    formdata.set("WardText2", WardText2);
+    formdata.set("Witness1", Witness1);
+    formdata.set("Witness2", Witness2);
+    formdata.set("Witness1Number", Witness1Number);
+    formdata.set("Witness2Number", Witness2Number);
+    formdata.set("SurgeryPackages", SurgeryPackages);
+    formdata.set("ProcedureDetails", ProcedureDetails);
+    formdata.set("InvestigationChargeList", InvestigationChargeList);
+
+    formdata.set("Patientage", Patientage);
+    formdata.set("OpNumber", OpNumber);
+    formdata.set("IpNumber", IpNumber);
+    formdata.set("StaffName", StaffName);
+    formdata.set("ConDoctorName2", ConDoctorName2);
+    formdata.set("Diagnosis", Diagnosis);
+    formdata.set("OperativeProce", OperativeProce);
+    formdata.set("PatientSurrogate", PatientSurrogate);
+    formdata.set("Date2", Date2);
+    formdata.set("Time1", Time1);
+    formdata.set("Date3", Date3);
+    formdata.set("Time2", Time2);
+    formdata.set("Doctor2", Doctor2);
+    formdata.set("Date4", Date4);
+    formdata.set("Time3", Time3);
+    formdata.set("Guardian1", Guardian1);
+    formdata.set("Date5", Date5);
+    formdata.set("Time4", Time4);
+    formdata.set("NameOfSurgery", NameOfSurgery);
+    formdata.set("TypeofAnesthesia", TypeofAnesthesia);
+
+    formdata.set("doctorsign", DoctorSignature, "doctor-signature.png");
+    formdata.set("patientsign", PatientSignature1, "patient-signature.png");
+    formdata.set("witnesssign", WitnessSignature, "witness-signature.png");
+    formdata.set(
+      "legalgurdiansign",
+      LegalGuardianSignature,
+      "legalgurdiation-signature.png"
+    );
     try {
       const config = {
         url: "/consentform",
         method: "put",
         baseURL: "http://localhost:8521/api/staff",
-        headers: { "Content-Type": "application/json" },
-        data: {
-          causeId: CauseId,
-          patientId: userdetail?._id,
-          formname: ConsentFormName,
-          patientname: `${userdetail?.Firstname} ${userdetail?.Lastname}`,
-          ConDoctorName: ConDoctorName,
-          RealivesName: RealivesName,
-          PatientRelation: PatientRelation,
-          Date: Date0,
-
-          WardRoomCharges: WardRoomCharges,
-          WardRemark: WardRemark,
-          WardText1: WardText1,
-          WardText2: WardText2,
-          Witness1: Witness1,
-          Witness2: Witness2,
-          Witness1Number: Witness1Number,
-          Witness2Number: Witness2Number,
-          SurgeryPackages: SurgeryPackages,
-          ProcedureDetails: ProcedureDetails,
-          InvestigationChargeList: InvestigationChargeList,
-
-          Patientage: Patientage,
-          OpNumber: OpNumber,
-          IpNumber: IpNumber,
-          StaffName: StaffName,
-          ConDoctorName2: ConDoctorName2,
-          Diagnosis: Diagnosis,
-          OperativeProce: OperativeProce,
-          PatientSurrogate: PatientSurrogate,
-          Date2: Date2,
-          Time1: Time1,
-          Date3: Date3,
-          Time2: Time2,
-          Doctor2: Doctor2,
-          Date4: Date4,
-          Time3: Time3,
-          Guardian1: Guardian1,
-          Date5: Date5,
-          Time4: Time4,
-          NameOfSurgery: NameOfSurgery,
-        },
+        headers: { "Content-Type": "multipart/form-data" },
+        data: formdata,
       };
       let res = await axios(config);
       if (res.status === 200) {
         alert(res.data.success);
         getpatientbyid();
+        window.location.assign("");
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -362,30 +431,6 @@ const IPDConsentFroms = () => {
   } else {
     ageOutput = `${ageYears} years`;
   }
-
-  // Doctors List
-
-  const [Doctors, setDoctors] = useState([]);
-  const getDoctors = () => {
-    axios
-      .get("http://localhost:8521/api/Doctor/getDoctorsList")
-      .then(function (response) {
-        setDoctors(
-          response.data.DoctorsInfo?.filter(
-            (data) => data.DoctorType === "hospital"
-          )
-        );
-      })
-      .catch(function (error) {
-        console.log(error);
-        setDoctors(error.response.data.DoctorsInfo);
-      });
-  };
-  console.log("Doctors", Doctors);
-
-  useEffect(() => {
-    getDoctors();
-  }, []);
 
   const [signature, setSignature] = useState(null);
   const sigCanvas = useRef({});
@@ -411,6 +456,30 @@ const IPDConsentFroms = () => {
     setSignature1(signature1);
   };
 
+  const [WitnessSign, setWitnessSign] = useState(null);
+  const sigCanvas3 = useRef({});
+
+  const clear3 = () => sigCanvas3.current.clear();
+
+  const save3 = () => {
+    const WitnessSign = sigCanvas3.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setWitnessSign(WitnessSign);
+  };
+
+  const [LegalGuardian, setLegalGuardian] = useState(null);
+  const sigCanvas4 = useRef({});
+
+  const clear4 = () => sigCanvas4.current.clear();
+
+  const save4 = () => {
+    const LegalGuardian = sigCanvas4.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setLegalGuardian(LegalGuardian);
+  };
+
   return (
     <div>
       <div
@@ -418,17 +487,17 @@ const IPDConsentFroms = () => {
           display: "flex",
           justifyContent: "space-between",
           marginTop: "2%",
-          backgroundColor:"#20958c",
-          padding:"10px",
-          borderRadius:"5px",
+          backgroundColor: "#20958c",
+          padding: "10px",
+          borderRadius: "5px",
         }}
       >
         <h6 style={{ fontSize: "22px", fontWeight: "600", color: "white" }}>
-         IPD Patient Consents Forms
+          IPD Patient Consents Forms
         </h6>
         <div id="google_translate_element"></div>
       </div>
-      <hr/>
+      <hr />
 
       <div className="d-flex mt-2 align-items-center">
         <div style={{ width: "15%" }}>Please Select Cause : </div>
@@ -442,7 +511,7 @@ const IPDConsentFroms = () => {
           })}
         </Form.Select>
       </div>
-      
+
       <div className="mt-3">
         <div className="d-flex gap-2">
           <button
@@ -519,28 +588,19 @@ const IPDConsentFroms = () => {
           </button>
         </div>
       </div>
-    
 
       {btn1 ? (
         <>
           <div className="mt-2 d-dlex text-center gap-2">
-            {/* <button
-              style={{
-                padding: "6px",
-                border: "none",
-                backgroundColor: "#20958c",
-                color: "white",
-                borderRadius: "0px",
-              }}
-              onClick={createPDF}
-            >
-              Print <FiDownload />
-            </button> */}
             <h3>{ConsentFormName}</h3>
           </div>
           <div
             id="pdf"
-            style={{ padding: "15px", overflow: "hidden", overflowX: "scroll" }}
+            style={{
+              padding: "15px",
+              overflow: "hidden",
+              overflowX: "scroll",
+            }}
           >
             <div
               style={{
@@ -549,7 +609,7 @@ const IPDConsentFroms = () => {
                 width: "1057px",
                 margin: "auto",
                 borderRadius: "20px",
-                height: "1235px",
+                height: "auto",
               }}
             >
               <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -574,16 +634,7 @@ const IPDConsentFroms = () => {
                   </h6>
                 </div>
               </div>
-              <div
-                className="text-center"
-                style={{
-                  borderBottom: "1px solid #20958C",
-                  width: "100%",
-                  textAlign: "center",
-                }}
-              ></div>
               <div className="text-center mt-1">
-                {" "}
                 <h6
                   className="fw-bold mt-2"
                   style={{ color: "#20958C", fontSize: "30px" }}
@@ -636,60 +687,71 @@ const IPDConsentFroms = () => {
                   relative.{" "}
                 </p>
               </div>
-              <div className="container">
-                <div className="row" style={{ border: "1px solid #20958C" }}>
-                  <div
-                    className="col-md-4"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                    }}
-                  >
-                    <h6
-                      style={{
-                        borderBottom: "1px solid #20958C",
-                        fontSize: "18px",
-                      }}
-                    >
-                      Doctor
-                    </h6>
-                    <div className="d-flex align-items-center mb-2">
-                      <b style={{ fontSize: "18px" }}>Name : </b>
-                      <span>
+              <div className="mt-3">
+                <Table bordered>
+                  <thead>
+                    <tr>
+                      <th>Doctor</th>
+                      <th>Tenant/ Relative</th>
+                      <th>Patient </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div>
+                          <b style={{ fontSize: "18px" }}>Name : </b>
+                          <span>
+                            <Form.Select
+                              className="vi_0"
+                              style={{ width: "270px" }}
+                              onChange={(e) => setConDoctorName(e.target.value)}
+                            >
+                              <option value="">Select Doctor</option>
+                              {userdetail?.assigndocts?.map((item) => {
+                                return (
+                                  <option
+                                    value={item?._id}
+                                  >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
+                                );
+                              })}
+                            </Form.Select>
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        <h6 style={{ fontSize: "20px" }}>Name : </h6>
+                        <span style={{ borderBottom: "1px solid black" }}>
+                          <input
+                            type="text"
+                            className="vi_0"
+                            value={RealivesName}
+                            onChange={(e) => setRealivesName(e.target.value)}
+                          />
+                        </span>
+                      </td>
+                      <td>
                         <input
                           type="text"
                           className="vi_0"
-                          style={{ width: "276px" }}
-                          onChange={(e) => setConDoctorName(e.target.value)}
+                          value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}
                         />
-                      </span>
-                    </div>
-
-                    <h6
-                      style={{
-                        borderTop: "1px solid #20958C",
-                        fontSize: "18px",
-                      }}
-                    >
-                      <div className="align-items-center mt-2">
-                        <p>
-                          {" "}
-                          <b>Sign :</b>
-                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
                         {!signature ? (
                           <div
                             style={{
                               border: "1px solid #dee2e6",
-                              margin: "10px",
                             }}
                           >
                             <SignatureCanvas
                               ref={sigCanvas}
                               penColor="black"
                               canvasProps={{
-                                width: 500,
-                                height: 200,
+                                width: 180,
+                                height: 100,
                                 className: "sigCanvas",
                               }}
                             />
@@ -699,124 +761,51 @@ const IPDConsentFroms = () => {
                         ) : (
                           <img src={signature} alt="Signature" />
                         )}
-                      </div>
-                    </h6>
-                  </div>
-                  <div
-                    className="col-md-4"
-                    style={{
-                      paddingTop: "10px",
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                    }}
-                  >
-                    <h6
-                      style={{
-                        borderBottom: "1px solid #20958C",
-                        fontSize: "18px",
-                      }}
-                    >
-                      Tenant/ Relative
-                    </h6>
-                    <h6 style={{ fontSize: "20px" }}>Name : </h6>
-                    <span style={{ borderBottom: "1px solid black" }}>
-                      <input
-                        type="text"
-                        className="vi_0"
-                        style={{ width: "344px" }}
-                        value={RealivesName}
-                        onChange={(e) => setRealivesName(e.target.value)}
-                      />
-                    </span>
-                    <br />
-                    <br />
-                    <h6
-                      style={{
-                        borderTop: "1px solid #20958C",
-                        fontSize: "18px",
-                      }}
-                    >
-                      Relationship :
-                      <span style={{ borderBottom: "1px solid black" }}>
+                      </td>
+                      <td>
                         <input
                           type="text"
                           className="vi_0"
-                          style={{ width: "344px" }}
                           value={PatientRelation}
                           onChange={(e) => setPatientRelation(e.target.value)}
                         />
-                      </span>
-                    </h6>
-                  </div>
-                  <div
-                    className="col-md-4"
-                    style={{
-                      paddingTop: "10px",
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                    }}
-                  >
-                    <h6
-                      style={{
-                        borderBottom: "1px solid #20958C",
-                        fontSize: "18px",
-                      }}
-                    >
-                      Patient :
-                      <span style={{ borderBottom: "1px solid black" }}>
-                        <input
-                          type="text"
-                          className="vi_0"
-                          style={{ width: "344px" }}
-                          value={userdetail?.Firstname}
-                        />
-                      </span>
-                    </h6>
-
-                    <div className="align-items-center">
-                      <p>
-                        {" "}
-                        <b style={{ fontSize: "18px" }}>Sign :</b>
-                      </p>
-                      {!signature1 ? (
-                        <div
-                          style={{
-                            border: "1px solid #dee2e6",
-                            margin: "10px",
-                          }}
-                        >
-                          <SignatureCanvas
-                            ref={sigCanvas1}
-                            penColor="black"
-                            canvasProps={{
-                              width: 500,
-                              height: 200,
-                              className: "sigCanvas",
+                      </td>
+                      <td>
+                        {!signature1 ? (
+                          <div
+                            style={{
+                              border: "1px solid #dee2e6",
                             }}
-                          />
-                          <button onClick={clear1}>Clear</button>
-                          <button onClick={save1}>Save</button>
-                        </div>
-                      ) : (
-                        <img src={signature1} alt="Signature" />
-                      )}
-                    </div>
-
-                    <br />
-                    <br />
-                  </div>
-                </div>
+                          >
+                            <SignatureCanvas
+                              ref={sigCanvas1}
+                              penColor="black"
+                              canvasProps={{
+                                width: 180,
+                                height: 100,
+                                className: "sigCanvas",
+                              }}
+                            />
+                            <button onClick={clear1}>Clear</button>
+                            <button onClick={save1}>Save</button>
+                          </div>
+                        ) : (
+                          <img src={signature1} alt="Signature" />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
               </div>
-              <div>
+
+              <div className="mt-3">
                 <p style={{ fontSize: "18px" }}>
                   Date/ Time :{" "}
                   <span>
                     <input
-                      type="date"
+                      type="datetime-local"
                       className="vi_0"
-                      style={{ width: "500px" }}
+                      style={{ width: "400px" }}
                       onChange={(e) => setDate(e.target.value)}
                     />
                   </span>
@@ -832,19 +821,8 @@ const IPDConsentFroms = () => {
         <>
           {btn2 ? (
             <>
-              <div className="mt-2 d-dlex text-end gap-2">
-                <button
-                  style={{
-                    padding: "6px",
-                    border: "none",
-                    backgroundColor: "#20958c",
-                    color: "white",
-                    borderRadius: "0px",
-                  }}
-                  onClick={createPDF1}
-                >
-                  Print <FiDownload />
-                </button>
+              <div className="mt-2 d-dlex text-center gap-2">
+                <h3>{ConsentFormName}</h3>
               </div>
               <div
                 id="pdf"
@@ -1443,21 +1421,6 @@ const IPDConsentFroms = () => {
                                   setInvestigationName(e.target.value)
                                 }
                               />
-                              {/* <select
-                                name=""
-                                id=""
-                                className="vi_0"
-                                style={{ width: "321px" }}
-                              >
-                                <option value="">select the surgery</option>
-                                {HServicesList?.map((val) => {
-                                  return (
-                                    <option value={val?.hSurgeryService}>
-                                      {val?.hSurgeryService}
-                                    </option>
-                                  );
-                                })}
-                              </select> */}
                             </span>{" "}
                           </div>
                           <div
@@ -1694,20 +1657,8 @@ const IPDConsentFroms = () => {
             <>
               {btn3 ? (
                 <>
-                  {/* English */}
-                  <div className="mt-2 d-dlex text-end gap-2">
-                    <button
-                      style={{
-                        padding: "6px",
-                        border: "none",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        borderRadius: "0px",
-                      }}
-                      onClick={createPDF2}
-                    >
-                      Print <FiDownload />
-                    </button>
+                  <div className="mt-2 d-dlex text-center gap-2">
+                    <h3>{ConsentFormName}</h3>
                   </div>
                   <div
                     id="pdf"
@@ -1724,7 +1675,7 @@ const IPDConsentFroms = () => {
                         width: "1073px",
                         margin: "auto",
                         borderRadius: "20px",
-                        height: "1700px",
+                        height: "auto",
                       }}
                     >
                       <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -1749,14 +1700,6 @@ const IPDConsentFroms = () => {
                           </h6>
                         </div>
                       </div>
-                      <div
-                        className="text-center"
-                        style={{
-                          borderBottom: "1px solid #20958C",
-                          width: "100%",
-                          textAlign: "center",
-                        }}
-                      ></div>
                       <div className="text-center mt-1">
                         {" "}
                         <h6
@@ -1768,715 +1711,461 @@ const IPDConsentFroms = () => {
                       </div>
                       <div
                         style={{
-                          paddingLeft: "42px",
-                          paddingRight: "42px",
                           textAlign: "justify",
+                          padding: "30px",
                         }}
                       >
-                        <p style={{ fontSize: "18px" }}>
-                          <div className="container">
+                        <div className="container">
+                          <div
+                            className="row"
+                            style={{ border: "1px solid #20958C" }}
+                          >
+                            <div className="col-md-4 consentformhd">
+                              <b>Patient Name :</b>{" "}
+                              <span>
+                                {`${userdetail?.Firstname} ${userdetail?.Lastname}`}
+                              </span>
+                            </div>
+                            <div className="col-md-4 consentformhd">
+                              <b>Date :</b>{" "}
+                              <span>
+                                {moment(userdetail?.createdAt).format(
+                                  "DD-MM-YYYY"
+                                )}
+                              </span>
+                            </div>
+                            <div className="col-md-4 consentformhd">
+                              <b>Age :</b> <span>{ageOutput}</span>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col-md-4 consentformhd">
+                              <b>OP No :</b> <span>24DSF2</span>
+                            </div>
+                            <div className="col-md-4 consentformhd">
+                              <b>IP No :</b> <span>45FGF3</span>
+                            </div>
+                            <div className="col-md-4 consentformhd">
+                              <b>Sex :</b> <span>{userdetail?.Gender}</span>
+                            </div>
+                          </div>
+                          <div className="row">
                             <div
-                              className="row"
-                              style={{ border: "1px solid #20958C" }}
+                              className="col-md-12"
+                              style={{
+                                padding: "10px",
+                                border: "1px solid #20958C",
+                              }}
                             >
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                Patient Name:{" "}
-                                <span>
-                                  {/* <input
-                                    type="text"
-                                    name=""
-                                    id=""
-                                    className="vi_0"
-                                    style={{ width: "190px" }}
-                                    value={PatientName}
-                                    onChange={(e)=>setPatientName(e.target.value)}
-                                  /> */}
-                                  {`${userdetail?.Firstname} ${userdetail?.Lastname}`}
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                Date:{" "}
-                                <span>
-                                  {moment(userdetail?.createdAt).format(
-                                    "DD-MM-YYYY"
-                                  )}
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                Age: <span>{ageOutput}</span>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                OP No:{" "}
-                                <span>
-                                  {/* <input
+                              <p style={{ fontSize: "18px" }}>
+                                I/ We{" "}
+                                <span
+                                  style={{ borderBottom: "1px solid black" }}
+                                >
+                                  <input
                                     type="text"
                                     className="vi_0"
-                                    style={{ width: "252px" }}
-                                    placeholder="enter op number"
-                                    value={OpNumber}
-                                    onChange={(e)=>setOpNumber(e.target.value)}
-                                  /> */}
-                                  24DSF2
+                                    style={{ width: "301px" }}
+                                    value={StaffName}
+                                    onClick={(e) =>
+                                      setStaffName(e.target.value)
+                                    }
+                                  />
                                 </span>
-                              </div>
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                IP No:{" "}
-                                <span>
-                                  {/* <input
-                                    type="text"
-                                    placeholder="enter ip umber"
+                                &nbsp; have been explained about the medical
+                                condition and <br />
+                                <p className="d-flex gap-3 mt-2">
+                                  the prospered surgery by Dr.
+                                  <Form.Select
                                     className="vi_0"
-                                    style={{ width: "262px" }}
-                                    value={IpNumber}
-                                    onChange={(e)=>setIpNumber(e.target.value)}
-                                  /> */}
-                                  45FGF3
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                Sex: <span>{userdetail?.Gender}</span>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-12"
-                                style={{
-                                  padding: "20px",
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <p style={{ fontSize: "18px" }}>
-                                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                  &nbsp; I/ We{" "}
-                                  <span
-                                    style={{ borderBottom: "1px solid black" }}
+                                    style={{ width: "301px" }}
+                                    value={ConDoctorName}
+                                    onChange={(e) =>
+                                      setConDoctorName(e.target.value)
+                                    }
                                   >
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "301px" }}
-                                      value={StaffName}
-                                      onClick={(e) =>
-                                        setStaffName(e.target.value)
-                                      }
-                                    />
-                                  </span>
-                                  have been explained about the medical
-                                  condition and the prospered surgery by Dr.
-                                  <span>
-                                    {/* <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "680px" }}
-                                      placeholder="doctor name"
-                                      value={ConDoctorName}
-                                      onChange={(e)=>setConDoctorName(e.target.value)}
-                                    /> */}
-                                    <Form.Select
-                                      className="vi_0"
-                                      value={ConDoctorName}
-                                      onChange={(e) =>
-                                        setConDoctorName(e.target.value)
-                                      }
-                                    >
-                                      <option>Select Doctors</option>
-                                      {Doctors?.map((item) => {
-                                        return (
-                                          <option
-                                            value={`${item?.Firstname} ${item?.Lastname}`}
-                                          >{`${item?.Firstname} ${item?.Lastname}`}</option>
-                                        );
-                                      })}
-                                    </Form.Select>
-                                    <br />
-                                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                    &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                    &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
-                                    &nbsp;Dr.
-                                    {/* <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "680px" }}
-                                      placeholder="doctor name"
-                                      value={ConDoctorName2}
-                                      onChange={(e)=>setConDoctorName2(e.target.value)}
-                                    /> */}
-                                    <Form.Select
-                                      className="vi_0"
-                                      value={ConDoctorName2}
-                                      onChange={(e) =>
-                                        setConDoctorName2(e.target.value)
-                                      }
-                                    >
-                                      <option>Select Doctors</option>
-                                      {Doctors?.map((item) => {
-                                        return (
-                                          <option
-                                            value={`${item?.Firstname} ${item?.Lastname}`}
-                                          >{`${item?.Firstname} ${item?.Lastname}`}</option>
-                                        );
-                                      })}
-                                    </Form.Select>
-                                  </span>
+                                    <option>Select Doctors</option>
+                                    {userdetail?.assigndocts?.map((item) => {
+                                      return (
+                                        <option
+                                          value={item?._id}
+                                        >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
+                                      );
+                                    })}
+                                  </Form.Select>
                                 </p>
-
-                                <p style={{ fontSize: "18px" }}>
-                                  Medical Condition/Diagnosis :
-                                  <span>
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "670px" }}
-                                      value={Diagnosis}
-                                      onChange={(e) =>
-                                        setDiagnosis(e.target.value)
-                                      }
-                                    />
-                                  </span>
-                                  Proposed operative Procedure:
-                                  <span>
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "684px" }}
-                                      value={OperativeProce}
-                                      onChange={(e) =>
-                                        setOperativeProce(e.target.value)
-                                      }
-                                    />
-                                  </span>{" "}
-                                </p>
-                                <p style={{ fontSize: "18px" }}>
-                                  I/We, (the relatives/legal guardian of)
-                                  Mr./Mrs
-                                  <span>
-                                    <input
-                                      type="text"
-                                      className="vi_0"
-                                      style={{ width: "200px" }}
-                                      value={RealivesName}
-                                      onChange={(e) =>
-                                        setRealivesName(e.target.value)
-                                      }
-                                    />
-                                  </span>
-                                  who is admitted on{" "}
-                                  <span>
-                                    <input
-                                      type="date"
-                                      className="vi_0"
-                                      style={{ width: "200px" }}
-                                      value={Date0}
-                                      onChange={(e) => setDate(e.target.value)}
-                                    />
-                                  </span>
-                                  have been explained in the languages
-                                  understood by me/us, about the pros & cons of
-                                  the operation and risks involved during and
-                                  after the surgery, and that the procedure
-                                  carries a higher risk than the usual cases.
-                                  <br />
-                                  <br />
-                                  I/We, have been explained in detail about the
-                                  nature of the surgery/procedure, the possible
-                                  benefits and complications. I/We have been
-                                  explained that this case carries a higher risk
-                                  than the usual and the reasons for the same.
-                                  During the course of the surgical procedure,
-                                  circumstances may arise or a condidtion may be
-                                  found which may require suspension or
-                                  extension of planned procedure or necessary
-                                  performance of an alternative procedure.
-                                  <br />
-                                  <br />
-                                  I/We, have been informed the high risk
-                                  involved in medical procedures which might
-                                  necessitate admission to ICU/NICU/Mecanial
-                                  Ventilation/Endotracheal intubation Lumbar
-                                  puncture/Bone marrow aspiration, Intercostal
-                                  drainage, Arterial Central Dialysis, line,
-                                  Exchange transfusion, FNAC Biopsy etc.
-                                  <br />
-                                  <br />
-                                  I/We have beeen informed that the operation
-                                  (s)/Procedures (s) involved the risk of
-                                  unsuccessful result,complication,temporary or
-                                  permanent injury or disability and even
-                                  fatality form known or unforeseen causes. No
-                                  guarantee or promises have been made to me/us
-                                  concerning the results of the procedure or
-                                  treatment.
-                                  <br />
-                                  <br />
-                                  I/We, understood that I/We, have the right to
-                                  withhold consent for the procedure/surgery
-                                  I/We. also understand that I/We, have a right
-                                  to obtain a second opinion transfer to a
-                                  different centre and the risk involved in such
-                                  a decision.
-                                  <br />
-                                  Knowing all the above mentioned facts / We,
-                                  give my/our Risk Consent for the above
-                                  mentioned surgery/Procedure.
-                                  <br />
-                                  <br />
-                                  I/We also indemnify the hospital, the
-                                  concerned doctors and the hospital staff in
-                                  case of any adverse consequences arising from
-                                  the surgery.
-                                </p>
-                                <p style={{ fontSize: "18px" }}>
-                                  <div className="container"></div>
-                                </p>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              ></div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                Name
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                Signature
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                Date
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                Time
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                Patient/ Patient Surrogate
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
+                                <span className="d-flex mt-3 gap-3">
+                                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                  &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                  &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dr.
+                                  <Form.Select
+                                    className="vi_0"
+                                    value={ConDoctorName2}
+                                    onChange={(e) =>
+                                      setConDoctorName2(e.target.value)
+                                    }
+                                    style={{ width: "301px" }}
+                                  >
+                                    <option>Select Doctors</option>
+                                    {userdetail?.assigndocts?.map((item) => {
+                                      return (
+                                        <option
+                                          value={item?._id}
+                                        >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
+                                      );
+                                    })}
+                                  </Form.Select>
+                                </span>
+                              </p>
+                              <div className="d-flex gap-3 mt-3 align-items-center">
+                                <p>Medical Condition/Diagnosis :</p>
                                 <span>
                                   <input
                                     type="text"
                                     className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={PatientSurrogate}
+                                    style={{ width: "683px" }}
+                                    value={Diagnosis}
                                     onChange={(e) =>
-                                      setPatientSurrogate(e.target.value)
+                                      setDiagnosis(e.target.value)
+                                    }
+                                    placeholder="Enter Medical Condition/Diagnosis"
+                                  />
+                                </span>
+                              </div>
+                              <div className="d-flex gap-3 mt-3 align-items-center">
+                                <p>Proposed operative Procedure:</p>
+                                <span>
+                                  <input
+                                    type="text"
+                                    className="vi_0"
+                                    style={{ width: "684px" }}
+                                    value={OperativeProce}
+                                    onChange={(e) =>
+                                      setOperativeProce(e.target.value)
+                                    }
+                                    placeholder="Enter Proposed operative Procedure"
+                                  />
+                                </span>{" "}
+                              </div>
+                              <div className="mt-3">
+                                I/We, (the relatives/legal guardian of) Mr./Mrs
+                                &nbsp;&nbsp;
+                                <span>
+                                  <input
+                                    type="text"
+                                    className="vi_0"
+                                    style={{ width: "200px" }}
+                                    value={RealivesName}
+                                    onChange={(e) =>
+                                      setRealivesName(e.target.value)
                                     }
                                   />
                                 </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
+                                &nbsp;&nbsp; who is admitted on{" "}
                                 <span>
                                   <input
                                     type="date"
                                     className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Date2}
-                                    onChange={(e) => setDate2(e.target.value)}
+                                    style={{ width: "200px" }}
+                                    value={Date0}
+                                    onChange={(e) => setDate(e.target.value)}
+                                    min={new Date().toISOString().split("T")[0]}
                                   />
                                 </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="time"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Time1}
-                                    onChange={(e) => setTime1(e.target.value)}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                Witness
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Witness1}
-                                    onChange={(e) =>
-                                      setWitness1(e.target.value)
-                                    }
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="date"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Date3}
-                                    onChange={(e) => setDate3(e.target.value)}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="time"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Time2}
-                                    onChange={(e) => setTime2(e.target.value)}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                Doctor
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Doctor2}
-                                    onChange={(e) => setDoctor2(e.target.value)}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="date"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Date4}
-                                    onChange={(e) => setDate4(e.target.value)}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="time"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Time3}
-                                    onChange={(e) => setTime3(e.target.value)}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div
-                                className="col-md-4"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                  fontSize: "16px",
-                                }}
-                              >
-                                Relative/Legal_guardian (relationship with
-                                patient)
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Guardian1}
-                                    onChange={(e) =>
-                                      setGuardian1(e.target.value)
-                                    }
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="text"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="date"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Date5}
-                                    onChange={(e) => setDate5(e.target.value)}
-                                  />
-                                </span>
-                              </div>
-                              <div
-                                className="col-md-2"
-                                style={{
-                                  border: "1px solid #20958C",
-                                  paddingLeft: "unset",
-                                  paddingRight: "unset",
-                                }}
-                              >
-                                <span>
-                                  <input
-                                    type="time"
-                                    className="vi_0"
-                                    style={{ width: "161px" }}
-                                    value={Time4}
-                                    onChange={(e) => setTime4(e.target.value)}
-                                  />
-                                </span>
+                                &nbsp;&nbsp; have been explained in the
+                                languages understood by me/us, about the pros &
+                                cons of the operation and risks involved during
+                                and after the surgery, and that the procedure
+                                carries a higher risk than the usual cases.
+                                <br />
+                                <br />
+                                I/We, have been explained in detail about the
+                                nature of the surgery/procedure, the possible
+                                benefits and complications. I/We have been
+                                explained that this case carries a higher risk
+                                than the usual and the reasons for the same.
+                                During the course of the surgical procedure,
+                                circumstances may arise or a condidtion may be
+                                found which may require suspension or extension
+                                of planned procedure or necessary performance of
+                                an alternative procedure.
+                                <br />
+                                <br />
+                                I/We, have been informed the high risk involved
+                                in medical procedures which might necessitate
+                                admission to ICU/NICU/Mecanial
+                                Ventilation/Endotracheal intubation Lumbar
+                                puncture/Bone marrow aspiration, Intercostal
+                                drainage, Arterial Central Dialysis, line,
+                                Exchange transfusion, FNAC Biopsy etc.
+                                <br />
+                                <br />
+                                I/We have beeen informed that the operation
+                                (s)/Procedures (s) involved the risk of
+                                unsuccessful result,complication,temporary or
+                                permanent injury or disability and even fatality
+                                form known or unforeseen causes. No guarantee or
+                                promises have been made to me/us concerning the
+                                results of the procedure or treatment.
+                                <br />
+                                <br />
+                                I/We, understood that I/We, have the right to
+                                withhold consent for the procedure/surgery I/We.
+                                also understand that I/We, have a right to
+                                obtain a second opinion transfer to a different
+                                centre and the risk involved in such a decision.
+                                <br />
+                                Knowing all the above mentioned facts / We, give
+                                my/our Risk Consent for the above mentioned
+                                surgery/Procedure.
+                                <br />
+                                <br />
+                                I/We also indemnify the hospital, the concerned
+                                doctors and the hospital staff in case of any
+                                adverse consequences arising from the surgery.
                               </div>
                             </div>
                           </div>
-                        </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-2" style={{ padding: "10px" }}>
+                        <Table bordered>
+                          <thead>
+                            <tr>
+                              <th></th>
+                              <th>Name</th>
+                              <th>Signature</th>
+                              <th>Date</th>
+                              <th>Time</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Patient/ Patient Surrogate</td>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="vi_0"
+                                  style={{ width: "161px" }}
+                                  value={PatientSurrogate}
+                                  onChange={(e) =>
+                                    setPatientSurrogate(e.target.value)
+                                  }
+                                />
+                              </td>
+                              <td>
+                                {!signature1 ? (
+                                  <div
+                                    style={{
+                                      border: "1px solid #dee2e6",
+                                      margin: "10px",
+                                    }}
+                                  >
+                                    <SignatureCanvas
+                                      ref={sigCanvas1}
+                                      penColor="black"
+                                      canvasProps={{
+                                        width: 180,
+                                        height: 100,
+                                        className: "sigCanvas",
+                                      }}
+                                    />
+                                    <button onClick={clear1}>Clear</button>
+                                    <button onClick={save1}>Save</button>
+                                  </div>
+                                ) : (
+                                  <img src={signature1} alt="Signature" />
+                                )}
+                              </td>
+                              <td>
+                                <input
+                                  type="date"
+                                  className="vi_0"
+                                  value={Date2}
+                                  onChange={(e) => setDate2(e.target.value)}
+                                  min={new Date().toISOString().split("T")[0]}
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="time"
+                                  className="vi_0"
+                                  value={Time1}
+                                  onChange={(e) => setTime1(e.target.value)}
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Witness</td>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="vi_0"
+                                  value={Witness1}
+                                  onChange={(e) => setWitness1(e.target.value)}
+                                  placeholder="Enter Witness Name"
+                                />
+                              </td>
+                              <td>
+                                {!WitnessSign ? (
+                                  <div
+                                    style={{
+                                      border: "1px solid #dee2e6",
+                                    }}
+                                  >
+                                    <SignatureCanvas
+                                      ref={sigCanvas3}
+                                      penColor="black"
+                                      canvasProps={{
+                                        width: 180,
+                                        height: 100,
+                                        className: "sigCanvas",
+                                      }}
+                                    />
+                                    <button onClick={clear3}>Clear</button>
+                                    <button onClick={save3}>Save</button>
+                                  </div>
+                                ) : (
+                                  <img src={WitnessSign} alt="Signature" />
+                                )}
+                              </td>
+                              <td>
+                                <input
+                                  type="date"
+                                  className="vi_0"
+                                  value={Date3}
+                                  onChange={(e) => setDate3(e.target.value)}
+                                  min={new Date().toISOString().split("T")[0]}
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="time"
+                                  className="vi_0"
+                                  value={Time2}
+                                  onChange={(e) => setTime2(e.target.value)}
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Doctor</td>
+                              <td>
+                                <Form.Select
+                                  className="vi_0"
+                                  onChange={(e) => setDoctor2(e.target.value)}
+                                >
+                                  <option>Select Doctor</option>
+                                  {userdetail?.assigndocts?.map((item) => {
+                                    return (
+                                      <option
+                                        value={item?._id}
+                                      >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
+                                    );
+                                  })}
+                                </Form.Select>
+                              </td>
+                              <td>
+                                {!signature ? (
+                                  <div
+                                    style={{
+                                      border: "1px solid #dee2e6",
+                                    }}
+                                  >
+                                    <SignatureCanvas
+                                      ref={sigCanvas}
+                                      penColor="black"
+                                      canvasProps={{
+                                        width: 180,
+                                        height: 100,
+                                        className: "sigCanvas",
+                                      }}
+                                    />
+                                    <button onClick={clear}>Clear</button>
+                                    <button onClick={save}>Save</button>
+                                  </div>
+                                ) : (
+                                  <img src={signature} alt="Signature" />
+                                )}
+                              </td>
+                              <td>
+                                <input
+                                  type="date"
+                                  className="vi_0"
+                                  value={Date4}
+                                  onChange={(e) => setDate4(e.target.value)}
+                                  min={new Date().toISOString().split("T")[0]}
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="time"
+                                  className="vi_0"
+                                  value={Time3}
+                                  onChange={(e) => setTime3(e.target.value)}
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                Relative/Legal_guardian (relationship with
+                                patient)
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="vi_0"
+                                  style={{ width: "161px" }}
+                                  value={Guardian1}
+                                  onChange={(e) => setGuardian1(e.target.value)}
+                                  placeholder="Enter Legal_guardian"
+                                />
+                              </td>
+                              <td>
+                                {!LegalGuardian ? (
+                                  <div
+                                    style={{
+                                      border: "1px solid #dee2e6",
+                                    }}
+                                  >
+                                    <SignatureCanvas
+                                      ref={sigCanvas4}
+                                      penColor="black"
+                                      canvasProps={{
+                                        width: 180,
+                                        height: 100,
+                                        className: "sigCanvas",
+                                      }}
+                                    />
+                                    <button onClick={clear4}>Clear</button>
+                                    <button onClick={save4}>Save</button>
+                                  </div>
+                                ) : (
+                                  <img src={LegalGuardian} alt="Signature" />
+                                )}
+                              </td>
+                              <td>
+                                <input
+                                  type="date"
+                                  className="vi_0"
+                                  value={Date5}
+                                  onChange={(e) => setDate5(e.target.value)}
+                                  min={new Date().toISOString().split("T")[0]}
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="time"
+                                  className="vi_0"
+                                  value={Time4}
+                                  onChange={(e) => setTime4(e.target.value)}
+                                />
+                              </td>
+                            </tr>
+                          </tbody>
+                        </Table>
                       </div>
                     </div>
                     <div className="mt-2 d-flex justify-content-center">
@@ -2490,20 +2179,8 @@ const IPDConsentFroms = () => {
                 <>
                   {btn4 ? (
                     <>
-                      {/* English */}
-                      <div className="mt-2 d-dlex text-end gap-2">
-                        <button
-                          style={{
-                            padding: "6px",
-                            border: "none",
-                            backgroundColor: "#20958c",
-                            color: "white",
-                            borderRadius: "0px",
-                          }}
-                          onClick={createPDF4}
-                        >
-                          Print <FiDownload />
-                        </button>
+                      <div className="mt-2 d-dlex text-center gap-2">
+                        <h3>{ConsentFormName}</h3>
                       </div>
                       <div
                         id="pdf"
@@ -2517,10 +2194,9 @@ const IPDConsentFroms = () => {
                           style={{
                             padding: "5px",
                             border: "2px solid #20958C",
-                            width: "1073px",
                             margin: "auto",
                             borderRadius: "20px",
-                            height: "1700px",
+                            height: "auto",
                           }}
                         >
                           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -2552,16 +2228,7 @@ const IPDConsentFroms = () => {
                               </h6>
                             </div>
                           </div>
-                          <div
-                            className="text-center"
-                            style={{
-                              borderBottom: "1px solid #20958C",
-                              width: "100%",
-                              textAlign: "center",
-                            }}
-                          ></div>
                           <div className="text-center mt-1">
-                            {" "}
                             <h6
                               className="fw-bold mt-2"
                               style={{ color: "#20958C", fontSize: "30px" }}
@@ -2571,237 +2238,238 @@ const IPDConsentFroms = () => {
                           </div>
                           <div
                             style={{
-                              paddingLeft: "42px",
-                              paddingRight: "42px",
+                              padding: "30px",
                               textAlign: "justify",
                             }}
                           >
-                            <p style={{ fontSize: "17px" }}>
-                              <div className="container">
+                            <div className="container">
+                              <div
+                                className="row"
+                                style={{ border: "1px solid #20958C" }}
+                              >
+                                <div className="col-md-4 consentformhd">
+                                  <b>Patient Name : </b>
+                                  <span>
+                                    {`${userdetail?.Firstname} ${userdetail?.Lastname}`}
+                                  </span>
+                                </div>
+                                <div className="col-md-4 consentformhd">
+                                  <b>Date : </b>
+                                  <span>
+                                    {moment(userdetail?.createdAt).format(
+                                      "DD-MM-YYYY"
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="col-md-4 consentformhd">
+                                  <b>Age :</b> <span>{ageOutput}</span>
+                                </div>
+                              </div>
+                              <div className="row">
+                                <div className="col-md-4 consentformhd">
+                                  <b>OP No : </b> <span>4546fgf</span>
+                                </div>
+                                <div className="col-md-4 consentformhd">
+                                  <b>IP No :</b> <span>asdads34</span>
+                                </div>
+                                <div className="col-md-4 consentformhd">
+                                  <b>Sex : </b>
+                                  <span>{userdetail?.Gender}</span>
+                                </div>
+                              </div>
+                              <div className="row">
+                                <div className="col-md-12 consentformhd">
+                                  <b>Diagnosis : </b>
+                                  <span>
+                                    <input
+                                      type="text"
+                                      className="vi_0"
+                                      style={{ width: "845px" }}
+                                      value={Diagnosis}
+                                      onChange={(e) =>
+                                        setDiagnosis(e.target.value)
+                                      }
+                                      placeholder="Enter Diagnosis Details"
+                                    />
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="row">
+                                <div className="col-md-12 consentformhd">
+                                  <b> Operative Procedure/ Operation : </b>
+                                  <span>
+                                    <input
+                                      type="text"
+                                      className="vi_0"
+                                      style={{ width: "655px" }}
+                                      value={OperativeProce}
+                                      onChange={(e) =>
+                                        setOperativeProce(e.target.value)
+                                      }
+                                      placeholder="Enter Operative Procedure/ Operation "
+                                    />
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="row">
+                                <div className="col-md-12 consentformhd">
+                                  <b>Type of Anesthesia : </b>
+                                  <sapn>
+                                    <Checkbox
+                                      onChange={(e) =>
+                                        setTypeofAnesthesia(
+                                          e.target.checked ? "Local" : ""
+                                        )
+                                      }
+                                      checked={TypeofAnesthesia === "Local"}
+                                      name="Anesthesia"
+                                    />{" "}
+                                    Local /
+                                    <Checkbox
+                                      onChange={(e) =>
+                                        setTypeofAnesthesia(
+                                          e.target.checked ? "General" : ""
+                                        )
+                                      }
+                                      checked={TypeofAnesthesia === "General"}
+                                      name="Anesthesia"
+                                    />{" "}
+                                    General /
+                                    <Checkbox
+                                      onChange={(e) =>
+                                        setTypeofAnesthesia(
+                                          e.target.checked ? "Spinal" : ""
+                                        )
+                                      }
+                                      checked={TypeofAnesthesia === "Spinal"}
+                                      name="Anesthesia"
+                                    />{" "}
+                                    Spinal /
+                                    <Checkbox
+                                      onChange={(e) =>
+                                        setTypeofAnesthesia(
+                                          e.target.checked ? "Epidural" : ""
+                                        )
+                                      }
+                                      checked={TypeofAnesthesia === "Epidural"}
+                                      name="Anesthesia"
+                                    />{" "}
+                                    Epidural /
+                                    <Checkbox
+                                      onChange={(e) =>
+                                        setTypeofAnesthesia(
+                                          e.target.checked ? "Never Block" : ""
+                                        )
+                                      }
+                                      checked={
+                                        TypeofAnesthesia === "Never Block"
+                                      }
+                                      name="Anesthesia"
+                                    />{" "}
+                                    Never Block /
+                                    <Checkbox
+                                      onChange={(e) =>
+                                        setTypeofAnesthesia(
+                                          e.target.checked ? "Combined" : ""
+                                        )
+                                      }
+                                      checked={TypeofAnesthesia === "Combined"}
+                                      name="Anesthesia"
+                                    />{" "}
+                                    Combined /
+                                    <Checkbox
+                                      onChange={(e) =>
+                                        setTypeofAnesthesia(
+                                          e.target.checked ? "MAC" : ""
+                                        )
+                                      }
+                                      checked={TypeofAnesthesia === "MAC"}
+                                      name="Anesthesia"
+                                    />{" "}
+                                    MAC /
+                                  </sapn>
+                                </div>
+                              </div>
+                              <div className="row">
                                 <div
-                                  className="row"
-                                  style={{ border: "1px solid #20958C" }}
+                                  className="col-md-12 "
+                                  style={{
+                                    border: "1px solid #20958C",
+                                  }}
                                 >
                                   <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
+                                    className="mt-3"
+                                    style={{ fontSize: "17px" }}
                                   >
-                                    Patient Name:{" "}
-                                    <span>
-                                      {`${userdetail?.Firstname} ${userdetail?.Lastname}`}
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    Date:{" "}
-                                    <span>
-                                      {moment(userdetail?.createdAt).format(
-                                        "DD-MM-YYYY"
-                                      )}
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    Age:
-                                    <span>23</span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    OP No: <span>4546fgf</span>
-                                  </div>
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    IP No: <span>asdads34</span>
-                                  </div>
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    Sex:
-                                    <span>{userdetail?.Gender}</span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-12"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    Diagnosis :{" "}
+                                    I,{" "}
                                     <span>
                                       <input
                                         type="text"
                                         className="vi_0"
-                                        style={{ width: "845px" }}
-                                        value={Diagnosis}
-                                        onChange={(e) =>
-                                          setDiagnosis(e.target.value)
-                                        }
+                                        style={{ width: "301px" }}
+                                        value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}
                                       />
                                     </span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-12"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    Operative Procedure/ Operation :{" "}
+                                    &nbsp; (Patient Name), give my full consent
+                                    out of my own free will to undergo the
+                                    following surgery / procedure&nbsp;
                                     <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "650px" }}
-                                        value={OperativeProce}
+                                      <select
+                                        className="vi_0 mt-2"
+                                        style={{ width: "331px" }}
+                                        value={NameOfSurgery}
                                         onChange={(e) =>
-                                          setOperativeProce(e.target.value)
+                                          setNameOfSurgery(e.target.value)
                                         }
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-
-                                <div className="row">
-                                  <div
-                                    className="col-md-12"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    Type of Anesthesia Local/ General/ Spinal/
-                                    Epidural/ Never Block/ Combined/ MAC{" "}
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-12"
-                                    style={{
-                                      padding: "6px",
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <p style={{ fontSize: "17px" }}>
-                                      I,{" "}
-                                      <span
-                                        style={{
-                                          borderBottom: "1px solid black",
-                                        }}
                                       >
-                                        <input
-                                          type="text"
-                                          className="vi_0"
-                                          style={{ width: "301px" }}
-                                          value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}
-                                        />
-                                      </span>
-                                      (Patient Name), give my full consent out
-                                      of my own free will to undergo the
-                                      following surgery / procedure
-                                      <span>
-                                        <select
-                                          className="vi_0"
-                                          style={{ width: "331px" }}
-                                          value={NameOfSurgery}
-                                          onChange={(e) =>
-                                            setNameOfSurgery(e.target.value)
-                                          }
-                                        >
-                                          <option value="">
-                                            select the surgery
-                                          </option>
-                                          {HServicesList?.map((val) => {
-                                            return (
-                                              <option
-                                                value={val?.hSurgeryService}
-                                              >
-                                                {val?.hSurgeryService}
-                                              </option>
-                                            );
-                                          })}
-                                        </select>
-                                        at Janani Multispeciality Hospital I
-                                        understand that the above mentioned
-                                        procedure necessitates the
-                                        administration of local/sedation/
-                                        regional/general anesthesia or any
-                                        combination there of to provide the
-                                        required anesthesia service.
-                                      </span>{" "}
-                                    </p>
+                                        <option value="">
+                                          select the surgery
+                                        </option>
+                                        {HServicesList?.map((val) => {
+                                          return (
+                                            <option
+                                              value={val?.hSurgeryService}
+                                            >
+                                              {val?.hSurgeryService}
+                                            </option>
+                                          );
+                                        })}
+                                      </select>
+                                      &nbsp; at Janani Multispeciality Hospital
+                                      I understand that the above mentioned
+                                      procedure necessitates the administration
+                                      of local/sedation/ regional/general
+                                      anesthesia or any combination there of to
+                                      provide the required anesthesia service.
+                                    </span>{" "}
+                                  </div>
 
-                                    <p style={{ fontSize: "17px" }}>
-                                      I, understand that anesthetic agent zould
-                                      be administered by injecting in to the
-                                      bloodstream (IV LINE), breathed in to the
-                                      lungs, myected through a needle/catheter
-                                      placed either directly in to the spinal
-                                      canal er immediate outside the spinal
-                                      canal block is achieved by injecting the
-                                      anesthetic agent near the nerves.
-                                    </p>
-                                    <p style={{ fontSize: "17px" }}>
-                                      I, undentand results and effects of
-                                      anesthesia depends on the type
-                                      administered and it decreasedless of
-                                      feeling/numbness, loss of movement to
-                                      tatal unconscious state. vary from
-                                      temporary
-                                      <br />
-                                      <br />
+                                  <div
+                                    style={{
+                                      fontSize: "17px",
+                                      marginTop: "10px",
+                                    }}
+                                  >
+                                    I, understand that anesthetic agent zould be
+                                    administered by injecting in to the
+                                    bloodstream (IV LINE), breathed in to the
+                                    lungs, myected through a needle/catheter
+                                    placed either directly in to the spinal
+                                    canal er immediate outside the spinal canal
+                                    block is achieved by injecting the
+                                    anesthetic agent near the nerves.
+                                  </div>
+                                  <div
+                                    style={{
+                                      fontSize: "17px",
+                                      marginTop: "10px",
+                                    }}
+                                  >
+                                    I, undentand results and effects of
+                                    anesthesia depends on the type administered
+                                    and it decreasedless of feeling/numbness,
+                                    loss of movement to tatal unconscious state.
+                                    <div className="mt-2">
                                       I, have been explained that all forms of
                                       anesthesia invalve some risks and no
                                       guarantees or promises can the results of
@@ -2829,22 +2497,24 @@ const IPDConsentFroms = () => {
                                       blood transfusion The possibility of more
                                       serious complications including death is
                                       quite remote, but it does exists.
-                                      <br />
-                                      <br />
+                                    </div>
+                                    <div className="mt-2">
                                       I, have been explained language known &
                                       understood by about the nature of the
                                       surgery/procedure, type of anarsthesia
                                       used, and it's benefits, and costs, inks
                                       associated with it, other alternatives and
-                                      its prognosis. <br />
-                                      <br />
+                                      its prognosis.
+                                    </div>
+                                    <div className="mt-2">
                                       I, understand that local anaesthesia with
                                       or without sedation may not be successful
                                       and therefor an altenative method may be
                                       used as deemend necessary.
-                                      <br />
-                                      <br />I hereby absolve Janani
-                                      Multispeciailty Hospital.
+                                    </div>
+                                    <div>
+                                      I hereby absolve Janani Multispeciailty
+                                      Hospital.
                                       <span>
                                         <select
                                           value={NameOfSurgery}
@@ -2872,10 +2542,12 @@ const IPDConsentFroms = () => {
                                       anyliability for consequences arising
                                       because of the above-mentioned
                                       surgery/procedure.
-                                      <br />
+                                    </div>
+                                    <div className="mt-2">
                                       Consent of Patient
                                       Rapresentative/Surrogate
-                                      <br />
+                                    </div>
+                                    <div>
                                       The patient is unable to give consent
                                       because he/she is minor/Unconscious{" "}
                                       <span>
@@ -2899,420 +2571,270 @@ const IPDConsentFroms = () => {
                                       therefore give my consent an behalf of the
                                       patient after discussion with the Doctor
                                       for the above mentioned
-                                      Surgery/operative/Invasive Proceudre
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  ></div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    Name
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    Signature
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    Date
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    Time
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    Patient/ Patient Surrogate
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={PatientSurrogate}
-                                        onChange={(e) =>
-                                          setPatientSurrogate(e.target.value)
-                                        }
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="date"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={Date2}
-                                        onChange={(e) =>
-                                          setDate2(e.target.value)
-                                        }
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="time"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={Time1}
-                                        onChange={(e) =>
-                                          setTime1(e.target.value)
-                                        }
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    Witness
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={Witness1}
-                                        onChange={(e) =>
-                                          setWitness1(e.target.value)
-                                        }
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="date"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={Date3}
-                                        onChange={(e) =>
-                                          setDate3(e.target.value)
-                                        }
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="time"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={Time2}
-                                        onChange={(e) =>
-                                          setTime2(e.target.value)
-                                        }
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "17px",
-                                    }}
-                                  >
-                                    Doctor
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={Doctor2}
-                                        onChange={(e) =>
-                                          setDoctor2(e.target.value)
-                                        }
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="date"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={Date4}
-                                        onChange={(e) =>
-                                          setDate4(e.target.value)
-                                        }
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="time"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={Time3}
-                                        onChange={(e) =>
-                                          setTime3(e.target.value)
-                                        }
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "16px",
-                                    }}
-                                  >
-                                    Relative/Legal_guardian (relationship with
-                                    patient)
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={Guardian1}
-                                        onChange={(e) =>
-                                          setGuardian1(e.target.value)
-                                        }
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="date"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={Date5}
-                                        onChange={(e) =>
-                                          setDate5(e.target.value)
-                                        }
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="time"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                        value={Time4}
-                                        onChange={(e) =>
-                                          setTime4(e.target.value)
-                                        }
-                                      />
-                                    </span>
+                                      Surgery/operative/Invasive Proceudre.
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </p>
+                            </div>
+                          </div>
+
+                          <div className="mt-2" style={{ padding: "10px" }}>
+                            <Table bordered>
+                              <thead>
+                                <tr>
+                                  <th></th>
+                                  <th>Name</th>
+                                  <th>Signature</th>
+                                  <th>Date</th>
+                                  <th>Time</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>Patient/ Patient Surrogate</td>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      className="vi_0"
+                                      style={{ width: "161px" }}
+                                      value={PatientSurrogate}
+                                      onChange={(e) =>
+                                        setPatientSurrogate(e.target.value)
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    {!signature1 ? (
+                                      <div
+                                        style={{
+                                          border: "1px solid #dee2e6",
+                                          margin: "10px",
+                                        }}
+                                      >
+                                        <SignatureCanvas
+                                          ref={sigCanvas1}
+                                          penColor="black"
+                                          canvasProps={{
+                                            width: 180,
+                                            height: 100,
+                                            className: "sigCanvas",
+                                          }}
+                                        />
+                                        <button onClick={clear1}>Clear</button>
+                                        <button onClick={save1}>Save</button>
+                                      </div>
+                                    ) : (
+                                      <img src={signature1} alt="Signature" />
+                                    )}
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="date"
+                                      className="vi_0"
+                                      style={{ width: "161px" }}
+                                      value={Date2}
+                                      onChange={(e) => setDate2(e.target.value)}
+                                      min={
+                                        new Date().toISOString().split("T")[0]
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="time"
+                                      className="vi_0"
+                                      value={Time1}
+                                      onChange={(e) => setTime1(e.target.value)}
+                                    />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Witness</td>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      className="vi_0"
+                                      style={{ width: "161px" }}
+                                      value={Witness1}
+                                      onChange={(e) =>
+                                        setWitness1(e.target.value)
+                                      }
+                                      placeholder="Enter Witness Name"
+                                    />
+                                  </td>
+                                  <td>
+                                    {!WitnessSign ? (
+                                      <div
+                                        style={{
+                                          border: "1px solid #dee2e6",
+                                        }}
+                                      >
+                                        <SignatureCanvas
+                                          ref={sigCanvas3}
+                                          penColor="black"
+                                          canvasProps={{
+                                            width: 180,
+                                            height: 100,
+                                            className: "sigCanvas",
+                                          }}
+                                        />
+                                        <button onClick={clear3}>Clear</button>
+                                        <button onClick={save3}>Save</button>
+                                      </div>
+                                    ) : (
+                                      <img src={WitnessSign} alt="Signature" />
+                                    )}
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="date"
+                                      className="vi_0"
+                                      style={{ width: "161px" }}
+                                      value={Date3}
+                                      onChange={(e) => setDate3(e.target.value)}
+                                      min={
+                                        new Date().toISOString().split("T")[0]
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="time"
+                                      className="vi_0"
+                                      value={Time2}
+                                      onChange={(e) => setTime2(e.target.value)}
+                                    />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Doctor</td>
+                                  <td>
+                                    <Form.Select
+                                      className="vi_0"
+                                      onChange={(e) =>
+                                        setDoctor2(e.target.value)
+                                      }
+                                    >
+                                      <option>Select Doctor</option>
+                                      {userdetail?.assigndocts?.map((item) => {
+                                        return (
+                                          <option
+                                            value={item?._id}
+                                          >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
+                                        );
+                                      })}
+                                    </Form.Select>
+                                  </td>
+                                  <td>
+                                    {!signature ? (
+                                      <div
+                                        style={{
+                                          border: "1px solid #dee2e6",
+                                        }}
+                                      >
+                                        <SignatureCanvas
+                                          ref={sigCanvas}
+                                          penColor="black"
+                                          canvasProps={{
+                                            width: 180,
+                                            height: 100,
+                                            className: "sigCanvas",
+                                          }}
+                                        />
+                                        <button onClick={clear}>Clear</button>
+                                        <button onClick={save}>Save</button>
+                                      </div>
+                                    ) : (
+                                      <img src={signature} alt="Signature" />
+                                    )}
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="date"
+                                      className="vi_0"
+                                      style={{ width: "161px" }}
+                                      value={Date4}
+                                      onChange={(e) => setDate4(e.target.value)}
+                                      min={
+                                        new Date().toISOString().split("T")[0]
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="time"
+                                      className="vi_0"
+                                      value={Time3}
+                                      onChange={(e) => setTime3(e.target.value)}
+                                    />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    Relative/Legal_guardian (relationship with
+                                    patient)
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      className="vi_0"
+                                      style={{ width: "161px" }}
+                                      value={Guardian1}
+                                      onChange={(e) =>
+                                        setGuardian1(e.target.value)
+                                      }
+                                      placeholder="Enter Legal_guardian"
+                                    />
+                                  </td>
+                                  <td>
+                                    {!LegalGuardian ? (
+                                      <div
+                                        style={{
+                                          border: "1px solid #dee2e6",
+                                        }}
+                                      >
+                                        <SignatureCanvas
+                                          ref={sigCanvas4}
+                                          penColor="black"
+                                          canvasProps={{
+                                            width: 180,
+                                            height: 100,
+                                            className: "sigCanvas",
+                                          }}
+                                        />
+                                        <button onClick={clear4}>Clear</button>
+                                        <button onClick={save4}>Save</button>
+                                      </div>
+                                    ) : (
+                                      <img
+                                        src={LegalGuardian}
+                                        alt="Signature"
+                                      />
+                                    )}
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="date"
+                                      className="vi_0"
+                                      value={Date5}
+                                      onChange={(e) => setDate5(e.target.value)}
+                                      min={
+                                        new Date().toISOString().split("T")[0]
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="time"
+                                      className="vi_0"
+                                      value={Time4}
+                                      onChange={(e) => setTime4(e.target.value)}
+                                    />
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </Table>
                           </div>
                         </div>
                         <div className="mt-2 d-flex justify-content-center">
@@ -3321,784 +2843,6 @@ const IPDConsentFroms = () => {
                           </Button>
                         </div>
                       </div>
-                      {/* kannada */}
-                      {/* <div className="mt-2 d-dlex text-end gap-2">
-                        <button
-                          style={{
-                            padding: "6px",
-                            border: "none",
-                            backgroundColor: "#20958c",
-                            color: "white",
-                            borderRadius: "0px",
-                          }}
-                          onClick={createPDF5}
-                        >
-                          Print <FiDownload />
-                        </button>
-                      </div>
-                      <div
-                        id="pdf"
-                        style={{
-                          padding: "15px",
-                          overflow: "hidden",
-                          overflowX: "scroll",
-                        }}
-                      >
-                        <div
-                          style={{
-                            padding: "5px",
-                            border: "2px solid #20958C",
-                            width: "1073px",
-                            margin: "auto",
-                            borderRadius: "20px",
-                            height: "1700px",
-                          }}
-                        >
-                          <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
-                            <div className="d-flex align-items-center">
-                              <img
-                                src="/Images/logo.jpg"
-                                alt=""
-                                style={{ width: "100px" }}
-                              />
-                            </div>
-                            <div className="text-center">
-                              <h4
-                                className="fw-bold"
-                                style={{ fontSize: "25px" }}
-                              >
-                                ಜನನಿ ಬಹು ವಿಶೇಷತೆಯ ಆಸ್ಪತ್ರೆ ಮತ್ತು ಸಂಶೋಧನಾ ಕೇಂದ್ರ
-                              </h4>
-                              <h6
-                                className="fw-bold"
-                                style={{ fontSize: "19px" }}
-                              >
-                                "ಕನರಾ ಬ್ಯಾಂಕ್ ಪಕ್ಕ, ಜಾಲನಗರ್ ಮುಖ್ಯ ರಸ್ತೆ, ಕೆ.ಕೆ.
-                                ಕಾಲೋನಿ, ವಿಜಯಪುರ-586109
-                              </h6>
-                              <h6 style={{ fontSize: "16px" }}>
-                                ದೂರವಾಣಿ: 08352-277077, ಮೊಬೈಲ್: 9606031158,
-                                7090831204 ಇಮೇಲ್: jananihospital2018@gmail.com
-                              </h6>
-                            </div>
-                          </div>
-                          <div
-                            className="text-center"
-                            style={{
-                              borderBottom: "1px solid #20958C",
-                              width: "100%",
-                              textAlign: "center",
-                            }}
-                          ></div>
-                          <div className="text-center mt-1">
-                            {" "}
-                            <h6
-                              className="fw-bold mt-2"
-                              style={{ color: "#20958C", fontSize: "30px" }}
-                            >
-                              ನಿಷ್ಚೇತನ/ತಾತ್ಕಾಲಿಕ ನೆನೆಗುದಿಗೆ ಬಿತ್ತುವಿಕೆಗಾಗಿ
-                              ಒಪ್ಪಿಗೆ
-                            </h6>
-                          </div>
-                          <div
-                            style={{
-                              paddingLeft: "42px",
-                              paddingRight: "42px",
-                              textAlign: "justify",
-                            }}
-                          >
-                            <p style={{ fontSize: "17px" }}>
-                              <div className="container">
-                                <div
-                                  className="row"
-                                  style={{ border: "1px solid #20958C" }}
-                                >
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ರೋಗಿಯ ಹೆಸರು:{" "}
-                                    <span>
-                                      <input
-                                        type="text"
-                                        name=""
-                                        id=""
-                                        className="vi_0"
-                                        style={{ width: "186px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ದಿನಾಂಕ:{" "}
-                                    <span>
-                                      <input
-                                        type="text"
-                                        name=""
-                                        id=""
-                                        className="vi_0"
-                                        style={{ width: "249px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ವಯಸ್ಸು:{" "}
-                                    <span>
-                                      <input
-                                        type="text"
-                                        name=""
-                                        id=""
-                                        className="vi_0"
-                                        style={{ width: "245px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ಓಪಿ ಸಂಖ್ಯೆ:{" "}
-                                    <span>
-                                      <input
-                                        type="text"
-                                        name=""
-                                        id=""
-                                        className="vi_0"
-                                        style={{ width: "231px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ಐಪಿ ಸಂಖ್ಯೆ:{" "}
-                                    <span>
-                                      <input
-                                        type="text"
-                                        name=""
-                                        id=""
-                                        className="vi_0"
-                                        style={{ width: "230px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ಲಿಂಗ:{" "}
-                                    <span>
-                                      <input
-                                        type="radio"
-                                        name=""
-                                        id=""
-                                        className="vi_0"
-                                      />
-                                      ಪುರುಷ &nbsp;&nbsp;&nbsp;
-                                      <input
-                                        type="radio"
-                                        name=""
-                                        id=""
-                                        className="vi_0"
-                                      />
-                                      ಸ್ತ್ರೀ{" "}
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-12"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ರೋಗನಿದಾನ :{" "}
-                                    <span>
-                                      <input
-                                        type="text"
-                                        name=""
-                                        id=""
-                                        className="vi_0"
-                                        style={{ width: "856px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-12"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ಶಸ್ತ್ರಚಿಕಿತ್ಸಾ ಕ್ರಮ/ಶಸ್ತ್ರಚಿಕಿತ್ಸೆ :{" "}
-                                    <span>
-                                      <input
-                                        type="text"
-                                        name=""
-                                        id=""
-                                        className="vi_0"
-                                        style={{ width: "741px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-
-                                <div className="row">
-                                  <div
-                                    className="col-md-12"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ನಿಷ್ಚೇತನದ ಪ್ರಕಾರ ಸ್ಥಳೀಯ/ ಸಾಮಾನ್ಯ/ ಸ್ಫೈನಲ್/
-                                    ಎಪಿಡ್ಯುರಲ್/ ನರ್ವ್ ಬ್ಲಾಕ್/ ಸಂಯೋಜಿತ/ MAC{" "}
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-12"
-                                    style={{
-                                      padding: "6px",
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <p style={{ fontSize: "17px" }}>
-                                      ನಾನು,{" "}
-                                      <span
-                                        style={{
-                                          borderBottom: "1px solid black",
-                                        }}
-                                      >
-                                        <input
-                                          type="text"
-                                          className="vi_0"
-                                          style={{ width: "301px" }}
-                                        />
-                                      </span>
-                                      (ರೋಗಿಯ ಹೆಸರು), ನನಗೆ ಸ್ವಯಂಸ್ಪೂರ್ತದಿಂದ ಈ
-                                      ಕೆಳಗಿನ ಶಸ್ತ್ರಚಿಕಿತ್ಸೆ/ಕ್ರಮವನ್ನು
-                                      ತೆಗೆದುಕೊಳ್ಳಲು ಸಂಪೂರ್ಣ ಒಪ್ಪಿಗೆ ನೀಡುತ್ತೇನೆ
-                                      <span>
-                                        <input
-                                          type="text"
-                                          className="vi_0"
-                                          style={{ width: "636px" }}
-                                        />
-                                        <br />
-                                        ಜನನಿ ಬಹು ವಿಶೇಷತೆಯ ಆಸ್ಪತ್ರೆಯಲ್ಲಿ, ಮೇಲ್ಕಂಡ
-                                        ಕ್ರಮವು ಅಗತ್ಯನಿಷ್ಚೇತನ ಸೇವೆಯನ್ನು ಒದಗಿಸಲು
-                                        ಸ್ಥಳೀಯ/ಸೂಜಿಸೀಡಿಸುವಿಕೆ/ಪ್ರಾದೇಶಿಕ/ಸಾಮಾನ್ಯ
-                                        ನಿಷ್ಚೇತನ ಅಥವಾ ಅವುಗಳಲ್ಲಿ ಯಾವುದಾದರೂ
-                                        ಸಂಯೋಜನೆಯನ್ನು ನೀಡಬೇಕಾಗಿದೆ ಎಂಬುದನ್ನು ನಾನು
-                                        ಅರ್ಥಮಾಡಿಕೊಂಡಿದ್ದೇನೆ.
-                                      </span>{" "}
-                                    </p>
-
-                                    <p style={{ fontSize: "17px" }}>
-                                      ನಾನು, ಅನಿಸ್ಥೆಟಿಕ್ ಏಜೆಂಟ್ ಅನ್ನು
-                                      ರಕ್ತನಾಳದಲ್ಲಿ (IV ಲೈನ್) ಸಲ್ಲಿಸುವ ಮೂಲಕ,
-                                      ಶ್ವಾಸಕೋಶಗಳಲ್ಲಿ ಉಸಿರಾಟ ಮಾಡುವ ಮೂಲಕ,
-                                      ನೆಡ್ಲ್/ಕ್ಯಾಥೆಟರ್ ಅನ್ನು ನೇರವಾಗಿ ಸ್ಫೈನಲ್
-                                      ಕಾಲಿನಲ್ಲಿ ಅಥವಾ ಸ್ಫೈನಲ್ ಕಾಲಿನ ಹೊರಗಡೆ
-                                      ಪ್ರದರ್ಶಿಸುವ ಮೂಲಕ ನೀಡಬಹುದು, ಅಥವಾ ರೋಗಿಯ
-                                      ಬ್ಲಾಕ್ ಅನ್ನು ಅನಿಸ್ಥೆಟಿಕ್ ಏಜೆಂಟ್ ಅನ್ನು ನರಗಳ
-                                      ಹತ್ತಿರ ಇಂಜೆಕ್ಟ್ ಮಾಡುವ ಮೂಲಕ ಸಾಧಿಸಲಾಗುತ್ತದೆ.
-                                    </p>
-                                    <p style={{ fontSize: "17px" }}>
-                                      ನಾನು, ಅನಿಸ್ಥೇಷಿಯಾದ ಫಲಿತಾಂಶಗಳು ಮತ್ತು
-                                      ಪರಿಣಾಮಗಳು ನೀಡಿದ ನಿಷ್ಚೇತನದ ಪ್ರಕಾರ
-                                      ಅವಲಂಬಿಸಿವೆ ಮತ್ತು ಇದು
-                                      ಸಂವೇದನೆ/ಅನುಭವ/ನಿರ್ಜೀವತೆ, ಚಲನಶೀಲತೆಯ
-                                      ನಷ್ಟದಿಂದ ಸಂಪೂರ್ಣ ಅಜ್ಞಾತ ಸ್ಥಿತಿವರೆಗೆ
-                                      ಅಂತರವಿರಬಹುದು ಎಂಬುದನ್ನು
-                                      ಅರ್ಥಮಾಡಿಕೊಂಡಿದ್ದೇನೆ. ಈ ಪ್ರಭಾವಗಳು
-                                      ತಾತ್ಕಾಲಿಕವಾಗಿದ್ದಿರಬಹುದು
-                                      <br />
-                                      <br />
-                                      ನಾನು, ಎಲ್ಲ ರೀತಿಯ ನಿಷ್ಚೇತನವು ಕೆಲವು
-                                      ಅಪಾಯಗಳನ್ನು ಒಳಗೊಂಡಿರುತ್ತವೆ ಮತ್ತು ಯಾವುದೇ
-                                      ಭರವಸೆಗಳನ್ನು ನೀಡುವಂತಿಲ್ಲ ಅಥವಾ
-                                      ಶಸ್ತ್ರಚಿಕಿತ್ಸೆ/ಚಿಕಿತ್ಸೆಗಳ ಫಲಿತಾಂಶಗಳ
-                                      ಭರವಸೆಯನ್ನು ನೀಡಲು ಸಾಧ್ಯವಿಲ್ಲ ಎಂಬುದನ್ನು
-                                      ವಿವರಿಸಲಾಗಿದೆ. ನಿಷ್ಚೇತನದಿಂದ ಉಂಟಾಗಬಹುದಾದ
-                                      ಕೆಲವು ಅಪರೂಪದ ಸಂಕೀರ್ಣತೆಗಳು ಒಳಗೊಂಡಿರುತ್ತವೆ
-                                      ಎಂದು ನನಗೆ ತಿಳಿಸಲಾಗಿದೆ, ಉದಾಹರಣೆಗೆ,
-                                      ಇಂಜೆಕ್ಷನ್‌ಗಳ ಸ್ಥಳದಲ್ಲಿ ರಕ್ತಗಾಯ, ನೋವು,
-                                      ತಾತ್ಕಾಲಿಕ ಉಸಿರಾಟ ಸಮಸ್ಯೆಗಳು, ತಾತ್ಕಾಲಿಕ ನರ
-                                      ಹಾನಿ, ಪೇಶಿ ನೋವು, ದೀರ್ಘಕಾಲೀನ
-                                      ಪ್ರತಿಕ್ರಿಯೆಗಳು, ತಲೆ ನೋವು, ಶಸ್ತ್ರಚಿಕಿತ್ಸೆಯ
-                                      ಸಮಯದಲ್ಲಿ ಸಂವೇದನೆ (ವಿಶೇಷವಾಗಿ ಸೀಸೇರಿಯನ್
-                                      ವಿಭಾಗ ಮತ್ತು ಕೆಲವು ತುರ್ತು ಕ್ರಮಗಳಲ್ಲಿ),
-                                      ಹಲ್ಲುಗಳು ಮತ್ತು ಹಲ್ಲಿನ ಕೃತಕ ಮತ್ತು
-                                      ತಾತ್ಕಾಲಿಕ, ಆದರೆ ನೋವುಸಂಕೀರ್ಣತೆಗಳು,
-                                      ಹೃದಯಾಘಾತ, ಪಾಳುಕು, ಗಂಭೀರ ಅಲರ್ಜಿಕ್ ಅಥವಾ
-                                      ಭಿನ್ನಪ್ರತ್ಯಯ ಪ್ರತಿಕ್ರಿಯೆಗಳು, ಮೆದುಳು ಹಾನಿ,
-                                      ಮೂತ್ರಪಿಂಡ ವೈಫಲ್ಯ, ಉಸಿರಾಟದ ಹಾನಿ,
-                                      ಪಾರಾಪ್ಲೆಜಿಯಾ ಅಥವಾ ಕ್ವಾಡ್ರಿಪ್ಲೆಜಿಯಾ, ಶಾಶ್ವತ
-                                      ನರ ಅಥವಾ ರಕ್ತನಾಳದ ಹಾನಿ, ಕಣ್ಣು ಹಾನಿ,
-                                      ಕಂಠಸ್ಥಳದ ಹಾನಿ, ಆವಾಜಿನ ತಂತಿಗಳು, ಶಾಶ್ವತ
-                                      ಹಾನಿ, ಮತ್ತು ರಕ್ತಸಂಚಾರದ ಸಂಕ್ರಮಣಗಳಿಂದ
-                                      ಉಂಟಾಗುವ ಶ್ವಾಸಕೋಶಗಳ ಬಹುಶಃ ಭೀಕರ
-                                      ಸಂಕೀರ್ಣತೆಗಳನ್ನು ಒಳಗೊಂಡಿದೆ, ಇದರ ಹೊರತಾಗಿಯೂ
-                                      ಅಪಾಯಗಳ ಸಾಧ್ಯತೆ ಇರುತ್ತದೆ.
-                                      <br />
-                                      <br />
-                                      ನಾನು, ನನಗೆ ಪರಿಚಿತವಾದ ಭಾಷೆಯಲ್ಲಿ ಮತ್ತು
-                                      ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ ವಿಷಯಗಳ ಬಗ್ಗೆ ವಿವರಿಸಲಾಗಿದೆ:
-                                      ಶಸ್ತ್ರಚಿಕಿತ್ಸೆಯ/ಕ್ರಮದ ಸ್ವರೂಪ, ಬಳಸಲಾದ
-                                      ನಿಷ್ಚೇತನದ ಪ್ರಕಾರ, ಅದರ ಪ್ರಯೋಜನಗಳು ಮತ್ತು
-                                      ವೆಚ್ಚ, ಅದಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಅಪಾಯಗಳು, ಇತರ
-                                      ಪರ್ಯಾಯಗಳು, ಮತ್ತು ಅವರ ಸಾಂಖ್ಯಾತಿಕ ಲೆಕ್ಕಾಚಾರ
-                                      <br />
-                                      <br />
-                                      ನಾನು, ಸ್ವಲ್ಪ ನಿಷ್ಚೇತನವು ಸೀಡಿಸಿದ ಅಥವಾ
-                                      ಇಲ್ಲದೆ ಯಶಸ್ವಿಯಾಗದಿದ್ದರೆ, ಅಗತ್ಯವೆಂದು
-                                      ಪರಿಗಣಿಸಿದಾಗ ಪರ್ಯಾಯ ವಿಧಾನವನ್ನು ಬಳಸಬಹುದು
-                                      ಎಂಬುದನ್ನು ಅರ್ಥಮಾಡಿಕೊಂಡಿದ್ದೇನೆ.
-                                      <br />
-                                      <br />
-                                      ನಾನು ಈ ಮೂಲಕ ಜನನಿ ಬಹು ವಿಶೇಷತೆಯ ಆಸ್ಪತ್ರೆಗೆ
-                                      ಪೂರ್ತಿ ಉಲ್ಲೇಖಿಸುತ್ತೇನೆ
-                                      <span>
-                                        <input
-                                          type="text"
-                                          className="vi_0"
-                                          style={{ width: "331px" }}
-                                        />
-                                      </span>
-                                      ಮತ್ತು ಶಸ್ತ್ರಚಿಕಿತ್ಸಾ ತಂಡ ಮತ್ತು ಆಸ್ಪತ್ರೆಗೆ
-                                      ಅಧಿಕೃತ ಹೊಣೆಗಾರಿಕೆಗಳಿಲ್ಲ ಮೇಲ್ಕಂಡ
-                                      ಶಸ್ತ್ರಚಿಕಿತ್ಸೆ/ಕ್ರಮದಿಂದ ಉಂಟಾಗುವ
-                                      ಪರಿಣಾಮಗಳಿಗೆ.
-                                      <br />
-                                      ರೋಗಿಯ ಪ್ರತಿನಿಧಿ/ಪ್ರತಿನಿಧಿಯ ಒಪ್ಪಿಗೆ
-                                      <br />
-                                      ರೋಗಿ ಒಪ್ಪಿಗೆ ನೀಡಲು ಸಾಧ್ಯವಿಲ್ಲ ಏಕೆಂದರೆ
-                                      ಅವರು/ಅವರು ಅಪ್ರಾಪ್ತ/ಅಪಸ್ಮಾರದ
-                                      ಸ್ಥಿತಿಯಲ್ಲಿದ್ದಾರೆ.{" "}
-                                      <span>
-                                        <input
-                                          type="text"
-                                          className="vi_0"
-                                          style={{ width: "331px" }}
-                                        />
-                                      </span>
-                                      ಹೀಗಾಗಿ ನಾನು,{" "}
-                                      <span>
-                                        <input
-                                          type="text"
-                                          className="vi_0"
-                                          style={{ width: "300px" }}
-                                        />
-                                      </span>{" "}
-                                      (ಹೆಸರು/ರೋಗಿಯೊಂದಿಗೆ ಸಂಬಂಧ) ಆದ್ದರಿಂದ ಮೇಲ್ಕಂಡ
-                                      ಶಸ್ತ್ರಚಿಕಿತ್ಸೆ/ಕ್ರೀಯಾತ್ಮಕ/ಆಕ್ರಮಣಕಾರಿ
-                                      ಕ್ರಮಕ್ಕಾಗಿ ಡಾಕ್ಟರ್ ಜೊತೆ ಚರ್ಚಿಸಿದ ನಂತರ
-                                      ರೋಗಿಯ ಪರವಾಗಿ ನನ್ನ ಒಪ್ಪಿಗೆ ನೀಡುತ್ತೇನೆ.
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  ></div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ಹೆಸರು
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ಹಸ್ತಾಕ್ಷರ
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ದಿನಾಂಕ
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ಸಮಯ
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ರೋಗಿ/ರೋಗಿಯ ಪ್ರತಿನಿಧಿ
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ಸಾಕ್ಷಿ
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    ಡಾಕ್ಟರ್
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div
-                                    className="col-md-4"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                      fontSize: "16px",
-                                    }}
-                                  >
-                                    ನಾತಿ/ಕಾನೂನು ಸಂರಕ್ಷಕ (ರೋಗಿಯೊಂದಿಗೆ ಸಂಬಂಧ)
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                  <div
-                                    className="col-md-2"
-                                    style={{
-                                      border: "1px solid #20958C",
-                                      paddingLeft: "unset",
-                                      paddingRight: "unset",
-                                    }}
-                                  >
-                                    <span>
-                                      <input
-                                        type="text"
-                                        className="vi_0"
-                                        style={{ width: "161px" }}
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </p>
-                          </div>
-                        </div>
-                      </div> */}
                     </>
                   ) : (
                     <></>

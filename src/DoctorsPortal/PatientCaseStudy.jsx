@@ -146,7 +146,7 @@ function PatientCaseStudy() {
                 {item?.investigationList?.map((item2, i) => {
                   return (
                     <>
-                      {item2.labid.Labtests?.map((val) => {
+                      {item2?.labid?.Labtests?.map((val) => {
                         return (
                           <tr>
                             <td>{i + 1}</td>

@@ -225,13 +225,21 @@ export const DoctorsCaseStudy = () => {
     GetLabtestList();
   }, []);
 
+  const [EditData, setEditData] = useState({});
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = (item) => {
+    setShow(true);
+    setEditData(item);
+  };
 
+  const [deleteData, setdeleteData] = useState({});
   const [show1, setShow1] = useState(false);
   const deleteBtnClose = () => setShow1(false);
-  const deleteBtnShow = () => setShow1(true);
+  const deleteBtnShow = (item) => {
+    setShow1(true);
+    setdeleteData(item);
+  };
 
   // Available / Recommeded lab tests
   const [show2, setShow2] = useState(false);
@@ -322,6 +330,108 @@ export const DoctorsCaseStudy = () => {
     }
   };
 
+  const [DocselectedMedicine1, setDocSelectedMedicine1] = useState(null);
+
+  const handleDocMedicineChange1 = (event, value) => {
+    setDocSelectedMedicine1(value);
+    // Do something with the selected medicine value
+  };
+  const [Quantity1, setQuantity1] = useState();
+  const [morningDose1, setmorningDose1] = useState();
+  const [noonDose1, setnoonDose1] = useState();
+  const [eveDose1, seteveDose1] = useState();
+  const [nightDose1, setnightDose1] = useState();
+  const [medicineTakingTime1, setmedicineTakingTime1] = useState();
+
+  console.log(
+    "DocselectedMedicine1",
+    DocselectedMedicine1,
+    medicineTakingTime1
+  );
+
+  const Editmedicine = async (e) => {
+    e.preventDefault();
+    if (
+      !DocselectedMedicine1 &&
+      !morningDose1 &&
+      !noonDose1 &&
+      !eveDose1 &&
+      !nightDose1 &&
+      !medicineTakingTime1 &&
+      !Quantity1
+    ) {
+      alert("There is no changes to Update");
+    } else {
+      try {
+        const config = {
+          url: "/user/editMedicine",
+          method: "post",
+          baseURL: "http://localhost:8521/api",
+          // headers: { "content-type": "multipart/form-data" },
+          data: {
+            patientsId: AppointmentList?._id,
+            MedicineId: EditData?._id,
+            medicineName: DocselectedMedicine1
+              ? DocselectedMedicine1?.productName
+              : EditData?.medicineName,
+            morningDose: morningDose1 ? morningDose1 : EditData?.morningDose,
+            noonDose: noonDose1 ? noonDose1 : EditData?.noonDose,
+            eveDose: eveDose1 ? eveDose1 : EditData?.eveDose,
+            nightDose: nightDose1 ? nightDose1 : EditData?.nightDose,
+            medicineTakingTime: medicineTakingTime1
+              ? medicineTakingTime1
+              : EditData?.medicineTakingTime,
+            Quantity: Quantity1 ? Quantity1 : EditData?.Quantity,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          getAppointmentList();
+          handleClose();
+          setQuantity1();
+          setmorningDose1();
+          setnoonDose1();
+          seteveDose1();
+          setnightDose1();
+          setmedicineTakingTime1();
+          alert(res.data.success);
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
+      }
+    }
+  };
+
+  const Deletemedicine = async (e) => {
+    e.preventDefault();
+    try {
+      const config = {
+        url: "/user/DeleteMedicine",
+        method: "delete",
+        baseURL: "http://localhost:8521/api",
+        // headers: { "content-type": "multipart/form-data" },
+        data: {
+          patientsId: AppointmentList?._id,
+          MedicineId: deleteData?._id,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        getAppointmentList();
+        deleteBtnClose();
+        alert(res.data.success);
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
   const [patientlist, setpatientlist] = useState([]);
 
   const getPatientlist = () => {
@@ -392,44 +502,49 @@ export const DoctorsCaseStudy = () => {
   const [generalexamination, setgeneralexamination] = useState();
   const [localexamination, setlocalexamination] = useState();
   const [isAppointmentCompleted, setisAppointmentCompleted] = useState(false);
+
   const AddExamination = async (e) => {
     e.preventDefault();
-    try {
-      const config = {
-        url: "/user/addExaminationInfo/" + AppointmentList?._id,
-        method: "put",
-        baseURL: "http://localhost:8521/api",
-        headers: { "content-type": "multipart/form-data" },
-        data: {
-          height: height,
-          weight: Weight,
-          bmi: bmi,
-          temperature: temperature,
-          pulserate: Pulserate,
-          bp: Bpressure,
-          spo2: spo2,
-          suger: sugar,
-          headcircumference: HeadCircumference,
-          rs: Respiratorysystem,
-          cvs: Cardiovascularsystem,
-          cns: Centralnervoussystem,
-          pa: Gastrointestinalsystem,
-          generalexamination: generalexamination,
-          localexamination: localexamination,
-          isAppointmentCompleted: isAppointmentCompleted,
-        },
-      };
-      let res = await axios(config);
-      if (res.status === 200) {
-        alert(res.data.success);
-        getAppointmentList();
-        handleClose3();
-        navigate("/appointmentlist");
-      }
-    } catch (error) {
-      console.log(error);
-      if (error.response) {
-        alert(error.response.data.error);
+    if (!generalexamination || !localexamination) {
+      alert("Please Enter General Examination and Local Examination");
+    } else {
+      try {
+        const config = {
+          url: "/user/addExaminationInfo/" + AppointmentList?._id,
+          method: "put",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "multipart/form-data" },
+          data: {
+            height: height,
+            weight: Weight,
+            bmi: bmi,
+            temperature: temperature,
+            pulserate: Pulserate,
+            bp: Bpressure,
+            spo2: spo2,
+            suger: sugar,
+            headcircumference: HeadCircumference,
+            rs: Respiratorysystem,
+            cvs: Cardiovascularsystem,
+            cns: Centralnervoussystem,
+            pa: Gastrointestinalsystem,
+            generalexamination: generalexamination,
+            localexamination: localexamination,
+            isAppointmentCompleted: isAppointmentCompleted,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          alert(res.data.success);
+          getAppointmentList();
+          handleClose3();
+          navigate("/appointmentlist");
+        }
+      } catch (error) {
+        console.log(error);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
       }
     }
   };
@@ -972,6 +1087,9 @@ export const DoctorsCaseStudy = () => {
 
                         <th className="text-light fw-bold">Frequency</th>
                         <th className="text-light fw-bold">Quantity</th>
+                        <th className="text-light fw-bold">
+                          Medicine Taking Time
+                        </th>
 
                         <th className="text-light fw-bold" width="10%">
                           Action
@@ -992,6 +1110,7 @@ export const DoctorsCaseStudy = () => {
                             </td>
 
                             <td>{item?.Quantity}</td>
+                            <td>{item?.medicineTakingTime}</td>
 
                             <td style={{ display: "flex", gap: "10px" }}>
                               <button
@@ -999,7 +1118,7 @@ export const DoctorsCaseStudy = () => {
                                   border: "none",
                                   backgroundColor: "transparent",
                                 }}
-                                onClick={handleShow}
+                                onClick={() => handleShow(item)}
                               >
                                 <FontAwesomeIcon
                                   icon={faPenToSquare}
@@ -1014,7 +1133,7 @@ export const DoctorsCaseStudy = () => {
                                   border: "none",
                                   backgroundColor: "transparent",
                                 }}
-                                onClick={deleteBtnShow}
+                                onClick={() => deleteBtnShow(item)}
                               >
                                 <FontAwesomeIcon
                                   icon={faTrash}
@@ -1024,40 +1143,6 @@ export const DoctorsCaseStudy = () => {
                                   }}
                                 />
                               </button>
-                              {/* <Dropdown>
-                                <Dropdown.Toggle
-                                  className="medicine-list"
-                                  id="dropdown-basic"
-                                >
-                                  <FontAwesomeIcon
-                                    icon={faEllipsis}
-                                    className="fs-3 "
-                                  />
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                  <Dropdown.Item
-                                    className="medicine-list-dropdown"
-                                    onClick={handleShow}
-                                  >
-                                    <FontAwesomeIcon
-                                      icon={faPenToSquare}
-                                      className="me-2"
-                                    />
-                                    Edit Selected
-                                  </Dropdown.Item>
-                                  <Dropdown.Item
-                                    className="medicine-list-dropdown"
-                                    onClick={deleteBtnShow}
-                                  >
-                                    <FontAwesomeIcon
-                                      icon={faTrash}
-                                      className="me-2"
-                                    />
-                                    Remove Selected
-                                  </Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown> */}
                             </td>
                           </tr>
                         );
@@ -1066,83 +1151,13 @@ export const DoctorsCaseStudy = () => {
                   </table>
                 </div>
               </div>
-              {/* <p className='fw-bold'>Advice :</p>
-                            <div style={{ width: '800px' }}>
-                                <CkEditorComponent />
-                            </div>
-
-                            <div className='row gap-3 ms-2'>
-                                <Button className='col-lg-2' style={{ backgroundColor: '#008900' }}>Save</Button>
-                                <Button className='col-lg-2' style={{ backgroundColor: '#208b8c' }}>Save & Bill</Button>
-                                <Button className='col-lg-2' style={{ backgroundColor: '#cd0b0be3' }}>Print</Button>
-                                <Button className='col-lg-2' style={{ backgroundColor: '#990399' }}>Email</Button>
-                            </div> */}
             </Tab.Pane>
 
             {/* THIRD TAB */}
             <Tab.Pane eventKey="third">
               <h5 className="fw-bold">Choose Lab Test</h5>
-              {/* <div className="row align-items-center mb-4">
-                <div className="col-lg-4">
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    onChange={(e) => setinvestigationName(e.target.value)}
-                  >
-                    <option selected>Add Investigstion</option>
-                    <option value="X-RAY FOREARM">X-RAY FOREARM</option>
-                    <option value="X-RAY CHEST">X-RAY CHEST</option>
-                    <option value="X-RAY DORSAL">X-RAY DORSAL</option>
-                    <option value="X-RAY FOOT AP">X-RAY FOOT AP</option>
-                    <option value="X-RAY WRIST">X-RAY WRIST</option>
-                    <option value="X-RAY KUB">X-RAY KUB</option>
-                    <option value="X-RAY THIGH">X-RAY THIGH</option>
-                    <option value="X-RAY SKULL">X-RAY SKULL</option>
-                    <option value="X-RAY ANKLE">X-RAY ANKLE</option>
-                  </select>
-                </div>
-                <div className="col-lg-4">
-                  <InputGroup size="lg">
-                    <Form.Control
-                      aria-label="Large"
-                      aria-describedby="inputGroup-sizing-sm"
-                      placeholder="Description"
-                      onChange={(e) =>
-                        setinvestigationDescription(e.target.value)
-                      }
-                    />
-                  </InputGroup>
-                </div>
-              </div>
-
-              <p className="fw-bold">Notes :</p>
-              <div>
-                <textarea
-                  placeholder="note"
-                  style={{
-                    width: "600px",
-                    padding: "2%",
-                    borderRadius: "20px",
-                  }}
-                  cols={10}
-                  onChange={(e) => setnotes(e.target.value)}
-                />
-              </div> */}
 
               <Row>
-                {/* <FloatingLabel
-                  className="col-md-6 p-2"
-                  controlId="floatingName"
-                  label="Type"
-                >
-                  <Form.Select onChange={(e) => setPatientType(e.target.value)}>
-                    <option>Choose Options</option>
-                    <option value={"IPD"}>IPD</option>
-                    <option value={"OPD"}>OPD</option>
-                    <option value={"GENERAL"}>General</option>
-                  </Form.Select>
-                </FloatingLabel> */}
-
                 {AppointmentList?.appointmentType === "SELF" ? (
                   <FloatingLabel
                     className="col-md-6 p-2"
@@ -1341,7 +1356,7 @@ export const DoctorsCaseStudy = () => {
                     <th>Recommended Tests</th>
                   </thead>
                   <tbody>
-                    {AppointmentList.investigationList?.map((val) => {
+                    {AppointmentList?.investigationList?.map((val) => {
                       return (
                         <tr>
                           <td>{val?.labid?.email}</td>
@@ -1597,7 +1612,7 @@ export const DoctorsCaseStudy = () => {
           <div className="row mb-5 ">
             <div className="col-lg-6">
               <FormLabel className="fw-bold text-dark">
-                Medicine Name*{" "}
+                Medicine Name*
               </FormLabel>
               <InputGroup>
                 <Autocomplete
@@ -1605,8 +1620,8 @@ export const DoctorsCaseStudy = () => {
                   id="combo-box-demo"
                   options={updatedProductList}
                   sx={{ width: 300, backgroundColor: "white" }}
-                  value={DocselectedMedicine}
-                  onChange={handleDocMedicineChange}
+                  value={DocselectedMedicine1}
+                  onChange={handleDocMedicineChange1}
                   renderInput={(params) => (
                     <TextField {...params} label="Medicines" />
                   )}
@@ -1622,9 +1637,9 @@ export const DoctorsCaseStudy = () => {
               >
                 <Form.Control
                   type="number"
-                  value={Quantity}
-                  placeholder="Quantity"
-                  onChange={(e) => setQuantity(e.target.value)}
+                  value={Quantity1 ? Quantity1 : EditData?.Quantity}
+                  placeholder={EditData?.Quantity}
+                  onChange={(e) => setQuantity1(e.target.value)}
                 />
               </FloatingLabel>
             </div>
@@ -1640,9 +1655,9 @@ export const DoctorsCaseStudy = () => {
               >
                 <Form.Control
                   type="number"
-                  value={morningDose}
+                  value={morningDose1 ? morningDose1 : EditData?.morningDose}
                   placeholder="Morning"
-                  onChange={(e) => setmorningDose(e.target.value)}
+                  onChange={(e) => setmorningDose1(e.target.value)}
                 />
               </FloatingLabel>
             </div>
@@ -1655,9 +1670,9 @@ export const DoctorsCaseStudy = () => {
               >
                 <Form.Control
                   type="number"
-                  value={noonDose}
+                  value={noonDose1 ? noonDose1 : EditData?.noonDose}
                   placeholder="Noon"
-                  onChange={(e) => setnoonDose(e.target.value)}
+                  onChange={(e) => setnoonDose1(e.target.value)}
                 />
               </FloatingLabel>
             </div>
@@ -1670,9 +1685,9 @@ export const DoctorsCaseStudy = () => {
               >
                 <Form.Control
                   type="number"
-                  value={eveDose}
+                  value={eveDose1 ? eveDose1 : EditData?.eveDose}
                   placeholder="Evening"
-                  onChange={(e) => seteveDose(e.target.value)}
+                  onChange={(e) => seteveDose1(e.target.value)}
                 />
               </FloatingLabel>
             </div>
@@ -1685,9 +1700,9 @@ export const DoctorsCaseStudy = () => {
               >
                 <Form.Control
                   type="number"
-                  value={nightDose}
+                  value={nightDose1 ? nightDose1 : EditData?.nightDose}
                   placeholder="Night"
-                  onChange={(e) => setnightDose(e.target.value)}
+                  onChange={(e) => setnightDose1(e.target.value)}
                 />
               </FloatingLabel>
             </div>
@@ -1700,7 +1715,7 @@ export const DoctorsCaseStudy = () => {
                 id="beforefood"
                 name="beforeorafterfood"
                 value="Before Food"
-                onChange={(e) => setmedicineTakingTime(e.target.value)}
+                onChange={(e) => setmedicineTakingTime1(e.target.value)}
               />
               Before Food
             </div>
@@ -1710,7 +1725,7 @@ export const DoctorsCaseStudy = () => {
                 id="afterfood"
                 name="beforeorafterfood"
                 value="After Food"
-                onChange={(e) => setmedicineTakingTime(e.target.value)}
+                onChange={(e) => setmedicineTakingTime1(e.target.value)}
               />
               After Food
             </div>
@@ -1720,7 +1735,7 @@ export const DoctorsCaseStudy = () => {
                 id="withoutfood"
                 name="beforeorafterfood"
                 value="With Food"
-                onChange={(e) => setmedicineTakingTime(e.target.value)}
+                onChange={(e) => setmedicineTakingTime1(e.target.value)}
               />
               With Food
             </div>
@@ -1730,7 +1745,7 @@ export const DoctorsCaseStudy = () => {
                 id="nafood"
                 name="beforeorafterfood"
                 value="N/A"
-                onChange={(e) => setmedicineTakingTime(e.target.value)}
+                onChange={(e) => setmedicineTakingTime1(e.target.value)}
               />
               N/A
             </div>
@@ -1740,7 +1755,9 @@ export const DoctorsCaseStudy = () => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="success">Submit</Button>
+          <Button variant="success" onClick={Editmedicine}>
+            Update
+          </Button>
         </Modal.Footer>
       </Modal>
 
@@ -1775,7 +1792,7 @@ export const DoctorsCaseStudy = () => {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger">
+          <Button variant="danger" onClick={Deletemedicine}>
             <FontAwesomeIcon icon={faCancel} className=" me-2" />
             Delet
           </Button>

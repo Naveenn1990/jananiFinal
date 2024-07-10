@@ -8,17 +8,32 @@ import html2canvas from "html2canvas";
 import { MdEdit } from "react-icons/md";
 import { CiBarcode } from "react-icons/ci";
 import { useReactToPrint } from "react-to-print";
+import Form from "react-bootstrap/Form";
+import moment from "moment";
 
 export default function Outpatientlist() {
-  const [View, setView] = useState([]);
+  const [View, setView] = useState({});
+  const [billing, setbilling] = useState({});
   const [show, setShow] = useState(false);
 
+  const [ReadmoreData, setReadmoreData] = useState({});
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = (item) => {
+    setShow(true);
+    setReadmoreData(item);
+  };
 
   const [show2, setShow2] = useState(false);
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
+
+  const [EditData, setEditData] = useState({});
+  const [showEdit, setShowEdit] = useState(false);
+  const handleCloseEdit = () => setShowEdit(false);
+  const handleShowEdit = (item) => {
+    setShowEdit(true);
+    setEditData(item);
+  };
 
   const [show3, setShow3] = useState(false);
   const handleClose3 = () => setShow3(false);
@@ -26,6 +41,15 @@ export default function Outpatientlist() {
     setShow3(true);
     setViewBarcode(item);
   };
+
+  const [BookAppointmentData, setBookAppointmentData] = useState({});
+  const [showBook, setShowBook] = useState(false);
+  const handleCloseBook = () => setShowBook(false);
+  const handleShowBook = (item) => {
+    setShowBook(true);
+    setBookAppointmentData(item);
+  };
+
   const [ViewBarcode, setViewBarcode] = useState({});
   const [show10, setShow10] = useState(false);
   const handleClose10 = () => setShow10(false);
@@ -33,7 +57,6 @@ export default function Outpatientlist() {
     setShow10(true);
     setViewBarcode(item);
   };
-
 
   function ValidateEmail(mail) {
     if (
@@ -79,7 +102,7 @@ export default function Outpatientlist() {
       return false;
     }
   }
-
+  const uniqueDates = new Set();
   const [medications, setmedications] = useState(false);
   const [medicinesTaking, setmedicinesTaking] = useState();
   let formdata = new FormData();
@@ -121,8 +144,219 @@ export default function Outpatientlist() {
   const [Aadharcard, setAadharcard] = useState("");
   const [Aadharno, setAadharno] = useState("");
 
+  const [GetDepartmentData, setGetDepartmentData] = useState([]);
+  const GetDepartment = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/admin/getDepartment"
+      );
+      if (res.status === 200) {
+        setGetDepartmentData(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // For Token Generation
+  const generateRandomNumber = () => {
+    // Generate a random number between 1000 and 9999
+    const randomNumber = Math.floor(Math.random() * 9000) + 1000;
+    return randomNumber;
+  };
+  const prefix = "JAN";
+  const randomNumber = generateRandomNumber();
+
+  const [Doctors, setDoctors] = useState([]);
+  const getDoctors = () => {
+    axios
+      .get("http://localhost:8521/api/Doctor/getDoctorsList")
+      .then(function (response) {
+        // handle success
+        setDoctors(
+          response.data.DoctorsInfo?.filter(
+            (data) => data.DoctorType === "hospital"
+          )
+        );
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+        setDoctors(error.response.data.DoctorsInfo);
+      });
+  };
+
+  const [Department, setDepartment] = useState("");
+  const [Doctor, setDoctor] = useState("");
+  const [DOA, setDOA] = useState("");
+  const [TOA, setTOA] = useState("");
+
+  const [selectedDoctorList1, setselectedDoctorList1] = useState([]);
+  useEffect(() => {
+    if (Department && Doctors?.length > 0) {
+      const xyz = Doctors?.filter((doc) => doc?.Department === Department);
+      setselectedDoctorList1(xyz);
+    }
+  }, [Department]);
+
+  const [Doctorschedule, setDoctorschedule] = useState();
+  useEffect(() => {
+    setDoctorschedule(Doctors?.find((doc) => doc._id === Doctor));
+  }, [Doctor, selectedDoctorList1, DOA, TOA]);
+
+  const [uniqueSchedules, setUniqueSchedules] = useState([]);
+
+  useEffect(() => {
+    if (Doctorschedule && Doctorschedule.scheduleList) {
+      const filteredSchedules = Doctorschedule.scheduleList.filter(
+        (schedd) =>
+          moment(schedd?.scheduleDate).isSameOrAfter(moment(), "day") &&
+          schedd?.bookingstatus === "Vacant"
+      );
+
+      const uniqueDatesSet = new Set();
+      const uniqueSchedulesArray = filteredSchedules.filter((sched) => {
+        const formattedDate = moment(sched?.scheduleDate).format("DD-MM-YYYY");
+        if (!uniqueDatesSet.has(formattedDate)) {
+          uniqueDatesSet.add(formattedDate);
+          return true;
+        }
+        return false;
+      });
+
+      setUniqueSchedules(uniqueSchedulesArray);
+    }
+  }, [Doctorschedule]);
+
+  const [selecteTimearray, setselecteTimearray] = useState([]);
+  useEffect(() => {
+    if (DOA) {
+      const asd = Doctorschedule?.scheduleList.filter(
+        (item) => item.scheduleDate == DOA && item.bookingstatus === "Vacant"
+      );
+      setselecteTimearray(asd);
+    }
+  }, [DOA]);
+
+  // const signup = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     if (
+  //       validatename(patientfirstname) &&
+  //       ValidateEmail(email) &&
+  //       phonenumber(mobileno) &&
+  //       CheckPassword(password)
+  //     ) {
+  //       formdata.set("Firstname", patientfirstname);
+  //       formdata.set("Lastname", patientlastname);
+  //       formdata.set("Gender", gender);
+  //       formdata.set("DOB", DOB);
+  //       formdata.set("profilepic", ProfilePic);
+  //       formdata.set("PhoneNumber", mobileno);
+  //       formdata.set("alternatePhoneNumber", alternatePhoneNumber);
+  //       formdata.set("Email", email);
+  //       formdata.set("Address1", Address);
+  //       formdata.set("Address2", Address1);
+  //       formdata.set("City1", City);
+  //       formdata.set("State1", State);
+  //       formdata.set("Zipcode", Zipcode);
+  //       formdata.set("MaritalStatus", MaritalStatus);
+  //       formdata.set("PatientAge18", PatientAge18);
+  //       formdata.set("relativeName", relativeName);
+  //       formdata.set("relationWithPatient", relationWithPatient);
+  //       formdata.set("relativePhone", relativePhone);
+  //       formdata.set("AdmitDate", AdmitDate);
+  //       formdata.set("followUpsDate", followUpsDate);
+  //       formdata.set("haveInsurance", haveInsurance);
+  //       formdata.set("insuranceDoc", insuranceDoc);
+  //       formdata.set("insuranceProviderCompany", insuranceProviderCompany);
+  //       formdata.set("insuranceAmt", insuranceAmt);
+  //       formdata.set("Password", password);
+  //       formdata.set("ConsultationFee", ConsultationFee);
+  //       formdata.set("ConfirmPassword", conpassword);
+  //       formdata.set("registrationType", "OPD");
+  //       formdata.set("registeredFrom", "staff");
+  //       formdata.set("patientAllergies", patientAllergies);
+  //       formdata.set("takingAnyMedication", medications);
+  //       formdata.set("medicinesTaking", medicinesTaking);
+  //       formdata.set("Aadharcard", Aadharcard);
+  //       formdata.set("Aadharno", Aadharno);
+  //       const config = {
+  //         url: "/user/addPatient",
+  //         method: "post",
+  //         baseURL: "http://localhost:8521/api",
+  //         headers: { "content-type": "multipart/form-data" },
+  //         data: formdata,
+  //       };
+  //       let res = await axios(config);
+  //       if (res.status === 200) {
+  //         console.log(res.data);
+  //         console.log(res.data.success);
+  //         setmedicinesTaking("");
+  //         setpatientAllergies([]);
+  //         alert("Signup Success");
+  //         getcategory();
+  //         // window.location.assign("/patientPortal");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log(error.response.data.error);
+  //     if (error.response) {
+  //       alert(error.response.data.error);
+  //     }
+  //   }
+  // };
+
   const signup = async (e) => {
     e.preventDefault();
+    if (!patientfirstname || !patientlastname) {
+      return alert("Please enter First and Last Name");
+    }
+    if (!gender) {
+      return alert("Please select Gender");
+    }
+    if (!mobileno) {
+      return alert("Please enter mobile No.");
+    }
+    if (!email) {
+      return alert("Please enter email Id");
+    }
+    if (!DOB) {
+      return alert("Please enter Date of Birth");
+    }
+    if (!Address || !Address1 || !City || !State) {
+      return alert("Please enter complete address");
+    }
+    if (!Zipcode) {
+      return alert("Please enter Pincode");
+    }
+    if (!password || !conpassword) {
+      return alert("Please enter Password and Confirm Password");
+    }
+    if (password !== conpassword) {
+      return alert("Password and Confirm Password should be the same");
+    }
+    if (!MaritalStatus) {
+      return alert("Please select Marital Status");
+    }
+    if (!AdmitDate) {
+      return alert("Please select Admission Date");
+    }
+    if (!haveInsurance) {
+      return alert("Please select Health Insurance");
+    }
+    if (!Department) {
+      return alert("Please select Department");
+    }
+    if (!Doctor) {
+      return alert("Please select Doctor");
+    }
+    if (!DOA) {
+      return alert("Please select Date of Appointment");
+    }
+    if (!TOA) {
+      return alert("Please select Time of Appointment");
+    }
     try {
       if (
         validatename(patientfirstname) &&
@@ -130,6 +364,8 @@ export default function Outpatientlist() {
         phonenumber(mobileno) &&
         CheckPassword(password)
       ) {
+        const srt = TOA?.split("-");
+
         formdata.set("Firstname", patientfirstname);
         formdata.set("Lastname", patientlastname);
         formdata.set("Gender", gender);
@@ -155,7 +391,7 @@ export default function Outpatientlist() {
         formdata.set("insuranceProviderCompany", insuranceProviderCompany);
         formdata.set("insuranceAmt", insuranceAmt);
         formdata.set("Password", password);
-        formdata.set("ConsultationFee", ConsultationFee);
+        formdata.set("ConsultationFee", Doctorschedule?.appointmentcharge);
         formdata.set("ConfirmPassword", conpassword);
         formdata.set("registrationType", "OPD");
         formdata.set("registeredFrom", "staff");
@@ -164,6 +400,14 @@ export default function Outpatientlist() {
         formdata.set("medicinesTaking", medicinesTaking);
         formdata.set("Aadharcard", Aadharcard);
         formdata.set("Aadharno", Aadharno);
+        // For Booking Appointment
+        formdata.set("token", prefix + randomNumber);
+        formdata.set("ConsultantDoctor", Doctor);
+        formdata.set("Dateofappointment", DOA);
+        formdata.set("starttime", srt[0]);
+        formdata.set("endtime", srt[1]);
+        formdata.set("ScheduleId", srt[2]);
+
         const config = {
           url: "/user/addPatient",
           method: "post",
@@ -173,14 +417,99 @@ export default function Outpatientlist() {
         };
         let res = await axios(config);
         if (res.status === 200) {
-          console.log(res.data);
           console.log(res.data.success);
           setmedicinesTaking("");
           setpatientAllergies([]);
           alert("Signup Success");
           getcategory();
-          // window.location.assign("/patientPortal");
         }
+      }
+    } catch (error) {
+      console.log(error.response.data.error);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
+  const BookAppointmentForExixtingPatients = async (e) => {
+    e.preventDefault();
+
+    if (!Department) {
+      return alert("Please select Department");
+    }
+    if (!Doctor) {
+      return alert("Please select Doctor");
+    }
+    if (!DOA) {
+      return alert("Please select Date of Appointment");
+    }
+    if (!TOA) {
+      return alert("Please select Time of Appointment");
+    }
+    try {
+      const srt = TOA?.split("-");
+      const config = {
+        url: "/user/BookAppointmentForExixtingPatients",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        // headers: { "content-type": "multipart/form-data" },
+        data: {
+          PatientId: BookAppointmentData?.PatientId,
+          Firstname: BookAppointmentData?.Firstname,
+          Lastname: BookAppointmentData?.Lastname,
+          Gender: BookAppointmentData?.Gender,
+          DOB: BookAppointmentData?.DOB,
+          PhoneNumber: BookAppointmentData?.PhoneNumber,
+          alternatePhoneNumber: BookAppointmentData?.alternatePhoneNumber,
+          Email: BookAppointmentData?.Email,
+          ConsultationFee: Doctorschedule?.appointmentcharge,
+          token: prefix + randomNumber,
+          ConsultantDoctor: Doctor,
+          Dateofappointment: DOA,
+          starttime: srt[0],
+          endtime: srt[1],
+          ScheduleId: srt[2],
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        console.log(res.data.success);
+        alert("Appointment Booked Successfully");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.log(error.response.data.error);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
+  const MakePayment = async (
+    PatientId,
+    BillingId,
+    consultationDate,
+    DoctorId
+  ) => {
+    try {
+      const config = {
+        url: "/user/MakeAppointmentPayment",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        data: {
+          PatientId: PatientId,
+          ConsultaionBillId: BillingId,
+          PaymentId: "Paymentdetailspending",
+          consultationDate: consultationDate,
+          DoctorId: DoctorId,
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        console.log(res.data.success);
+        alert("Appointment Booked Successfully");
+        window.location.reload();
       }
     } catch (error) {
       console.log(error.response.data.error);
@@ -208,6 +537,8 @@ export default function Outpatientlist() {
 
   useEffect(() => {
     getcategory();
+    getDoctors();
+    GetDepartment();
   }, []);
   const createPDF = async () => {
     // dynamic image is also adding in the PDF
@@ -236,6 +567,128 @@ export default function Outpatientlist() {
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
+
+  const [FirstName1, setFirstName1] = useState("");
+  const [LastName1, setLastName1] = useState("");
+  const [Gender1, setGender1] = useState("");
+  const [ContactNumber1, setContactNumber1] = useState();
+  const [AlternativeContactNumber1, setAlternativeContactNumber1] = useState();
+  const [Email1, setEmail1] = useState("");
+  const [DoB1, setDoB1] = useState();
+  const [ProfilePic1, setProfilePic1] = useState("");
+  const [Address111, setAddress111] = useState("");
+  const [Address222, setAddress222] = useState("");
+  const [City11, setCity11] = useState("");
+  const [State11, setState11] = useState("");
+  const [Pincode1, setPincode1] = useState();
+  const [Password11, setPassword11] = useState("");
+  const [ConfirmPassword11, setConfirmPassword11] = useState("");
+  const [MarritalStatus1, setMarritalStatus1] = useState("");
+  const [Age11, setAge11] = useState("");
+  const [Adharcard11, setAdharcard11] = useState("");
+  const [AdharNumber11, setAdharNumber11] = useState("");
+  const [RelativeName1, setRelativeName1] = useState("");
+  const [RelativeRelation, setRelativeRelation] = useState("");
+  const [RelativeNumber, setRelativeNumber] = useState("");
+  const [AdmissionDate1, setAdmissionDate1] = useState("");
+  const [FollowupDate1, setFollowupDate1] = useState("");
+  const [HealthInsurance, setHealthInsurance] = useState("");
+  const [HealthInsuranceDoc, setHealthInsuranceDoc] = useState();
+  const [HealthInsuranceProvider, setHealthInsuranceProvider] = useState("");
+  const [HealthInsuranceAmount, setHealthInsuranceAmount] = useState();
+
+  const EditPatient = async (e) => {
+    e.preventDefault();
+    try {
+      const appendFormData = (key, value, defaultValue) => {
+        const finalValue =
+          value !== undefined && value !== null
+            ? value
+            : defaultValue !== undefined && defaultValue !== null
+            ? defaultValue
+            : "";
+        console.log(`Appending ${key}:`, finalValue, key, value, defaultValue); // Log each key-value pair being appended
+        formdata.append(key, finalValue);
+      };
+      appendFormData("Firstname", FirstName1, EditData?.Firstname);
+      appendFormData("Lastname", LastName1, EditData?.Lastname);
+      appendFormData("Gender", Gender1, EditData?.Gender);
+      appendFormData("DOB", DoB1, EditData?.DOB);
+      appendFormData("profilepic", ProfilePic1, EditData?.profilepic);
+      appendFormData("PhoneNumber", ContactNumber1, EditData?.PhoneNumber);
+      appendFormData(
+        "alternatePhoneNumber",
+        AlternativeContactNumber1,
+        EditData?.alternatePhoneNumber
+      );
+      appendFormData("Email", Email1, EditData?.Email);
+      appendFormData("Address1", Address111, EditData?.Address1);
+      appendFormData("Address2", Address222, EditData?.Address2);
+      appendFormData("City1", City11, EditData?.City1);
+      appendFormData("State1", State11, EditData?.State1);
+      appendFormData("Zipcode", Pincode1, EditData?.Zipcode);
+      appendFormData("MaritalStatus", MarritalStatus1, EditData?.MaritalStatus);
+      appendFormData("PatientAge18", Age11, EditData?.PatientAge18);
+      appendFormData("relativeName", RelativeName1, EditData?.relativeName);
+      appendFormData(
+        "relationWithPatient",
+        RelativeRelation,
+        EditData?.relationWithPatient
+      );
+      appendFormData("relativePhone", RelativeNumber, EditData?.relativePhone);
+      appendFormData("AdmitDate", AdmissionDate1, EditData?.AdmitDate);
+      appendFormData("followUpsDate", FollowupDate1, EditData?.followUpsDate);
+      appendFormData("haveInsurance", HealthInsurance, EditData?.haveInsurance);
+      appendFormData(
+        "insuranceDoc",
+        HealthInsuranceDoc,
+        EditData?.insuranceDoc
+      );
+      appendFormData(
+        "insuranceProviderCompany",
+        HealthInsuranceProvider,
+        EditData?.insuranceProviderCompany
+      );
+      appendFormData(
+        "insuranceAmt",
+        HealthInsuranceAmount,
+        EditData?.insuranceAmt
+      );
+      appendFormData("Password", Password11, EditData?.Password);
+      appendFormData(
+        "ConfirmPassword",
+        ConfirmPassword11,
+        EditData?.ConfirmPassword
+      );
+      appendFormData("Aadharcard", Adharcard11, EditData?.Aadharcard);
+      appendFormData("Aadharno", AdharNumber11, EditData?.Aadharno);
+
+      console.log("FormData entries:", Array.from(formdata.entries()));
+
+      const config = {
+        url: "/user/editPatientDetails/" + EditData?.PatientId,
+        method: "put",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "multipart/form-data" },
+        data: formdata,
+      };
+
+      console.log("Config:", config);
+      let res = await axios(config);
+      if (res.status === 200) {
+        console.log(res.data.success);
+        alert("Data updated successfully");
+        // window.location.reload();
+      }
+    } catch (error) {
+      console.log("Error:", error);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
+  console.log("ReadmoreData", ReadmoreData);
   return (
     <div>
       <div
@@ -269,8 +722,24 @@ export default function Outpatientlist() {
         <Modal.Body>
           <div className="row">
             <div className="col-lg-4">
-              <img src="/Images/Patient.png" style={{ width: "100%" }} />
-              <div style={{ border: "1px solid lightgrey" }}>
+              {ReadmoreData?.profilepic ? (
+                <img
+                  alt=""
+                  src={`http://localhost:8521/PatientREG/${ReadmoreData?.profilepic}`}
+                  style={{
+                    width: "100%",
+                    height: "200px",
+                  }}
+                />
+              ) : (
+                <img
+                  src="/img/dummyprofile.png"
+                  style={{ width: "100%", height: "200px" }}
+                />
+              )}
+            </div>
+            <div className="col-lg-8">
+              <div style={{ border: "1px solid lightgrey", padding: "2%" }}>
                 <h6
                   style={{
                     textAlign: "center",
@@ -280,7 +749,6 @@ export default function Outpatientlist() {
                 >
                   ABOUT PATIENT
                 </h6>
-
                 <h6
                   style={{
                     paddingLeft: "4%",
@@ -288,7 +756,8 @@ export default function Outpatientlist() {
                     marginTop: "2%",
                   }}
                 >
-                  <b>NAME</b> : John
+                  <b>NAME</b> : {ReadmoreData?.Firstname}&nbsp;
+                  {ReadmoreData?.Lastname}
                 </h6>
                 <h6
                   style={{
@@ -297,7 +766,7 @@ export default function Outpatientlist() {
                     marginTop: "2%",
                   }}
                 >
-                  <b>EmailID</b> : John@gmail.com
+                  <b>EmailID</b> : {ReadmoreData?.Email}
                 </h6>
                 <h6
                   style={{
@@ -306,7 +775,7 @@ export default function Outpatientlist() {
                     marginTop: "2%",
                   }}
                 >
-                  <b>Mobile</b> : 9563256325
+                  <b>Mobile</b> : {ReadmoreData?.PhoneNumber}
                 </h6>
                 <h6
                   style={{
@@ -315,55 +784,8 @@ export default function Outpatientlist() {
                     marginTop: "2%",
                   }}
                 >
-                  <b>Occupation</b> : Engineer
+                  <b>DOB</b> : {ReadmoreData?.DOB}
                 </h6>
-              </div>
-            </div>
-            <div className="col-lg-8">
-              <div style={{ border: "1px solid lightgrey", padding: "2%" }}>
-                <span style={{ fontSize: "14px", textAlign: "justify" }}>
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s,
-                </span>
-                <hr></hr>
-                <h6>General Report</h6>
-                <hr></hr>
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Heart Beat
-                </span>
-                <ProgressBar
-                  variant="success"
-                  style={{ height: "6px" }}
-                  now={40}
-                />
-
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Blood Pressure
-                </span>
-                <ProgressBar
-                  variant="info"
-                  style={{ height: "6px" }}
-                  now={60}
-                />
-
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Sugar
-                </span>
-                <ProgressBar
-                  variant="warning"
-                  style={{ height: "6px" }}
-                  now={60}
-                />
-
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Haemoglobin
-                </span>
-                <ProgressBar
-                  variant="danger"
-                  style={{ height: "6px" }}
-                  now={60}
-                />
               </div>
             </div>
           </div>
@@ -372,37 +794,68 @@ export default function Outpatientlist() {
             <thead>
               <tr style={{ fontSize: "15px", textAlign: "center" }}>
                 <th>Date</th>
+                <th>Department</th>
                 <th>Doctor</th>
-                <th> Treatment</th>
+                <th>Time</th>
                 <th>Charges</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                <td>06/10/1987</td>
-
-                <td>Devid</td>
-                <td>Check Up</td>
-                <td>500</td>
-                <td>
-                  {" "}
-                  <div
-                    style={{
-                      display: "flex",
-                      textAlign: "center",
-                      justifyContent: "space-evenly",
-                    }}
-                  >
-                    <MdEdit style={{ color: "#20958c", marginRight: "1%" }} />
-                    <AiFillDelete style={{ color: "red" }} />
-                  </div>
-                </td>
-              </tr>
+              {ReadmoreData?.consultationBillDetails?.map((billing) => (
+                <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                  <td>{billing?.consultationDate}</td>
+                  <td>{billing?.Doctor?.Department}</td>
+                  <td>
+                    {billing?.Doctor?.Firstname}&nbsp;
+                    {billing?.Doctor?.Lastname}
+                  </td>
+                  <td>
+                    {billing?.consulationStartTime}-
+                    {billing?.consultationEndTime}
+                  </td>
+                  <td>{billing?.consulationFees}</td>
+                  {billing?.PaymentStatus === "Pending" ? (
+                    <td>
+                      <button
+                        style={{
+                          border: "none",
+                          backgroundColor: "red",
+                          color: "white",
+                        }}
+                        onClick={() =>
+                          MakePayment(
+                            ReadmoreData?.PatientId,
+                            billing?._id,
+                            billing?.consultationDate,
+                            billing?.Doctor?._id
+                          )
+                        }
+                      >
+                        Make Payment
+                      </button>
+                    </td>
+                  ) : (
+                    <td>
+                      {billing?.PaymentStatus}
+                      <button
+                        style={{ border: "none" }}
+                        onClick={() => {
+                          handleShow3();
+                          setView(ReadmoreData);
+                          setbilling(billing);
+                        }}
+                      >
+                        Reciept
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))}
             </tbody>
           </Table>
         </Modal.Body>
-        {/* <Modal.Footer>
+        <Modal.Footer>
           <div style={{ display: "flex" }}>
             <button
               style={{
@@ -420,28 +873,11 @@ export default function Outpatientlist() {
             >
               CANCEL
             </button>
-
-            <button
-              style={{
-                backgroundColor: "orange",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                fontWeight: "600",
-                padding: "4px 10px",
-              }}
-              onClick={() => {
-                setShow(false);
-                alert("Doctor Added");
-              }}
-            >
-              SUBMIT
-            </button>
           </div>
-        </Modal.Footer> */}
+        </Modal.Footer>
       </Modal>
 
-      <Modal size="lg" show={show2} onHide={handleClose2}>
+      {/* <Modal size="lg" show={show2} onHide={handleClose2}>
         <Modal.Header>
           <Modal.Title>Add Out-Patient</Modal.Title>
         </Modal.Header>
@@ -828,8 +1264,6 @@ export default function Outpatientlist() {
                 padding: "2%",
                 borderRadius: "0px",
                 borderTop: "1px solid #ebebeb",
-                // borderBottom: "1px solid #ebebeb",
-                // backgroundColor: "#ebebeb",
                 marginTop: "4%",
               }}
             >
@@ -889,8 +1323,6 @@ export default function Outpatientlist() {
                 padding: "2%",
                 borderRadius: "0px",
                 borderTop: "1px solid #ebebeb",
-                // borderBottom: "1px solid #ebebeb",
-                // backgroundColor: "#ebebeb",
                 marginTop: "4%",
               }}
             >
@@ -1059,36 +1491,7 @@ export default function Outpatientlist() {
                   </div>
                 </div>
 
-                {/* <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Accidental Case*:
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <select
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
-                        }}
-                        // onChange={(e) => setAddress(e.target.value)}
-                      >
-                        <option value="">Select Option</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                      </select>
-                    </div>
-                  </div>
-                </div> */}
+              
               </div>
             </div>
             <div
@@ -1097,8 +1500,6 @@ export default function Outpatientlist() {
                 padding: "2%",
                 borderRadius: "0px",
                 borderTop: "1px solid #ebebeb",
-                // borderBottom: "1px solid #ebebeb",
-                // backgroundColor: "#ebebeb",
                 marginTop: "4%",
               }}
             >
@@ -1119,93 +1520,12 @@ export default function Outpatientlist() {
                     onChange={(e) => setConsultationFee(e.target.value)}
                   ></input>
                 </div>
-
-                
-
-                
               </div>
             </div>
-            {/* <div className="col-lg-6">
-              <textarea
-                placeholder="Address"
-                cols={4}
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                  marginTop: "4%",
-                }}
-              ></textarea>
-            </div> */}
+           
           </div>
 
-          {/* <h6 style={{ color: "white", margin: "2%" }}>In case of emergency</h6> */}
-          {/* <div
-            className="row"
-            style={{
-              border: "1px solid white",
-              padding: "2% 0%",
-              margin: "0% 1%",
-              borderRadius: "0px",
-            }}
-          >
-            <div className="col-lg-6">
-              <input
-                placeholder="First Name"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                }}
-              ></input>
-            </div>
-
-            <div className="col-lg-6">
-              <input
-                placeholder="Last Name"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                }}
-              ></input>
-            </div>
-
-            <div className="col-lg-6">
-              <input
-                placeholder="Relationship"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  marginTop: "4%",
-                  backgroundColor: "#ebebeb",
-                }}
-              ></input>
-            </div>
-
-            <div className="col-lg-6">
-              <input
-                placeholder="Contact Number"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  marginTop: "4%",
-
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                }}
-              ></input>
-            </div>
-          </div> */}
+        
 
           <div
             className="row"
@@ -1302,7 +1622,961 @@ export default function Outpatientlist() {
                     variant="warning"
                     onClick={() => {
                       patientAllergies.push(allergy);
-                      // setpatientAllergies(patientAllergies);
+                      console.log(patientAllergies);
+                      setclickedAddAllergyBtn("clicked");
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6 mt-3">
+              <Table responsive>
+                <thead>
+                  <th>S.no.</th>
+                  <th>Allergies</th>
+                </thead>
+                <tbody>
+                  {patientAllergies.map((item, i) => {
+                    console.log("patientAllergies", patientAllergies);
+                    return (
+                      <tr>
+                        <td>{++i}</td>
+                        <td>{item}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div style={{ display: "flex" }}>
+            <button
+              style={{
+                backgroundColor: "grey",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                marginRight: "20px",
+                border: "1px solid white",
+                padding: "4px 10px",
+              }}
+              onClick={() => {
+                setShow2(false);
+              }}
+            >
+              CANCEL
+            </button>
+
+            <button
+              style={{
+                backgroundColor: "orange",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                border: "1px solid white",
+                padding: "4px 10px",
+              }}
+              onClick={(e) => {
+                setShow2(false);
+                signup(e);
+              }}
+            >
+              SUBMIT
+            </button>
+          </div>
+        </Modal.Footer>
+      </Modal> */}
+
+      <Modal size="lg" show={show2} onHide={handleClose2}>
+        <Modal.Header>
+          <Modal.Title>Add Out-Patient</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h6 style={{ color: "white", margin: "0% 2% 2% 2%" }}>
+            Personal Information
+          </h6>
+          <div
+            className="row"
+            style={{
+              border: "1px solid white",
+              padding: "2% 0%",
+              margin: "0% 1%",
+              borderRadius: "0px",
+            }}
+          >
+            <div className="col-lg-6">
+              <input
+                placeholder="First Name *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                onChange={(e) => setpatientfirstname(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="Last Name *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                onChange={(e) => setpatientlastname(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <select
+                placeholder="Name"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  marginTop: "4%",
+                  backgroundColor: "#ebebeb",
+                }}
+                onChange={(e) => setgender(e.target.value)}
+              >
+                <option>Select Gender *</option>
+                <option>Male</option>
+                <option>Female</option>
+              </select>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="Contact Number *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  marginTop: "4%",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                type="tele"
+                maxLength={10}
+                onKeyPress={(event) => {
+                  if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
+                onChange={(e) => setmobileno(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="Alternate Phone Number"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  marginTop: "4%",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                type="tele"
+                maxLength={10}
+                onKeyPress={(event) => {
+                  if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
+                onChange={(e) => setalternatePhoneNumber(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="Email *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  marginTop: "4%",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                onChange={(e) => setemail(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-5">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Date of Birth *:
+                  </h6>
+                </div>
+                <div className="col-lg-7">
+                  {" "}
+                  <input
+                    type="date"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    onChange={(e) => setDOB(e.target.value)}
+                  ></input>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-4">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Profile Pic :
+                  </h6>
+                </div>
+                <div className="col-lg-8">
+                  {" "}
+                  <input
+                    type="file"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    onChange={(e) => setProfilePic(e.target.files[0])}
+                  ></input>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Address *:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  {" "}
+                  <input
+                    type="text"
+                    placeholder="Street Address *"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    onChange={(e) => setAddress(e.target.value)}
+                  ></input>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="Street Address Line 2 *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                onChange={(e) => setAddress1(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-3">
+              <input
+                placeholder="City *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "8%",
+                }}
+                onChange={(e) => setCity(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-3">
+              <input
+                placeholder="
+                State / Province *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "8%",
+                }}
+                onChange={(e) => setState(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="Postal / Zip Code *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                type="tele"
+                maxLength={6}
+                onKeyPress={(event) => {
+                  if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
+                onChange={(e) => setZipcode(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="Password *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                onChange={(e) => setpassword(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="ConfirmPassword *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                onChange={(e) => setconpassword(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Marrital Status *:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  <select
+                    type="text"
+                    placeholder="Street Address"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    onChange={(e) => setMaritalStatus(e.target.value)}
+                  >
+                    <option value="">Select Option</option>
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Age is 18+:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  {" "}
+                  <select
+                    type="text"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    onChange={(e) => setPatientAge18(e.target.value)}
+                  >
+                    <option value="">Select Option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Aadhar Card:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  {" "}
+                  <input
+                    type="file"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    onChange={(e) => setAadharcard(e.target.files[0])}
+                  ></input>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Aadhar No:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  {" "}
+                  <input
+                    type="text"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    onChange={(e) => setAadharno(e.target.value)}
+                  ></input>
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                width: "100%",
+                padding: "2%",
+                borderRadius: "0px",
+                borderTop: "1px solid #ebebeb",
+                marginTop: "4%",
+              }}
+            >
+              <h6 style={{ color: "white" }}>Relative / next to kin</h6>
+
+              <div className="row">
+                <div className="col-lg-6">
+                  <input
+                    placeholder="Relation with patient"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "2%",
+                    }}
+                    onChange={(e) => setrelationWithPatient(e.target.value)}
+                  ></input>
+                </div>
+
+                <div className="col-lg-6">
+                  <input
+                    placeholder="Relative Name"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "2%",
+                    }}
+                    onChange={(e) => setrelativeName(e.target.value)}
+                  ></input>
+                </div>
+
+                <div className="col-lg-6">
+                  <input
+                    placeholder="Relative Mobileno."
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    type="tele"
+                    maxLength={10}
+                    onKeyPress={(event) => {
+                      if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
+                    onChange={(e) => setrelativePhone(e.target.value)}
+                  ></input>
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                width: "100%",
+                padding: "2%",
+                borderRadius: "0px",
+                borderTop: "1px solid #ebebeb",
+                marginTop: "4%",
+              }}
+            >
+              <h6 style={{ color: "white" }}>Admission Information</h6>
+
+              <div className="row">
+                <div className="col-lg-6">
+                  <div className="row" style={{ justifyContent: "center" }}>
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white" }}>Admission Date *: </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      <input
+                        type="date"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "2%",
+                        }}
+                        onChange={(e) => setAdmitDate(e.target.value)}
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div className="row" style={{ justifyContent: "center" }}>
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white" }}>Follow-up Date: </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      <input
+                        type="date"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "2%",
+                        }}
+                        onChange={(e) => setfollowUpsDate(e.target.value)}
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div
+                    className="row"
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white", marginTop: "6%" }}>
+                        Health Insurance*:
+                      </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      {" "}
+                      <select
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "6%",
+                        }}
+                        onChange={(e) => sethaveInsurance(e.target.value)}
+                      >
+                        <option value="">Select Option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div
+                    className="row"
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white", marginTop: "6%" }}>
+                        Health Insurance Doc(if available):
+                      </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      {" "}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "6%",
+                        }}
+                        onChange={(e) => setinsuranceDoc(e.target.files[0])}
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div
+                    className="row"
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white", marginTop: "6%" }}>
+                        Health Insurance Provider:
+                      </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      {" "}
+                      <input
+                        type="test"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "6%",
+                        }}
+                        onChange={(e) =>
+                          setinsuranceProviderCompany(e.target.value)
+                        }
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div
+                    className="row"
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white", marginTop: "6%" }}>
+                        Health Insurance Amount:
+                      </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      {" "}
+                      <input
+                        type="Number"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "6%",
+                        }}
+                        onChange={(e) => setinsuranceAmt(e.target.value)}
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                width: "100%",
+                padding: "2%",
+                borderRadius: "0px",
+                borderTop: "1px solid #ebebeb",
+                marginTop: "4%",
+              }}
+            >
+              <h6 style={{ color: "white" }}>Doctor Details</h6>
+
+              <div className="row">
+                <div className="col-lg-3">
+                  <form>
+                    <label className="mb-1 text-light" for="name">
+                      Department *
+                    </label>
+                    <br />
+                    <Form.Select
+                      aria-label="Default select example"
+                      onChange={(e) => setDepartment(e.target.value)}
+                    >
+                      <option>Select</option>
+                      {GetDepartmentData?.map((dep) => (
+                        <option value={dep?.DepartmentName}>
+                          {dep?.DepartmentName}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </form>
+                </div>
+                <div className="col-lg-3 mb-2">
+                  <form className="">
+                    <label className="mb-1 text-light" for="name">
+                      Doctor *
+                    </label>
+                    <br />
+                    <Form.Select
+                      aria-label="Default select example"
+                      onChange={(e) => setDoctor(e.target.value)}
+                    >
+                      <option>Select</option>
+                      {selectedDoctorList1?.map((doc) => (
+                        <option value={doc?._id}>
+                          {doc?.Firstname}&nbsp;{doc?.Lastname}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </form>
+                </div>
+                <div className="col-lg-3">
+                  <form>
+                    <label className="mb-1 text-light" for="email">
+                      Date of Appointment *
+                    </label>
+                    <br />
+                    <Form.Select
+                      aria-label="Default select example"
+                      onChange={(e) => setDOA(e.target.value)}
+                    >
+                      <option>Select</option>
+
+                      {/* {Doctorschedule?.scheduleList
+                        ?.filter(
+                          (schedd) =>
+                            moment(schedd?.scheduleDate).isSameOrAfter(
+                              moment(),
+                              "day"
+                            ) && schedd?.bookingstatus === "Vacant"
+                        )
+                        ?.map((shedul) => {
+                          const formattedDate = moment(
+                            shedul?.scheduleDate
+                          ).format("DD-MM-YYYY");
+                          if (!uniqueDates.has(formattedDate)) {
+                            uniqueDates.add(formattedDate);
+                            console.log("formattedDate", formattedDate);
+                            return (
+                              <option
+                                value={shedul?.scheduleDate}
+                                key={shedul?.scheduleDate}
+                              >
+                                {formattedDate}
+                              </option>
+                            );
+                          }
+                          return null; // Return null for duplicates, so they are not rendered
+                        })} */}
+
+                      {uniqueSchedules.map((shedul) => (
+                        <option
+                          value={shedul?.scheduleDate}
+                          key={shedul?.scheduleDate}
+                        >
+                          {moment(shedul?.scheduleDate).format("DD-MM-YYYY")}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </form>
+                </div>
+                <div className="col-lg-3">
+                  <form>
+                    <label className="mb-1 text-light" for="email">
+                      Time of Appointment *
+                    </label>
+                    <br />
+                    <Form.Select
+                      aria-label="Default select example"
+                      onChange={(e) => setTOA(e.target.value)}
+                    >
+                      <option>Select</option>
+
+                      {selecteTimearray?.map((shedul) => (
+                        <option
+                          value={`${shedul?.startTime}-${shedul?.endTime}-${shedul?._id}`}
+                        >
+                          {/* <option value={shedul?._id}> */}
+                          {shedul?.startTime}-{shedul?.endTime}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </form>
+                </div>
+                <div className="col-lg-3">
+                  <form>
+                    <label className="mb-1 text-light" for="email">
+                      Appointment Charges
+                    </label>
+                    <br />
+                    <input
+                      type="text"
+                      style={{
+                        width: "100%",
+                        padding: "8px 20px",
+                        borderRadius: "0px",
+                        border: "1px solid #ebebeb",
+                        backgroundColor: "#ebebeb",
+                        marginTop: "6%",
+                      }}
+                      value={Doctorschedule?.appointmentcharge}
+                    ></input>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="row"
+            style={{
+              border: "1px solid white",
+              padding: "2% 0%",
+              margin: "0% 1%",
+              borderRadius: "0px",
+            }}
+          >
+            <div className="col-lg-6" style={{ color: "white" }}>
+              Taking any medications, currently?
+            </div>
+            <div className="col-lg-6" style={{ color: "white" }}>
+              <div className="row">
+                <div className="col-lg-3">
+                  <input
+                    type="checkbox"
+                    checked={medications == true}
+                    onChange={() => setmedications(true)}
+                  ></input>{" "}
+                  Yes
+                </div>
+
+                <div className="col-lg-3">
+                  <input
+                    type="checkbox"
+                    checked={medications == false}
+                    onChange={() => setmedications(false)}
+                  ></input>{" "}
+                  No
+                </div>
+              </div>
+            </div>
+
+            {medications ? (
+              <>
+                <label style={{ color: "white", marginTop: "4%" }}>
+                  If yes, please list it here
+                </label>
+                <div
+                  className="col-lg-12"
+                  style={{ color: "white", textAlign: "center" }}
+                >
+                  <textarea
+                    cols={6}
+                    placeholder="Please list all medications"
+                    value={medicinesTaking}
+                    onChange={(e) => setmedicinesTaking(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                    }}
+                  ></textarea>
+                </div>
+              </>
+            ) : null}
+
+            <div className="col-lg-6">
+              <div
+                className="row"
+                style={{
+                  display: "flex",
+                  alignItems: "baseline",
+                }}
+              >
+                <div className="col-lg-3">
+                  <h6 style={{ color: "white", marginTop: "6%" }}>
+                    Allergies:
+                  </h6>
+                </div>
+                <div className="col-lg-6">
+                  {" "}
+                  <input
+                    type="text"
+                    value={allergy}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    onChange={(e) => setallergy(e.target.value)}
+                  ></input>
+                </div>
+                <div className="col-lg-3">
+                  <Button
+                    variant="warning"
+                    onClick={() => {
+                      patientAllergies.push(allergy);
                       console.log(patientAllergies);
                       setclickedAddAllergyBtn("clicked");
                     }}
@@ -1374,15 +2648,700 @@ export default function Outpatientlist() {
         </Modal.Footer>
       </Modal>
 
+      <Modal size="lg" show={showEdit} onHide={handleCloseEdit}>
+        <Modal.Header>
+          <Modal.Title>Edit / Update Out-Patient</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h6 style={{ color: "white", margin: "0% 2% 2% 2%" }}>
+            Personal Information
+          </h6>
+          <div
+            className="row"
+            style={{
+              border: "1px solid white",
+              padding: "2% 0%",
+              margin: "0% 1%",
+              borderRadius: "0px",
+            }}
+          >
+            <div className="col-lg-6">
+              <input
+                placeholder={EditData?.Firstname}
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                onChange={(e) => setFirstName1(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder={EditData?.Lastname}
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                onChange={(e) => setLastName1(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <select
+                placeholder="Name"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  marginTop: "4%",
+                  backgroundColor: "#ebebeb",
+                }}
+                onChange={(e) => setGender1(e.target.value)}
+              >
+                <option>{EditData?.Gender}</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder={EditData?.PhoneNumber}
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  marginTop: "4%",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                type="tele"
+                maxLength={10}
+                onKeyPress={(event) => {
+                  if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
+                onChange={(e) => setContactNumber1(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder={EditData?.alternatePhoneNumber}
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  marginTop: "4%",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                type="tele"
+                maxLength={10}
+                onKeyPress={(event) => {
+                  if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
+                onChange={(e) => setAlternativeContactNumber1(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder={EditData?.Email}
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  marginTop: "4%",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                onChange={(e) => setEmail1(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-5">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Date of Birth *:
+                  </h6>
+                </div>
+                <div className="col-lg-7">
+                  {" "}
+                  <input
+                    type="date"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    onChange={(e) => setDoB1(e.target.value)}
+                  ></input>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-4">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Profile Pic :
+                  </h6>
+                </div>
+                <div className="col-lg-8">
+                  {" "}
+                  <input
+                    type="file"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    onChange={(e) => setProfilePic1(e.target.files[0])}
+                  ></input>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Address *:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  {" "}
+                  <input
+                    type="text"
+                    placeholder={EditData?.Address1}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    onChange={(e) => setAddress111(e.target.value)}
+                  ></input>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder={EditData?.Address2}
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                onChange={(e) => setAddress222(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-3">
+              <input
+                placeholder={EditData?.City1}
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "8%",
+                }}
+                onChange={(e) => setCity11(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-3">
+              <input
+                placeholder={EditData?.State1}
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "8%",
+                }}
+                onChange={(e) => setState11(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder={EditData?.Zipcode}
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                type="tele"
+                maxLength={6}
+                onKeyPress={(event) => {
+                  if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
+                onChange={(e) => setPincode1(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="Password *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                onChange={(e) => setPassword11(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="ConfirmPassword *"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                onChange={(e) => setConfirmPassword11(e.target.value)}
+              ></input>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Marrital Status *:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  <select
+                    type="text"
+                    placeholder="Street Address"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    onChange={(e) => setMarritalStatus1(e.target.value)}
+                  >
+                    <option value="">{EditData?.MaritalStatus}</option>
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Age is 18+:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  <select
+                    type="text"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    onChange={(e) => setAge11(e.target.value)}
+                  >
+                    <option value="">Select Option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Aadhar Card:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  {" "}
+                  <input
+                    type="file"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    onChange={(e) => setAdharcard11(e.target.files[0])}
+                  ></input>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Aadhar No:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  {" "}
+                  <input
+                    type="text"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    placeholder={EditData?.Aadharno}
+                    onChange={(e) => setAdharNumber11(e.target.value)}
+                  ></input>
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                width: "100%",
+                padding: "2%",
+                borderRadius: "0px",
+                borderTop: "1px solid #ebebeb",
+                marginTop: "4%",
+              }}
+            >
+              <h6 style={{ color: "white" }}>Relative / next to kin</h6>
+
+              <div className="row">
+                <div className="col-lg-6">
+                  <input
+                    placeholder={EditData?.relationWithPatient}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "2%",
+                    }}
+                    onChange={(e) => setRelativeRelation(e.target.value)}
+                  ></input>
+                </div>
+
+                <div className="col-lg-6">
+                  <input
+                    placeholder={EditData?.relativeName}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "2%",
+                    }}
+                    onChange={(e) => setRelativeName1(e.target.value)}
+                  ></input>
+                </div>
+
+                <div className="col-lg-6">
+                  <input
+                    placeholder={EditData?.relativePhone}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    type="tele"
+                    maxLength={10}
+                    onKeyPress={(event) => {
+                      if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
+                    onChange={(e) => setRelativeNumber(e.target.value)}
+                  ></input>
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                width: "100%",
+                padding: "2%",
+                borderRadius: "0px",
+                borderTop: "1px solid #ebebeb",
+                marginTop: "4%",
+              }}
+            >
+              <h6 style={{ color: "white" }}>Admission Information</h6>
+
+              <div className="row">
+                <div className="col-lg-6">
+                  <div className="row" style={{ justifyContent: "center" }}>
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white" }}>Admission Date *: </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      <input
+                        type="date"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "2%",
+                        }}
+                        onChange={(e) => setAdmissionDate1(e.target.value)}
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div className="row" style={{ justifyContent: "center" }}>
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white" }}>Follow-up Date: </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      <input
+                        type="date"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "2%",
+                        }}
+                        onChange={(e) => setFollowupDate1(e.target.value)}
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div
+                    className="row"
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white", marginTop: "6%" }}>
+                        Health Insurance*:
+                      </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      {" "}
+                      <select
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "6%",
+                        }}
+                        onChange={(e) => setHealthInsurance(e.target.value)}
+                      >
+                        <option value="">Select Option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div
+                    className="row"
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white", marginTop: "6%" }}>
+                        Health Insurance Doc(if available):
+                      </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      {" "}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "6%",
+                        }}
+                        onChange={(e) =>
+                          setHealthInsuranceDoc(e.target.files[0])
+                        }
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div
+                    className="row"
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white", marginTop: "6%" }}>
+                        Health Insurance Provider:
+                      </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      {" "}
+                      <input
+                        type="test"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "6%",
+                        }}
+                        placeholder={EditData?.insuranceProviderCompany}
+                        onChange={(e) =>
+                          setHealthInsuranceProvider(e.target.value)
+                        }
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div
+                    className="row"
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white", marginTop: "6%" }}>
+                        Health Insurance Amount:
+                      </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      {" "}
+                      <input
+                        type="Number"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "6%",
+                        }}
+                        placeholder={EditData?.insuranceAmt}
+                        onChange={(e) =>
+                          setHealthInsuranceAmount(e.target.value)
+                        }
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div style={{ display: "flex" }}>
+            <button
+              style={{
+                backgroundColor: "grey",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                marginRight: "20px",
+                border: "1px solid white",
+                padding: "4px 10px",
+              }}
+              onClick={() => {
+                setShowEdit(false);
+              }}
+            >
+              CANCEL
+            </button>
+
+            <button
+              style={{
+                backgroundColor: "orange",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                border: "1px solid white",
+                padding: "4px 10px",
+              }}
+              onClick={(e) => EditPatient(e)}
+            >
+              SUBMIT
+            </button>
+          </div>
+        </Modal.Footer>
+      </Modal>
+
       <Modal size="lg" show={show3} onHide={handleClose3}>
         <Modal.Header>
           <Modal.Title>Invoice</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div
-            id="pdf"
-            style={{ padding: "15px"}}
-          >
+          <div id="pdf" style={{ padding: "15px" }}>
             <div
               style={{
                 padding: "5px",
@@ -1432,14 +3391,13 @@ export default function Outpatientlist() {
                   </div>
                   <div className="col-md-12">
                     <div className="d-flex justify-content-between">
-                      <div className="text-center mt-1 d-flex align-items-center" >
+                      <div className="text-center mt-1 d-flex align-items-center">
                         {" "}
                         <h6
                           className="fw-bold mt-2"
                           style={{
                             color: "#20958C",
                             fontSize: "20px",
-                            
                           }}
                         >
                           RECIEPT/ PATIENT COPY
@@ -1447,7 +3405,8 @@ export default function Outpatientlist() {
                       </div>
                       <div>
                         <Barcode
-                          value={`${View?.Firstname} ${View?.Lastname}`}
+                          // value={`${View?.Firstname} ${View?.Lastname}`}
+                          value={View?._id}
                           width={1}
                           height={50}
                         />
@@ -1461,25 +3420,42 @@ export default function Outpatientlist() {
                     <div className="row">
                       <div className="col-md-6">
                         <p style={{ fontSize: "14px", marginBottom: "unset" }}>
-                          <span style={{color:"#20958C",fontWeight:"600"}}>UHID No.</span>: {View?.PatientId}
+                          <span style={{ color: "#20958C", fontWeight: "600" }}>
+                            UHID No.
+                          </span>
+                          : {View?.PatientId}
                         </p>
                         <p style={{ fontSize: "14px", marginBottom: "unset" }}>
-                        <span style={{color:"#20958C",fontWeight:"600"}}>PT. NAME</span>  : {View?.Firstname}
+                          <span style={{ color: "#20958C", fontWeight: "600" }}>
+                            PT. NAME
+                          </span>{" "}
+                          : {View?.Firstname}&nbsp;{View?.Lastname}
                         </p>
                         <p style={{ fontSize: "14px", marginBottom: "unset" }}>
-                        <span style={{color:"#20958C",fontWeight:"600"}}>ADDRESS</span> : {View?.Address1}
+                          <span style={{ color: "#20958C", fontWeight: "600" }}>
+                            ADDRESS
+                          </span>{" "}
+                          : {View?.Address1}
                         </p>
-                        
                       </div>
                       <div className="col-md-6">
                         <p style={{ fontSize: "14px", marginBottom: "unset" }}>
-                        <span style={{color:"#20958C",fontWeight:"600"}}>Phone No</span> : {View?.PhoneNumber}
+                          <span style={{ color: "#20958C", fontWeight: "600" }}>
+                            Phone No
+                          </span>{" "}
+                          : {View?.PhoneNumber}
                         </p>
                         <p style={{ fontSize: "14px", marginBottom: "unset" }}>
-                        <span style={{color:"#20958C",fontWeight:"600"}}>SEX</span> : {View?.Gender}
+                          <span style={{ color: "#20958C", fontWeight: "600" }}>
+                            SEX
+                          </span>{" "}
+                          : {View?.Gender}
                         </p>
                         <p style={{ fontSize: "14px", marginBottom: "unset" }}>
-                        <span style={{color:"#20958C",fontWeight:"600"}}>DOB</span> : {View?.DOB}
+                          <span style={{ color: "#20958C", fontWeight: "600" }}>
+                            DOB
+                          </span>{" "}
+                          : {View?.DOB}
                         </p>
                       </div>
                     </div>
@@ -1517,13 +3493,13 @@ export default function Outpatientlist() {
                         className="col-md-8"
                         style={{ border: "1px solid #20958C" }}
                       >
-                        Initial Consultation
+                        Consultation
                       </div>
                       <div
                         className="col-md-2"
                         style={{ border: "1px solid #20958C" }}
                       >
-                        ₹ {View?.ConsultationFee}/-
+                        ₹ {billing?.consulationFees}/-
                       </div>
                     </div>
                   </div>
@@ -1540,7 +3516,9 @@ export default function Outpatientlist() {
                   <div className="col-md-12 ">
                     <div className="row">
                       <div className="col-md-10">Total</div>
-                      <div className="col-md-2">₹ {View?.ConsultationFee}/-</div>
+                      <div className="col-md-2">
+                        ₹ {billing?.consulationFees}/-
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-12 mt-2">
@@ -1557,7 +3535,7 @@ export default function Outpatientlist() {
                     <div className="row">
                       <div className="col-md-6">
                         <p style={{ fontSize: "11px", marginBottom: "unset" }}>
-                          Paid Amount : ( ₹ {View?.ConsultationFee}/-)
+                          Paid Amount : ( ₹ {billing?.consulationFees}/-)
                         </p>
                         <p style={{ fontSize: "12px", marginBottom: "unset" }}>
                           *This is a Computerised Bill/Receipt
@@ -1572,7 +3550,7 @@ export default function Outpatientlist() {
                           CENTRE
                         </p>
                         <p style={{ fontSize: "12px", marginBottom: "unset" }}>
-                          BHIMU 19-04-2024
+                          BHIMU {moment(View?.createdAt)?.format("DD-MM-YYYY")}
                         </p>
                         <p style={{ fontSize: "12px", marginBottom: "unset" }}>
                           Authorised Signatory *
@@ -1620,98 +3598,6 @@ export default function Outpatientlist() {
           </div>
         </Modal.Footer>
       </Modal>
-      <div>
-      <Table responsive="md" style={{ marginTop: "1%" }}>
-        <thead>
-          <tr style={{ fontSize: "15px", textAlign: "center" }}>
-            <th>Profile</th>
-            <th>Patient-Id</th>
-
-            <th> Name</th>
-            <th>Sex</th>
-            <th>Address</th>
-            <th>Mobile</th>
-            <th>Age</th>
-            <th>Reciept</th>
-            <th>Bar-Code</th>
-            <th>Action</th>
-            <th>Read More</th>
-          </tr>
-        </thead>
-        <tbody>
-          {category
-            ?.filter((val) => val?.registrationType === "OPD")
-            ?.map((item) => {
-              return (
-                <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                  <td>
-                    <img
-                      alt=""
-                      src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        borderRadius: "50%",
-                      }}
-                    />
-                  </td>
-                  <td>{item?.PatientId}</td>
-                  <td>{item?.Firstname}</td>
-                  <td>{item?.Gender}</td>
-                  <td>{item?.Address1}</td>
-                  <td>{item?.PhoneNumber}</td>
-                  <td>{item?.DOB}</td>
-                  <td>
-                    <button
-                      style={{
-                        padding: "6px",
-                        border: "1px solid white",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        borderRadius: "0px",
-                      }}
-                      onClick={()=>{handleShow3();setView(item)}}
-                    >
-                      Consultaion Reciept
-                    </button>
-                  </td>
-                  <td>
-                      <CiBarcode
-                        style={{ cursor: "pointer", fontSize: "35px" }}
-                        onClick={() => handleShow10(item)}
-                      />
-                    </td>
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        textAlign: "center",
-                        justifyContent: "space-evenly",
-                      }}
-                    >
-                      <MdEdit style={{ color: "#20958c", marginRight: "1%" }} />
-                      <AiFillDelete style={{ color: "red" }} />
-                    </div>
-                  </td>
-                  <td>
-                    <button
-                      style={{
-                        border: "none",
-                        backgroundColor: "#20958c",
-                        color: "white",
-                        borderRadius: "0px",
-                      }}
-                      onClick={() => setShow(true)}
-                    >
-                      Read More
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </Table>
-      </div>
       <Modal size="md" show={show10} onHide={handleClose10}>
         <Modal.Header>
           <Modal.Title>
@@ -1724,7 +3610,8 @@ export default function Outpatientlist() {
         <Modal.Body>
           <div ref={componentRef} className="d-flex justify-content-center">
             <Barcode
-              value={`${ViewBarcode?.Firstname} ${ViewBarcode?.Lastname}`}
+              // value={`${ViewBarcode?.Firstname} ${ViewBarcode?.Lastname}`}
+              value={ViewBarcode?._id}
               width={1}
               height={50}
             />
@@ -1740,6 +3627,335 @@ export default function Outpatientlist() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <Modal size="lg" show={showBook} onHide={handleCloseBook}>
+        <Modal.Header>
+          <Modal.Title>Book Appointment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h6 style={{ color: "white", margin: "0% 2% 2% 2%" }}>
+            Doctor Details
+          </h6>
+          <div
+            className="row"
+            style={{
+              border: "1px solid white",
+              margin: "0% 1%",
+              borderRadius: "0px",
+            }}
+          >
+            <div
+              style={{
+                width: "100%",
+                padding: "2%",
+                borderRadius: "0px",
+                borderTop: "1px solid #ebebeb",
+              }}
+            >
+              <div className="row">
+                <div className="col-lg-3">
+                  <form>
+                    <label className="mb-1 text-light" for="name">
+                      Department *
+                    </label>
+                    <br />
+                    <Form.Select
+                      aria-label="Default select example"
+                      onChange={(e) => setDepartment(e.target.value)}
+                    >
+                      <option>Select</option>
+                      {GetDepartmentData?.map((dep) => (
+                        <option value={dep?.DepartmentName}>
+                          {dep?.DepartmentName}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </form>
+                </div>
+                <div className="col-lg-3 mb-2">
+                  <form className="">
+                    <label className="mb-1 text-light" for="name">
+                      Doctor *
+                    </label>
+                    <br />
+                    <Form.Select
+                      aria-label="Default select example"
+                      onChange={(e) => setDoctor(e.target.value)}
+                    >
+                      <option>Select</option>
+                      {selectedDoctorList1?.map((doc) => (
+                        <option value={doc?._id}>
+                          {doc?.Firstname}&nbsp;{doc?.Lastname}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </form>
+                </div>
+                <div className="col-lg-3">
+                  <form>
+                    <label className="mb-1 text-light" for="email">
+                      Date of Appointment *
+                    </label>
+                    <br />
+                    <Form.Select
+                      aria-label="Default select example"
+                      onChange={(e) => setDOA(e.target.value)}
+                    >
+                      <option>Select</option>
+
+                      {/* {Doctorschedule?.scheduleList
+                        ?.filter(
+                          (schedd) =>
+                            moment(schedd?.scheduleDate).isSameOrAfter(
+                              moment(),
+                              "day"
+                            ) && schedd?.bookingstatus === "Vacant"
+                        )
+                        ?.map((shedul) => {
+                          const formattedDate = moment(
+                            shedul?.scheduleDate
+                          ).format("DD-MM-YYYY");
+                          if (!uniqueDates.has(formattedDate)) {
+                            uniqueDates.add(formattedDate);
+                            return (
+                              <option
+                                value={shedul?.scheduleDate}
+                                key={shedul?.scheduleDate}
+                              >
+                                {formattedDate}
+                              </option>
+                            );
+                          }
+                          return null; // Return null for duplicates, so they are not rendered
+                        })} */}
+                      {uniqueSchedules.map((shedul) => (
+                        <option
+                          value={shedul?.scheduleDate}
+                          key={shedul?.scheduleDate}
+                        >
+                          {moment(shedul?.scheduleDate).format("DD-MM-YYYY")}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </form>
+                </div>
+                <div className="col-lg-3">
+                  <form>
+                    <label className="mb-1 text-light" for="email">
+                      Time of Appointment *
+                    </label>
+                    <br />
+                    <Form.Select
+                      aria-label="Default select example"
+                      onChange={(e) => setTOA(e.target.value)}
+                    >
+                      <option>Select</option>
+
+                      {selecteTimearray?.map((shedul) => (
+                        <option
+                          value={`${shedul?.startTime}-${shedul?.endTime}-${shedul?._id}`}
+                        >
+                          {/* <option value={shedul?._id}> */}
+                          {shedul?.startTime}-{shedul?.endTime}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </form>
+                </div>
+                <div className="col-lg-3">
+                  <form>
+                    <label className="mb-1 text-light" for="email">
+                      Appointment Charges
+                    </label>
+                    <br />
+                    <input
+                      type="text"
+                      style={{
+                        width: "100%",
+                        padding: "8px 20px",
+                        borderRadius: "0px",
+                        border: "1px solid #ebebeb",
+                        backgroundColor: "#ebebeb",
+                        marginTop: "6%",
+                      }}
+                      value={Doctorschedule?.appointmentcharge}
+                    ></input>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div style={{ display: "flex" }}>
+            <button
+              style={{
+                backgroundColor: "grey",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                marginRight: "20px",
+                border: "1px solid white",
+                padding: "4px 10px",
+              }}
+              onClick={() => {
+                handleCloseBook();
+              }}
+            >
+              CANCEL
+            </button>
+
+            <button
+              style={{
+                backgroundColor: "orange",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                border: "1px solid white",
+                padding: "4px 10px",
+              }}
+              onClick={(e) => {
+                BookAppointmentForExixtingPatients(e);
+              }}
+            >
+              SUBMIT
+            </button>
+          </div>
+        </Modal.Footer>
+      </Modal>
+      <div style={{ overflowX: "scroll" }}>
+        <Table responsive="md" style={{ marginTop: "1%" }}>
+          <thead>
+            <tr style={{ fontSize: "15px", textAlign: "center" }}>
+              <th>Profile</th>
+              <th>Patient-Id</th>
+              <th> Name</th>
+              <th>Sex</th>
+              <th>Address</th>
+              <th>Mobile</th>
+              <th>Age</th>
+              {/* <th>Reciept</th> */}
+              <th>Bar-Code</th>
+              <th>Appointment</th>
+              <th>Edit/Update</th>
+              <th>Read More</th>
+            </tr>
+          </thead>
+          <tbody>
+            {category
+              ?.filter((val) => val?.registrationType === "OPD")
+              ?.map((item) => {
+                return (
+                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                    <td>
+                      {item?.profilepic ? (
+                        <img
+                          alt=""
+                          src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            borderRadius: "50%",
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src="/img/dummyprofile.png"
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            borderRadius: "50%",
+                          }}
+                        />
+                      )}
+                    </td>
+                    <td>{item?.PatientId}</td>
+                    <td>{item?.Firstname}</td>
+                    <td>{item?.Gender}</td>
+                    <td>{item?.Address1}</td>
+                    <td>{item?.PhoneNumber}</td>
+                    <td>{item?.DOB}</td>
+                    {/* <td>
+                      <button
+                        style={{
+                          padding: "6px",
+                          border: "1px solid white",
+                          backgroundColor: "#20958c",
+                          color: "white",
+                          borderRadius: "0px",
+                        }}
+                        onClick={() => {
+                          handleShow3();
+                          setView(item);
+                        }}
+                      >
+                        Consultaion Reciept
+                      </button>
+                    </td> */}
+                    <td>
+                      <CiBarcode
+                        style={{ cursor: "pointer", fontSize: "35px" }}
+                        onClick={() => handleShow10(item)}
+                      />
+                    </td>
+                    <td>
+                      <button
+                        style={{
+                          padding: "6px",
+                          border: "1px solid white",
+                          backgroundColor: "#20958c",
+                          color: "white",
+                          borderRadius: "0px",
+                        }}
+                        onClick={() => {
+                          handleShowBook(item);
+                        }}
+                      >
+                        Book
+                      </button>
+                    </td>
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          textAlign: "center",
+                          justifyContent: "space-evenly",
+                        }}
+                      >
+                        <button
+                          onClick={() => handleShowEdit(item)}
+                          style={{
+                            border: "none",
+                            backgroundColor: "transparent",
+                          }}
+                        >
+                          <MdEdit
+                            style={{ color: "#20958c", marginRight: "1%" }}
+                          />
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <button
+                        style={{
+                          border: "none",
+                          backgroundColor: "#20958c",
+                          color: "white",
+                          borderRadius: "0px",
+                        }}
+                        onClick={() => handleShow(item)}
+                      >
+                        Read More
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 }

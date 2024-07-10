@@ -120,7 +120,7 @@ export default function Sidebar1() {
             className="sidebarItem"
             onClick={() => window.location.assign("/admin/DoctorsAppointment")}
           >
-            Doctors appointment
+            Appointment
           </h6>
         ) : null}
 

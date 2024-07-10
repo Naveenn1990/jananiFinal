@@ -18,7 +18,7 @@ export default function DoctorsAppointment() {
     setAppointmentId(item);
   };
 
-  const [ShowAppointmentDetails, setShowAppointmentDetails] = useState({})
+  const [ShowAppointmentDetails, setShowAppointmentDetails] = useState({});
   const [show2, setShow2] = useState(false);
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
@@ -65,13 +65,12 @@ export default function DoctorsAppointment() {
     let docInfo = Doctors.find((item) => item?._id === val);
     setConsultantDrInfo(docInfo);
   }
-  const [SelectedTime, setSelectedTime] = useState({})
+  const [SelectedTime, setSelectedTime] = useState({});
   useEffect(() => {
-    if(StatrtTime){
-      setSelectedTime(JSON?.parse(StatrtTime))
+    if (StatrtTime) {
+      setSelectedTime(JSON?.parse(StatrtTime));
     }
-    
-  }, [StatrtTime])
+  }, [StatrtTime]);
   const formdata = new FormData();
 
   const BookAppointment = async (e) => {
@@ -80,13 +79,17 @@ export default function DoctorsAppointment() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^\d{10}$/;
     if (!nameRegex.test(patientfirstname)) {
-      return alert('Invalid first name. Only letters are allowed, and it should be between 2 and 30 characters long.');
+      return alert(
+        "Invalid first name. Only letters are allowed, and it should be between 2 and 30 characters long."
+      );
     }
     if (!nameRegex.test(patientlastname)) {
-      return alert('Invalid last name. Only letters are allowed, and it should be between 2 and 30 characters long.');
+      return alert(
+        "Invalid last name. Only letters are allowed, and it should be between 2 and 30 characters long."
+      );
     }
     if (!emailRegex.test(email)) {
-      return alert('Invalid email address.');
+      return alert("Invalid email address.");
     }
     if (!DOB) {
       return alert("Please select date of birth.");
@@ -95,7 +98,9 @@ export default function DoctorsAppointment() {
       return alert("Please select gender.");
     }
     if (!phoneRegex.test(mobileno)) {
-      return alert('Invalid phone number. It should be exactly 10 digits long.');
+      return alert(
+        "Invalid phone number. It should be exactly 10 digits long."
+      );
     }
     if (!DocDept) {
       return alert("Please Select Department");
@@ -174,7 +179,7 @@ export default function DoctorsAppointment() {
         console.log(error);
       });
   };
- console.log("AppointmentList",AppointmentList);
+  console.log("AppointmentList", AppointmentList);
   const [Doctors, setDoctors] = useState([]);
   const getDoctors = () => {
     axios
@@ -189,7 +194,7 @@ export default function DoctorsAppointment() {
 
   const [AppointmentId, setAppointmentId] = useState({});
 
-  console.log("AppointmentId",AppointmentId);
+  console.log("AppointmentId", AppointmentId);
   const UpdateBookingAppointment = async () => {
     try {
       const config = {
@@ -201,11 +206,11 @@ export default function DoctorsAppointment() {
           AppointmentId: AppointmentId?._id,
           starttime: SelectedTime?.startTime,
           endtime: SelectedTime?.endTime,
-          rescheduleId:SelectedTime?._id,
+          rescheduleId: SelectedTime?._id,
 
           doctorId: AppointmentId?.ConsultantDoctor?._id,
           bookedscheduleId: AppointmentId?.ScheduleId,
-          Dateofappointment: DateofApp,      
+          Dateofappointment: DateofApp,
         },
       };
 
@@ -214,19 +219,19 @@ export default function DoctorsAppointment() {
         alert(res.data.success);
         getAppointmentList();
         handleClose1();
-        window.location.assign("")
+        window.location.assign("");
       }
     } catch (error) {
       alert(error.response.data.error);
     }
   };
 
-const [PaymentStatus, setPaymentStatus] = useState()
- console.log("PaymentStatus",PaymentStatus);
-const PaymentUpdate = async()=>{
-  if(!PaymentStatus){
-    return alert("Please check the paid box")
-  }
+  const [PaymentStatus, setPaymentStatus] = useState();
+  console.log("PaymentStatus", PaymentStatus);
+  const PaymentUpdate = async () => {
+    if (!PaymentStatus) {
+      return alert("Please check the paid box");
+    }
     try {
       const config = {
         url: "/user/payment",
@@ -234,82 +239,86 @@ const PaymentUpdate = async()=>{
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
         data: {
-          payment:PaymentStatus,
-          appointmentid:ShowAppointmentDetails?._id,
+          payment: PaymentStatus,
+          appointmentid: ShowAppointmentDetails?._id,
         },
       };
       let res = await axios(config);
       if (res.status === 200) {
         alert(res.data.success);
-        setPaymentStatus("")
-        handleClose2()       
-        getAppointmentList()
+        setPaymentStatus("");
+        handleClose2();
+        getAppointmentList();
       }
     } catch (error) {
       if (error.response) {
         alert(error.response.data.error);
       }
     }
-  }
+  };
 
   //Search
   const [SearchItem, setSearchItem] = useState("");
 
   // Pagination
-      const [pagination, setPagination] = useState([]);
-      const [pageNumber, setPageNumber] = useState(0);
-      const usersPerPage = 5;
-      const pagesVisited = pageNumber * usersPerPage;
-      const pageCount = Math.ceil(pagination?.length / usersPerPage);
-      const changePage = ( selected ) => {
-          setPageNumber(selected);
-      };
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = (selected) => {
+    setPageNumber(selected);
+  };
 
-    // Get Hospital Department
-    const [GetDepartmentData, setGetDepartmentData] = useState([]);
-    const GetDepartment = async () => {
-      try {
-        const res = await axios.get(
-          "http://localhost:8521/api/admin/getDepartment"
-        );
-        if (res.status === 200) {
-          setGetDepartmentData(res.data.success);
-        }
-      } catch (error) {
-        console.log(error);
+  // Get Hospital Department
+  const [GetDepartmentData, setGetDepartmentData] = useState([]);
+  const GetDepartment = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/admin/getDepartment"
+      );
+      if (res.status === 200) {
+        setGetDepartmentData(res.data.success);
       }
-    };
-    const Doctorschedule = Doctors?.find((doc) => doc?._id === ConsultantDr);
-    const uniqueDates = new Set();
-    const [selecteTimearray, setselecteTimearray] = useState([]);
-    useEffect(() => {
-      if (DateofApp) {
-        const asd = Doctorschedule?.scheduleList.filter(
-          (item) => item.scheduleDate == DateofApp && item.bookingstatus === "Vacant"
-        );
-        setselecteTimearray(asd);
-      }
-    }, [DateofApp]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const Doctorschedule = Doctors?.find((doc) => doc?._id === ConsultantDr);
+  const uniqueDates = new Set();
+  const [selecteTimearray, setselecteTimearray] = useState([]);
+  useEffect(() => {
+    if (DateofApp) {
+      const asd = Doctorschedule?.scheduleList.filter(
+        (item) =>
+          item.scheduleDate == DateofApp && item.bookingstatus === "Vacant"
+      );
+      setselecteTimearray(asd);
+    }
+  }, [DateofApp]);
 
-    //Reschedule Appointemnt
-    const DoctorReschedule = Doctors?.find((doc) => doc?._id === AppointmentId?.ConsultantDoctor?._id);
-    const [selecteRescheduleTimearray, setselecteRescheduleTimearray] = useState([]);
-    useEffect(() => {
-      if (AppointmentId?.Dateofappointment) {
-        const asd = DoctorReschedule?.scheduleList.filter(
-          (item) =>
-            item.scheduleDate == AppointmentId?.Dateofappointment &&
-            item.bookingstatus === "Vacant"
-        );
-        setselecteRescheduleTimearray(asd);
-      }
-    }, [AppointmentId?.Dateofappointment]);
-
+  //Reschedule Appointemnt
+  const DoctorReschedule = Doctors?.find(
+    (doc) => doc?._id === AppointmentId?.ConsultantDoctor?._id
+  );
+  const [selecteRescheduleTimearray, setselecteRescheduleTimearray] = useState(
+    []
+  );
+  useEffect(() => {
+    if (AppointmentId?.Dateofappointment) {
+      const asd = DoctorReschedule?.scheduleList.filter(
+        (item) =>
+          item.scheduleDate == AppointmentId?.Dateofappointment &&
+          item.bookingstatus === "Vacant"
+      );
+      setselecteRescheduleTimearray(asd);
+    }
+  }, [AppointmentId?.Dateofappointment]);
 
   useEffect(() => {
     getDoctors();
     getAppointmentList();
-    GetDepartment()
+    GetDepartment();
   }, []);
   return (
     <div>
@@ -325,7 +334,7 @@ const PaymentUpdate = async()=>{
             Doctors Appointment
           </h6>
 
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
             <RiStethoscopeLine
               className="AddIcon1"
               onClick={() => setShow(true)}
@@ -340,7 +349,7 @@ const PaymentUpdate = async()=>{
               type="search"
               onChange={(e)=>setSearchItem(e.target.value)}
             />
-          </div>
+          </div> */}
         </div>
 
         <Modal size="lg" show={show} onHide={handleClose}>
@@ -460,11 +469,11 @@ const PaymentUpdate = async()=>{
                       </option>
                     )
                   )} */}
-                   {GetDepartmentData?.map((dep) => (
-                      <option value={dep?.DepartmentName}>
-                        {dep?.DepartmentName}
-                        </option>
-                    ))}
+                  {GetDepartmentData?.map((dep) => (
+                    <option value={dep?.DepartmentName}>
+                      {dep?.DepartmentName}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="col-lg-6">
@@ -524,31 +533,31 @@ const PaymentUpdate = async()=>{
                       {uniqueDate}
                     </option>
                   ))} */}
-                   {Doctorschedule?.scheduleList
-                        ?.filter(
-                          (schedd) =>
-                            moment(schedd?.scheduleDate).isSameOrAfter(
-                              moment(),
-                              "day"
-                            ) && schedd?.bookingstatus === "Vacant"
-                        )
-                        ?.map((shedul) => {
-                          const formattedDate = moment(
-                            shedul?.scheduleDate
-                          ).format("DD-MM-YYYY");
-                          if (!uniqueDates.has(formattedDate)) {
-                            uniqueDates.add(formattedDate);
-                            return (
-                              <option
-                                value={shedul?.scheduleDate}
-                                key={shedul?.scheduleDate}
-                              >
-                                {formattedDate}
-                              </option>
-                            );
-                          }
-                          return null; // Return null for duplicates, so they are not rendered
-                        })}
+                  {Doctorschedule?.scheduleList
+                    ?.filter(
+                      (schedd) =>
+                        moment(schedd?.scheduleDate).isSameOrAfter(
+                          moment(),
+                          "day"
+                        ) && schedd?.bookingstatus === "Vacant"
+                    )
+                    ?.map((shedul) => {
+                      const formattedDate = moment(shedul?.scheduleDate).format(
+                        "DD-MM-YYYY"
+                      );
+                      if (!uniqueDates.has(formattedDate)) {
+                        uniqueDates.add(formattedDate);
+                        return (
+                          <option
+                            value={shedul?.scheduleDate}
+                            key={shedul?.scheduleDate}
+                          >
+                            {formattedDate}
+                          </option>
+                        );
+                      }
+                      return null; // Return null for duplicates, so they are not rendered
+                    })}
                 </select>
               </div>
               <div className="col-lg-6">
@@ -580,13 +589,11 @@ const PaymentUpdate = async()=>{
                         ))
                   )} */}
                   {selecteTimearray?.map((shedul) => (
-                      <option
-                      value={JSON.stringify(shedul)}
-                      >
-                        {/* <option value={shedul?._id}> */}
-                        {shedul?.startTime}-{shedul?.endTime}
-                      </option>
-                    ))}
+                    <option value={JSON.stringify(shedul)}>
+                      {/* <option value={shedul?._id}> */}
+                      {shedul?.startTime}-{shedul?.endTime}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="col-lg-6">
@@ -653,7 +660,7 @@ const PaymentUpdate = async()=>{
                 >
                   Document
                 </label>
-                <br/>
+                <br />
                 <input
                   type="file"
                   style={{
@@ -926,84 +933,92 @@ const PaymentUpdate = async()=>{
               </tr>
             </thead>
             <tbody>
-              {AppointmentList?.slice(pagesVisited, pagesVisited + usersPerPage)?.map((item, i) => {
-                 if (
+              {AppointmentList?.slice(
+                pagesVisited,
+                pagesVisited + usersPerPage
+              )?.map((item, i) => {
+                if (
                   SearchItem === "" ||
                   Object.values(item).some((value) =>
-                  String(value).toLowerCase().includes(SearchItem.toLowerCase())
-              ))
-                return (
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td>{i + 1}</td>
-                    <td>
-                      {item?.Firstname} {item?.Lastname}
-                    </td>
-                    <td>{item?.Email}</td>
-                    <td>{item?.Dateofappointment}</td>
-                    <td>{item?.starttime} to {item?.endtime}</td>
-                    <td>{item?.PhoneNumber}</td>
+                    String(value)
+                      .toLowerCase()
+                      .includes(SearchItem.toLowerCase())
+                  )
+                )
+                  return (
+                    <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                      <td>{i + 1}</td>
+                      <td>
+                        {item?.Firstname} {item?.Lastname}
+                      </td>
+                      <td>{item?.Email}</td>
+                      <td>{item?.Dateofappointment}</td>
+                      <td>
+                        {item?.starttime} to {item?.endtime}
+                      </td>
+                      <td>{item?.PhoneNumber}</td>
 
-                    <td>{item?.medicalReason}</td>
-                    <td>{item?.token}</td>
-                    <td>
-                      {item?.payment === "unpaid" ? (<>
-                        <Button
-                      onClick={()=>{
-                        handleShow2();
-                        setShowAppointmentDetails(item)
-                      }}
-                      >Payment</Button>
-                      <p>{item?.payment}</p>
-                      </>):(
-                        <p>Payment Done</p>
-                      )}
-                      
-                    </td>
-                    <td>
-                      {item?.payment === "unpaid" ? (
-                        <p>Payment is pending</p>
-                      ):(
-                        <Button
-                        onClick={()=>{
-                          handleShow3()
-                          setShowAppointmentDetails(item)
-                        }}
+                      <td>{item?.medicalReason}</td>
+                      <td>{item?.token}</td>
+                      <td>
+                        {item?.payment === "unpaid" ? (
+                          <>
+                            <Button
+                              onClick={() => {
+                                handleShow2();
+                                setShowAppointmentDetails(item);
+                              }}
+                            >
+                              Payment
+                            </Button>
+                            <p>{item?.payment}</p>
+                          </>
+                        ) : (
+                          <p>Payment Done</p>
+                        )}
+                      </td>
+                      <td>
+                        {item?.payment === "unpaid" ? (
+                          <p>Payment is pending</p>
+                        ) : (
+                          <Button
+                            onClick={() => {
+                              handleShow3();
+                              setShowAppointmentDetails(item);
+                            }}
+                          >
+                            Invoice
+                          </Button>
+                        )}
+                      </td>
+                      <td>
+                        {" "}
+                        <p
+                          style={{
+                            color: "green",
+                            fontSize: "20px",
+                            cursor: "pointer",
+                          }}
                         >
-                          Invoice
-                        </Button>
-                      )}
-                     
-                    </td>
-                    <td>
-                      {" "}
-                      <p
-                        style={{
-                          color: "green",
-                          fontSize: "20px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <FaEdit onClick={() => 
-                          handleShow1(item)
-                          } />
-                      </p>
-                    </td>
-                  </tr>
-                );
+                          <FaEdit onClick={() => handleShow1(item)} />
+                        </p>
+                      </td>
+                    </tr>
+                  );
               })}
             </tbody>
           </Table>
-          <div style={{float:"right"}} className="my-3 d-flex justify-end">
-                        <Stack spacing={2}>
-                            <Pagination
-                                count={pageCount}
-                                onChange={(event, value)=>{
-                                    changePage(value-1)
-                                  }}
-                                color="primary"                          
-                            />
-                        </Stack>
-                    </div>
+          <div style={{ float: "right" }} className="my-3 d-flex justify-end">
+            <Stack spacing={2}>
+              <Pagination
+                count={pageCount}
+                onChange={(event, value) => {
+                  changePage(value - 1);
+                }}
+                color="primary"
+              />
+            </Stack>
+          </div>
         </div>
       </div>
       <Modal show={show2} onHide={handleClose2}>
@@ -1011,28 +1026,31 @@ const PaymentUpdate = async()=>{
           <Modal.Title>Doctor Payment Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-         <div 
-         className="container" 
-         style={{backgroundColor:"white"}}>
-          <div className="d-flex align-items-center gap-4"> 
-            <b>Doctor Name : </b>
-            <p>{`${ShowAppointmentDetails?.ConsultantDoctor?.Firstname} ${ShowAppointmentDetails?.ConsultantDoctor?.Firstname} `}</p>
-          </div>
-          <div className="d-flex align-items-center gap-4"> 
-            <b> Consultation fee : </b>
-            <p>{ShowAppointmentDetails?.ConsultantDoctor?.appointmentcharge} /-</p>
-          </div>
-          <div className="d-flex align-items-center gap-4"> 
-            <b> Payment : </b>
-            <p>Paid 
-              <Checkbox 
-              onChange={(e)=>setPaymentStatus(e.target.checked ? "paid" : "")}
-              checked={PaymentStatus === "paid"}
-              />
+          <div className="container" style={{ backgroundColor: "white" }}>
+            <div className="d-flex align-items-center gap-4">
+              <b>Doctor Name : </b>
+              <p>{`${ShowAppointmentDetails?.ConsultantDoctor?.Firstname} ${ShowAppointmentDetails?.ConsultantDoctor?.Firstname} `}</p>
+            </div>
+            <div className="d-flex align-items-center gap-4">
+              <b> Consultation fee : </b>
+              <p>
+                {ShowAppointmentDetails?.ConsultantDoctor?.appointmentcharge} /-
               </p>
+            </div>
+            <div className="d-flex align-items-center gap-4">
+              <b> Payment : </b>
+              <p>
+                Paid
+                <Checkbox
+                  onChange={(e) =>
+                    setPaymentStatus(e.target.checked ? "paid" : "")
+                  }
+                  checked={PaymentStatus === "paid"}
+                />
+              </p>
+            </div>
           </div>
-         </div>
-          </Modal.Body>
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose2}>
             Close
@@ -1043,134 +1061,141 @@ const PaymentUpdate = async()=>{
         </Modal.Footer>
       </Modal>
       <Modal show={show3} onHide={handleClose3} size="lg">
-          <Modal.Header closeButton>
-            <Modal.Title>Invoice</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div ref={componentRef}>
-              <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+        <Modal.Header closeButton>
+          <Modal.Title>Invoice</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div ref={componentRef}>
+            <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+              <div
+                className="invoice-rspns"
+                style={{
+                  boxShadow: " 0px 8px 32px 0px rgba(19, 19, 20, 0.37)",
+                  background: "#f5f6fa",
+                  backdropFilter: "blur(4px)",
+                  padding: "20px",
+                }}
+              >
+                <div className="">
+                  <div className="mb-5">
+                    <img
+                      style={{ width: "40px", height: "40px" }}
+                      className="logo me-2 "
+                      src="/img/logo.png"
+                      alt="Logo"
+                    />{" "}
+                    <br />
+                    <span
+                      className="fw-bold fs-4"
+                      style={{ color: "rgb(32 139 140)" }}
+                    >
+                      JANANI
+                    </span>
+                    <br />
+                    <span>JananiPharmacy@gmail.com</span>
+                    <br />
+                    <span>+91 9989212993</span>
+                    <br />
+                    <span>Singapur Layout, Banglore</span>
+                    <br />
+                  </div>
+                </div>
+
                 <div
-                  className="invoice-rspns"
-                  style={{
-                    boxShadow: " 0px 8px 32px 0px rgba(19, 19, 20, 0.37)",
-                    background: "#f5f6fa",
-                    backdropFilter: "blur(4px)",
-                    padding: "20px",
-                  }}
+                  className="row"
+                  style={{ border: "2px solid", padding: "0px" }}
                 >
-                  <div className="">
-                    <div className="mb-5">
-                      <img
-                        style={{ width: "40px", height: "40px" }}
-                        className="logo me-2 "
-                        src="/img/logo.png"
-                        alt="Logo"
-                      />{" "}
-                      <br />
-                      <span
-                        className="fw-bold fs-4"
-                        style={{ color: "rgb(32 139 140)" }}
-                      >
-                        JANANI
-                      </span>
-                      <br />
-                      <span>JananiPharmacy@gmail.com</span>
-                      <br />
-                      <span>+91 9989212993</span>
-                      <br />
-                      <span>Singapur Layout, Banglore</span>
-                      <br />
+                  <div className="col-sm-4">
+                    <div>
+                      <b>Patient Name : </b>{" "}
+                      {`${ShowAppointmentDetails?.Firstname} ${ShowAppointmentDetails?.Firstname}`}
+                    </div>
+                    <div>
+                      <b>Patient DOB : </b> {ShowAppointmentDetails?.DOB}
                     </div>
                   </div>
-
-                  <div
-                    className="row"
-                    style={{ border: "2px solid", padding: "0px" }}
-                  >
-                    <div className="col-sm-4">
-                      <div>
-                        <b>Patient Name : </b> {`${ShowAppointmentDetails?.Firstname} ${ShowAppointmentDetails?.Firstname}`}
-                      </div>
-                      <div>
-                        <b>Patient DOB : </b> {ShowAppointmentDetails?.DOB}
-                      </div>
+                  <div className="col-sm-4">
+                    <div>
+                      <b>Gender : </b> {ShowAppointmentDetails?.Gender}
                     </div>
-                    <div className="col-sm-4">
-                     
-                      <div>
-                        <b>Gender : </b> {ShowAppointmentDetails?.Gender}
-                      </div>
-                      <div>
-                        <b>Time : </b> {ShowAppointmentDetails?.starttime}
-                        / {ShowAppointmentDetails?.endtime}
-                      </div>
+                    <div>
+                      <b>Time : </b> {ShowAppointmentDetails?.starttime}/{" "}
+                      {ShowAppointmentDetails?.endtime}
                     </div>
-                    <div className="col-sm-4">
-                      <div>
-                        <b>Register Date : </b>
-                        {moment(ShowAppointmentDetails?.createdAt).format("DD/MM/YYYY")}
-                      </div>
-                      <div>
-                        <b>Doctor  : </b> 
-                        {`${ShowAppointmentDetails?.ConsultantDoctor?.Firstname}
+                  </div>
+                  <div className="col-sm-4">
+                    <div>
+                      <b>Register Date : </b>
+                      {moment(ShowAppointmentDetails?.createdAt).format(
+                        "DD/MM/YYYY"
+                      )}
+                    </div>
+                    <div>
+                      <b>Doctor : </b>
+                      {`${ShowAppointmentDetails?.ConsultantDoctor?.Firstname}
                         ${ShowAppointmentDetails?.ConsultantDoctor?.Lastname}
                         `}
-                      </div>
                     </div>
                   </div>
-                  <div className="row mt-2">
-                    <Table bordered>
-                      <thead>
-                        <tr>
-                          <th>Medical Reason</th>
-                          <th>Condition</th>
-                          <th>Note</th>
-                          <th>Address</th>
-                        </tr>
-                      </thead>
-                      <tbody>                      
-                            <tr>
-                              <td>{ShowAppointmentDetails?.medicalReason}</td>
-                              <td>{ShowAppointmentDetails?.Condition}</td>
-                              <td>{ShowAppointmentDetails?.Note}</td>
-                              <td>{ShowAppointmentDetails?.Address1} </td>
-                            </tr>                          
-                      </tbody>
-                    </Table>
-                  </div>
-                  <div>
-                    <p style={{ textAlign: "right" }}>
-                      Amount Paid : {ShowAppointmentDetails?.ConsultantDoctor?.appointmentcharge} /-
-                    </p>
-                    <p style={{ textAlign: "right" }}>
-                      Payment Status : {ShowAppointmentDetails?.payment}
-                    </p>
-                  </div>
-                  <div>
-                    <p style={{ textAlign: "center" }}>
-                      ---------The end of Report---------
-                    </p>
-                  </div>
-                  <hr />
-                  <div className="text-center text-dark ">
-                    <p>
-                       Invoice Generated By: Janani Hospital, Contact :
-                      JananiHospital@gamil.com{" "}
-                    </p>
-                  </div>
+                </div>
+                <div className="row mt-2">
+                  <Table bordered>
+                    <thead>
+                      <tr>
+                        <th>Medical Reason</th>
+                        <th>Condition</th>
+                        <th>Note</th>
+                        <th>Address</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>{ShowAppointmentDetails?.medicalReason}</td>
+                        <td>{ShowAppointmentDetails?.Condition}</td>
+                        <td>{ShowAppointmentDetails?.Note}</td>
+                        <td>{ShowAppointmentDetails?.Address1} </td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
+                <div>
+                  <p style={{ textAlign: "right" }}>
+                    Amount Paid :{" "}
+                    {
+                      ShowAppointmentDetails?.ConsultantDoctor
+                        ?.appointmentcharge
+                    }{" "}
+                    /-
+                  </p>
+                  <p style={{ textAlign: "right" }}>
+                    Payment Status : {ShowAppointmentDetails?.payment}
+                  </p>
+                </div>
+                <div>
+                  <p style={{ textAlign: "center" }}>
+                    ---------The end of Report---------
+                  </p>
+                </div>
+                <hr />
+                <div className="text-center text-dark ">
+                  <p>
+                    Invoice Generated By: Janani Hospital, Contact :
+                    JananiHospital@gamil.com{" "}
+                  </p>
                 </div>
               </div>
             </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose3}>
-              Close
-            </Button>
-            <Button variant="primary" onClick={handleprint}>
-              Print
-            </Button>
-          </Modal.Footer>
-        </Modal>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose3}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleprint}>
+            Print
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <Modal
         show={show1}
@@ -1206,7 +1231,7 @@ const PaymentUpdate = async()=>{
                       {uniqueDate}
                     </option>
                   ))} */}
-                   {DoctorReschedule?.scheduleList
+              {DoctorReschedule?.scheduleList
                 ?.filter(
                   (schedd) =>
                     moment(schedd?.scheduleDate).isSameOrAfter(
@@ -1249,14 +1274,13 @@ const PaymentUpdate = async()=>{
               ))}
             </Form.Select>
           </div>
-          
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose1}>
             Close
           </Button>
           <Button onClick={UpdateBookingAppointment} variant="success">
-          Reschedule
+            Reschedule
           </Button>
         </Modal.Footer>
       </Modal>
