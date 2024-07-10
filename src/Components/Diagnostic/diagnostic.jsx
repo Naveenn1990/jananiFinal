@@ -110,6 +110,39 @@ export const Diagnostic = () => {
   const [generalRefVal, setgeneralRefVal] = useState("");
   const [patientReportVal, setpatientReportVal] = useState("");
   let [selectedOptions, setSelectedOptions] = useState([]);
+
+  function ValidateEmail(mail) {
+    if (
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+        mail
+      )
+    ) {
+      return true;
+    }
+    alert("You have entered an invalid email address!");
+    return false;
+  }
+
+  function validatename(inputtxt) {
+    var phoneno = /^[a-zA-Z ]{2,30}$/; // var no = /^\d{10}$/;
+    if (inputtxt.match(phoneno)) {
+      return true;
+    } else {
+      alert("You have entered an invalid name!");
+      return false;
+    }
+  }
+
+  function phonenumber(inputtxt) {
+    var phoneno = /^[6-9]\d{9}$/; // var no = /^\d{10}$/;
+    if (inputtxt.match(phoneno)) {
+      return true;
+    } else {
+      alert("You have entered an invalid mobile number!");
+      return false;
+    }
+  }
+
   const AddLabTest = (Labtests) => {
     setSelectedOptions(
       Labtests?.map((val) => {
@@ -129,57 +162,69 @@ export const Diagnostic = () => {
   };
 
   const bookLabTest = async () => {
-    let obj;
-    if (
-      labUserDetails &&
-      JSON.parse(labUserDetails)?.registrationType === "IPD"
-    ) {
-      obj = {
-        causeid: causeid,
-        patientid: JSON.parse(labUserDetails)?._id,
-        patientname: patientname,
-        Phoneno: Phoneno,
-        email: email,
-        testDate: testDate,
-        Labtests: selectedOptions,
-      };
-    } else if (
-      labUserDetails &&
-      JSON.parse(labUserDetails)?.registrationType === "OPD"
-    ) {
-      obj = {
-        patientid: JSON.parse(labUserDetails)?._id,
-        patientname: patientname,
-        Phoneno: Phoneno,
-        email: email,
-        testDate: testDate,
-        Labtests: selectedOptions,
-      };
-    } else if (!labUserDetails) {
-      obj = {
-        patientname: patientname,
-        Phoneno: Phoneno,
-        email: email,
-        testDate: testDate,
-        Labtests: selectedOptions,
-      };
-    }
-    try {
-      const config = {
-        url: "/user/bookHospitalLabTest",
-        method: "post",
-        baseURL: "http://localhost:8521/api",
-        headers: { "content-type": "application/json" },
-        data: obj,
-      };
-      let res = await axios(config);
-      if (res.status === 200 || res.status === 201) {
-        alert("Lab test booked");
-        thankyouShow();
+    if (!patientname || !Phoneno || !email || !testDate) {
+      alert("Please fill all the filds");
+    } else if (selectedOptions?.length == 0) {
+      alert("Please select Lab Tests");
+    } else {
+      let obj;
+      if (
+        labUserDetails &&
+        JSON.parse(labUserDetails)?.registrationType === "IPD"
+      ) {
+        obj = {
+          causeid: causeid,
+          patientid: JSON.parse(labUserDetails)?._id,
+          patientname: patientname,
+          Phoneno: Phoneno,
+          email: email,
+          testDate: testDate,
+          Labtests: selectedOptions,
+        };
+      } else if (
+        labUserDetails &&
+        JSON.parse(labUserDetails)?.registrationType === "OPD"
+      ) {
+        obj = {
+          patientid: JSON.parse(labUserDetails)?._id,
+          patientname: patientname,
+          Phoneno: Phoneno,
+          email: email,
+          testDate: testDate,
+          Labtests: selectedOptions,
+        };
+      } else if (!labUserDetails) {
+        obj = {
+          patientname: patientname,
+          Phoneno: Phoneno,
+          email: email,
+          testDate: testDate,
+          Labtests: selectedOptions,
+        };
       }
-    } catch (error) {
-      console.log(error);
-      return alert(error.response.data.error);
+      try {
+        if (
+          validatename(patientname) &&
+          ValidateEmail(email) &&
+          phonenumber(Phoneno)
+        ) {
+          const config = {
+            url: "/user/bookHospitalLabTest",
+            method: "post",
+            baseURL: "http://localhost:8521/api",
+            headers: { "content-type": "application/json" },
+            data: obj,
+          };
+          let res = await axios(config);
+          if (res.status === 200 || res.status === 201) {
+            alert("Lab test booked");
+            thankyouShow();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        return alert(error.response.data.error);
+      }
     }
   };
 
@@ -568,7 +613,13 @@ export const Diagnostic = () => {
               <Col md={6} className="p-2">
                 <FloatingLabel controlId="floatingMobile" label="Mobile">
                   <Form.Control
-                    type="tel"
+                    type="tele"
+                    maxLength={10}
+                    onKeyPress={(event) => {
+                      if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
                     value={Phoneno}
                     placeholder="Enter your mobile number"
                     onChange={(e) => setPhoneno(e.target.value)}

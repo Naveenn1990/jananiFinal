@@ -224,6 +224,20 @@ export const Home = () => {
       });
   };
 
+  const [PatientList, setPatientList] = useState([]);
+  const getsetPatient = () => {
+    axios
+      .get("http://localhost:8521/api/user/getPatientList")
+      .then(function (response) {
+        // handle success
+        setPatientList(response.data.UsersInfo);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     getBanner();
     GetAboutUs();
@@ -235,6 +249,7 @@ export const Home = () => {
     getService();
     getPharmacyBan();
     getDoctors();
+    getsetPatient();
   }, []);
 
   const [selectedDepartment, setselectedDepartment] = useState("");
@@ -267,10 +282,15 @@ export const Home = () => {
     if (Department && Doctors?.length > 0) {
       const xyz = Doctors?.filter((doc) => doc?.Department === Department);
       setselectedDoctorList1(xyz);
+      setTOA("");
     }
   }, [Department]);
 
-  const Doctorschedule = Doctors?.find((doc) => doc._id === Doctor);
+  const [Doctorschedule, setDoctorschedule] = useState();
+  useEffect(() => {
+    setDoctorschedule(Doctors?.find((doc) => doc._id === Doctor));
+    setTOA("");
+  }, [Doctor, Department]);
 
   const formdata = new FormData();
   const generateRandomNumber = () => {
@@ -313,6 +333,87 @@ export const Home = () => {
     }
   }
 
+  const [PatientType, setPatientType] = useState("New Patient");
+  // const BookAppointment = async (e) => {
+  //   e.preventDefault();
+  //   if (
+  //     !Fname ||
+  //     !Lname ||
+  //     !Gender ||
+  //     !DOB ||
+  //     !Pnum ||
+  //     !Email ||
+  //     !address ||
+  //     !Doctor ||
+  //     !DOA ||
+  //     !TOA
+  //   ) {
+  //     alert("Please fill all the fields");
+  //   } else {
+  //     const srt = TOA?.split("-");
+  //     formdata.append("token", prefix + randomNumber);
+  //     formdata.append("Firstname", Fname);
+  //     formdata.append("Lastname", Lname);
+  //     formdata.append("Gender", Gender);
+  //     formdata.append("DOB", DOB);
+  //     formdata.append("PhoneNumber", Pnum);
+  //     formdata.append("Email", Email);
+  //     formdata.append("Address1", address);
+  //     formdata.append("ConsultantDoctor", Doctor);
+  //     formdata.append("Dateofappointment", DOA);
+  //     formdata.append("starttime", srt[0]);
+  //     formdata.append("endtime", srt[1]);
+  //     formdata.append("ScheduleId", srt[2]);
+  //     try {
+  //       if (validatename(Fname) && ValidateEmail(Email) && phonenumber(Pnum)) {
+  //         const config = {
+  //           url: "/user/addappointment",
+  //           method: "post",
+  //           baseURL: "http://localhost:8521/api",
+  //           headers: { "content-type": "multipart/form-data" },
+  //           data: formdata,
+  //         };
+  //         let res = await axios(config);
+  //         if (res.status === 200) {
+  //           console.log(res.data);
+  //           console.log(res.data.success);
+  //           alert("Appointment Added");
+  //           window.location.reload();
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.log(error.response);
+  //       if (error.response) {
+  //         alert(error.response.data.error);
+  //       }
+  //     }
+  //   }
+  // };
+
+  const uniqueDates = new Set();
+
+  const [selecteTimearray, setselecteTimearray] = useState([]);
+  useEffect(() => {
+    if (DOA) {
+      const asd = Doctorschedule?.scheduleList.filter(
+        (item) => item.scheduleDate == DOA && item.bookingstatus === "Vacant"
+      );
+      setselecteTimearray(asd);
+    }
+  }, [DOA]);
+
+  const [selected_Patient, setselected_Patient] = useState();
+  const [PayientId, setPayientId] = useState();
+
+  const checkPatient = () => {
+    const xyz = PatientList.find((item) => item?.PatientId === PayientId);
+    if (xyz) {
+      setselected_Patient(xyz);
+    } else {
+      alert("Please check Patient ID");
+    }
+  };
+
   const BookAppointment = async (e) => {
     e.preventDefault();
     if (
@@ -338,6 +439,7 @@ export const Home = () => {
       formdata.append("PhoneNumber", Pnum);
       formdata.append("Email", Email);
       formdata.append("Address1", address);
+      formdata.set("ConsultationFee", Doctorschedule?.appointmentcharge);
       formdata.append("ConsultantDoctor", Doctor);
       formdata.append("Dateofappointment", DOA);
       formdata.append("starttime", srt[0]);
@@ -346,7 +448,7 @@ export const Home = () => {
       try {
         if (validatename(Fname) && ValidateEmail(Email) && phonenumber(Pnum)) {
           const config = {
-            url: "/user/addappointment",
+            url: "/user/addPatient",
             method: "post",
             baseURL: "http://localhost:8521/api",
             headers: { "content-type": "multipart/form-data" },
@@ -368,20 +470,67 @@ export const Home = () => {
       }
     }
   };
-  const uniqueDates = new Set();
 
-  const [selecteTimearray, setselecteTimearray] = useState([]);
-  useEffect(() => {
-    if (DOA) {
-      const asd = Doctorschedule?.scheduleList.filter(
-        (item) => item.scheduleDate == DOA && item.bookingstatus === "Vacant"
-      );
-      setselecteTimearray(asd);
+  const BookAppointmentForExixtingPatients = async (e) => {
+    e.preventDefault();
+
+    if (!Department) {
+      return alert("Please select Department");
     }
-  }, [DOA]);
+    if (!Doctor) {
+      return alert("Please select Doctor");
+    }
+    if (!DOA) {
+      return alert("Please select Date of Appointment");
+    }
+    if (!TOA) {
+      return alert("Please select Time of Appointment");
+    }
+    try {
+      const srt = TOA?.split("-");
+      const config = {
+        url: "/user/BookAppointmentForExixtingPatients",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        // headers: { "content-type": "multipart/form-data" },
+        data: {
+          PatientId: selected_Patient?.PatientId,
+          Firstname: selected_Patient?.Firstname,
+          Lastname: selected_Patient?.Lastname,
+          Gender: selected_Patient?.Gender,
+          DOB: selected_Patient?.DOB,
+          PhoneNumber: selected_Patient?.PhoneNumber,
+          alternatePhoneNumber: selected_Patient?.alternatePhoneNumber,
+          Email: selected_Patient?.Email,
+          ConsultationFee: Doctorschedule?.appointmentcharge,
+          token: prefix + randomNumber,
+          ConsultantDoctor: Doctor,
+          Dateofappointment: DOA,
+          starttime: srt[0],
+          endtime: srt[1],
+          ScheduleId: srt[2],
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        console.log(res.data.success);
+        alert("Appointment Booked Successfully");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.log(error.response.data.error);
+      if (error.response) {
+        alert(error.response.data.error);
+      }
+    }
+  };
 
-  console.log("Doctors", Doctor, Doctorschedule, DOA);
-  console.log("selecteTimearray", selecteTimearray);
+  console.log("PatientList", PatientList);
+  console.log("setPatientType", PatientType);
+  console.log("selected_Patient", selected_Patient);
+  // console.log("Doctors", Doctor, Doctorschedule, DOA);
+  // console.log("selecteTimearray", selecteTimearray);
+
   return (
     <div>
       <ProgressLine
@@ -497,140 +646,171 @@ export const Home = () => {
               <h4 className="fw-bold mb-4 text-light text-center">
                 BOOK APPOINTMENT
               </h4>
-              <div className="col-lg-3">
-                <form>
-                  <label className="mb-1 text-light" for="name">
-                    Patient First Name
-                  </label>
-                  <br />
+              <div
+                style={{
+                  width: "50%",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
+                className="row text-center"
+              >
+                <div style={{ color: "white" }} className="col-md-6">
                   <input
-                    className="home-input mb-2"
-                    type="text"
-                    placeholder="Name"
-                    onChange={(e) => setFname(e.target.value)}
+                    type="radio"
+                    name="patientType"
+                    value="New Patient"
+                    checked={PatientType === "New Patient"}
+                    onChange={() => setPatientType("New Patient")}
                   />
-                  <br />
-                  <label className="mb-1 text-light" for="date">
-                    Date of Birth
-                  </label>
+                  New Patient's
+                </div>
+                <div style={{ color: "white" }} className="col-md-6">
                   <input
-                    className="home-input mb-2"
-                    type="date"
-                    min={DOB}
-                    onChange={(e) => setDOB(e.target.value)}
+                    type="radio"
+                    name="patientType"
+                    value="Existing Patient"
+                    checked={PatientType === "Existing Patient"}
+                    onChange={() => setPatientType("Existing Patient")}
                   />
-                  {/* date logic implemented  */}
-                </form>
+                  Existing Patient's
+                </div>
               </div>
+              {PatientType === "New Patient" ? (
+                <div className="row mt-2">
+                  <div className="col-lg-3">
+                    <form>
+                      <label className="mb-1 text-light" for="name">
+                        Patient First Name
+                      </label>
+                      <br />
+                      <input
+                        className="home-input mb-2"
+                        type="text"
+                        placeholder="Name"
+                        onChange={(e) => setFname(e.target.value)}
+                      />
+                      <br />
+                      <label className="mb-1 text-light" for="date">
+                        Date of Birth
+                      </label>
+                      <input
+                        className="home-input mb-2"
+                        type="date"
+                        min={DOB}
+                        onChange={(e) => setDOB(e.target.value)}
+                      />
+                      {/* date logic implemented  */}
+                    </form>
+                  </div>
 
-              <div className="col-lg-3 mb-2">
-                <form className="">
-                  <label className="mb-1 text-light" for="number">
-                    Patient Last Name
-                  </label>
-                  <br />
-                  <input
-                    className="home-input mb-2"
-                    type="text"
-                    placeholder="Name"
-                    onChange={(e) => setLname(e.target.value)}
-                  />
-                  <br />
+                  <div className="col-lg-3 mb-2">
+                    <form className="">
+                      <label className="mb-1 text-light" for="number">
+                        Patient Last Name
+                      </label>
+                      <br />
+                      <input
+                        className="home-input mb-2"
+                        type="text"
+                        placeholder="Name"
+                        onChange={(e) => setLname(e.target.value)}
+                      />
+                      <br />
 
-                  <label className="mb-1 text-light" for="name">
-                    Select Gender
-                  </label>
-                  <br />
-                  <Form.Select
-                    aria-label="Default select example"
-                    onChange={(e) => setGender(e.target.value)}
-                  >
-                    <option> Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Others">Others</option>
-                  </Form.Select>
-                </form>
-              </div>
+                      <label className="mb-1 text-light" for="name">
+                        Select Gender
+                      </label>
+                      <br />
+                      <Form.Select
+                        aria-label="Default select example"
+                        onChange={(e) => setGender(e.target.value)}
+                      >
+                        <option> Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Others">Others</option>
+                      </Form.Select>
+                    </form>
+                  </div>
 
-              <div className="col-lg-3">
-                <form>
-                  <label className="mb-1 text-light" for="number">
-                    Phone Number
-                  </label>
-                  <br />
-                  <input
-                    className="home-input mb-2"
-                    type="tele"
-                    maxLength={10}
-                    onKeyPress={(event) => {
-                      if (!/[0-9]/.test(event.key)) {
-                        event.preventDefault();
-                      }
-                    }}
-                    placeholder="9123456789"
-                    onChange={(e) => setPnum(e.target.value)}
-                  />
-                  <br />
-                  <label className="mb-1 text-light" for="name">
-                    Department
-                  </label>
-                  <br />
-                  <Form.Select
-                    aria-label="Default select example"
-                    onChange={(e) => setDepartment(e.target.value)}
-                  >
-                    <option>Select</option>
-                    {GetDepartmentData?.map((dep) => (
-                      <option value={dep?.DepartmentName}>
-                        {dep?.DepartmentName}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </form>
-              </div>
-              <div className="col-lg-3">
-                <form>
-                  <label className="mb-1 text-light" for="email">
-                    Email address
-                  </label>
-                  <br />
-                  <input
-                    className="home-input mb-2"
-                    type="email"
-                    placeholder="example@gmail.com"
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <br />
-                  <label className="mb-1 text-light" for="name">
-                    Doctor
-                  </label>
-                  <br />
-                  <Form.Select
-                    aria-label="Default select example"
-                    onChange={(e) => setDoctor(e.target.value)}
-                  >
-                    <option>Select</option>
-                    {selectedDoctorList1?.map((doc) => (
-                      <option value={doc?._id}>
-                        {doc?.Firstname}&nbsp;{doc?.Lastname}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </form>
-              </div>
-              <div className="col-lg-3">
-                <form>
-                  <label className="mb-1 text-light" for="email">
-                    Date of Appointment
-                  </label>
-                  <br />
-                  <Form.Select
-                    aria-label="Default select example"
-                    onChange={(e) => setDOA(e.target.value)}
-                  >
-                    <option>Select</option>
-                    {/* {Doctorschedule?.scheduleList
+                  <div className="col-lg-3">
+                    <form>
+                      <label className="mb-1 text-light" for="number">
+                        Phone Number
+                      </label>
+                      <br />
+                      <input
+                        className="home-input mb-2"
+                        type="tele"
+                        maxLength={10}
+                        onKeyPress={(event) => {
+                          if (!/[0-9]/.test(event.key)) {
+                            event.preventDefault();
+                          }
+                        }}
+                        placeholder="9123456789"
+                        onChange={(e) => setPnum(e.target.value)}
+                      />
+                      <br />
+                      <label className="mb-1 text-light" for="name">
+                        Department
+                      </label>
+                      <br />
+                      <Form.Select
+                        aria-label="Default select example"
+                        onChange={(e) => setDepartment(e.target.value)}
+                      >
+                        <option>Select</option>
+                        {GetDepartmentData?.map((dep) => (
+                          <option value={dep?.DepartmentName}>
+                            {dep?.DepartmentName}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </form>
+                  </div>
+                  <div className="col-lg-3">
+                    <form>
+                      <label className="mb-1 text-light" for="email">
+                        Email address
+                      </label>
+                      <br />
+                      <input
+                        className="home-input mb-2"
+                        type="email"
+                        placeholder="example@gmail.com"
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                      <br />
+                      <label className="mb-1 text-light" for="name">
+                        Doctor
+                      </label>
+                      <br />
+                      <Form.Select
+                        aria-label="Default select example"
+                        onChange={(e) => setDoctor(e.target.value)}
+                      >
+                        <option>Select</option>
+                        {selectedDoctorList1?.map((doc) => (
+                          <option value={doc?._id}>
+                            {doc?.Firstname}&nbsp;{doc?.Lastname}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </form>
+                  </div>
+                  <div className="col-lg-3">
+                    <form>
+                      <label className="mb-1 text-light" for="email">
+                        Date of Appointment
+                      </label>
+                      <br />
+                      <Form.Select
+                        aria-label="Default select example"
+                        onChange={(e) => setDOA(e.target.value)}
+                      >
+                        <option>Select</option>
+                        {/* {Doctorschedule?.scheduleList
                       ?.filter(
                         (schedd) =>
                           moment(schedd?.scheduleDate).format("DD-MM-YYYY") >=
@@ -654,46 +834,46 @@ export const Home = () => {
                         }
                         return null; // Return null for duplicates, so they are not rendered
                       })} */}
-                    {Doctorschedule?.scheduleList
-                      ?.filter(
-                        (schedd) =>
-                          moment(schedd?.scheduleDate).isSameOrAfter(
-                            moment(),
-                            "day"
-                          ) && schedd?.bookingstatus === "Vacant"
-                      )
-                      ?.map((shedul) => {
-                        const formattedDate = moment(
-                          shedul?.scheduleDate
-                        ).format("DD-MM-YYYY");
-                        if (!uniqueDates.has(formattedDate)) {
-                          uniqueDates.add(formattedDate);
-                          return (
-                            <option
-                              value={shedul?.scheduleDate}
-                              key={shedul?.scheduleDate}
-                            >
-                              {formattedDate}
-                            </option>
-                          );
-                        }
-                        return null; // Return null for duplicates, so they are not rendered
-                      })}
-                  </Form.Select>
-                </form>
-              </div>
-              <div className="col-lg-3">
-                <form>
-                  <label className="mb-1 text-light" for="email">
-                    Time of Appointment
-                  </label>
-                  <br />
-                  <Form.Select
-                    aria-label="Default select example"
-                    onChange={(e) => setTOA(e.target.value)}
-                  >
-                    <option>Select</option>
-                    {/* {Doctorschedule?.scheduleList
+                        {Doctorschedule?.scheduleList
+                          ?.filter(
+                            (schedd) =>
+                              moment(schedd?.scheduleDate).isSameOrAfter(
+                                moment(),
+                                "day"
+                              ) && schedd?.bookingstatus === "Vacant"
+                          )
+                          ?.map((shedul) => {
+                            const formattedDate = moment(
+                              shedul?.scheduleDate
+                            ).format("DD-MM-YYYY");
+                            if (!uniqueDates.has(formattedDate)) {
+                              uniqueDates.add(formattedDate);
+                              return (
+                                <option
+                                  value={shedul?.scheduleDate}
+                                  key={shedul?.scheduleDate}
+                                >
+                                  {formattedDate}
+                                </option>
+                              );
+                            }
+                            return null; // Return null for duplicates, so they are not rendered
+                          })}
+                      </Form.Select>
+                    </form>
+                  </div>
+                  <div className="col-lg-3">
+                    <form>
+                      <label className="mb-1 text-light" for="email">
+                        Time of Appointment
+                      </label>
+                      <br />
+                      <Form.Select
+                        aria-label="Default select example"
+                        onChange={(e) => setTOA(e.target.value)}
+                      >
+                        <option>Select</option>
+                        {/* {Doctorschedule?.scheduleList
                       ?.filter(
                         (schedd) =>
                           moment(schedd?.scheduleDate).format("DD-MM-YYYY") >=
@@ -708,39 +888,238 @@ export const Home = () => {
                         </option>
                       ))} */}
 
-                    {selecteTimearray?.map((shedul) => (
-                      <option
-                        value={`${shedul?.startTime}-${shedul?.endTime}-${shedul?._id}`}
+                        {selecteTimearray?.map((shedul) => (
+                          <option
+                            value={`${shedul?.startTime}-${shedul?.endTime}-${shedul?._id}`}
+                          >
+                            {/* <option value={shedul?._id}> */}
+                            {shedul?.startTime}-{shedul?.endTime}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </form>
+                  </div>
+                  <div className="col-lg-6">
+                    <form>
+                      <label className="mb-1 text-light" for="email">
+                        Address
+                      </label>
+                      <br />
+                      <input
+                        className="home-input mb-2"
+                        type="text"
+                        placeholder="Address"
+                        onChange={(e) => setaddress(e.target.value)}
+                      />
+                    </form>
+                  </div>
+                  <div className="col-lg-12 text-center">
+                    <a>
+                      <Button
+                        className="red-btn-2 mt-4 mb-2"
+                        onClick={(e) => BookAppointment(e)}
+                      ></Button>
+                    </a>
+                  </div>
+                </div>
+              ) : !selected_Patient ? (
+                <div className="row mt-2 text-center">
+                  <div
+                    className="col-lg-4"
+                    style={{ marginLeft: "auto", marginRight: "auto" }}
+                  >
+                    <form>
+                      <label className="mb-1 text-light" for="name">
+                        Enter Patient ID
+                      </label>
+                      <br />
+                      <input
+                        className="home-input mb-2"
+                        type="text"
+                        placeholder="Patient ID"
+                        onChange={(e) => setPayientId(e.target.value)}
+                      />
+                    </form>
+                  </div>
+                  <div className="col-lg-12 text-center">
+                    <a>
+                      <Button
+                        className="red-btn-check mt-4 mb-2"
+                        onClick={checkPatient}
+                      ></Button>
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <div className="row mt-2">
+                  <div className="col-lg-3">
+                    <form>
+                      <label className="mb-1 text-light" for="name">
+                        Patient First Name
+                      </label>
+                      <br />
+                      <input
+                        className="home-input mb-2"
+                        type="text"
+                        placeholder="Name"
+                        value={selected_Patient?.Firstname}
+                        // onChange={(e) => setFname(e.target.value)}
+                      />
+                      <br />
+                      <label className="mb-1 text-light" for="name">
+                        Department
+                      </label>
+                      <br />
+                      <Form.Select
+                        aria-label="Default select example"
+                        onChange={(e) => setDepartment(e.target.value)}
                       >
-                        {/* <option value={shedul?._id}> */}
-                        {shedul?.startTime}-{shedul?.endTime}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </form>
-              </div>
-              <div className="col-lg-6">
-                <form>
-                  <label className="mb-1 text-light" for="email">
-                    Address
-                  </label>
-                  <br />
-                  <input
-                    className="home-input mb-2"
-                    type="text"
-                    placeholder="Address"
-                    onChange={(e) => setaddress(e.target.value)}
-                  />
-                </form>
-              </div>
-              <div className="col-lg-12 text-center">
-                <a href="#">
-                  <Button
-                    className="red-btn-2 mt-4 mb-2"
-                    onClick={(e) => BookAppointment(e)}
-                  ></Button>
-                </a>
-              </div>
+                        <option>Select</option>
+                        {GetDepartmentData?.map((dep) => (
+                          <option value={dep?.DepartmentName}>
+                            {dep?.DepartmentName}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </form>
+                  </div>
+
+                  <div className="col-lg-3 mb-2">
+                    <form className="">
+                      <label className="mb-1 text-light" for="number">
+                        Patient Last Name
+                      </label>
+                      <br />
+                      <input
+                        className="home-input mb-2"
+                        type="text"
+                        value={selected_Patient?.Lastname}
+                        // onChange={(e) => setLname(e.target.value)}
+                      />
+                      <br />
+
+                      <label className="mb-1 text-light" for="name">
+                        Doctor
+                      </label>
+                      <br />
+                      <Form.Select
+                        aria-label="Default select example"
+                        onChange={(e) => setDoctor(e.target.value)}
+                      >
+                        <option>Select</option>
+                        {selectedDoctorList1?.map((doc) => (
+                          <option value={doc?._id}>
+                            {doc?.Firstname}&nbsp;{doc?.Lastname}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </form>
+                  </div>
+
+                  <div className="col-lg-3">
+                    <form>
+                      <label className="mb-1 text-light" for="number">
+                        Phone Number
+                      </label>
+                      <br />
+                      <input
+                        className="home-input mb-2"
+                        type="tele"
+                        // maxLength={10}
+                        // onKeyPress={(event) => {
+                        //   if (!/[0-9]/.test(event.key)) {
+                        //     event.preventDefault();
+                        //   }
+                        // }}
+                        // placeholder="9123456789"
+                        // onChange={(e) => setPnum(e.target.value)}
+                        value={selected_Patient?.PhoneNumber}
+                      />
+                      <br />
+                      <label className="mb-1 text-light" for="email">
+                        Date of Appointment
+                      </label>
+                      <br />
+                      <Form.Select
+                        aria-label="Default select example"
+                        onChange={(e) => setDOA(e.target.value)}
+                      >
+                        <option>Select</option>
+
+                        {Doctorschedule?.scheduleList
+                          ?.filter(
+                            (schedd) =>
+                              moment(schedd?.scheduleDate).isSameOrAfter(
+                                moment(),
+                                "day"
+                              ) && schedd?.bookingstatus === "Vacant"
+                          )
+                          ?.map((shedul) => {
+                            const formattedDate = moment(
+                              shedul?.scheduleDate
+                            ).format("DD-MM-YYYY");
+                            if (!uniqueDates.has(formattedDate)) {
+                              uniqueDates.add(formattedDate);
+                              return (
+                                <option
+                                  value={shedul?.scheduleDate}
+                                  key={shedul?.scheduleDate}
+                                >
+                                  {formattedDate}
+                                </option>
+                              );
+                            }
+                            return null; // Return null for duplicates, so they are not rendered
+                          })}
+                      </Form.Select>
+                    </form>
+                  </div>
+                  <div className="col-lg-3">
+                    <form>
+                      <label className="mb-1 text-light" for="email">
+                        Email address
+                      </label>
+                      <br />
+                      <input
+                        className="home-input mb-2"
+                        // type="email"
+                        // placeholder="example@gmail.com"
+                        // onChange={(e) => setEmail(e.target.value)}
+                        value={selected_Patient?.Email}
+                      />
+                      <br />
+                      <label className="mb-1 text-light" for="email">
+                        Time of Appointment
+                      </label>
+                      <br />
+                      <Form.Select
+                        aria-label="Default select example"
+                        onChange={(e) => setTOA(e.target.value)}
+                      >
+                        <option>Select</option>
+
+                        {selecteTimearray?.map((shedul) => (
+                          <option
+                            value={`${shedul?.startTime}-${shedul?.endTime}-${shedul?._id}`}
+                          >
+                            {/* <option value={shedul?._id}> */}
+                            {shedul?.startTime}-{shedul?.endTime}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </form>
+                  </div>
+
+                  <div className="col-lg-12 text-center">
+                    <a>
+                      <Button
+                        className="red-btn-2 mt-4 mb-2"
+                        onClick={(e) => BookAppointmentForExixtingPatients(e)}
+                      ></Button>
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
             {/* </Nav.Item> */}
           </div>
