@@ -56,7 +56,7 @@ export default function HospitalLabPanel() {
           ViewModal
         ) : (
           <div className="row">
-            {admin?.labTechnician ? (
+            {/* {admin?.labTechnician ? (
               <>
                 <div className="col-lg-4">
                   {" "}
@@ -89,7 +89,7 @@ export default function HospitalLabPanel() {
               </>
             ) : (
               <></>
-            )}
+            )} */}
 
             {admin?.labManagement ? (
               <>

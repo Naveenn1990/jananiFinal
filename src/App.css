@@ -2,6 +2,20 @@ p {
   margin-bottom: 0 !important;
   font-family: math;
 }
+.xxx .pagination{
+  display: flex !important;
+    gap: 15px !important;
+} 
+.xxx .pagination li{
+ border: 1px solid black;
+ padding:5px;
+}
+.xxx .pagination .active{
+  border: 1px solid #20958c;
+  padding:5px;
+  background-color: #20958c;
+  color: white;
+ }
 
 .yesButtonHover:hover {
   background-color: red !important;
@@ -525,6 +539,61 @@ textarea {
   background-color: #cf522cef;
   color: #fff;
 }
+
+
+.red-btn-check {
+  position: relative;
+  width: 214px;
+  height: 40px;
+  padding: 20px 20px;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 24px 24px;
+  background-color: rgb(211 39 40) !important;
+  color: #000;
+  font-size: 15px;
+  letter-spacing: 1px;
+  outline: none;
+  cursor: pointer;
+  line-height: 20px;
+}
+
+.red-btn-check::before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "CHECK";
+  transition: all 0.3s;
+}
+
+.red-btn-check::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "CHECK";
+  transition: all 0.3s;
+}
+
+.red-btn-check:hover::before {
+  top: -60px;
+}
+
+.red-btn-check:hover::after {
+  top: 0;
+  background-color: #cf522cef;
+  color: #fff;
+}
+
 
 .red-btn-1 {
   position: relative;

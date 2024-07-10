@@ -101,7 +101,7 @@ export const AppointmentList = () => {
       alert("Enter file name to export");
     }
   };
-
+  console.log("data", data);
   return (
     <div>
       <Navbar expand="lg" style={{ backgroundColor: "#dae1f3" }}>

@@ -25,6 +25,12 @@ export default function Hospitallab() {
   const handleClose6 = () => setShow6(false);
   const handleShow6 = () => setShow6(true);
 
+  // ================ show Hospital lab test description=======================
+  const [showTestDetails, setShowTestDetails] = useState("");
+  const [show7, setShow7] = useState(false);
+  const handleClose7 = () => setShow7(false);
+  const handleShow7 = () => setShow7(true);
+
   const [vialneededArr, setvialneededArr] = useState([]);
   const [ShowvialDetailsModal, setShowvialDetailsModal] = useState(false);
   const handleClosevialDetailsModal = () => setShowvialDetailsModal(false);
@@ -56,6 +62,7 @@ export default function Hospitallab() {
   // const [beforeFoodRefVal, setbeforeFoodRefVal] = useState("");
   // const [afterFoodRefVal, setafterFoodRefVal] = useState("");
   const [generalRefVal, setgeneralRefVal] = useState("");
+  const [testDescription, settestDescription] = useState("");
   const [tat, settat] = useState("");
   const [testImg, settestImg] = useState({});
   const [vialsneeded, setvialsneeded] = useState([]);
@@ -101,6 +108,7 @@ export default function Hospitallab() {
       testImg,
       vialsneeded: JSON.stringify(vialsneeded),
       tat,
+      testDescription,
     };
     try {
       const config = {
@@ -129,6 +137,7 @@ export default function Hospitallab() {
         setvialsneeded([]);
         setshowvialsneeded([]);
         setaddedVialObj("");
+        settestDescription("");
       }
     } catch (err) {
       console.log(err);
@@ -150,6 +159,7 @@ export default function Hospitallab() {
       generalRefVal,
       testImg,
       tat,
+      testDescription,
     };
     try {
       const config = {
@@ -176,6 +186,7 @@ export default function Hospitallab() {
         setvialsneeded([]);
         setshowvialsneeded([]);
         setaddedVialObj("");
+        settestDescription("");
       }
     } catch (error) {
       console.log(error);
@@ -211,6 +222,7 @@ export default function Hospitallab() {
         setvialsneeded([]);
         setshowvialsneeded([]);
         setaddedVialObj("");
+        settestDescription("");
       }
     } catch (error) {
       console.log(error);
@@ -562,8 +574,8 @@ export default function Hospitallab() {
                   Turn Around Time(TAT)
                 </label>
                 <input
-                  placeholder="Turn Around Time"
-                  type="string"
+                  placeholder="Turn Around Time (In Hours)"
+                  type="number"
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -574,6 +586,33 @@ export default function Hospitallab() {
                   value={tat}
                   onChange={(e) => settat(e.target.value)}
                 ></input>
+              </div>
+
+              <div className="col-lg-12" style={{ marginTop: "4%" }}>
+                <label
+                  style={{
+                    color: "white",
+                    fontWeight: "400",
+                    fontSize: "18px",
+                  }}
+                >
+                  Test Description
+                </label>
+                <textarea
+                  cols={5}
+                  rows={5}
+                  placeholder="Test Description"
+                  type="text"
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                  value={testDescription}
+                  onChange={(e) => settestDescription(e.target.value)}
+                ></textarea>
               </div>
 
               <div className="col-lg-12" style={{ marginTop: "4%" }}>
@@ -954,8 +993,8 @@ export default function Hospitallab() {
                   Turn Around Time(TAT)
                 </label>
                 <input
-                  placeholder={View?.tat}
-                  type="string"
+                  placeholder={`${View?.tat} Hours`}
+                  type="number"
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -966,6 +1005,35 @@ export default function Hospitallab() {
                   value={tat}
                   onChange={(e) => settat(e.target.value)}
                 ></input>
+              </div>
+
+              <div className="col-lg-12" style={{ marginTop: "4%" }}>
+                <label
+                  style={{
+                    color: "white",
+                    fontWeight: "400",
+                    fontSize: "18px",
+                  }}
+                >
+                  Test Description
+                </label>
+                <textarea
+                  cols={5}
+                  rows={5}
+                  placeholder={`${View?.testDescription}`}
+                  type="text"
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                  value={testDescription}
+                  onChange={(e) => settestDescription(e.target.value)}
+                >
+                  {View?.testDescription}
+                </textarea>
               </div>
 
               <div
@@ -1204,6 +1272,36 @@ export default function Hospitallab() {
           </Modal.Footer>
         </Modal>
 
+        {/* =========================== show hospital lab test description ===================== */}
+
+        <Modal size="lg" show={show7} onHide={handleClose7}>
+          <Modal.Header>
+            <Modal.Title> Hospital lab test Description</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p style={{ color: "white" }}>{showTestDetails}</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <div style={{ display: "flex" }}>
+              <button
+                style={{
+                  backgroundColor: "grey",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  border: "1px solid white",
+                  fontWeight: "600",
+                  marginRight: "20px",
+                  padding: "4px 10px",
+                }}
+                onClick={handleClose7}
+              >
+                close
+              </button>
+            </div>
+          </Modal.Footer>
+        </Modal>
+
         <div style={{ overflowX: "scroll", overflowY: "scroll" }}>
           <Table responsive="md" style={{ marginTop: "1%" }} bordered>
             <thead>
@@ -1219,6 +1317,7 @@ export default function Hospitallab() {
               <th>After Food Reference value</th> */}
                 <th>General Reference value</th>
                 <th>Turn Around Time(TAT)</th>
+                <th>Description</th>
                 <th>Vial Availability</th>
 
                 <th>Edit Vials</th>
@@ -1245,7 +1344,20 @@ export default function Hospitallab() {
                     {/* <td>{valitem?.beforeFoodRefVal}</td>
                   <td>{valitem?.afterFoodRefVal}</td> */}
                     <td>{valitem?.generalRefVal}</td>
-                    <td>{valitem?.tat}</td>
+                    <td>{valitem?.tat} Hr.</td>
+                    <td>
+                      {!valitem?.testDescription ? (
+                        "--/--"
+                      ) : (
+                        <IoEye
+                          style={{ fontSize: "20px", color: "#20958c" }}
+                          onClick={() => {
+                            setShowTestDetails(valitem?.testDescription);
+                            handleShow7();
+                          }}
+                        />
+                      )}{" "}
+                    </td>
                     <td>
                       <IoEye
                         style={{ fontSize: "20px", color: "#20958c" }}
