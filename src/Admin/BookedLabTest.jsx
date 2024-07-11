@@ -9,10 +9,16 @@ import {
   FloatingLabel,
   Row,
 } from "react-bootstrap";
-import { AiFillDelete, AiOutlineUserAdd } from "react-icons/ai";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlineUserAdd,
+} from "react-icons/ai";
 import { MdDelete, MdDeleteOutline, MdEdit } from "react-icons/md";
 import { useReactToPrint } from "react-to-print";
 import Select from "react-select";
+import exportFromJSON from "export-from-json";
+import { Pagination, Stack } from "@mui/material";
 
 function BookedLabTest() {
   // Select width
@@ -23,7 +29,7 @@ function BookedLabTest() {
       minHeight: "60px", // Adjust the height here
     }),
   };
-
+  const [SpecificTestInfo, setSpecificTestInfo] = useState({});
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -62,6 +68,16 @@ function BookedLabTest() {
   const handleClose8 = () => setShow8(false);
   const handleShow8 = () => setShow8(true);
 
+  // ================================= list of reports modal =================================
+  const [show9, setShow9] = useState(false);
+  const handleClose9 = () => setShow9(false);
+  const handleShow9 = () => setShow9(true);
+
+  // ================================= report details modal =================================
+  const [show11, setShow11] = useState(false);
+  const handleClose11 = () => setShow11(false);
+  const handleShow11 = () => setShow11(true);
+
   const componentRef = useRef();
   const handleprint = useReactToPrint({
     content: () => componentRef.current,
@@ -76,13 +92,16 @@ function BookedLabTest() {
 
   // Get All Lab Test Requests
   const [AllTestList, setAllTestList] = useState([]);
+  const [AllTestList1, setAllTestList1] = useState([]);
   const GetLabtestList = async () => {
     try {
       const res = await axios.get(
         "http://localhost:8521/api/user/getBookedHospitalLabTest"
       );
       setAllTestList(res.data.list);
-      setFilteredCatList(res.data.list);
+      setAllTestList1(res.data.list1);
+      setFilteredCatList(res.data.list1);
+      setPagination(res.data.list1);
     } catch (error) {
       console.log(error);
     }
@@ -329,7 +348,7 @@ function BookedLabTest() {
   function handleFilter() {
     if (search != "") {
       // setSearch(search);
-      const filterTable = AllTestList.filter((o) =>
+      const filterTable = AllTestList1.filter((o) =>
         Object.keys(o).some((k) =>
           String(o[k]).toLowerCase().includes(search.toLowerCase())
         )
@@ -338,13 +357,47 @@ function BookedLabTest() {
     } else {
       // setSearch(search);
       // vialList();
-      setFilteredCatList([...AllTestList]);
+      setFilteredCatList([...AllTestList1]);
     }
   }
 
   useEffect(() => {
     handleFilter();
   }, [search]);
+
+  //===================
+
+  // Pagination
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = (selected) => {
+    setPageNumber(selected);
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Booked lab tests");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (AllTestList1.length != 0) {
+        exportFromJSON({
+          data: JSON.parse(JSON.stringify(AllTestList1)),
+          fileName,
+          exportType,
+        });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
 
   return (
     <div>
@@ -366,6 +419,18 @@ function BookedLabTest() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <AiOutlineUserAdd className="AddIcon1" onClick={handleShow} />
           </div>
@@ -387,12 +452,16 @@ function BookedLabTest() {
                 <th>Invoice</th>
                 {/* <th>View Report</th> */}
                 <th>Payment</th>
+                <th>Reports</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {FilteredCatList?.map((item, i) => {
+              {FilteredCatList?.slice(
+                pagesVisited,
+                pagesVisited + usersPerPage
+              )?.map((item, i) => {
                 return (
                   <tr style={{ fontSize: "15px", textAlign: "center" }}>
                     {/* <td>
@@ -528,7 +597,27 @@ function BookedLabTest() {
                       <b>{item?.labTestBookingStatus}</b>
                     </td>
                     <td>
-                      {item?.paymentStatus === "PAID" ? (
+                      {item?.Labtests?.length ===
+                      item?.Labtests?.filter((val) => val.patientReportVal)
+                        ?.length ? (
+                        <Button
+                          onClick={() => {
+                            // handleShow3();
+                            handleShow9();
+                            setLabtests(item);
+                          }}
+                        >
+                          View Report
+                        </Button>
+                      ) : (
+                        <b style={{ color: "red" }}>
+                          Reports are not generated
+                        </b>
+                      )}
+                    </td>
+                    <td>
+                      {item?.paymentStatus === "PAID" ||
+                      item?.labTestBookingStatus !== "BOOKED" ? (
                         <></>
                       ) : (
                         <div className="d-flex justify-content-center">
@@ -554,6 +643,17 @@ function BookedLabTest() {
               })}
             </tbody>
           </Table>
+          <div style={{ float: "left" }} className="my-3 d-flex justify-end">
+            <Stack spacing={2}>
+              <Pagination
+                count={pageCount}
+                onChange={(event, value) => {
+                  changePage(value - 1);
+                }}
+                color="primary"
+              />
+            </Stack>
+          </div>
         </div>
 
         <Modal show={show1} onHide={handleClose1} size="lg">
@@ -777,7 +877,7 @@ function BookedLabTest() {
           </Modal.Footer>
         </Modal>
 
-        <Modal show={show3} onHide={handleClose3} size="lg">
+        {/* <Modal show={show3} onHide={handleClose3} size="lg">
           <Modal.Header closeButton>
             <Modal.Title>Lab Report</Modal.Title>
           </Modal.Header>
@@ -843,9 +943,7 @@ function BookedLabTest() {
                         <b>Register Date : </b>
                         {moment(Labtests?.testDate).format("DD/MM/YYYY")}
                       </div>
-                      {/* <div>
-                        <b>Receiving Date : </b> 12/23/6767
-                      </div> */}
+          
                     </div>
                   </div>
                   <div className="row mt-2">
@@ -898,7 +996,7 @@ function BookedLabTest() {
               Print
             </Button>
           </Modal.Footer>
-        </Modal>
+        </Modal> */}
         <Modal show={show5} onHide={handleClose5} size="lg">
           <Modal.Header closeButton>
             <Modal.Title> Add Lab Report</Modal.Title>
@@ -1049,7 +1147,7 @@ function BookedLabTest() {
                   <option>Choose Options</option>
                   <option value={"IPD"}>IPD</option>
                   <option value={"OPD"}>OPD</option>
-                  <option value={"GENERAL"}>General</option>
+                  {/* <option value={"GENERAL"}>General</option> */}
                 </Form.Select>
               </FloatingLabel>
 
@@ -1706,6 +1804,272 @@ function BookedLabTest() {
             </div>
           </Modal.Footer>
         </Modal> */}
+
+        <Modal show={show9} onHide={handleClose9} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>Lab Report list</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              <Table bordered>
+                <thead>
+                  <th>S.no.</th>
+                  <th>Lab Reports</th>
+                  <th>Actions</th>
+                </thead>
+                <tbody>
+                  {Labtests?.Labtests?.map((val, i) => {
+                    return (
+                      <tr>
+                        <td>{i + 1}. </td>
+                        <td>{val?.testName} </td>
+                        <td>
+                          <Button
+                            variant="primary"
+                            onClick={() => {
+                              setSpecificTestInfo(val);
+                              handleShow11();
+                            }}
+                          >
+                            View Report
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose9}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal show={show11} onHide={handleClose11} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>Lab Report</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div ref={componentRef1}>
+              <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+                <div
+                  className="invoice-rspns"
+                  style={{
+                    boxShadow: " 0px 8px 32px 0px rgba(19, 19, 20, 0.37)",
+                    background: "#f5f6fa",
+                    backdropFilter: "blur(4px)",
+                    padding: "20px",
+                  }}
+                >
+                  <div className="">
+                    <div
+                      className="mb-5 "
+                      style={{
+                        display: "flex",
+                      }}
+                    >
+                      <div>
+                        <img
+                          style={{ width: "115px", height: "115px" }}
+                          className="logo me-2 "
+                          src="/img/logo.png"
+                          alt="Logo"
+                        />{" "}
+                      </div>
+                      <div
+                        className="text-center"
+                        style={{ marginLeft: "30px" }}
+                      >
+                        <span
+                          className="fw-bold fs-4"
+                          style={{ color: "rgb(32 139 140)" }}
+                        >
+                          JANANI CLINICAL LABORATORY
+                        </span>
+                        <br />
+                        <div>
+                          <b>
+                            Upstair Canara bank , Near BDA Cross, KK Colony,
+                            Jalanagar Main Road, Vijayapur--586109
+                          </b>
+                          <div>
+                            Phone:- 08352-277077 ,9606831158 , Email:-
+                            jananihospital2018@gmail.com
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    className="row"
+                    style={{
+                      borderBottom: "2px solid",
+                      padding: "0px",
+                      display: "flex",
+                      //   justifyContent: "space-between",
+                    }}
+                  >
+                    <div className="col-sm-6">
+                      <Table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <b>Patient ID</b>{" "}
+                            </td>
+                            <td>{Labtests?.patientid?.PatientId}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Patient Name</b>{" "}
+                            </td>
+                            <td>
+                              {Labtests?.patientid?.Firstname}{" "}
+                              {Labtests?.patientid?.Lastname}
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Patient Age</b>{" "}
+                            </td>
+                            <td>
+                              {moment().diff(
+                                moment(Labtests?.patientid?.DOB),
+                                "years"
+                              )}{" "}
+                              years
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <b>Gender</b>
+                            </td>
+                            <td>{Labtests?.patientid?.Gender}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Email</b>
+                            </td>
+                            <td> {Labtests?.email}</td>
+                          </tr>
+                        </tbody>
+                      </Table>
+                    </div>
+                    <div className="col-sm-6">
+                      <Table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <b>Phone</b>
+                            </td>
+                            <td>{Labtests?.patientid?.PhoneNumber}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Referred By</b>
+                            </td>
+                            <td>{Labtests?.hospitallabRefferedBy}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Register Date</b>
+                            </td>
+                            <td>
+                              {moment(Labtests?.testDate).format("DD/MM/YYYY")}
+                              years
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <b>Sample No</b>
+                            </td>
+                            <td> {SpecificTestInfo?.sampleName}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Collected On</b>{" "}
+                            </td>
+                            <td>
+                              {`${new Date(
+                                SpecificTestInfo?.sampleCollectionDateTime
+                              ).getDate()} - ${
+                                new Date(
+                                  SpecificTestInfo?.sampleCollectionDateTime
+                                ).getMonth() + 1
+                              } - ${new Date(
+                                SpecificTestInfo?.sampleCollectionDateTime
+                              ).getFullYear()}`}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </Table>
+                    </div>
+                  </div>
+
+                  <div className="row mt-2">
+                    <Table bordered>
+                      <thead>
+                        <tr>
+                          <th>Test</th>
+                          <th>Result</th>
+                          <th>Units</th>
+                          <th>Normal Range</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* {Labtests?.Labtests?.filter(
+                          (ele) => ele.patientReportVal
+                        )?.map((item, i) => {
+                          return ( */}
+                        <tr>
+                          <td>{SpecificTestInfo?.testName}</td>
+                          <td>{SpecificTestInfo?.patientReportVal}</td>
+                          <td>{SpecificTestInfo?.unit}</td>
+                          <td>{SpecificTestInfo?.generalRefVal} </td>
+                        </tr>
+                        {/* );
+                        })} */}
+                      </tbody>
+                    </Table>
+                  </div>
+                  <div>
+                    <p>
+                      <b>Note: </b>
+                      <span>{SpecificTestInfo?.testid?.testDescription}</span>
+                    </p>
+                    <p style={{ textAlign: "center" }}>
+                      ---------The end of Report---------
+                    </p>
+                  </div>
+                  <hr />
+                  {/* <div className="text-center text-dark ">
+                    <p>
+                      Sales Invoice Generated By: Janani Hospital, Contact :
+                      JananiHospital@gamil.com{" "}
+                    </p>
+                  </div> */}
+                </div>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose11}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleprint1}>
+              Print
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );

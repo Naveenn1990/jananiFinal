@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Table } from "react-bootstrap";
-import { AiFillDelete } from "react-icons/ai";
+import { AiFillDelete, AiFillFileExcel } from "react-icons/ai";
 import { MdEdit } from "react-icons/md";
 import { ImLab } from "react-icons/im";
 import { IoEye } from "react-icons/io5";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { Pagination, Stack } from "@mui/material";
+import exportFromJSON from "export-from-json";
 
 export default function Hospitallab() {
   const [show, setShow] = useState(false);
@@ -295,6 +297,8 @@ export default function Hospitallab() {
           const data = response.data.HospitalLabTests;
           setHospitalLabList(data);
           setHospitalLabListImmutable(data);
+          setFilteredCatList(data);
+          setPagination(data);
         }
       })
       .catch(function (error) {
@@ -325,6 +329,7 @@ export default function Hospitallab() {
 
   // search
   const [search, setSearch] = useState("");
+  const [FilteredCatList, setFilteredCatList] = useState([]);
   function handleFilter() {
     if (search != "") {
       // setSearch(search);
@@ -333,9 +338,9 @@ export default function Hospitallab() {
           String(o[k]).toLowerCase().includes(search.toLowerCase())
         )
       );
-      setHospitalLabList([...filterTable]);
+      setFilteredCatList([...filterTable]);
     } else {
-      setHospitalLabList([...HospitalLabListImmutable]);
+      setFilteredCatList([...HospitalLabList]);
     }
   }
 
@@ -348,6 +353,41 @@ export default function Hospitallab() {
     HospitallabList();
     getHospitalVials();
   }, []);
+
+  // ==========================
+
+  // Pagination
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 2;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = (selected) => {
+    setPageNumber(selected);
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Hospital lab-list");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (HospitalLabList.length != 0) {
+        exportFromJSON({
+          data: JSON.parse(JSON.stringify(HospitalLabList)),
+          fileName,
+          exportType,
+        });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -368,6 +408,18 @@ export default function Hospitallab() {
             }}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <ImLab className="AddIcon1" onClick={handleShow} />
           </div>
@@ -1325,7 +1377,10 @@ export default function Hospitallab() {
               </tr>
             </thead>
             <tbody>
-              {HospitalLabList?.map((valitem, index) => {
+              {FilteredCatList?.slice(
+                pagesVisited,
+                pagesVisited + usersPerPage
+              )?.map((valitem, index) => {
                 return (
                   <tr style={{ fontSize: "15px", textAlign: "center" }}>
                     <td>{index + 1}</td>
@@ -1417,6 +1472,18 @@ export default function Hospitallab() {
               })}
             </tbody>
           </Table>
+
+          <div style={{ float: "left" }} className="my-3 d-flex justify-end">
+            <Stack spacing={2}>
+              <Pagination
+                count={pageCount}
+                onChange={(event, value) => {
+                  changePage(value - 1);
+                }}
+                color="primary"
+              />
+            </Stack>
+          </div>
         </div>
       </div>
     </div>

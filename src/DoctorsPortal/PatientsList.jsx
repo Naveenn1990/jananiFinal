@@ -610,24 +610,23 @@ export const PatientsList = () => {
           </button>
         </Modal.Footer>
       </Modal>
-      <Modal size="lg" show={show2} onHide={medHistoryClose2}>
+      <Modal size="md" show={show2} onHide={medHistoryClose2}>
         <Modal.Header className="all-bg-green text-light">
           <Modal.Title>OPD to IPD</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="all-bg-green ">
-          <div style={{ color: "white" }}>
-            <label>Reason</label>
-            <textarea></textarea>
-          </div>
-          <div className="row" style={{ color: "white" }}>
+        <Modal.Body className="all-bg-green p-4">
+          <div style={{ color: "white", margin: "10px" }}>
             Are you sure, you want to admit this patient to the IPD?
           </div>
+          {/* <div style={{ margin: "10px" }}>
+            <textarea cols={50} rows={10} placeholder="Reason"></textarea>
+          </div> */}
         </Modal.Body>
         <Modal.Footer>
           <button onClick={medHistoryClose2} className="btn btn-danger">
             Close
           </button>
-          <button onClick={getDocReqFromOPDtoIPD} className="table-details-btn">
+          <button onClick={getDocReqFromOPDtoIPD} className="btn btn-primary">
             Done
           </button>
         </Modal.Footer>

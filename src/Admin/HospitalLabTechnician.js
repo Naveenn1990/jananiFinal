@@ -5,6 +5,8 @@ import { Button, Modal, Table } from "react-bootstrap";
 
 import { useReactToPrint } from "react-to-print";
 import ReactPaginate from "react-paginate";
+import exportFromJSON from "export-from-json";
+import { AiFillFileExcel } from "react-icons/ai";
 
 export default function HospitalLabTechnician() {
   // Select width
@@ -102,8 +104,6 @@ export default function HospitalLabTechnician() {
         console.log(error);
       });
   };
-
-  console.log("patientlist656555: ", patientlist);
 
   useEffect(() => {
     getPatientlist();
@@ -296,8 +296,38 @@ export default function HospitalLabTechnician() {
   };
 
   const offset = currentPage * itemsPerPage;
-  const pageCount = Math.ceil(FilteredCatList.length / itemsPerPage);
-  FilteredCatList = FilteredCatList.slice(offset, offset + itemsPerPage);
+  const pageCount = Math.ceil(
+    FilteredCatList?.filter(
+      (data) => data?.labTestBookingStatus === "SAMPLE COLLECTED"
+    ).length / itemsPerPage
+  );
+  FilteredCatList = FilteredCatList?.filter(
+    (data) => data?.labTestBookingStatus === "SAMPLE COLLECTED"
+  ).slice(offset, offset + itemsPerPage);
+
+  console.log("FilteredCatList: ", FilteredCatList);
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Lab Technician-report list");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (AllTestList1.length != 0) {
+        exportFromJSON({
+          data: JSON.parse(JSON.stringify(AllTestList1)),
+          fileName,
+          exportType,
+        });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
 
   return (
     <div>
@@ -319,6 +349,18 @@ export default function HospitalLabTechnician() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
           {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
             <AiOutlineUserAdd className="AddIcon1" onClick={handleShow} />
           </div> */}
@@ -411,8 +453,7 @@ export default function HospitalLabTechnician() {
                     </td> */}
 
                     <td>
-                      {item?.labTestBookingStatus ===
-                      "TECHNICIAN_PROCESSING" ? (
+                      {item?.labTestBookingStatus === "TECHNICIAN DONE" ? (
                         <b style={{ color: "green" }}>Reports Added</b>
                       ) : item?.paymentStatus === "PAID" ||
                         item?.patientid?.registrationType === "IPD" ? (
@@ -520,19 +561,23 @@ export default function HospitalLabTechnician() {
             </tbody>
           </Table>
         </div>
-        <div className="d-flex justify-content-end mt-3 xxx">
+        <div className="d-flex justify-content-end mt-3 ">
+          {/* xxx classname */}
           <ReactPaginate
             previousLabel={"Previous"}
             nextLabel={"Next"}
             breakLabel={"..."}
             breakClassName={"break-me"}
             pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={3}
+            // marginPagesDisplayed={2}
+            // pageRangeDisplayed={3}
             onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            subContainerClassName={"pages pagination"}
-            activeClassName={"active"}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            // subContainerClassName={"pages pagination"}
+            activeClassName={"paginationActive"}
           />
         </div>
 
@@ -822,64 +867,106 @@ export default function HospitalLabTechnician() {
                       //   justifyContent: "space-between",
                     }}
                   >
-                    <div className="col-sm-4">
-                      <div>
-                        <b>Patient ID : </b> {Labtests?.patientid?.PatientId}
-                      </div>
-                      <div>
-                        <b>Patient Name : </b> {Labtests?.patientid?.Firstname}{" "}
-                        {Labtests?.patientid?.Lastname}
-                      </div>
-                      <div>
-                        <b>Patient Age : </b>{" "}
-                        {moment().diff(
-                          moment(Labtests?.patientid?.DOB),
-                          "years"
-                        )}{" "}
-                        years
-                      </div>
-                      <div>
-                        <b>Gender : </b> {Labtests?.patientid?.Gender}
-                      </div>
-                      <div>
-                        <b>Email : </b> {Labtests?.email}
-                      </div>
-                    </div>
+                    <div className="col-sm-6">
+                      <Table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <b>Patient ID</b>{" "}
+                            </td>
+                            <td>{Labtests?.patientid?.PatientId}</td>
+                          </tr>
 
-                    <div className="col-sm-4">
-                      <div>
-                        <b>Phone : </b> {Labtests?.patientid?.PhoneNumber}
-                      </div>
-                      <div>
-                        <b>Referred By : </b> {Labtests?.hospitallabRefferedBy}
-                      </div>
-                      <div>
-                        <b>Register Date : </b>
-                        {moment(Labtests?.testDate).format("DD/MM/YYYY")}
-                      </div>
-                      <div>
-                        <b>Sample No : </b> {SpecificTestInfo?.sampleName}
-                      </div>
-                      <div>
-                        <b>Collected On : </b>{" "}
-                        {`${new Date(
-                          SpecificTestInfo?.sampleCollectionDateTime
-                        ).getDate()} - ${
-                          new Date(
-                            SpecificTestInfo?.sampleCollectionDateTime
-                          ).getMonth() + 1
-                        } - ${new Date(
-                          SpecificTestInfo?.sampleCollectionDateTime
-                        ).getFullYear()}`}
-                      </div>
-                    </div>
+                          <tr>
+                            <td>
+                              <b>Patient Name</b>{" "}
+                            </td>
+                            <td>
+                              {Labtests?.patientid?.Firstname}{" "}
+                              {Labtests?.patientid?.Lastname}
+                            </td>
+                          </tr>
 
-                    {/* <div className="col-sm-4">
-                      
+                          <tr>
+                            <td>
+                              <b>Patient Age</b>{" "}
+                            </td>
+                            <td>
+                              {moment().diff(
+                                moment(Labtests?.patientid?.DOB),
+                                "years"
+                              )}{" "}
+                              years
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <b>Gender</b>
+                            </td>
+                            <td>{Labtests?.patientid?.Gender}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Email</b>
+                            </td>
+                            <td> {Labtests?.email}</td>
+                          </tr>
+                        </tbody>
+                      </Table>
                     </div>
-                    <div className="col-sm-4">
-                      
-                    </div> */}
+                    <div className="col-sm-6">
+                      <Table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <b>Phone</b>
+                            </td>
+                            <td>{Labtests?.patientid?.PhoneNumber}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Referred By</b>
+                            </td>
+                            <td>{Labtests?.hospitallabRefferedBy}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Register Date</b>
+                            </td>
+                            <td>
+                              {moment(Labtests?.testDate).format("DD/MM/YYYY")}
+                              years
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <b>Sample No</b>
+                            </td>
+                            <td> {SpecificTestInfo?.sampleName}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Collected On</b>{" "}
+                            </td>
+                            <td>
+                              {`${new Date(
+                                SpecificTestInfo?.sampleCollectionDateTime
+                              ).getDate()} - ${
+                                new Date(
+                                  SpecificTestInfo?.sampleCollectionDateTime
+                                ).getMonth() + 1
+                              } - ${new Date(
+                                SpecificTestInfo?.sampleCollectionDateTime
+                              ).getFullYear()}`}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </Table>
+                    </div>
                   </div>
                   <div className="row mt-2">
                     <Table bordered>
