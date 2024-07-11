@@ -6,6 +6,14 @@ import { Button, FloatingLabel, Form, Modal, Table } from "react-bootstrap";
 import { FaEdit } from "react-icons/fa";
 import { RiStethoscopeLine } from "react-icons/ri";
 import { useReactToPrint } from "react-to-print";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
+
 export default function DoctorsAppointment() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -167,19 +175,18 @@ export default function DoctorsAppointment() {
     }
   };
 
-  const [AppointmentList, setAppointmentList] = useState([]);
-  const getAppointmentList = () => {
+  const [data, setdata] = useState([]);
+  const getdata = () => {
     axios
       .get("http://localhost:8521/api/user/getlist")
       .then(function (response) {
-        setAppointmentList(response.data.Info);
-        setPagination(response.data.Info);
+        setdata(response.data.Info);
       })
       .catch(function (error) {
         console.log(error);
       });
   };
-  console.log("AppointmentList", AppointmentList);
+  console.log("data", data);
   const [Doctors, setDoctors] = useState([]);
   const getDoctors = () => {
     axios
@@ -217,7 +224,7 @@ export default function DoctorsAppointment() {
       let res = await axios(config);
       if (res.status === 200) {
         alert(res.data.success);
-        getAppointmentList();
+        getdata();
         handleClose1();
         window.location.assign("");
       }
@@ -248,26 +255,13 @@ export default function DoctorsAppointment() {
         alert(res.data.success);
         setPaymentStatus("");
         handleClose2();
-        getAppointmentList();
+        getdata();
       }
     } catch (error) {
       if (error.response) {
         alert(error.response.data.error);
       }
     }
-  };
-
-  //Search
-  const [SearchItem, setSearchItem] = useState("");
-
-  // Pagination
-  const [pagination, setPagination] = useState([]);
-  const [pageNumber, setPageNumber] = useState(0);
-  const usersPerPage = 5;
-  const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(pagination?.length / usersPerPage);
-  const changePage = (selected) => {
-    setPageNumber(selected);
   };
 
   // Get Hospital Department
@@ -317,9 +311,56 @@ export default function DoctorsAppointment() {
 
   useEffect(() => {
     getDoctors();
-    getAppointmentList();
+    getdata();
     GetDepartment();
   }, []);
+
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 10;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Appointments");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
+  console.log("data", data);
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -331,7 +372,7 @@ export default function DoctorsAppointment() {
           }}
         >
           <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-            Doctors Appointment
+            Appointment's
           </h6>
 
           {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -350,6 +391,35 @@ export default function DoctorsAppointment() {
               onChange={(e)=>setSearchItem(e.target.value)}
             />
           </div> */}
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "2%",
+          }}
+        >
+          <input
+            placeholder="Search Hospital doctors"
+            style={{
+              padding: "5px 10px",
+              border: "1px solid #20958c",
+              borderRadius: "0px",
+            }}
+            onChange={handleFilter}
+          />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
         </div>
 
         <Modal size="lg" show={show} onHide={handleClose}>
@@ -933,91 +1003,152 @@ export default function DoctorsAppointment() {
               </tr>
             </thead>
             <tbody>
-              {AppointmentList?.slice(
-                pagesVisited,
-                pagesVisited + usersPerPage
-              )?.map((item, i) => {
-                if (
-                  SearchItem === "" ||
-                  Object.values(item).some((value) =>
-                    String(value)
-                      .toLowerCase()
-                      .includes(SearchItem.toLowerCase())
-                  )
-                )
-                  return (
-                    <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                      <td>{i + 1}</td>
-                      <td>
-                        {item?.Firstname} {item?.Lastname}
-                      </td>
-                      <td>{item?.Email}</td>
-                      <td>{item?.Dateofappointment}</td>
-                      <td>
-                        {item?.starttime} to {item?.endtime}
-                      </td>
-                      <td>{item?.PhoneNumber}</td>
+              {search.length > 0
+                ? tableFilter
+                    .slice(pagesVisited, pagesVisited + usersPerPage)
+                    ?.map((item, i) => {
+                      return (
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                          <td>{i + 1}</td>
+                          <td>
+                            {item?.Firstname} {item?.Lastname}
+                          </td>
+                          <td>{item?.Email}</td>
+                          <td>{item?.Dateofappointment}</td>
+                          <td>
+                            {item?.starttime} to {item?.endtime}
+                          </td>
+                          <td>{item?.PhoneNumber}</td>
 
-                      <td>{item?.medicalReason}</td>
-                      <td>{item?.token}</td>
-                      <td>
-                        {item?.payment === "unpaid" ? (
-                          <>
-                            <Button
-                              onClick={() => {
-                                handleShow2();
-                                setShowAppointmentDetails(item);
+                          <td>{item?.medicalReason}</td>
+                          <td>{item?.token}</td>
+                          <td>
+                            {item?.payment === "unpaid" ? (
+                              <>
+                                <Button
+                                  onClick={() => {
+                                    handleShow2();
+                                    setShowAppointmentDetails(item);
+                                  }}
+                                >
+                                  Payment
+                                </Button>
+                                <p>{item?.payment}</p>
+                              </>
+                            ) : (
+                              <p>Payment Done</p>
+                            )}
+                          </td>
+                          <td>
+                            {item?.payment === "unpaid" ? (
+                              <p>Payment is pending</p>
+                            ) : (
+                              <Button
+                                onClick={() => {
+                                  handleShow3();
+                                  setShowAppointmentDetails(item);
+                                }}
+                              >
+                                Invoice
+                              </Button>
+                            )}
+                          </td>
+                          <td>
+                            {" "}
+                            <p
+                              style={{
+                                color: "green",
+                                fontSize: "20px",
+                                cursor: "pointer",
                               }}
                             >
-                              Payment
-                            </Button>
-                            <p>{item?.payment}</p>
-                          </>
-                        ) : (
-                          <p>Payment Done</p>
-                        )}
-                      </td>
-                      <td>
-                        {item?.payment === "unpaid" ? (
-                          <p>Payment is pending</p>
-                        ) : (
-                          <Button
-                            onClick={() => {
-                              handleShow3();
-                              setShowAppointmentDetails(item);
-                            }}
-                          >
-                            Invoice
-                          </Button>
-                        )}
-                      </td>
-                      <td>
-                        {" "}
-                        <p
-                          style={{
-                            color: "green",
-                            fontSize: "20px",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <FaEdit onClick={() => handleShow1(item)} />
-                        </p>
-                      </td>
-                    </tr>
-                  );
-              })}
+                              <FaEdit onClick={() => handleShow1(item)} />
+                            </p>
+                          </td>
+                        </tr>
+                      );
+                    })
+                : data
+                    ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                    ?.map((item, i) => {
+                      return (
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                          <td>{i + 1}</td>
+                          <td>
+                            {item?.Firstname} {item?.Lastname}
+                          </td>
+                          <td>{item?.Email}</td>
+                          <td>{item?.Dateofappointment}</td>
+                          <td>
+                            {item?.starttime} to {item?.endtime}
+                          </td>
+                          <td>{item?.PhoneNumber}</td>
+
+                          <td>{item?.medicalReason}</td>
+                          <td>{item?.token}</td>
+                          <td>
+                            {item?.payment === "unpaid" ? (
+                              <>
+                                <Button
+                                  onClick={() => {
+                                    handleShow2();
+                                    setShowAppointmentDetails(item);
+                                  }}
+                                >
+                                  Payment
+                                </Button>
+                                <p>{item?.payment}</p>
+                              </>
+                            ) : (
+                              <p>Payment Done</p>
+                            )}
+                          </td>
+                          <td>
+                            {item?.payment === "unpaid" ? (
+                              <p>Payment is pending</p>
+                            ) : (
+                              <Button
+                                onClick={() => {
+                                  handleShow3();
+                                  setShowAppointmentDetails(item);
+                                }}
+                              >
+                                Invoice
+                              </Button>
+                            )}
+                          </td>
+                          <td>
+                            {" "}
+                            <p
+                              style={{
+                                color: "green",
+                                fontSize: "20px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <FaEdit onClick={() => handleShow1(item)} />
+                            </p>
+                          </td>
+                        </tr>
+                      );
+                    })}
             </tbody>
           </Table>
-          <div style={{ float: "right" }} className="my-3 d-flex justify-end">
-            <Stack spacing={2}>
-              <Pagination
-                count={pageCount}
-                onChange={(event, value) => {
-                  changePage(value - 1);
-                }}
-                color="primary"
-              />
-            </Stack>
+          <div style={{ display: "flex" }}>
+            <p style={{ width: "100%", marginTop: "20px" }}>
+              Total Count: {data?.length}
+            </p>
+            <ReactPaginate
+              previousLabel={"Back"}
+              nextLabel={"Next"}
+              pageCount={pageCount}
+              onPageChange={changePage}
+              containerClassName={"paginationBttns"}
+              previousLinkClassName={"previousBttn"}
+              nextLinkClassName={"nextBttn"}
+              disabledClassName={"paginationDisabled"}
+              activeClassName={"paginationActive"}
+            />
           </div>
         </div>
       </div>
