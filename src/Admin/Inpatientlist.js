@@ -6,7 +6,7 @@ import { Table, Modal, ProgressBar, Button, Form, Card } from "react-bootstrap";
 import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { CiBarcode, CiEdit } from "react-icons/ci";
+import { CiBarcode} from "react-icons/ci";
 
 import { useReactToPrint } from "react-to-print";
 import { GrView } from "react-icons/gr";
@@ -44,7 +44,6 @@ export default function Inpatientlist() {
   const handleShow5 = () => setShow5(true);
 
   const [ViewCause, setViewCause] = useState({});
-  console.log("ViewCause", ViewCause);
   const [show6, setShow6] = useState(false);
   const handleClose6 = () => setShow6(false);
   const handleShow6 = () => setShow6(true);
@@ -133,8 +132,6 @@ export default function Inpatientlist() {
 
   const [State, setState] = useState();
   const [Zipcode, setZipcode] = useState();
-  const [Marital, setMarital] = useState();
-
   const [password, setpassword] = useState("");
   const [conpassword, setconpassword] = useState("");
 
@@ -207,14 +204,11 @@ export default function Inpatientlist() {
         };
         let res = await axios(config);
         if (res.status === 200) {
-          console.log(res.data);
-          console.log(res.data.success);
           setmedicinesTaking("");
           setpatientAllergies([]);
           alert("IPD Patient Register Successfully.!");
           getipdpatients();
           handleClose2();
-          // window.location.assign("/patientPortal");
         }
       }
     } catch (error) {
@@ -226,7 +220,6 @@ export default function Inpatientlist() {
   };
 
   const [IPDPatientList, setIPDPatientList] = useState([]);
-
   const getipdpatients = () => {
     axios
       .get("http://localhost:8521/api/user/getPatientList")
@@ -244,7 +237,6 @@ export default function Inpatientlist() {
     axios
       .get("http://localhost:8521/api/Doctor/getDoctorsList")
       .then(function (response) {
-        // handle success
         setDoctors(
           response.data.DoctorsInfo?.filter(
             (data) => data.DoctorType === "hospital"
@@ -252,7 +244,6 @@ export default function Inpatientlist() {
         );
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
         setDoctors(error.response.data.DoctorsInfo);
       });
@@ -387,7 +378,6 @@ export default function Inpatientlist() {
       alert(error.response.data.error);
     }
   };
-  console.log("ViewCause", ViewCause);
 
   const dobString = AdmissionForm?.DOB;
   const dob = new Date(dobString);
@@ -1571,8 +1561,8 @@ export default function Inpatientlist() {
         <Modal.Body>
           <div ref={componentRef} className="d-flex justify-content-center">
             <Barcode
-              value={`${ViewBarcode?.Firstname} ${ViewBarcode?.Lastname}`}
-              width={1}
+              value={ViewBarcode?.PatientId}
+              width={2}
               height={50}
             />
           </div>
@@ -1943,7 +1933,11 @@ export default function Inpatientlist() {
                   <td>{item?.PhoneNumber}</td>
                   <td>{item?.Gender}</td>
                   <td>{item?.Address1}</td>
-                  <td>{item?.DOB}</td>
+                  <td>
+                    <div style={{width:"80px",fontWeight:"bold"}}>
+                    {item?.DOB}
+                    </div>
+                    </td>
                   <td>
                     <CiBarcode
                       style={{ cursor: "pointer", fontSize: "35px" }}

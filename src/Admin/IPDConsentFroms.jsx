@@ -64,6 +64,7 @@ const IPDConsentFroms = () => {
 
   // Hospitalization Consent Form
   const [NameOfSurgery, setNameOfSurgery] = useState("");
+  const [NameOfSurgery2, setNameOfSurgery2] = useState("");
   const [SurgeryEstimatePrice, setSurgeryEstimatePrice] = useState();
   const [SurgeryRemark, setSurgeryRemark] = useState("");
   const [SurgeryPackages, setSurgeryPackages] = useState([]);
@@ -208,6 +209,13 @@ const IPDConsentFroms = () => {
       }
     }
 
+    if(ConsentFormName === "HospitalizedConsentForms"){
+      if(!WardRoomCharges){
+        return alert("Please Enter Ward/ Room Charges")
+      }
+
+    }
+
     if (ConsentFormName === "HighriskConsentForms") {
       if (!StaffName) {
         return alert("Please Enter Staff Name");
@@ -224,20 +232,20 @@ const IPDConsentFroms = () => {
       if (!OperativeProce) {
         return alert("Please Enter Proposed operative Procedure");
       }
+      if (!RealivesName) {
+        return alert("Please Enter Realive Name");
+      }
       if (!Date0) {
         return alert("Please Select Date");
-      }
-      if (!PatientSurrogate) {
-        return alert("Please Enter Patient/ Patient Surrogate Name");
       }
       if (!signature1) {
         return alert("Patient Sign is pending ");
       }
       if (!Date2) {
-        return alert("Select date ");
+        return alert("Patient Select date ");
       }
       if (!Time1) {
-        return alert("Select Time ");
+        return alert("Patient Select Time ");
       }
       if (!Witness1) {
         return alert("Please Enter Witness Name");
@@ -288,19 +296,19 @@ const IPDConsentFroms = () => {
         return alert("Please check Type of Anesthesia ");
       }
       if (!NameOfSurgery) {
-        return alert("Please Select the Surgery");
+        return alert("Please enter the surgery name");
       }
-      if (!PatientSurrogate) {
-        return alert("Please Enter Patient/ Patient Surrogate Name");
+      if (!NameOfSurgery2) {
+        return alert("Please fill the field");
       }
       if (!signature1) {
         return alert("Patient Sign is pending ");
       }
       if (!Date2) {
-        return alert("Select date ");
+        return alert("Patient Select date ");
       }
       if (!Time1) {
-        return alert("Select Time ");
+        return alert("Patient Select Time ");
       }
       if (!Witness1) {
         return alert("Please Enter Witness Name");
@@ -356,6 +364,7 @@ const IPDConsentFroms = () => {
     );
     formdata.set("ConDoctorName", ConDoctorName);
     formdata.set("RealivesName", RealivesName);
+    formdata.set("PatientRelation", PatientRelation);
     formdata.set("Date", Date0);
 
     formdata.set("WardRoomCharges", WardRoomCharges);
@@ -390,6 +399,9 @@ const IPDConsentFroms = () => {
     formdata.set("Time4", Time4);
     formdata.set("NameOfSurgery", NameOfSurgery);
     formdata.set("TypeofAnesthesia", TypeofAnesthesia);
+    formdata.set("DOB", userdetail?.DOB);
+    formdata.set("Gender", userdetail?.Gender);
+    formdata.set("NameOfSurgery2", NameOfSurgery2);
 
     formdata.set("doctorsign", DoctorSignature, "doctor-signature.png");
     formdata.set("patientsign", PatientSignature1, "patient-signature.png");
@@ -656,7 +668,7 @@ const IPDConsentFroms = () => {
                     <input
                       type="text"
                       className="vi_0"
-                      value={userdetail?.Firstname}
+                      value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}
                       style={{ width: "490px" }}
                       readOnly
                     />
@@ -711,7 +723,7 @@ const IPDConsentFroms = () => {
                               {userdetail?.assigndocts?.map((item) => {
                                 return (
                                   <option
-                                    value={item?._id}
+                                    value={item?.doctorsId?._id}
                                   >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
                                 );
                               })}
@@ -836,10 +848,9 @@ const IPDConsentFroms = () => {
                   style={{
                     padding: "5px",
                     border: "2px solid #20958C",
-                    width: "1073px",
                     margin: "auto",
                     borderRadius: "20px",
-                    height: "1700px",
+                    height: "auto",
                   }}
                 >
                   <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -864,16 +875,7 @@ const IPDConsentFroms = () => {
                       </h6>
                     </div>
                   </div>
-                  <div
-                    className="text-center"
-                    style={{
-                      borderBottom: "1px solid #20958C",
-                      width: "100%",
-                      textAlign: "center",
-                    }}
-                  ></div>
                   <div className="text-center mt-1">
-                    {" "}
                     <h6
                       className="fw-bold mt-2"
                       style={{ color: "#20958C", fontSize: "30px" }}
@@ -889,43 +891,30 @@ const IPDConsentFroms = () => {
                     }}
                   >
                     <p style={{ fontSize: "18px" }}>
-                      1. Ward/ Room Charges
+                      <b>1. Ward/ Room Charges</b>
                       <div className="container">
                         <div
                           className="row"
                           style={{ border: "1px solid #20958C" }}
                         >
-                          <div
-                            className="col-md-4"
-                            style={{
-                              paddingTop: "10px",
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                            }}
-                          >
+                          <div className="col-md-4 consentformhd">
                             <textarea
-                              cols="27"
-                              rows="4"
-                              className="vi_0"
+                              cols="20"
+                              rows="3"
+                              className="vi_0 mt-1"
                               onChange={(e) =>
                                 setWardRoomCharges(e.target.value)
                               }
-                            ></textarea>
+                              placeholder=" Ward/ Room Charges"
+                              value={WardRoomCharges}
+                            />
                           </div>
-                          <div
-                            className="col-md-4"
-                            style={{
-                              paddingTop: "10px",
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                            }}
-                          >
+                          <div className="col-md-4 consentformhd">
                             <h6
                               style={{
                                 fontSize: "17px",
                                 padding: "5px",
+                                textAlign:"justify"
                               }}
                             >
                               Ward/ Room Category Charges per Day (Including
@@ -933,65 +922,49 @@ const IPDConsentFroms = () => {
                               Monitoring, charges, Primary Consultant Charges).
                             </h6>
                           </div>
-                          <div
-                            className="col-md-4"
-                            style={{
-                              paddingTop: "10px",
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                            }}
-                          >
+                          <div className="col-md-4 consentformhd">
                             <h6
                               style={{
                                 fontSize: "18px",
                               }}
                             >
-                              Remark
+                              Remark :
                             </h6>
                             <textarea
                               placeholder="enter remarks"
-                              cols="27"
-                              rows="3"
-                              className="vi_0"
+                              cols="20"
+                              rows="2"
+                              className="vi_0 p-1"
                               onChange={(e) => setWardRemark(e.target.value)}
-                            ></textarea>
+                              value={WardRemark}
+                            />
                           </div>
                           <div
-                            className="col-md-12"
-                            style={{
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                            }}
-                          >
+                            className="col-md-12 consentformhd">
                             <textarea
                               onChange={(e) => setWardText1(e.target.value)}
                               cols="90"
                               rows="1"
-                              className="vi_0"
-                            ></textarea>
+                              className="vi_0 mt-1"
+                              placeholder="Write Something"
+                              value={WardText1}
+                            />
                           </div>
-                          <div
-                            className="col-md-12"
-                            style={{
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                            }}
-                          >
+                          <div className="col-md-12 consentformhd">
                             <textarea
                               onChange={(e) => setWardText2(e.target.value)}
                               cols="90"
                               rows="1"
-                              className="vi_0"
-                            ></textarea>
+                              className="vi_0 mt-1"
+                              placeholder="Write Something"
+                              value={WardText2}
+                            />
                           </div>
                         </div>
                       </div>
-                    </p>
+                    </p><br/>
                     <p style={{ fontSize: "18px" }}>
-                      2. Surgery Package Charges
+                      <b>2. Surgery Package Charges</b>
                       <div className="container">
                         <div
                           className="row"
@@ -1170,22 +1143,16 @@ const IPDConsentFroms = () => {
                         })}
                       </div>
                     </p>
+                    <br/>
                     <p style={{ fontSize: "18px" }}>
-                      3.Special Procedure Charges
+                      <b>3.Special Procedure Charges</b>
                       <div className="container">
                         <div
                           className="row"
                           style={{ border: "1px solid #20958C" }}
                         >
                           <div
-                            className="col-md-3"
-                            style={{
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                              fontSize: "18px",
-                            }}
-                          >
+                            className="col-md-3 consentformhd" >
                             Name of the Procedure/ Procedures
                           </div>
                           <div
@@ -1762,15 +1729,17 @@ const IPDConsentFroms = () => {
                                 <span
                                   style={{ borderBottom: "1px solid black" }}
                                 >
-                                  <input
+                                   <input
                                     type="text"
                                     className="vi_0"
                                     style={{ width: "301px" }}
                                     value={StaffName}
-                                    onClick={(e) =>
+                                    onChange={(e) =>
                                       setStaffName(e.target.value)
                                     }
-                                  />
+                                    placeholder="Enter Staff Name"
+                                  /> 
+                                    
                                 </span>
                                 &nbsp; have been explained about the medical
                                 condition and <br />
@@ -1788,7 +1757,7 @@ const IPDConsentFroms = () => {
                                     {userdetail?.assigndocts?.map((item) => {
                                       return (
                                         <option
-                                          value={item?._id}
+                                          value={item?.doctorsId?._id}
                                         >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
                                       );
                                     })}
@@ -1812,7 +1781,7 @@ const IPDConsentFroms = () => {
                                     {userdetail?.assigndocts?.map((item) => {
                                       return (
                                         <option
-                                          value={item?._id}
+                                          value={item?.doctorsId?._id}
                                         >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
                                       );
                                     })}
@@ -1950,10 +1919,10 @@ const IPDConsentFroms = () => {
                                   type="text"
                                   className="vi_0"
                                   style={{ width: "161px" }}
-                                  value={PatientSurrogate}
-                                  onChange={(e) =>
-                                    setPatientSurrogate(e.target.value)
-                                  }
+                                  value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}
+                                  // onChange={(e) =>
+                                  //   setPatientSurrogate(e.target.value)
+                                  // }
                                 />
                               </td>
                               <td>
@@ -2061,7 +2030,7 @@ const IPDConsentFroms = () => {
                                   {userdetail?.assigndocts?.map((item) => {
                                     return (
                                       <option
-                                        value={item?._id}
+                                        value={item?.doctorsId?._id}
                                       >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
                                     );
                                   })}
@@ -2414,27 +2383,15 @@ const IPDConsentFroms = () => {
                                     out of my own free will to undergo the
                                     following surgery / procedure&nbsp;
                                     <span>
-                                      <select
+                                      <input
                                         className="vi_0 mt-2"
                                         style={{ width: "331px" }}
                                         value={NameOfSurgery}
                                         onChange={(e) =>
                                           setNameOfSurgery(e.target.value)
                                         }
-                                      >
-                                        <option value="">
-                                          select the surgery
-                                        </option>
-                                        {HServicesList?.map((val) => {
-                                          return (
-                                            <option
-                                              value={val?.hSurgeryService}
-                                            >
-                                              {val?.hSurgeryService}
-                                            </option>
-                                          );
-                                        })}
-                                      </select>
+                                      placeholder="Enter Surgery Name"
+                                      />      
                                       &nbsp; at Janani Multispeciality Hospital
                                       I understand that the above mentioned
                                       procedure necessitates the administration
@@ -2516,27 +2473,14 @@ const IPDConsentFroms = () => {
                                       I hereby absolve Janani Multispeciailty
                                       Hospital.
                                       <span>
-                                        <select
-                                          value={NameOfSurgery}
+                                        <input
+                                          value={NameOfSurgery2}
                                           onChange={(e) =>
-                                            setNameOfSurgery(e.target.value)
+                                            setNameOfSurgery2(e.target.value)
                                           }
                                           className="vi_0"
                                           style={{ width: "331px" }}
-                                        >
-                                          <option value="">
-                                            select the surgery
-                                          </option>
-                                          {HServicesList?.map((val) => {
-                                            return (
-                                              <option
-                                                value={val?.hSurgeryService}
-                                              >
-                                                {val?.hSurgeryService}
-                                              </option>
-                                            );
-                                          })}
-                                        </select>
+                                        />
                                       </span>
                                       and its surgical team & hospital staff of
                                       anyliability for consequences arising
@@ -2557,7 +2501,7 @@ const IPDConsentFroms = () => {
                                           style={{ width: "331px" }}
                                           value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}
                                         />
-                                      </span>
+                                      </span> &nbsp;
                                       hence I,{" "}
                                       <span>
                                         <input
@@ -2598,10 +2542,7 @@ const IPDConsentFroms = () => {
                                       type="text"
                                       className="vi_0"
                                       style={{ width: "161px" }}
-                                      value={PatientSurrogate}
-                                      onChange={(e) =>
-                                        setPatientSurrogate(e.target.value)
-                                      }
+                                      value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}         
                                     />
                                   </td>
                                   <td>
@@ -2720,7 +2661,7 @@ const IPDConsentFroms = () => {
                                       {userdetail?.assigndocts?.map((item) => {
                                         return (
                                           <option
-                                            value={item?._id}
+                                            value={item?.doctorsId?._id}
                                           >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
                                         );
                                       })}

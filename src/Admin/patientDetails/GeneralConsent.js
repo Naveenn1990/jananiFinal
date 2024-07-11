@@ -1,12 +1,10 @@
 import moment from "moment";
 import React from "react";
-
 import { Button, Table } from "react-bootstrap";
-
 import { FiDownload } from "react-icons/fi";
 
 const GeneralConsent = ({viewGeneralConsentform}) => {
-
+console.log("viewGeneralConsentform",viewGeneralConsentform);
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">
@@ -31,10 +29,8 @@ const GeneralConsent = ({viewGeneralConsentform}) => {
           style={{
             padding: "5px",
             border: "2px solid #20958C",
-            // width: "1057px",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1235px",
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -55,16 +51,7 @@ const GeneralConsent = ({viewGeneralConsentform}) => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
-            {" "}
             <h6
               className="fw-bold mt-2"
               style={{ color: "#20958C", fontSize: "30px" }}
@@ -124,33 +111,42 @@ const GeneralConsent = ({viewGeneralConsentform}) => {
                 <tr>
                   <th style={{ width: "33%", border: "1.5px  solid #20958C" }}>
                     Doctor
-                    {/* <span style={{ fontWeight: "bold" }}>Mannu Kumar</span>{" "} */}
                   </th>
                   <th style={{ width: "33%", border: "1.5px  solid #20958C" }}>
                     Tenant/ Relative
-                    {/* <span style={{ fontWeight: "bold" }}>02/05/2024</span>{" "} */}
                   </th>
                   <th style={{ width: "33%", border: "1.5px  solid #20958C" }}>
                     Patient
-                    {/* <span style={{ fontWeight: "bold" }}>25 years</span> */}
                   </th>
                 </tr>
                 <tr>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
                     Name:{" "}
-                    <span style={{ fontWeight: "bold" }}>Dr. {viewGeneralConsentform[0]?.ConDoctorName}</span>{" "}
+                    <span 
+                    style={{ fontWeight: "bold" }}>
+                      Dr. {`${viewGeneralConsentform[0]?.ConDoctorName?.Firstname} ${viewGeneralConsentform[0]?.ConDoctorName?.Lastname}`}</span>{" "}
                   </td>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
                     Name: <span style={{ fontWeight: "bold" }}>Mr. {viewGeneralConsentform[0]?.RealivesName}</span>{" "}
                   </td>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
-                    Sign: <span style={{ fontWeight: "bold" }}></span>{" "}
+                    Sign: <span style={{ fontWeight: "bold" }}>
+                    <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/ConsentForm/${viewGeneralConsentform[0]?.patientsign}`}
+                    />
+                      </span>{" "}
                   </td>
                 </tr>
 
                 <tr>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
-                    Sign: <span style={{ fontWeight: "bold" }}></span>{" "}
+                    Sign: <span style={{ fontWeight: "bold" }}>
+                    <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/ConsentForm/${viewGeneralConsentform[0]?.doctorsign}`}                     
+                      />
+                      </span>{" "}
                   </td>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
                     Relationship:{" "}
