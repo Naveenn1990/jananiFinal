@@ -5,6 +5,8 @@ import { Button, Modal, Table } from "react-bootstrap";
 
 import { useReactToPrint } from "react-to-print";
 import ReactPaginate from "react-paginate";
+import exportFromJSON from "export-from-json";
+import { AiFillFileExcel } from "react-icons/ai";
 
 export default function HospitalLabTechnician() {
   // Select width
@@ -305,6 +307,28 @@ export default function HospitalLabTechnician() {
 
   console.log("FilteredCatList: ", FilteredCatList);
 
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Lab Technician-report list");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (AllTestList1.length != 0) {
+        exportFromJSON({
+          data: JSON.parse(JSON.stringify(AllTestList1)),
+          fileName,
+          exportType,
+        });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -325,6 +349,18 @@ export default function HospitalLabTechnician() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
           {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
             <AiOutlineUserAdd className="AddIcon1" onClick={handleShow} />
           </div> */}

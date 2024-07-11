@@ -9,10 +9,16 @@ import {
   FloatingLabel,
   Row,
 } from "react-bootstrap";
-import { AiFillDelete, AiOutlineUserAdd } from "react-icons/ai";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlineUserAdd,
+} from "react-icons/ai";
 import { MdDelete, MdDeleteOutline, MdEdit } from "react-icons/md";
 import { useReactToPrint } from "react-to-print";
 import Select from "react-select";
+import exportFromJSON from "export-from-json";
+import { Pagination, Stack } from "@mui/material";
 
 function BookedLabTest() {
   // Select width
@@ -95,6 +101,7 @@ function BookedLabTest() {
       setAllTestList(res.data.list);
       setAllTestList1(res.data.list1);
       setFilteredCatList(res.data.list1);
+      setPagination(res.data.list1);
     } catch (error) {
       console.log(error);
     }
@@ -358,6 +365,40 @@ function BookedLabTest() {
     handleFilter();
   }, [search]);
 
+  //===================
+
+  // Pagination
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = (selected) => {
+    setPageNumber(selected);
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Booked lab tests");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (AllTestList1.length != 0) {
+        exportFromJSON({
+          data: JSON.parse(JSON.stringify(AllTestList1)),
+          fileName,
+          exportType,
+        });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -378,6 +419,18 @@ function BookedLabTest() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <AiOutlineUserAdd className="AddIcon1" onClick={handleShow} />
           </div>
@@ -405,7 +458,10 @@ function BookedLabTest() {
               </tr>
             </thead>
             <tbody>
-              {FilteredCatList?.map((item, i) => {
+              {FilteredCatList?.slice(
+                pagesVisited,
+                pagesVisited + usersPerPage
+              )?.map((item, i) => {
                 return (
                   <tr style={{ fontSize: "15px", textAlign: "center" }}>
                     {/* <td>
@@ -587,6 +643,17 @@ function BookedLabTest() {
               })}
             </tbody>
           </Table>
+          <div style={{ float: "left" }} className="my-3 d-flex justify-end">
+            <Stack spacing={2}>
+              <Pagination
+                count={pageCount}
+                onChange={(event, value) => {
+                  changePage(value - 1);
+                }}
+                color="primary"
+              />
+            </Stack>
+          </div>
         </div>
 
         <Modal show={show1} onHide={handleClose1} size="lg">
@@ -1080,7 +1147,7 @@ function BookedLabTest() {
                   <option>Choose Options</option>
                   <option value={"IPD"}>IPD</option>
                   <option value={"OPD"}>OPD</option>
-                  <option value={"GENERAL"}>General</option>
+                  {/* <option value={"GENERAL"}>General</option> */}
                 </Form.Select>
               </FloatingLabel>
 

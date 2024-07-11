@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Table } from "react-bootstrap";
-import { AiFillDelete } from "react-icons/ai";
+import { AiFillDelete, AiFillFileExcel } from "react-icons/ai";
 import { BsFillEyeFill } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { FaUserMd } from "react-icons/fa";
 import { ImLab } from "react-icons/im";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { Pagination, Stack } from "@mui/material";
+import exportFromJSON from "export-from-json";
 
 export default function HospitallabCategory() {
   const [show, setShow] = useState(false);
@@ -74,6 +76,7 @@ export default function HospitallabCategory() {
           const data = response.data.list;
           setHospitalLabCatList(data);
           setFilteredCatList(data);
+          setPagination(data);
         }
       })
       .catch(function (error) {
@@ -169,6 +172,40 @@ export default function HospitallabCategory() {
     HospitallabCategories();
   }, []);
 
+  // ==========================
+
+  // Pagination
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 4;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = (selected) => {
+    setPageNumber(selected);
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Lab test categories");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (HospitalLabCatList.length != 0) {
+        exportFromJSON({
+          data: JSON.parse(JSON.stringify(HospitalLabCatList)),
+          fileName,
+          exportType,
+        });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -189,6 +226,18 @@ export default function HospitallabCategory() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <ImLab className="AddIcon1" onClick={() => setShow(true)} />
           </div>
@@ -446,7 +495,10 @@ export default function HospitallabCategory() {
             </tr>
           </thead>
           <tbody>
-            {FilteredCatList?.map((val, index) => {
+            {FilteredCatList?.slice(
+              pagesVisited,
+              pagesVisited + usersPerPage
+            )?.map((val, index) => {
               return (
                 <tr style={{ fontSize: "15px", textAlign: "center" }}>
                   <td>{index + 1}</td>
@@ -488,6 +540,18 @@ export default function HospitallabCategory() {
             })}
           </tbody>
         </Table>
+
+        <div style={{ float: "left" }} className="my-3 d-flex justify-end">
+          <Stack spacing={2}>
+            <Pagination
+              count={pageCount}
+              onChange={(event, value) => {
+                changePage(value - 1);
+              }}
+              color="primary"
+            />
+          </Stack>
+        </div>
       </div>
     </div>
   );
