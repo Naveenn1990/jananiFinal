@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import Barcode from "react-barcode";
 import { Table, Modal, ProgressBar, Button } from "react-bootstrap";
-import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { MdEdit } from "react-icons/md";
@@ -10,6 +9,14 @@ import { CiBarcode } from "react-icons/ci";
 import { useReactToPrint } from "react-to-print";
 import Form from "react-bootstrap/Form";
 import moment from "moment";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
+import { FaUserMd } from "react-icons/fa";
 
 export default function Outpatientlist() {
   const [View, setView] = useState({});
@@ -295,7 +302,7 @@ export default function Outpatientlist() {
   //         setmedicinesTaking("");
   //         setpatientAllergies([]);
   //         alert("Signup Success");
-  //         getcategory();
+  //         getdata();
   //         // window.location.assign("/patientPortal");
   //       }
   //     }
@@ -421,7 +428,7 @@ export default function Outpatientlist() {
           setmedicinesTaking("");
           setpatientAllergies([]);
           alert("Signup Success");
-          getcategory();
+          getdata();
         }
       }
     } catch (error) {
@@ -519,24 +526,27 @@ export default function Outpatientlist() {
     }
   };
 
-  const [category, setcategory] = useState([]);
+  const [data, setdata] = useState([]);
 
-  const getcategory = () => {
+  const getdata = () => {
     axios
       .get("http://localhost:8521/api/user/getPatientList")
       .then(function (response) {
         // handle success
-        setcategory(response.data.UsersInfo);
+        setdata(
+          response.data.UsersInfo?.filter(
+            (val) => val?.registrationType === "OPD"
+          )
+        );
       })
       .catch(function (error) {
         // handle error
         console.log(error);
       });
   };
-  console.log("category", category);
 
   useEffect(() => {
-    getcategory();
+    getdata();
     getDoctors();
     GetDepartment();
   }, []);
@@ -596,81 +606,139 @@ export default function Outpatientlist() {
   const [HealthInsuranceDoc, setHealthInsuranceDoc] = useState();
   const [HealthInsuranceProvider, setHealthInsuranceProvider] = useState("");
   const [HealthInsuranceAmount, setHealthInsuranceAmount] = useState();
-
+  const formd = new FormData();
   const EditPatient = async (e) => {
     e.preventDefault();
     try {
-      const appendFormData = (key, value, defaultValue) => {
-        const finalValue =
-          value !== undefined && value !== null
-            ? value
-            : defaultValue !== undefined && defaultValue !== null
-            ? defaultValue
-            : "";
-        console.log(`Appending ${key}:`, finalValue, key, value, defaultValue); // Log each key-value pair being appended
-        formdata.append(key, finalValue);
+      const obj = {
+        Firstname: FirstName1
+          ? FirstName1
+          : EditData?.Firstname
+          ? EditData?.Firstname
+          : "",
+        Lastname: LastName1
+          ? LastName1
+          : EditData?.Lastname
+          ? EditData?.Lastname
+          : "",
+        Gender: Gender1 ? Gender1 : EditData?.Gender ? EditData?.Gender : "",
+        DOB: DoB1 ? DoB1 : EditData?.DOB ? EditData?.DOB : "",
+        profilepic: ProfilePic1
+          ? ProfilePic1
+          : EditData?.profilepic
+          ? EditData?.profilepic
+          : "",
+        PhoneNumber: ContactNumber1
+          ? ContactNumber1
+          : EditData?.PhoneNumber
+          ? EditData?.PhoneNumber
+          : "",
+        alternatePhoneNumber: AlternativeContactNumber1
+          ? AlternativeContactNumber1
+          : EditData?.alternatePhoneNumber
+          ? EditData?.alternatePhoneNumber
+          : "",
+        Email: Email1 ? Email1 : EditData?.Email ? EditData?.Email : "",
+        Address1: Address111
+          ? Address111
+          : EditData?.Address1
+          ? EditData?.Address1
+          : "",
+        Address2: Address222
+          ? Address222
+          : EditData?.Address2
+          ? EditData?.Address2
+          : "",
+        City1: City11 ? City11 : EditData?.City1 ? EditData?.City1 : "",
+        State1: State11 ? State11 : EditData?.State1 ? EditData?.State1 : "",
+        Zipcode: Pincode1
+          ? Pincode1
+          : EditData?.Zipcode
+          ? EditData?.Zipcode
+          : "",
+        MaritalStatus: MarritalStatus1
+          ? MarritalStatus1
+          : EditData?.MaritalStatus
+          ? EditData?.MaritalStatus
+          : "",
+        PatientAge18: Age11
+          ? Age11
+          : EditData?.PatientAge18
+          ? EditData?.PatientAge18
+          : "",
+        relativeName: RelativeName1
+          ? RelativeName1
+          : EditData?.relativeName
+          ? EditData?.relativeName
+          : "",
+        relationWithPatient: RelativeRelation
+          ? RelativeRelation
+          : EditData?.relationWithPatient
+          ? EditData?.relationWithPatient
+          : "",
+        relativePhone: RelativeNumber
+          ? RelativeNumber
+          : EditData?.relativePhone
+          ? EditData?.relativePhone
+          : "",
+        AdmitDate: AdmissionDate1
+          ? AdmissionDate1
+          : EditData?.AdmitDate
+          ? EditData?.AdmitDate
+          : "",
+        followUpsDate: FollowupDate1
+          ? FollowupDate1
+          : EditData?.followUpsDate
+          ? EditData?.followUpsDate
+          : "",
+        haveInsurance: HealthInsurance
+          ? HealthInsurance
+          : EditData?.haveInsurance
+          ? EditData?.haveInsurance
+          : "",
+        insuranceDoc: HealthInsuranceDoc
+          ? HealthInsuranceDoc
+          : EditData?.insuranceDoc
+          ? EditData?.insuranceDoc
+          : "",
+        insuranceProviderCompany: HealthInsuranceProvider
+          ? HealthInsuranceProvider
+          : EditData?.insuranceProviderCompany
+          ? EditData?.insuranceProviderCompany
+          : "",
+        insuranceAmt: HealthInsuranceAmount
+          ? HealthInsuranceAmount
+          : EditData?.insuranceAmt
+          ? EditData?.insuranceAmt
+          : "",
+        Password: Password11
+          ? Password11
+          : EditData?.Password
+          ? EditData?.Password
+          : "",
+        ConfirmPassword: ConfirmPassword11
+          ? ConfirmPassword11
+          : EditData?.ConfirmPassword
+          ? EditData?.ConfirmPassword
+          : "",
+        Aadharcard: Adharcard11
+          ? Adharcard11
+          : EditData?.Aadharcard
+          ? EditData?.Aadharcard
+          : "",
+        Aadharno: AdharNumber11
+          ? AdharNumber11
+          : EditData?.Aadharno
+          ? EditData?.Aadharno
+          : "",
       };
-      appendFormData("Firstname", FirstName1, EditData?.Firstname);
-      appendFormData("Lastname", LastName1, EditData?.Lastname);
-      appendFormData("Gender", Gender1, EditData?.Gender);
-      appendFormData("DOB", DoB1, EditData?.DOB);
-      appendFormData("profilepic", ProfilePic1, EditData?.profilepic);
-      appendFormData("PhoneNumber", ContactNumber1, EditData?.PhoneNumber);
-      appendFormData(
-        "alternatePhoneNumber",
-        AlternativeContactNumber1,
-        EditData?.alternatePhoneNumber
-      );
-      appendFormData("Email", Email1, EditData?.Email);
-      appendFormData("Address1", Address111, EditData?.Address1);
-      appendFormData("Address2", Address222, EditData?.Address2);
-      appendFormData("City1", City11, EditData?.City1);
-      appendFormData("State1", State11, EditData?.State1);
-      appendFormData("Zipcode", Pincode1, EditData?.Zipcode);
-      appendFormData("MaritalStatus", MarritalStatus1, EditData?.MaritalStatus);
-      appendFormData("PatientAge18", Age11, EditData?.PatientAge18);
-      appendFormData("relativeName", RelativeName1, EditData?.relativeName);
-      appendFormData(
-        "relationWithPatient",
-        RelativeRelation,
-        EditData?.relationWithPatient
-      );
-      appendFormData("relativePhone", RelativeNumber, EditData?.relativePhone);
-      appendFormData("AdmitDate", AdmissionDate1, EditData?.AdmitDate);
-      appendFormData("followUpsDate", FollowupDate1, EditData?.followUpsDate);
-      appendFormData("haveInsurance", HealthInsurance, EditData?.haveInsurance);
-      appendFormData(
-        "insuranceDoc",
-        HealthInsuranceDoc,
-        EditData?.insuranceDoc
-      );
-      appendFormData(
-        "insuranceProviderCompany",
-        HealthInsuranceProvider,
-        EditData?.insuranceProviderCompany
-      );
-      appendFormData(
-        "insuranceAmt",
-        HealthInsuranceAmount,
-        EditData?.insuranceAmt
-      );
-      appendFormData("Password", Password11, EditData?.Password);
-      appendFormData(
-        "ConfirmPassword",
-        ConfirmPassword11,
-        EditData?.ConfirmPassword
-      );
-      appendFormData("Aadharcard", Adharcard11, EditData?.Aadharcard);
-      appendFormData("Aadharno", AdharNumber11, EditData?.Aadharno);
-
-      console.log("FormData entries:", Array.from(formdata.entries()));
 
       const config = {
         url: "/user/editPatientDetails/" + EditData?.PatientId,
         method: "put",
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "multipart/form-data" },
-        data: formdata,
+        data: obj,
       };
 
       console.log("Config:", config);
@@ -678,7 +746,7 @@ export default function Outpatientlist() {
       if (res.status === 200) {
         console.log(res.data.success);
         alert("Data updated successfully");
-        // window.location.reload();
+        window.location.reload();
       }
     } catch (error) {
       console.log("Error:", error);
@@ -688,9 +756,65 @@ export default function Outpatientlist() {
     }
   };
 
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 10;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Out-Patient-List");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
+  console.log("data", data);
+
   console.log("ReadmoreData", ReadmoreData);
   return (
     <div>
+      <h6
+        style={{
+          fontSize: "22px",
+          fontWeight: "600",
+          color: "grey",
+          marginTop: "20px",
+        }}
+      >
+        Out-Patient List
+      </h6>
       <div
         style={{
           display: "flex",
@@ -698,21 +822,32 @@ export default function Outpatientlist() {
           marginTop: "2%",
         }}
       >
-        <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-          Out-Patient List
-        </h6>
         <AiOutlinePlusCircle
           className="AddIcon1"
           onClick={() => handleShow2(true)}
         />
+
         <input
-          placeholder="Search Out-Patient List"
+          placeholder="Search Hospital doctors"
           style={{
             padding: "5px 10px",
             border: "1px solid #20958c",
             borderRadius: "0px",
           }}
+          onChange={handleFilter}
         />
+        <button
+          style={{
+            backgroundColor: "#20958c",
+            color: "white",
+            border: "none",
+            fontSize: "12px",
+            borderRadius: "4px",
+          }}
+          onClick={ExportToExcel}
+        >
+          EXPORT <AiFillFileExcel />
+        </button>
       </div>
 
       <Modal size="lg" show={show} onHide={handleClose}>
@@ -3825,17 +3960,18 @@ export default function Outpatientlist() {
           </div>
         </Modal.Footer>
       </Modal>
-      <div style={{ overflowX: "scroll" }}>
+      <div style={{ overflow: "hidden", overflowX: "scroll" }}>
         <Table responsive="md" style={{ marginTop: "1%" }}>
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
+              <th>Sl. No.</th>
               <th>Profile</th>
               <th>Patient-Id</th>
               <th> Name</th>
               <th>Sex</th>
               <th>Address</th>
               <th>Mobile</th>
-              <th>Age</th>
+              <th>DOB</th>
               {/* <th>Reciept</th> */}
               <th>Bar-Code</th>
               <th>Appointment</th>
@@ -3844,40 +3980,42 @@ export default function Outpatientlist() {
             </tr>
           </thead>
           <tbody>
-            {category
-              ?.filter((val) => val?.registrationType === "OPD")
-              ?.map((item) => {
-                return (
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td>
-                      {item?.profilepic ? (
-                        <img
-                          alt=""
-                          src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
-                          style={{
-                            width: "50px",
-                            height: "50px",
-                            borderRadius: "50%",
-                          }}
-                        />
-                      ) : (
-                        <img
-                          src="/img/dummyprofile.png"
-                          style={{
-                            width: "50px",
-                            height: "50px",
-                            borderRadius: "50%",
-                          }}
-                        />
-                      )}
-                    </td>
-                    <td>{item?.PatientId}</td>
-                    <td>{item?.Firstname}</td>
-                    <td>{item?.Gender}</td>
-                    <td>{item?.Address1}</td>
-                    <td>{item?.PhoneNumber}</td>
-                    <td>{item?.DOB}</td>
-                    {/* <td>
+            {search.length > 0
+              ? tableFilter
+                  .slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item, index) => {
+                    return (
+                      <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                        <td>{index + 1}</td>
+                        <td>
+                          {item?.profilepic ? (
+                            <img
+                              alt=""
+                              src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                borderRadius: "50%",
+                              }}
+                            />
+                          ) : (
+                            <img
+                              src="/img/dummyprofile.png"
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                borderRadius: "50%",
+                              }}
+                            />
+                          )}
+                        </td>
+                        <td>{item?.PatientId}</td>
+                        <td>{item?.Firstname}</td>
+                        <td>{item?.Gender}</td>
+                        <td>{item?.Address1}</td>
+                        <td>{item?.PhoneNumber}</td>
+                        <td>{item?.DOB}</td>
+                        {/* <td>
                       <button
                         style={{
                           padding: "6px",
@@ -3894,67 +4032,193 @@ export default function Outpatientlist() {
                         Consultaion Reciept
                       </button>
                     </td> */}
-                    <td>
-                      <CiBarcode
-                        style={{ cursor: "pointer", fontSize: "35px" }}
-                        onClick={() => handleShow10(item)}
-                      />
-                    </td>
-                    <td>
-                      <button
-                        style={{
-                          padding: "6px",
-                          border: "1px solid white",
-                          backgroundColor: "#20958c",
-                          color: "white",
-                          borderRadius: "0px",
-                        }}
-                        onClick={() => {
-                          handleShowBook(item);
-                        }}
-                      >
-                        Book
-                      </button>
-                    </td>
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          textAlign: "center",
-                          justifyContent: "space-evenly",
-                        }}
-                      >
-                        <button
-                          onClick={() => handleShowEdit(item)}
-                          style={{
-                            border: "none",
-                            backgroundColor: "transparent",
-                          }}
-                        >
-                          <MdEdit
-                            style={{ color: "#20958c", marginRight: "1%" }}
+                        <td>
+                          <CiBarcode
+                            style={{ cursor: "pointer", fontSize: "35px" }}
+                            onClick={() => handleShow10(item)}
                           />
-                        </button>
-                      </div>
-                    </td>
-                    <td>
-                      <button
-                        style={{
-                          border: "none",
-                          backgroundColor: "#20958c",
-                          color: "white",
-                          borderRadius: "0px",
-                        }}
-                        onClick={() => handleShow(item)}
-                      >
-                        Read More
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+                        </td>
+                        <td>
+                          <button
+                            style={{
+                              padding: "6px",
+                              border: "1px solid white",
+                              backgroundColor: "#20958c",
+                              color: "white",
+                              borderRadius: "0px",
+                            }}
+                            onClick={() => {
+                              handleShowBook(item);
+                            }}
+                          >
+                            Book
+                          </button>
+                        </td>
+                        <td>
+                          <div
+                            style={{
+                              display: "flex",
+                              textAlign: "center",
+                              justifyContent: "space-evenly",
+                            }}
+                          >
+                            <button
+                              onClick={() => handleShowEdit(item)}
+                              style={{
+                                border: "none",
+                                backgroundColor: "transparent",
+                              }}
+                            >
+                              <MdEdit
+                                style={{ color: "#20958c", marginRight: "1%" }}
+                              />
+                            </button>
+                          </div>
+                        </td>
+                        <td>
+                          <button
+                            style={{
+                              border: "none",
+                              backgroundColor: "#20958c",
+                              color: "white",
+                              borderRadius: "0px",
+                            }}
+                            onClick={() => handleShow(item)}
+                          >
+                            Read More
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+              : data
+                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item, index) => {
+                    return (
+                      <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                        <td>{index + 1}</td>
+                        <td>
+                          {item?.profilepic ? (
+                            <img
+                              alt=""
+                              src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                borderRadius: "50%",
+                              }}
+                            />
+                          ) : (
+                            <img
+                              src="/img/dummyprofile.png"
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                borderRadius: "50%",
+                              }}
+                            />
+                          )}
+                        </td>
+                        <td>{item?.PatientId}</td>
+                        <td>{item?.Firstname}</td>
+                        <td>{item?.Gender}</td>
+                        <td>{item?.Address1}</td>
+                        <td>{item?.PhoneNumber}</td>
+                        <td>{item?.DOB}</td>
+                        {/* <td>
+                    <button
+                      style={{
+                        padding: "6px",
+                        border: "1px solid white",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "0px",
+                      }}
+                      onClick={() => {
+                        handleShow3();
+                        setView(item);
+                      }}
+                    >
+                      Consultaion Reciept
+                    </button>
+                  </td> */}
+                        <td>
+                          <CiBarcode
+                            style={{ cursor: "pointer", fontSize: "35px" }}
+                            onClick={() => handleShow10(item)}
+                          />
+                        </td>
+                        <td>
+                          <button
+                            style={{
+                              padding: "6px",
+                              border: "1px solid white",
+                              backgroundColor: "#20958c",
+                              color: "white",
+                              borderRadius: "0px",
+                            }}
+                            onClick={() => {
+                              handleShowBook(item);
+                            }}
+                          >
+                            Book
+                          </button>
+                        </td>
+                        <td>
+                          <div
+                            style={{
+                              display: "flex",
+                              textAlign: "center",
+                              justifyContent: "space-evenly",
+                            }}
+                          >
+                            <button
+                              onClick={() => handleShowEdit(item)}
+                              style={{
+                                border: "none",
+                                backgroundColor: "transparent",
+                              }}
+                            >
+                              <MdEdit
+                                style={{ color: "#20958c", marginRight: "1%" }}
+                              />
+                            </button>
+                          </div>
+                        </td>
+                        <td>
+                          <button
+                            style={{
+                              border: "none",
+                              backgroundColor: "#20958c",
+                              color: "white",
+                              borderRadius: "0px",
+                            }}
+                            onClick={() => handleShow(item)}
+                          >
+                            Read More
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
           </tbody>
         </Table>
+        <div style={{ display: "flex" }}>
+          <p style={{ width: "100%", marginTop: "20px" }}>
+            Total Count: {data?.length}
+          </p>
+          <ReactPaginate
+            previousLabel={"Back"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
+        </div>
       </div>
     </div>
   );
