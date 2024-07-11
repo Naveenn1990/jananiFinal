@@ -1151,19 +1151,10 @@ const IPDConsentFroms = () => {
                           className="row"
                           style={{ border: "1px solid #20958C" }}
                         >
-                          <div
-                            className="col-md-3 consentformhd" >
+                          <div className="col-md-3 consentformhd" >
                             Name of the Procedure/ Procedures
                           </div>
-                          <div
-                            className="col-md-3"
-                            style={{
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                              fontSize: "18px",
-                            }}
-                          >
+                          <div className="col-md-3 consentformhd">
                             Estimated Cost
                           </div>
                           <div
