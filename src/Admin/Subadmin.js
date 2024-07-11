@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { TbView360 } from "react-icons/tb";
 import { BiSolidUserCircle } from "react-icons/bi";
+import { Pagination, Stack } from "@mui/material";
 
 import Modal from "react-bootstrap/Modal";
 import { MdEdit } from "react-icons/md";
@@ -11,6 +12,7 @@ import { RiLockPasswordFill } from "react-icons/ri";
 import { ImCancelCircle } from "react-icons/im";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import exportFromJSON from "export-from-json";
 
 export default function Subadmin() {
   const isAdminlogin = sessionStorage.getItem("adminDetails");
@@ -171,8 +173,9 @@ export default function Subadmin() {
         .get("http://localhost:8521/api/admin/getSubadminList")
         ?.then((res) => {
           if (res.status === 200) {
-            setsubadminlist(res.data.subadminList);
-            setsubadminlistImmutable(res.data.subadminList);
+            setsubadminlist([...res.data.subadminList]);
+            setFilteredCatList(res.data.subadminList);
+            setPagination(res.data.subadminList);
           }
         })
         ?.catch((err) => {
@@ -340,6 +343,7 @@ export default function Subadmin() {
   };
 
   const [search, setSearch] = useState("");
+  let [FilteredCatList, setFilteredCatList] = useState([]);
   function handleFilter() {
     if (search != "") {
       // setSearch(search);
@@ -348,11 +352,11 @@ export default function Subadmin() {
           String(o[k]).toLowerCase().includes(search.toLowerCase())
         )
       );
-      setsubadminlist([...filterTable]);
+      setFilteredCatList([...filterTable]);
     } else {
       // setSearch(search);
       // subadminList();
-      setsubadminlist([...subadminlistImmutable]);
+      setFilteredCatList([...subadminlist]);
     }
   }
 
@@ -368,6 +372,41 @@ export default function Subadmin() {
       subadminList();
     }
   }, [isAdminlogin, navigate]);
+
+  //===================
+
+  // Pagination
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 3;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = (selected) => {
+    setPageNumber(selected);
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Subadmin-list");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (subadminlist.length != 0) {
+        exportFromJSON({
+          data: JSON.parse(JSON.stringify(subadminlist)),
+          fileName,
+          exportType,
+        });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+  console.log("subadminlist9098: ", subadminlist);
 
   return (
     <div style={{ padding: "1%" }}>
@@ -398,6 +437,7 @@ export default function Subadmin() {
             fontSize: "12px",
             borderRadius: "4px",
           }}
+          onClick={ExportToExcel}
         >
           EXPORT <AiFillFileExcel />
         </button>
@@ -1803,7 +1843,10 @@ export default function Subadmin() {
           </tr>
         </thead>
         <tbody>
-          {subadminlist?.map((details, i) => {
+          {FilteredCatList?.slice(
+            pagesVisited,
+            pagesVisited + usersPerPage
+          )?.map((details, i) => {
             return (
               <tr style={{ fontSize: "15px", textAlign: "center" }}>
                 <td>{++i}</td>
@@ -1925,6 +1968,18 @@ export default function Subadmin() {
           })}
         </tbody>
       </Table>
+
+      <div style={{ float: "left" }} className="my-3 d-flex justify-end">
+        <Stack spacing={2}>
+          <Pagination
+            count={pageCount}
+            onChange={(event, value) => {
+              changePage(value - 1);
+            }}
+            color="primary"
+          />
+        </Stack>
+      </div>
     </div>
   );
 }

@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
-import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
 import { MdEdit } from "react-icons/md";
 import { useEffect } from "react";
 import axios from "axios";
+import { Pagination, Stack } from "@mui/material";
+import exportFromJSON from "export-from-json";
 
 export default function Clinicallab() {
   const [show, setShow] = useState(false);
@@ -176,6 +182,7 @@ export default function Clinicallab() {
       );
       if (res.status === 200) {
         setclinicalLabs(res.data.ClinicalLabsInfo);
+        setPagination(res.data.ClinicalLabsInfo);
       }
     } catch (error) {
       console.log(error);
@@ -224,6 +231,40 @@ export default function Clinicallab() {
     getClinicalLabsList();
   }, []);
 
+  // ==========================
+
+  // Pagination
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = (selected) => {
+    setPageNumber(selected);
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Clinical-lab list");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (clinicalLabs.length != 0) {
+        exportFromJSON({
+          data: JSON.parse(JSON.stringify(clinicalLabs)),
+          fileName,
+          exportType,
+        });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -244,6 +285,18 @@ export default function Clinicallab() {
             value={SearchItem}
             onChange={(e) => setSearchItem(e.target.value)}
           />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <AiOutlinePlusCircle
               className="AddIcon1"
@@ -1116,106 +1169,121 @@ export default function Clinicallab() {
             </tr>
           </thead>
           <tbody>
-            {clinicalLabs.map((labinfo, i) => {
-              if (
-                SearchItem === "" ||
-                Object.values(labinfo).some((value) =>
-                  String(value).toLowerCase().includes(SearchItem.toLowerCase())
+            {clinicalLabs
+              ?.slice(pagesVisited, pagesVisited + usersPerPage)
+              ?.map((labinfo, i) => {
+                if (
+                  SearchItem === "" ||
+                  Object.values(labinfo).some((value) =>
+                    String(value)
+                      .toLowerCase()
+                      .includes(SearchItem.toLowerCase())
+                  )
                 )
-              )
-                return (
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td>{++i}</td>
-                    <td>{labinfo?.ClinicLabId}</td>
-                    <td>{labinfo?.ClinicLabName}</td>
-                    <td>{labinfo?.Email}</td>
-                    <td>{labinfo?.PhoneNumber}</td>
-                    <td>
-                      {labinfo?.blocked === false ? (
-                        <>
-                          <Button
+                  return (
+                    <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                      <td>{++i}</td>
+                      <td>{labinfo?.ClinicLabId}</td>
+                      <td>{labinfo?.ClinicLabName}</td>
+                      <td>{labinfo?.Email}</td>
+                      <td>{labinfo?.PhoneNumber}</td>
+                      <td>
+                        {labinfo?.blocked === false ? (
+                          <>
+                            <Button
+                              style={{
+                                fontSize: "12px",
+                                border: "none",
+                                backgroundColor: "#20958c",
+                                color: "white",
+                                fontWeight: "600",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                handleShow6();
+                                setLabDetailsShow(labinfo);
+                              }}
+                            >
+                              BLOCK
+                            </Button>
+                            <br />
+                            <b style={{ color: "green" }}> User is UnBlock </b>
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              style={{
+                                fontSize: "12px",
+                                border: "none",
+                                color: "white",
+                                fontWeight: "600",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                              }}
+                              variant="danger"
+                              onClick={() => {
+                                handleShow6();
+                                setLabDetailsShow(labinfo);
+                              }}
+                            >
+                              UNBLOCK
+                            </Button>
+                            <br />
+                            <b style={{ color: "red" }}> User is Block </b>
+                          </>
+                        )}
+                      </td>
+                      <td>
+                        <div
+                          style={{
+                            display: "flex",
+                            textAlign: "center",
+                            justifyContent: "space-evenly",
+                            gap: "10px",
+                          }}
+                        >
+                          <MdEdit
                             style={{
-                              fontSize: "12px",
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              fontWeight: "600",
-                              borderRadius: "4px",
+                              color: "#20958c",
+                              marginRight: "1%",
                               cursor: "pointer",
+                              fontSize: "20px",
                             }}
                             onClick={() => {
-                              handleShow6();
+                              handleShow4();
                               setLabDetailsShow(labinfo);
                             }}
-                          >
-                            BLOCK
-                          </Button>
-                          <br />
-                          <b style={{ color: "green" }}> User is UnBlock </b>
-                        </>
-                      ) : (
-                        <>
-                          <Button
+                          />
+                          <AiFillDelete
                             style={{
-                              fontSize: "12px",
-                              border: "none",
-                              color: "white",
-                              fontWeight: "600",
-                              borderRadius: "4px",
+                              color: "red",
                               cursor: "pointer",
+                              fontSize: "20px",
                             }}
-                            variant="danger"
                             onClick={() => {
-                              handleShow6();
-                              setLabDetailsShow(labinfo);
+                              setView(labinfo);
+                              handleShow5();
                             }}
-                          >
-                            UNBLOCK
-                          </Button>
-                          <br />
-                          <b style={{ color: "red" }}> User is Block </b>
-                        </>
-                      )}
-                    </td>
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          textAlign: "center",
-                          justifyContent: "space-evenly",
-                          gap: "10px",
-                        }}
-                      >
-                        <MdEdit
-                          style={{
-                            color: "#20958c",
-                            marginRight: "1%",
-                            cursor: "pointer",
-                            fontSize: "20px",
-                          }}
-                          onClick={() => {
-                            handleShow4();
-                            setLabDetailsShow(labinfo);
-                          }}
-                        />
-                        <AiFillDelete
-                          style={{
-                            color: "red",
-                            cursor: "pointer",
-                            fontSize: "20px",
-                          }}
-                          onClick={() => {
-                            setView(labinfo);
-                            handleShow5();
-                          }}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                );
-            })}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+              })}
           </tbody>
         </Table>
+        <div style={{ float: "left" }} className="my-3 d-flex justify-end">
+          <Stack spacing={2}>
+            <Pagination
+              count={pageCount}
+              onChange={(event, value) => {
+                changePage(value - 1);
+              }}
+              color="primary"
+            />
+          </Stack>
+        </div>
       </div>
     </div>
   );

@@ -1,10 +1,13 @@
 import axios from "axios";
+import exportFromJSON from "export-from-json";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import Barcode from "react-barcode";
 import { Button, Modal, Table } from "react-bootstrap";
+import { AiFillFileExcel } from "react-icons/ai";
 import { IoEye } from "react-icons/io5";
 import { useReactToPrint } from "react-to-print";
+import { Pagination, Stack } from "@mui/material";
 
 export default function CollectingSampleslist() {
   const AdminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
@@ -42,6 +45,7 @@ export default function CollectingSampleslist() {
         "http://localhost:8521/api/user/getBookedHospitalLabTest"
       );
       setAllTestList(res.data.list);
+      setPagination(res.data.list);
       setFilteredCatList(res.data.list);
     } catch (error) {
       console.log(error);
@@ -182,6 +186,40 @@ export default function CollectingSampleslist() {
     handleShowvialDetailsModal();
   }
 
+  //===================
+
+  // Pagination
+  const [pagination, setPagination] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(pagination?.length / usersPerPage);
+  const changePage = (selected) => {
+    setPageNumber(selected);
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("lab sample list");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (AllTestList.length != 0) {
+        exportFromJSON({
+          data: JSON.parse(JSON.stringify(AllTestList)),
+          fileName,
+          exportType,
+        });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -202,6 +240,18 @@ export default function CollectingSampleslist() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
         </div>
         <div style={{ overflow: "hidden", overflowX: "scroll" }}>
           <Table className="mt-2" bordered>
@@ -224,65 +274,78 @@ export default function CollectingSampleslist() {
                 (x) =>
                   (x.patientType === "IPD" || x.paymentStatus === "PAID") &&
                   x.labTestBookingStatus === "BOOKED"
-              )?.map((item, i) => {
-                return (
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td>
-                      {item?.patientid?._id ? (
-                        <>
-                          {item?.patientid?._id}(
-                          {item?.patientid?.registrationType})
-                        </>
-                      ) : (
-                        <>--/--</>
-                      )}
-                    </td>
-                    <td>{item?.patientname}</td>
-                    <td>{item?.Phoneno}</td>
-                    <td>{item?.email}</td>
-                    <td>{moment(item?.testDate).format("DD/MM/YYYY")}</td>
-                    <td>
-                      <Button
-                        onClick={() => {
-                          handleShow2();
-                          setLabtests(item);
-                        }}
-                      >
-                        View
-                      </Button>
-                    </td>
-                    <td>
-                      <IoEye
-                        style={{ fontSize: "20px", color: "#20958c" }}
-                        onClick={() => {
-                          vailNeededFn(item?.Labtests);
-                        }}
-                      />
-                    </td>
-                    <td>
-                      <IoEye
-                        style={{ fontSize: "20px", color: "#20958c" }}
-                        onClick={() => {
-                          handleShow10(item);
-                        }}
-                      />
-                    </td>
-                    <td>
-                      <Button
-                        variant="primary"
-                        onClick={() => {
-                          setLabtests(item);
-                          handleShow3();
-                        }}
-                      >
-                        Confirm
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
+              )
+                ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                ?.map((item, i) => {
+                  return (
+                    <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                      <td>
+                        {item?.patientid?._id ? (
+                          <>
+                            {item?.patientid?._id}(
+                            {item?.patientid?.registrationType})
+                          </>
+                        ) : (
+                          <>--/--</>
+                        )}
+                      </td>
+                      <td>{item?.patientname}</td>
+                      <td>{item?.Phoneno}</td>
+                      <td>{item?.email}</td>
+                      <td>{moment(item?.testDate).format("DD/MM/YYYY")}</td>
+                      <td>
+                        <Button
+                          onClick={() => {
+                            handleShow2();
+                            setLabtests(item);
+                          }}
+                        >
+                          View
+                        </Button>
+                      </td>
+                      <td>
+                        <IoEye
+                          style={{ fontSize: "20px", color: "#20958c" }}
+                          onClick={() => {
+                            vailNeededFn(item?.Labtests);
+                          }}
+                        />
+                      </td>
+                      <td>
+                        <IoEye
+                          style={{ fontSize: "20px", color: "#20958c" }}
+                          onClick={() => {
+                            handleShow10(item);
+                          }}
+                        />
+                      </td>
+                      <td>
+                        <Button
+                          variant="primary"
+                          onClick={() => {
+                            setLabtests(item);
+                            handleShow3();
+                          }}
+                        >
+                          Confirm
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </Table>
+          <div style={{ float: "left" }} className="my-3 d-flex justify-end">
+            <Stack spacing={2}>
+              <Pagination
+                count={pageCount}
+                onChange={(event, value) => {
+                  changePage(value - 1);
+                }}
+                color="primary"
+              />
+            </Stack>
+          </div>
         </div>
 
         <Modal show={show2} onHide={handleClose2} size="lg">

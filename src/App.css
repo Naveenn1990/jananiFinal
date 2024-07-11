@@ -130,9 +130,9 @@ select {
   border-color: #0000006e !important;
 }
 
-textarea {
+/* textarea {
   border-color: #0000006e !important;
-}
+} */
 
 /* .navbar-toggler {
 
@@ -3846,4 +3846,11 @@ margin-top: 30px;
   100% {
     left: 96%;
   }
+}
+
+.consentformhd{
+  border: 1px solid #20958C;
+  padding-left: unset;
+  padding-right: unset;
+  font-size: 18px;
 }

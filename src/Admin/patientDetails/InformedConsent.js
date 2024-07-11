@@ -1,12 +1,32 @@
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import moment from "moment";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Table, Modal, ProgressBar, Button, Form } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
+import { useReactToPrint } from "react-to-print";
 
-const InformedConsent = ({HighRiskCForm}) => {
+const InformedConsent = ({ HighRiskCForm }) => {
+  console.log("HighRiskCForm", HighRiskCForm);
+
+  const pdfdownload = async () => {
+    const pdf = new jsPDF("portrait", "pt", "a4");
+    const data = await html2canvas(document.querySelector("#pdf"));
+    const img = data.toDataURL("image/png");
+    const imgProperties = pdf.getImageProperties(img);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+    pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("HighRiskConsentForm.pdf");
+  };
+
+  const componentRef = useRef();
+  const handleprint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: "HighRiskConsentForm",
+  });
   return (
     <>
-  
       <div
         className="mt-2 d-dlex text-end gap-2"
         style={{ justifyContent: "right" }}
@@ -20,11 +40,13 @@ const InformedConsent = ({HighRiskCForm}) => {
             borderRadius: "0px",
             marginRight: "20px",
           }}
+          onClick={handleprint}
         >
           Print <FiDownload />
         </Button>
       </div>
       <div
+      ref={componentRef}
         id="pdf"
         style={{
           padding: "15px",
@@ -36,10 +58,8 @@ const InformedConsent = ({HighRiskCForm}) => {
           style={{
             padding: "5px",
             border: "2px solid #20958C",
-            // width: "1073px",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1700px",
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -60,16 +80,7 @@ const InformedConsent = ({HighRiskCForm}) => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
-            {" "}
             <h6
               className="fw-bold mt-2"
               style={{ color: "#20958C", fontSize: "30px" }}
@@ -100,18 +111,53 @@ const InformedConsent = ({HighRiskCForm}) => {
                       style={{ width: "33%", border: "1.5px  solid #20958C" }}
                     >
                       Patient Name:{" "}
-                      <span style={{ fontWeight: "bold" }}>{HighRiskCForm[0]?.patientname}</span>{" "}
+                      <span style={{ fontWeight: "bold" }}>
+                        {HighRiskCForm[0]?.patientname}
+                      </span>{" "}
                     </td>
                     <td
                       style={{ width: "33%", border: "1.5px  solid #20958C" }}
                     >
                       Date:{" "}
-                      <span style={{ fontWeight: "bold" }}>{moment(HighRiskCForm[0]?.createdAt).format("DD/MM/YYYY")}</span>{" "}
+                      <span style={{ fontWeight: "bold" }}>
+                        {moment(HighRiskCForm[0]?.createdAt)?.format(
+                          "DD/MM/YYYY"
+                        )}
+                      </span>{" "}
                     </td>
                     <td
                       style={{ width: "33%", border: "1.5px  solid #20958C" }}
                     >
-                      Age: <span style={{ fontWeight: "bold" }}>25 years</span>
+                      Age:{" "}
+                      <span style={{ fontWeight: "bold" }}>
+                        {(() => {
+                          const dob = new Date(HighRiskCForm[0]?.DOB);
+                          const currentDate = new Date();
+                          const differenceMs = currentDate - dob;
+                          const ageYears = Math.floor(
+                            differenceMs / (1000 * 60 * 60 * 24 * 365.25)
+                          );
+                          const ageMonths = Math.floor(
+                            (differenceMs % (1000 * 60 * 60 * 24 * 365.25)) /
+                              (1000 * 60 * 60 * 24 * 30.44)
+                          );
+
+                          if (ageYears > 0) {
+                            return (
+                              <span>
+                                {ageYears} {ageYears === 1 ? "year" : "years"}
+                              </span>
+                            );
+                          } else {
+                            return (
+                              <span>
+                                {ageMonths}{" "}
+                                {ageMonths === 1 ? "month" : "months"}
+                              </span>
+                            );
+                          }
+                        })()}
+                      </span>
                     </td>
                   </tr>
                   <tr>
@@ -123,12 +169,13 @@ const InformedConsent = ({HighRiskCForm}) => {
                     <td
                       style={{ width: "33%", border: "1.5px  solid #20958C" }}
                     >
-                      IP No: <span style={{ fontWeight: "bold" }}>SHIDIK323</span>{" "}
+                      IP No:{" "}
+                      <span style={{ fontWeight: "bold" }}>SHIDIK323</span>{" "}
                     </td>
                     <td
                       style={{ width: "33%", border: "1.5px  solid #20958C" }}
                     >
-                      Sex: <span style={{ fontWeight: "bold" }}>Male</span>{" "}
+                      Sex: <span style={{ fontWeight: "bold" }}>{HighRiskCForm[0]?.Gender}</span>{" "}
                     </td>
                   </tr>
 
@@ -141,22 +188,29 @@ const InformedConsent = ({HighRiskCForm}) => {
                         </span>{" "}
                         have been explained about the medical condition and the
                         prospered surgery by <br /> Dr.{" "}
-                        <span style={{ fontWeight: "bold" }}>{HighRiskCForm[0]?.ConDoctorName} </span> and{" "}
-                        Dr. {"  "}{" "}
-                        <span style={{ fontWeight: "bold" }}>{HighRiskCForm[0]?.ConDoctorName2}</span>
+                        <span style={{ fontWeight: "bold" }}>{`${HighRiskCForm[0]?.ConDoctorName?.Firstname} ${HighRiskCForm[0]?.ConDoctorName?.Lastname}`} </span> and Dr.{" "}
+                        {"  "} <span style={{ fontWeight: "bold" }}>{`${HighRiskCForm[0]?.ConDoctorName2?.Firstname} ${HighRiskCForm[0]?.ConDoctorName2?.Lastname}`}</span>
                         <br />
                         <br />
                         Medical Condition/Diagnosis:{" "}
-                        <span style={{ fontWeight: "bold" }}>{HighRiskCForm[0]?.Diagnosis}</span> <br />
+                        <span style={{ fontWeight: "bold" }}>
+                          {HighRiskCForm[0]?.Diagnosis}
+                        </span>{" "}
+                        <br />
                         <br />
                         Proposed operatve Procedure:{" "}
-                        <span style={{ fontWeight: "bold" }}>{HighRiskCForm[0]?.OperativeProce}</span> <br />
+                        <span style={{ fontWeight: "bold" }}>
+                          {HighRiskCForm[0]?.OperativeProce}
+                        </span>{" "}
+                        <br />
                         <br />
                         I/We, (the relatives/legal guardian of) Mr./Mrs{" "}
-                        <span style={{ fontWeight: "bold" }}>{HighRiskCForm[0]?.RealivesName}</span> who is
-                        admitted on{" "}
                         <span style={{ fontWeight: "bold" }}>
-                        {HighRiskCForm[0]?.Date}
+                          {HighRiskCForm[0]?.RealivesName}
+                        </span>{" "}
+                        who is admitted on{" "}
+                        <span style={{ fontWeight: "bold" }}>
+                          {HighRiskCForm[0]?.Date}
                         </span>{" "}
                         have been explained in the languages understood by
                         me/us, about the pros & cons of the operation and risks
@@ -231,80 +285,96 @@ const InformedConsent = ({HighRiskCForm}) => {
                     <td style={{ width: "20%", border: "1px solid #20958C" }}>
                       Patient/Patirnt Surrogate
                     </td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    >
-                      {HighRiskCForm[0]?.PatientSurrogate}
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
+                      {HighRiskCForm[0]?.patientname}
                     </td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
-                    ></td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{HighRiskCForm[0]?.Date2}</td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{HighRiskCForm[0]?.Time1}</td>
+                    >
+                       <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/ConsentForm/${HighRiskCForm[0]?.patientsign}`}
+                    />
+                    </td>
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
+                      {HighRiskCForm[0]?.Date2}
+                    </td>
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
+                      {HighRiskCForm[0]?.Time1}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ width: "20%", border: "1px solid #20958C" }}>
                       Witness
                     </td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    >
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
                       {HighRiskCForm[0]?.Witness1}
                     </td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
-                    ></td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{HighRiskCForm[0]?.Date3}</td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{HighRiskCForm[0]?.Time2}</td>
+                    >
+                      <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/ConsentForm/${HighRiskCForm[0]?.witnesssign}`}
+                    />
+                    </td>
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
+                      {HighRiskCForm[0]?.Date3}
+                    </td>
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
+                      {HighRiskCForm[0]?.Time2}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ width: "20%", border: "1px solid #20958C" }}>
                       Doctor
                     </td>
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
+                    {`${HighRiskCForm[0]?.Doctor2?.Firstname} ${HighRiskCForm[0]?.Doctor2?.Lastname}`}                   
+                    </td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{HighRiskCForm[0]?.Doctor2}</td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    ></td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{HighRiskCForm[0]?.Date4}</td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{HighRiskCForm[0]?.Time3}</td>
+                    >
+                       <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/ConsentForm/${HighRiskCForm[0]?.doctorsign}`}
+                    />
+                    </td>
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
+                      {HighRiskCForm[0]?.Date4}
+                    </td>
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
+                      {HighRiskCForm[0]?.Time3}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ width: "20%", border: "1px solid #20958C" }}>
                       Relative/Legal_guardian(relationship with patient)
                     </td>
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
+                      {HighRiskCForm[0]?.Guardian1}
+                    </td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{HighRiskCForm[0]?.Guardian1}</td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    ></td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{HighRiskCForm[0]?.Date5}</td>
-                    <td
-                      style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{HighRiskCForm[0]?.Time4}</td>
+                    >
+                        <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/ConsentForm/${HighRiskCForm[0]?.legalgurdiansign}`}
+                    />
+                    </td>
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
+                      {HighRiskCForm[0]?.Date5}
+                    </td>
+                    <td style={{ width: "20%", border: "1px solid #20958C" }}>
+                      {HighRiskCForm[0]?.Time4}
+                    </td>
                   </tr>
                 </tbody>
               </Table>
             </div>
           </div>
         </div>
-      </div>  
+      </div>
     </>
   );
 };

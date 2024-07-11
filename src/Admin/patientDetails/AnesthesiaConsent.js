@@ -1,11 +1,30 @@
-import React from "react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import moment from "moment";
+import React, { useRef } from "react";
 import { Table, Button } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
+import { useReactToPrint } from "react-to-print";
 
 const AnesthesiaConsent = ({AnesthesiaCForm}) => {
+  const pdfdownload = async () => {
+    const pdf = new jsPDF("portrait", "pt", "a4");
+    const data = await html2canvas(document.querySelector("#pdf"));
+    const img = data.toDataURL("image/png");
+    const imgProperties = pdf.getImageProperties(img);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+    pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("AnesthesiaConsentForm.pdf");
+  };
+
+  const componentRef = useRef();
+  const handleprint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: "AnesthesiaConsentForm.pdf",
+  });
   return (
     <>
-
       <div
         className="mt-2 d-flex text-end gap-2"
         style={{ alignItems: "right", justifyContent: "right" }}
@@ -19,11 +38,13 @@ const AnesthesiaConsent = ({AnesthesiaCForm}) => {
             borderRadius: "0px",
             marginRight: "20px",
           }}
+          onClick={handleprint}
         >
           Print <FiDownload />
         </Button>
       </div>
       <div
+       ref={componentRef}
         id="pdf"
         style={{
           padding: "15px",
@@ -35,10 +56,8 @@ const AnesthesiaConsent = ({AnesthesiaCForm}) => {
           style={{
             padding: "5px",
             border: "2px solid #20958C",
-            // width: "1073px",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1700px",
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -99,10 +118,42 @@ const AnesthesiaConsent = ({AnesthesiaCForm}) => {
                     <span style={{ fontWeight: "bold" }}>{AnesthesiaCForm[0]?.patientname}</span>{" "}
                   </td>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
-                    Date: <span style={{ fontWeight: "bold" }}>02/05/2024</span>{" "}
+                    Date: <span style={{ fontWeight: "bold" }}>
+                    {moment(AnesthesiaCForm[0]?.createdAt)?.format(
+                          "DD/MM/YYYY"
+                        )}
+                      </span>{" "}
                   </td>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
-                    Age: <span style={{ fontWeight: "bold" }}>25 years</span>
+                    Age: <span style={{ fontWeight: "bold" }}>
+                    {(() => {
+                          const dob = new Date(AnesthesiaCForm[0]?.DOB);
+                          const currentDate = new Date();
+                          const differenceMs = currentDate - dob;
+                          const ageYears = Math.floor(
+                            differenceMs / (1000 * 60 * 60 * 24 * 365.25)
+                          );
+                          const ageMonths = Math.floor(
+                            (differenceMs % (1000 * 60 * 60 * 24 * 365.25)) /
+                              (1000 * 60 * 60 * 24 * 30.44)
+                          );
+
+                          if (ageYears > 0) {
+                            return (
+                              <span>
+                                {ageYears} {ageYears === 1 ? "year" : "years"}
+                              </span>
+                            );
+                          } else {
+                            return (
+                              <span>
+                                {ageMonths}{" "}
+                                {ageMonths === 1 ? "month" : "months"}
+                              </span>
+                            );
+                          }
+                        })()}
+                    </span>
                   </td>
                 </tr>
                 <tr>
@@ -113,7 +164,7 @@ const AnesthesiaConsent = ({AnesthesiaCForm}) => {
                     IP No: <span style={{ fontWeight: "bold" }}>FR234DF</span>{" "}
                   </td>
                   <td style={{ width: "33%", border: "1.5px  solid #20958C" }}>
-                    Sex: <span style={{ fontWeight: "bold" }}>Male</span>{" "}
+                    Sex: <span style={{ fontWeight: "bold" }}>{AnesthesiaCForm[0]?.Gender}</span>{" "}
                   </td>
                 </tr>
                 <tr>
@@ -134,7 +185,7 @@ const AnesthesiaConsent = ({AnesthesiaCForm}) => {
                   <td colSpan={3} style={{ border: "1.5px  solid #20958C" }}>
                     Type of Anesthesia Local/ General/ Spinal/ Epidural/ Never
                     Block/ Combined/ MAC :{" "}
-                    <span style={{ fontWeight: "bold" }}>Spinal</span>{" "}
+                    <span style={{ fontWeight: "bold" }}>{AnesthesiaCForm[0]?.TypeofAnesthesia}</span>{" "}
                   </td>
                 </tr>
                 <tr>
@@ -198,7 +249,7 @@ const AnesthesiaConsent = ({AnesthesiaCForm}) => {
                       Janani Multispeciailty Hospital
                       <span style={{ fontWeight: "bold" }}>
                         {" "}
-                        {AnesthesiaCForm[0]?.NameOfSurgery}
+                        {AnesthesiaCForm[0]?.NameOfSurgery2}
                       </span>
                       and its surgical team & hospital staff of anyliability for
                       consequences arising because of the above-mentioned
@@ -246,10 +297,15 @@ const AnesthesiaConsent = ({AnesthesiaCForm}) => {
                     </td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{AnesthesiaCForm[0]?.PatientSurrogate}</td>
+                    >{AnesthesiaCForm[0]?.patientname}</td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
-                    > </td>
+                    > 
+                      <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/ConsentForm/${AnesthesiaCForm[0]?.patientsign}`}
+                    />
+                    </td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
                     > {AnesthesiaCForm[0]?.Date2}</td>
@@ -266,7 +322,12 @@ const AnesthesiaConsent = ({AnesthesiaCForm}) => {
                     >{AnesthesiaCForm[0]?.Witness1}</td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
-                    ></td>
+                    >
+                      <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/ConsentForm/${AnesthesiaCForm[0]?.witnesssign}`}
+                    />
+                    </td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
                     >{AnesthesiaCForm[0]?.Date3}</td>
@@ -280,10 +341,17 @@ const AnesthesiaConsent = ({AnesthesiaCForm}) => {
                     </td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
-                    >{AnesthesiaCForm[0]?.Doctor2}</td>
+                    >
+                       {`${AnesthesiaCForm[0]?.Doctor2?.Firstname} ${AnesthesiaCForm[0]?.Doctor2?.Lastname}`}  
+                      </td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
-                    ></td>
+                    >
+                      <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/ConsentForm/${AnesthesiaCForm[0]?.doctorsign}`}
+                    />
+                    </td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
                     >{AnesthesiaCForm[0]?.Date4}</td>
@@ -300,7 +368,13 @@ const AnesthesiaConsent = ({AnesthesiaCForm}) => {
                     >{AnesthesiaCForm[0]?.Guardian1}</td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
-                    ></td>
+                    >
+                      <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/ConsentForm/${AnesthesiaCForm[0]?.legalgurdiansign}`}
+                    />
+
+                    </td>
                     <td
                       style={{ width: "20%", border: "1px solid #20958C" }}
                     >{AnesthesiaCForm[0]?.Date5}</td>

@@ -14,6 +14,8 @@ const PatientDetails = () => {
   const [patientform, setPatientForm] = useState(false);
   const [patientdetail, setpatientdetail] = useState([]);
 
+  console.log("patientdetail",patientdetail);
+
   const dobString = patientdetail?.DOB;
   const dob = new Date(dobString);
   const currentDate = new Date();
@@ -196,7 +198,7 @@ const PatientDetails = () => {
               value={JSON.stringify(SelectCause)}
               onChange={handleSelect}
             >
-              <option>Select The Cause</option>
+              <option value={JSON.stringify({})}>Select The Cause</option>
               {patientdetail?.cause?.map((item) => {
                 return (
                   <option value={JSON.stringify(item)}>
