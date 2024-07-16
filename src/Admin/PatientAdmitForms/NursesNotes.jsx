@@ -1,18 +1,44 @@
 import axios from "axios";
 import moment from "moment";
-import React, { useState } from "react";
-import { Button, Table } from "react-bootstrap";
-import { IoMdAdd } from "react-icons/io";
+import React, { useEffect, useRef, useState } from "react";
+import { Form, Table } from "react-bootstrap";
+import { FaBackward } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import { useLocation, useNavigate } from "react-router-dom";
-
+import { useLocation } from "react-router-dom";
+import SignatureCanvas from "react-signature-canvas";
 const NursesNotes = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { patientdetails, cause } = location.state || {};
 
   console.log("patientdetails", patientdetails);
   console.log("cause", cause);
+
+  const [userdetail, setuserdetail] = useState({});
+  const getpatientbyid = async () => {
+    try {
+      let res = await axios.get(
+        `http://localhost:8521/api/user/getPatientDetailByid/${patientdetails?._id}`
+      );
+      if (res.status === 200) {
+        setuserdetail(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getpatientbyid();
+  }, []);
+
+  const [SelectedCause, setSelectedCause] = useState([]);
+  useEffect(() => {
+    if (cause) {
+      const findcause = userdetail?.cause?.filter(
+        (ele) => ele._id === cause?._id
+      );
+      setSelectedCause(findcause);
+    }
+  }, [cause, userdetail]);
 
   const dobString = patientdetails?.DOB;
   const dob = new Date(dobString);
@@ -28,10 +54,30 @@ const NursesNotes = () => {
     ageOutput = `${ageYears} years`;
   }
 
+  const [SelectDoctor, setSelectDoctor] = useState("");
+  const [DoctorDept, setDoctorDept] = useState([]);
+  useEffect(() => {
+    if (SelectDoctor) {
+      const assignDocDept = patientdetails?.assigndocts?.filter(
+        (ele) => ele?.doctorsId?._id === SelectDoctor
+      );
+      setDoctorDept(assignDocDept);
+    }
+  }, [SelectDoctor, patientdetails]);
+
+  const [NurseSignature, setNurseSignature] = useState(null);
+  const sigCanvas1 = useRef({});
+  const clear1 = () => sigCanvas1.current.clear();
+  const save1 = () => {
+    const NurseSignature = sigCanvas1.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setNurseSignature(NurseSignature);
+  };
+
   // Add Nurse Notes
 
-  const [NDate, setNDate] = useState("");
-  const [NTime, setNTime] = useState("");
+  const [TimeandDate, setTimeandDate] = useState("");
   const [NurseReport, setNurseReport] = useState("");
 
   const [NurseNote, setNurseNote] = useState([]);
@@ -39,8 +85,7 @@ const NursesNotes = () => {
   const AddNurseNote = async () => {
     const newNote = {
       causename: cause?.CauseName,
-      NDate: NDate,
-      NTime: NTime,
+      // NDate: NDate,
       NurseReport: NurseReport,
     };
     setNurseNote((prevDrug) => [...prevDrug, newNote]);
@@ -52,27 +97,64 @@ const NursesNotes = () => {
     setNurseNote(updatedDrugList);
   };
 
-  const submitNurseNote = async()=>{
+  const [Diagnosis, setDiagnosis] = useState("");
+  const submitNurseNote = async () => {
+    if (!SelectDoctor) {
+      return alert("Please Select Doctor..!");
+    }
+    if (!Diagnosis) {
+      return alert("Enter Diagnosis..!");
+    }
+    if (!TimeandDate) {
+      return alert("Select Date..!");
+    }
+    if (!NurseReport) {
+      return alert("Enter NurseReport..!");
+    }
+    if (!NurseSignature) {
+      return alert("Sign is Pending..!");
+    }
     try {
-      const config ={
-        url:"/addnursenote",
-        method:"put",
-        baseURL:"http://localhost:8521/api/staff",
-        headers:{"content-type":"application/json"},
-        data:{
-          patientId:patientdetails?._id,
-          causeId:cause?._id,
-          NurseNote:NurseNote
-        }
-      }
+      const formdata = new FormData();
+      const Nursesign = await fetch(NurseSignature).then((res) => res.blob());
+      formdata.set("patientId", patientdetails?._id);
+      formdata.set("causeId", cause?._id);
+      formdata.set("doctorId", SelectDoctor);
+      formdata.set("Diagnosis", Diagnosis);
+      formdata.set("timeanddate", TimeandDate);
+      formdata.set("NurseReport", NurseReport);
+      formdata.set("NurseSignature", Nursesign, "nurse-signature.png");
+      const config = {
+        url: "/addnursenote",
+        method: "put",
+        baseURL: "http://localhost:8521/api/staff",
+        headers: { "Content-Type": "multipart/form-data" },
+        data: formdata,
+      };
       let res = await axios(config);
-      if(res.status === 200){
-        alert(res.data.success)
+      if (res.status === 200) {
+        alert(res.data.success);
+        getpatientbyid()
+        setTimeandDate("")
+        setNurseReport("")
+        setNurseSignature(null)
+
       }
     } catch (error) {
-      alert(error.response.data.error)
+      alert(error.response.data.error);
     }
-  }
+  };
+
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
 
   return (
     <div>
@@ -80,15 +162,16 @@ const NursesNotes = () => {
         <button
           className="mt-2"
           style={{
-            padding: "6px",
-            border: "1px solid white",
+            border: "#20958c",
+            padding: "8px",
             backgroundColor: "#20958c",
             color: "white",
-            borderRadius: "0px",
+            borderRadius: "6px",
+            boxShadow: " 8px 8px 16px #20958c,-8px -8px 16px #20958c",
           }}
-          onClick={() => navigate("/admin/patientform")}
+          onClick={() => window.history.go(-1)}
         >
-          Back
+          <FaBackward /> &nbsp; Back
         </button>
       </div>
 
@@ -112,10 +195,8 @@ const NursesNotes = () => {
           style={{
             padding: "5px",
             border: "2px solid #20958C",
-            // width: "1073px",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1700px",
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -136,14 +217,6 @@ const NursesNotes = () => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
             {" "}
             <h6
@@ -204,116 +277,61 @@ const NursesNotes = () => {
                   </div>
                 </div>
                 <div className="row" style={{ border: "1px solid #20958C" }}>
-                  <div
-                    className="col-md-6"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    Pt ID: <span>{patientdetails?.PatientId}</span>
+                  <div className="col-md-6 consentformhd">
+                    Pt ID : <span>{patientdetails?.PatientId}</span>
                   </div>
-                  <div
-                    className="col-md-6"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
+                  <div className="col-md-6 consentformhd">
                     Ward: <span>23AC</span>
                   </div>
                 </div>
                 <div className="row" style={{ border: "1px solid #20958C" }}>
-                  <div
-                    className="col-md-6"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    Dept:{" "}
-                    <span>
-                      <input
-                        type="text"
-                        name=""
-                        id=""
-                        className="vi_0"
-                        style={{ width: "350px" }}
-                      />
-                    </span>
+                  <div className="col-md-6 consentformhd">
+                    Dept: <span>{DoctorDept?.[0]?.doctorsId?.Department}</span>
                   </div>
-                  <div
-                    className="col-md-6"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    Doctor: <span>Dr. JK Das</span>
+                  <div className="col-md-6 d-flex align-items-center gap-2">
+                    Doctor:
+                    <span>
+                      <Form.Select
+                        className="vi_0"
+                        style={{ width: "270px" }}
+                        onChange={(e) => setSelectDoctor(e.target.value)}
+                      >
+                        <option value="">Select Doctor</option>
+                        {patientdetails?.assigndocts?.map((item) => {
+                          return (
+                            <option
+                              value={item?.doctorsId?._id}
+                            >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
+                          );
+                        })}
+                      </Form.Select>
+                    </span>
                   </div>
                 </div>
                 <div className="row" style={{ border: "1px solid #20958C" }}>
-                  <div
-                    className="col-md-5"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
+                  <div className="col-md-5 consentformhd">
                     DOA:{" "}
                     <span>
                       {moment(patientdetails?.createdAt).format("DD-MM-YYYY")}
                     </span>
                   </div>
-                  <div
-                    className="col-md-7"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    Known Drug Allergies:{" "}
-                    <span>
-                      <input
-                        type="text"
-                        name=""
-                        id=""
-                        className="vi_0"
-                        style={{ width: "392px" }}
-                      />
-                    </span>
+                  <div className="col-md-7 consentformhd d-flex gap-2 align-items-center">
+                    <p>Known Drug Allergies: </p>
+                    <span>{patientdetails?.patientAllergies}</span>
                   </div>
                 </div>
                 <div className="row" style={{ border: "1px solid #20958C" }}>
-                  <div
-                    className="col-md-12"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
-                    Diagnosis:{" "}
+                  <div className="col-md-12 consentformhd d-flex gap-2 align-items-center">
+                    <b>Diagnosis : </b>
+
                     <span>
-                      <input
+                      <textarea
                         type="text"
-                        name=""
-                        id=""
                         className="vi_0"
-                        style={{ width: "886px" }}
+                        style={{ width: "550px" }}
+                        placeholder="Diagnosis"
+                        value={Diagnosis}
+                        onChange={(e) => setDiagnosis(e.target.value)}
                       />
                     </span>
                   </div>
@@ -324,46 +342,83 @@ const NursesNotes = () => {
                   </span>
                 </div>
                 <div className="mt-2">
-                  <Table className="text-center">
+                  <Table className="text-center" bordered>
                     <thead>
                       <tr>
-                        <th>Date</th>
-                        <th>Time</th>
+                        <th>Date & Time</th>
                         <th>Observation/ Nsg Action/ Response/ Plan </th>
                         <th>Nurses Sign</th>
-                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
+                      {SelectedCause?.[0]?.nursenote?.map((item) => {
+                        return (
+                          <tr>
+                            <td>
+                              {moment(item?.timeanddate)?.format(
+                                "DD-MM-YYYY || HH:MM"
+                              )}
+                            </td>
+                            <td>{item?.NurseReport}</td>
+                            <td>
+                              <img
+                                alt="sign"
+                                src={`http://localhost:8521/PatientREG/${item?.NurseSignature}`}
+                              />
+                            </td>
+                          </tr>
+                        );
+                      })}
+
                       <tr>
                         <td>
                           <input
-                            type="date"
+                            type="datetime-local"
                             className="vi_0"
-                            value={NDate}
-                            onChange={(e) => setNDate(e.target.value)}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="time"
-                            className="vi_0"
-                            value={NTime}
-                            onChange={(e) => setNTime(e.target.value)}
+                            value={TimeandDate}
+                            onChange={(e) => setTimeandDate(e.target.value)}
+                            // min={new Date().toISOString().split("T")[0]}
+                            min={getCurrentDateTime()}
                           />
                         </td>
                         <td>
                           <textarea
                             className="vi_0"
+                            value={NurseReport}
                             onChange={(e) => setNurseReport(e.target.value)}
                           />
                         </td>
-                        <td></td>
                         <td>
+                          {!NurseSignature ? (
+                            <div
+                              style={{
+                                border: "1px solid #dee2e6",
+                                margin: "10px",
+                              }}
+                            >
+                              <SignatureCanvas
+                                ref={sigCanvas1}
+                                penColor="black"
+                                canvasProps={{
+                                  width: 180,
+                                  height: 100,
+                                  className: "sigCanvas",
+                                }}
+                              />
+                              <div className="d-flex gap-3">
+                                <button onClick={clear1}>Clear</button>
+                                <button onClick={save1}>Save</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <img src={NurseSignature} alt="Signature" />
+                          )}
+                        </td>
+                        {/* <td>
                           <Button onClick={AddNurseNote}>
                             <IoMdAdd />
                           </Button>
-                        </td>
+                        </td> */}
                       </tr>
                       {NurseNote?.map((item, i) => {
                         return (
@@ -371,7 +426,12 @@ const NursesNotes = () => {
                             <td>{item?.NDate}</td>
                             <td>{item?.NTime}</td>
                             <td>{item?.NurseReport}</td>
-                            <td>Sing</td>
+                            <td>
+                              <img
+                                alt="sign"
+                                src={`http://localhost:8521/PatientREG/${item?.NurseSignature}`}
+                              />
+                            </td>
                             <td>
                               <MdDelete
                                 onClick={() => deleteNote(i)}
@@ -393,10 +453,9 @@ const NursesNotes = () => {
         </div>
       </div>
       <div className="text-center mt-2 mb-2">
-        <button 
-        className="btn btn-success"
-        onClick={submitNurseNote}
-        >Submit</button>
+        <button className="btn btn-success" onClick={submitNurseNote}>
+          Submit
+        </button>
       </div>
     </div>
   );

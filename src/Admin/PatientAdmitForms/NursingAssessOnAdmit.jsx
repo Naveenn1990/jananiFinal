@@ -1,27 +1,13 @@
 import { Checkbox } from "@mui/material";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Table } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
-
+import { FaBackward } from "react-icons/fa";
+import { useLocation} from "react-router-dom";
+import SignatureCanvas from "react-signature-canvas";
 const NursingAssessOnAdmit = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { patientdetails, cause } = location.state || {};
-
-  const dobString = patientdetails?.DOB;
-  const dob = new Date(dobString);
-  const currentDate = new Date();
-  const differenceMs = currentDate - dob;
-  const ageYears = Math.floor(differenceMs / (1000 * 60 * 60 * 24 * 365.25));
-
-  let ageOutput;
-  if (ageYears < 1) {
-    const ageMonths = Math.floor(ageYears * 12);
-    ageOutput = `${ageMonths} months`;
-  } else {
-    ageOutput = `${ageYears} years`;
-  }
 
   // NURSING ASSESSMENT ON ADMISSION
 
@@ -31,6 +17,7 @@ const NursingAssessOnAdmit = () => {
   const [VSPulse, setVSPulse] = useState("");
   const [Resp, setResp] = useState("");
   const [BP, setBP] = useState("");
+  const [Height, setHeight] = useState("")
   const [Weight, setWeight] = useState("");
   const [BloodGroup, setBloodGroup] = useState("");
   const [Spo2, setSpo2] = useState("");
@@ -82,77 +69,257 @@ const NursingAssessOnAdmit = () => {
   const [AnyDrugAllergy, setAnyDrugAllergy] = useState("");
   const [formfillTime, setformfillTime] = useState("");
   const [FormfillDate, setFormfillDate] = useState("");
- 
-
 
   const submitNursingAssesment = async () => {
-    try {
+    if(!DTNursingInitialAssesment){
+      return alert("Please Select Date and Time")
+    }
+    if(!ConsentSign){
+      return alert("Please Check General Consent Signed or Not")
+    }
+    if(!VSTemp){
+      return alert("Enter temperature")
+    }
+    if(!VSPulse){
+      return alert("Enter Pulse")
+    }
+    if(!Resp){
+      return alert("Enter Resp")
+    }
+    if(!BP){
+      return alert("Enter BP ")
+    }
+    if(!Height){
+      return alert("Enter Height ")
+    }
+    if(!Weight){
+      return alert("Enter Weight ")
+    }
+    if(!BloodGroup){
+      return alert("Enter BloodGroup ")
+    }
+    if(!Complaints){
+      return alert("Enter Complaints during admission and it's duration ")
+    }
+    if(!Oriented){
+      return alert("Check Oriented ")
+    }
+    if(!Speech1){
+      return alert("Check Speech ")
+    }
+    if(!Speech2){
+      return alert("Check Speech ")
+    }
+    if(!Consciousness){
+      return alert("Check Level of Consciousness  ")
+    }
+    if(!Impairment){
+      return alert("Check Visual Impairment  ")
+    }
+    if(!Extremity){
+      return alert("Check Extremity strength  ")
+    }
+    if(!Pupils){
+      return alert("Check Pupils  ")
+    }
+    if(!HearingImpairment){
+      return alert("Check Hearing Impairment  ")
+    }
+    if(!Pain){
+      return alert("Check Pain  ")
+    }
+    if(Pain === "Yes"){
+      if(!Location1){
+      return  alert("Enter Pain Location")
+      }
+      if(!PainScale){
+      return alert("Rate the pain scale")
+      }      
+    }
+    if(!Airway){
+     return alert("Check Airway  ")
+    }
+    if(!Dyspnea){
+     return alert("Check Dyspnea  ")
+    }
+    if(!Wheezing){
+     return alert("Check Wheezing  ")
+    }
+    if(!Hemoptysis){
+     return alert("Check Hemoptysis  ")
+    }
+    if(!Cough){
+     return alert("Check Cough  ")
+    }
+    if(!Sputum){
+     return alert("Check Sputum  ")
+    }
+    if(!Edema){
+     return alert("Check Edema  ")
+    }
+    if(Edema === "Present"){
+      if(!Loactionofedema){
+        return alert("Enter Loaction of edema ")
+      }
+    }
+    if(!Skinperfusion){
+      return alert("Check Skin perfusion  ")
+     }
+    if(!Capillaryrefill){
+      return alert("Check Capillary refill  ")
+     }
+    if(!Pacemaker){
+      return alert("Check Pacemaker  ")
+     }
+    if(!SkinColor){
+      return alert("Check Skin-Color  ")
+     }
+    if(!Turgor){
+      return alert("Check Turgor  ")
+     }
+    if(!Temperature){
+      return alert("Check Temperature  ")
+     }
+    if(!Mucousmembrane){
+      return alert("Check Mucous membrane  ")
+     }
+    if(!Moisture){
+      return alert("Check Moisture  ")
+     }
+    if(!Condition){
+      return alert("Check Condition  ")
+     }
+    if(!PressureSore){
+      return alert("Check Pressure Sore  ")
+     }
+    if( PressureSore === "present"){
+      if(!Stage){
+        return alert("Check Stage")
+       }
+     }
+     if(!LossofAppetite){
+      return alert("Check Loss of Appetite")
+     }
+     if(!Abdomen){
+      return alert("Check Abdomen")
+     }
+     if(!Swallowingdiffulty){
+      return alert("Check  Swallowing diffulty")
+     }
+     if(!Dysuria){
+      return alert("Check Dysuria")
+     }
+     if(!Haemeturia){
+      return alert("Check Haemeturia")
+     }
+     if(!Frequency){
+      return alert("Enter Frequency")
+     }
+     if(!FoleyCatheter){
+      return alert("Check Foley's Catheter")
+     }
+     if(!Incontinence){
+      return alert("Check Incontinence")
+     }
+     if(!Insertedon){
+      return alert("Enter Inserted")
+     }
+     if(!LMP){
+      return alert("Enter LMP")
+     }
+     if(!EDD){
+      return alert("Enter EDD")
+     }
+     if(!DatingScan){
+      return alert("Enter Dating Scan(11 to 14 Weeks)")
+     }
+     if(!POG){
+      return alert("Enter POG")
+     }
+     if(!AnyDrugAllergy){
+      return alert("Enter Drug Allergy")
+     }
+     if(!NurseSignature){
+      return alert("Nurse Sign is pending...!")
+     }
+     if(!FormfillDate){
+      return alert("Select date...!")
+     }
+     if(!formfillTime){
+      return alert("Select time...!")
+     }
+
+     const formdata= new FormData();
+     const Nursesign = await fetch(NurseSignature).then((res) => res.blob());
+    
+     formdata.append("patientId", patientdetails?._id);
+formdata.append("causeId", cause?._id);
+formdata.append("DTNursingInitialAssesment", DTNursingInitialAssesment);
+formdata.append("ConsentSign", ConsentSign);
+formdata.append("VSTemp", VSTemp);
+formdata.append("VSPulse", VSPulse);
+formdata.append("Resp", Resp);
+formdata.append("BP", BP);
+formdata.append("Height", Height);
+formdata.append("Weight", Weight);
+formdata.append("BloodGroup", BloodGroup);
+formdata.append("Spo2", Spo2);
+formdata.append("GRBS", GRBS);
+formdata.append("Complaints", Complaints);
+formdata.append("Oriented", Oriented);
+formdata.append("Speech1", Speech1);
+formdata.append("Speech2", Speech2);
+formdata.append("Consciousness", Consciousness);
+formdata.append("Impairment", Impairment);
+formdata.append("Extremity", Extremity);
+formdata.append("Pupils", Pupils);
+formdata.append("HearingImpairment", HearingImpairment);
+formdata.append("Pain", Pain);
+formdata.append("Location1", Location1);
+formdata.append("PainScale", PainScale);
+formdata.append("Airway", Airway);
+formdata.append("Dyspnea", Dyspnea);
+formdata.append("Wheezing", Wheezing);
+formdata.append("Hemoptysis", Hemoptysis);
+formdata.append("Cough", Cough);
+formdata.append("Sputum", Sputum);
+formdata.append("Edema", Edema);
+formdata.append("Loactionofedema", Loactionofedema);
+formdata.append("Skinperfusion", Skinperfusion);
+formdata.append("Capillaryrefill", Capillaryrefill);
+formdata.append("Pacemaker", Pacemaker);
+formdata.append("SkinColor", SkinColor);
+formdata.append("Turgor", Turgor);
+formdata.append("Temperature", Temperature);
+formdata.append("Mucousmembrane", Mucousmembrane);
+formdata.append("Moisture", Moisture);
+formdata.append("Condition", Condition);
+formdata.append("PressureSore", PressureSore);
+formdata.append("Stage", Stage);
+formdata.append("LossofAppetite", LossofAppetite);
+formdata.append("Abdomen", Abdomen);
+formdata.append("Swallowingdiffulty", Swallowingdiffulty);
+formdata.append("Dysuria", Dysuria);
+formdata.append("Haemeturia", Haemeturia);
+formdata.append("Frequency", Frequency);
+formdata.append("FoleyCatheter", FoleyCatheter);
+formdata.append("Incontinence", Incontinence);
+formdata.append("Insertedon", Insertedon);
+formdata.append("LMP", LMP);
+formdata.append("EDD", EDD);
+formdata.append("DatingScan", DatingScan);
+formdata.append("POG", POG);
+formdata.append("AnyDrugAllergy", AnyDrugAllergy);
+formdata.append("formfillTime", formfillTime);
+formdata.append("FormfillDate", FormfillDate);
+formdata.append("NurseSignature", Nursesign,"nurse-signature.png");
+     try {
       const config = {
         url: "/addnursingassessment",
         method: "put",
         baseURL: "http://localhost:8521/api/staff",
-        headers: { "content-type": "application/json" },
-        data: {
-          patientId: patientdetails?._id,
-          causeId: cause?._id,
-          DTNursingInitialAssesment:DTNursingInitialAssesment,
-          ConsentSign:ConsentSign,
-          VSTemp:VSTemp,
-          VSPulse:VSPulse,
-          Resp:Resp,
-          BP:BP,
-          Weight:Weight,
-          BloodGroup:BloodGroup,
-          Spo2:Spo2,
-          GRBS:GRBS,
-          Complaints:Complaints,
-          Oriented:Oriented,
-          Speech1:Speech1,
-          Speech2:Speech2,
-          Consciousness:Consciousness,
-          Impairment:Impairment,
-          Extremity:Extremity,
-          Pupils:Pupils,
-          HearingImpairment:HearingImpairment,
-          Pain:Pain,
-          Location1:Location1,
-          PainScale:PainScale,
-          Airway:Airway,
-          Dyspnea:Dyspnea,
-          Wheezing:Wheezing,
-          Hemoptysis:Hemoptysis,
-          Cough:Cough,
-          Sputum:Sputum,
-          Edema:Edema,
-          Loactionofedema:Loactionofedema,
-          Skinperfusion:Skinperfusion,
-          Capillaryrefill:Capillaryrefill,
-          Pacemaker:Pacemaker,
-          SkinColor:SkinColor,
-          Turgor:Turgor,
-          Temperature:Temperature,
-          Mucousmembrane:Mucousmembrane,
-          Moisture:Moisture,
-          Condition:Condition,
-          PressureSore:PressureSore,
-          Stage:Stage,
-          LossofAppetite:LossofAppetite,
-          Abdomen:Abdomen,
-          Swallowingdiffulty:Swallowingdiffulty,
-          Dysuria:Dysuria,
-          Haemeturia:Haemeturia,
-          Frequency:Frequency,
-          FoleyCatheter:FoleyCatheter,
-          Incontinence:Incontinence,
-          Insertedon:Insertedon,
-          LMP:LMP,
-          EDD:EDD,
-          DatingScan:DatingScan,
-          POG:POG,
-          AnyDrugAllergy:AnyDrugAllergy,
-          formfillTime:formfillTime,
-          FormfillDate:FormfillDate,
-        },
+        headers: { "Content-Type": "multipart/form-data" },
+        data:  formdata,
       };
       let res = await axios(config);
       if (res.status === 200) {
@@ -162,21 +329,36 @@ const NursingAssessOnAdmit = () => {
       alert(error.response.data.error);
     }
   };
+
+  const [NurseSignature, setNurseSignature] = useState(null);
+  const sigCanvas1 = useRef({});
+
+  const clear1 = () => sigCanvas1.current.clear();
+
+  const save1 = () => {
+    const NurseSignature = sigCanvas1.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setNurseSignature(NurseSignature);
+  };
   return (
     <div>
       <div>
-        <button
+      <button
           className="mt-2"
           style={{
-            padding: "6px",
-            border: "1px solid white",
+            border:"#20958c",
+            padding: "8px",
             backgroundColor: "#20958c",
             color: "white",
-            borderRadius: "0px",
+            borderRadius: "6px",
+             boxShadow: " 8px 8px 16px #20958c,-8px -8px 16px #20958c",
+           
           }}
-          onClick={() => navigate("/admin/patientform")}
+          onClick={() => window.history.go(-1)}
         >
-          Back
+         <FaBackward />  &nbsp;      
+         Back
         </button>
       </div>
 
@@ -225,14 +407,7 @@ const NursingAssessOnAdmit = () => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
+          
           <div className="text-center mt-1">
             {" "}
             <h6
@@ -263,18 +438,20 @@ const NursingAssessOnAdmit = () => {
               <tbody>
                 <tr>
                   <td colSpan={3} style={{ border: "2px  solid #20958C" }}>
-                    Patient Name:{" "}
+                   <b>Patient Name :</b> {" "}
                     {`${patientdetails?.Firstname} ${patientdetails?.Lastname} `}
                   </td>
 
                   <td colSpan={2} style={{ border: "2px  solid #20958C" }}>
-                    UHID No : {patientdetails?.PatientId}
+                   <b>UHID No : </b> {patientdetails?.PatientId}
                   </td>
                 </tr>
                 <tr>
                   <td colSpan={3} style={{ border: "2px  solid #20958C" }}>
-                    Date & Time of Nursing Initial Assessment:
-                    <input
+                   <div className="d-flex gap-2">
+                   <b>Date & Time of Nursing Initial Assessment : </b>
+                   <div>
+                   <input
                       type="datetime-local"
                       value={DTNursingInitialAssesment}
                       onChange={(e) =>
@@ -284,9 +461,13 @@ const NursingAssessOnAdmit = () => {
                       style={{ width: "240px" }}
                       min={new Date().toISOString().slice(0, 16)}
                     />
+                   </div>
+                   </div>
+                  
+                   
                   </td>
                   <td colSpan={2} style={{ border: "2px  solid #20958C" }}>
-                    General Consent Signed: Yes
+                   <b>General Consent Signed : </b>  Yes
                     <Checkbox
                       onChange={(e) =>
                         setConsentSign(e.target.checked ? "YES" : "")
@@ -313,18 +494,22 @@ const NursingAssessOnAdmit = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    Vital Signs
+                    <b>Vital Signs</b>
                   </th>
-                  <td style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ width: "45%" }}>Temp :</div>
+                  <td>
+                    <div  className="d-flex align-items-center">
+                    <div style={{ width: "64%",fontWeight:"bold" }}>Temp : </div>
                     <input
                       type="text"
                       className="vi_0"
                       value={VSTemp}
                       onChange={(e) => setVSTemp(e.target.value)}
                     />
+                    </div>
+                   
                   </td>
-                  <td style={{ width: "20%", border: "2px  solid #20958C" }}>
+                  <td style={{ width: "20%", border: "2px  solid #20958C",
+                    fontWeight:"bold" }}>
                     <div className="d-flex gap-1 align-items-center">
                       <div>Pulse:</div>
                       <input
@@ -336,7 +521,9 @@ const NursingAssessOnAdmit = () => {
                       <div>/Min</div>
                     </div>
                   </td>
-                  <td style={{ width: "20%", border: "2px  solid #20958C" }}>
+                  <td style={{ width: "20%", border: "2px  solid #20958C",
+                    fontWeight:"bold"
+                   }}>
                     <div className="d-flex gap-1 align-items-center">
                       <div>Resp:</div>
                       <input
@@ -348,7 +535,7 @@ const NursingAssessOnAdmit = () => {
                       <div>/Min</div>
                     </div>
                   </td>
-                  <td style={{ width: "20%", border: "2px  solid #20958C" }}>
+                  <td style={{ width: "20%", border: "2px  solid #20958C", fontWeight:"bold" }}>
                     <div className="d-flex align-items-center">
                       <div style={{ width: "27%" }}>BP :</div>
                       <input
@@ -361,9 +548,15 @@ const NursingAssessOnAdmit = () => {
                   </td>
                 </tr>
 
-                <tr style={{ textAlign: "center" }}>
-                  <th style={{ width: "20%", border: "2px  solid #20958C" }}>
+                <tr style={{ textAlign: "center" ,fontWeight:"bold"}}>
+                  <th style={{ width: "20%", border: "2px  solid #20958C",fontWeight:"bold" }}>
                     Height
+                    <input
+                      type="text"
+                      value={Height}
+                      onChange={(e) => setHeight(e.target.value)}
+                      className="vi_0"
+                    />
                   </th>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
                     Weight
@@ -403,7 +596,7 @@ const NursingAssessOnAdmit = () => {
                   </td>
                 </tr>
                 <tr style={{ textAlign: "center" }}>
-                  <th style={{ border: "2px  solid #20958C" }}>
+                  <th style={{ border: "2px  solid #20958C",fontWeight:"bold" }}>
                     Complaints during admission and it's duration
                   </th>
                   <td colSpan={4} style={{ border: "2px  solid #20958C" }}>
@@ -412,17 +605,18 @@ const NursingAssessOnAdmit = () => {
                       onChange={(e) => setComplaints(e.target.value)}
                       rows={3}
                       className="vi_0"
+                      placeholder="Complaints during admission and it's duration"
                     />
                   </td>
                 </tr>
                 <tr style={{ textAlign: "center" }}>
-                  <th style={{ border: "2px  solid #20958C" }}>Neurological</th>
+                  <th style={{ border: "2px  solid #20958C",fontWeight:"bold" }}>Neurological</th>
                   <td colSpan={4} style={{ border: "2px  solid #20958C" }}>
                     <tr style={{ textAlign: "left" }}>
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        Oriented : Yes
+                       <b>Oriented : </b>  Yes
                         <Checkbox 
                         onChange={(e)=>setOriented(e.target.checked ? "YES":"")}
                         checked={Oriented==="YES"}
@@ -435,7 +629,7 @@ const NursingAssessOnAdmit = () => {
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        Speech:
+                       <b>Speech : </b> 
                         <br />
                         Clear : <Checkbox
                          onChange={(e)=>setSpeech1(e.target.checked ? "Clear":"")}
@@ -449,7 +643,7 @@ const NursingAssessOnAdmit = () => {
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        Speech:
+                       <b>Speech : </b> 
                         <br />
                         Clear : <Checkbox 
                          onChange={(e)=>setSpeech2(e.target.checked ? "Clear":"")}
@@ -465,7 +659,7 @@ const NursingAssessOnAdmit = () => {
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        <b>Level of Consciousness </b>
+                        <b>Level of Consciousness : </b>
                         Conscious <Checkbox
                           onChange={(e)=>setConsciousness(e.target.checked ? "Conscious":"")}
                           checked={Consciousness==="Conscious"}
@@ -482,7 +676,7 @@ const NursingAssessOnAdmit = () => {
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        <b>Visual Impairment</b> <br />
+                        <b>Visual Impairment : </b> <br />
                         None <Checkbox 
                           onChange={(e)=>setImpairment(e.target.checked ? "None":"")}
                           checked={Impairment==="None"}
@@ -500,7 +694,7 @@ const NursingAssessOnAdmit = () => {
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        <b>Extremity strength </b>
+                        <b>Extremity strength : </b>
                         <br />
                         Equal
                         <Checkbox 
@@ -519,7 +713,7 @@ const NursingAssessOnAdmit = () => {
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        <b>Pupils</b> <br />
+                        <b>Pupils : </b> <br />
                         Equal <Checkbox 
                           onChange={(e)=>setPupils(e.target.checked ? "Equal":"")}
                           checked={Pupils==="Equal"}
@@ -543,7 +737,7 @@ const NursingAssessOnAdmit = () => {
                       <td
                         style={{ width: "33%", border: ".5px  solid #20958C" }}
                       >
-                        <b>Hearing Impairment </b> <br />
+                        <b>Hearing Impairment : </b> <br />
                         None
                         <Checkbox 
                           onChange={(e)=>setHearingImpairment(e.target.checked ? "None":"")}
@@ -575,11 +769,13 @@ const NursingAssessOnAdmit = () => {
                           checked={Pain==="No"}
                         />
                         <br />
-                        Location:
+                       <b>Location : </b> 
                         <input 
                         value={Location1}
                         onChange={(e)=>setLocation1(e.target.value)}
-                        type="text" className="vi_0" />
+                        type="text" className="vi_0"
+                        placeholder="pain location"
+                         />
                       </td>
                     </tr>
                   </td>
@@ -590,6 +786,7 @@ const NursingAssessOnAdmit = () => {
                     style={{
                       textAlign: "center",
                       border: "2px  solid #20958C",
+                      fontWeight:"bold"
                     }}
                   >
                     Pain Scale
@@ -605,18 +802,19 @@ const NursingAssessOnAdmit = () => {
                       >
                         <div >
                         <img
-                        onClick={()=>setPainScale(0)}
                           src="/Images/PainScale0.png"
                           alt=""
                           style={{ width: "75px", height: "70px" }}
                         />
-                        </div>
-                        
+                        </div>                        
                         <span>0</span>
-                        <div 
                        
+                        <div                        
                         style={{ fontSize: "15px", textAlign: "center" }}>
-                          No Pain
+                          No Pain <Checkbox 
+                           onChange={(e)=>setPainScale(e.target.checked ? "0": "")}
+                           checked={PainScale === "0"}
+                          />
                         </div>
                       </div>
                       <div
@@ -627,14 +825,16 @@ const NursingAssessOnAdmit = () => {
                         }}
                       >
                         <img
-                        onClick={()=>setPainScale(2)}
                           src="/Images/PainScale2.png"
                           alt=""
                           style={{ width: "75px", height: "70px" }}
                         />
                         <span>2</span>
                         <div style={{ fontSize: "15px", textAlign: "center" }}>
-                          Little Pain
+                          Little Pain<Checkbox 
+                          onChange={(e)=>setPainScale(e.target.checked ? "2":"")}
+                          checked={PainScale=== "2"}
+                          />
                         </div>
                       </div>
                       <div
@@ -645,14 +845,16 @@ const NursingAssessOnAdmit = () => {
                         }}
                       >
                         <img
-                         onClick={()=>setPainScale(4)}
                           src="/Images/PainScale4.png"
                           alt=""
                           style={{ width: "75px", height: "70px" }}
                         />
                         <span>4</span>
                         <div style={{ fontSize: "15px", textAlign: "center" }}>
-                          Mild Pain
+                          Mild Pain<Checkbox 
+                           onChange={(e)=>setPainScale(e.target.checked ? "4":"")}
+                           checked={PainScale=== "4"}
+                          />
                         </div>
                       </div>
                       <div
@@ -663,14 +865,16 @@ const NursingAssessOnAdmit = () => {
                         }}
                       >
                         <img
-                         onClick={()=>setPainScale(6)}
                           src="/Images/PainScale6.png"
                           alt=""
                           style={{ width: "75px", height: "70px" }}
                         />
                         <span>6</span>
                         <div style={{ fontSize: "15px", textAlign: "center" }}>
-                          Moderate Pain
+                          Moderate Pain<Checkbox 
+                           onChange={(e)=>setPainScale(e.target.checked ? "6":"")}
+                           checked={PainScale=== "6"}
+                          />
                         </div>
                       </div>
                       <div
@@ -681,14 +885,16 @@ const NursingAssessOnAdmit = () => {
                         }}
                       >
                         <img
-                         onClick={()=>setPainScale(8)}
                           src="/Images/PainScale8.png"
                           alt=""
                           style={{ width: "75px", height: "70px" }}
                         />
                         <span>8</span>
                         <div style={{ fontSize: "15px", textAlign: "center" }}>
-                          Severe Pain
+                          Severe Pain<Checkbox 
+                           onChange={(e)=>setPainScale(e.target.checked ? "8":"")}
+                           checked={PainScale==="8"}
+                          />
                         </div>
                       </div>
                       <div
@@ -699,14 +905,16 @@ const NursingAssessOnAdmit = () => {
                         }}
                       >
                         <img
-                         onClick={()=>setPainScale(10)}
                           src="/Images/PainScale10.png"
                           alt=""
                           style={{ width: "75px", height: "70px" }}
                         />
                         <span>10</span>
                         <div style={{ fontSize: "15px", textAlign: "center" }}>
-                          Worst Pain
+                          Worst Pain<Checkbox 
+                           onChange={(e)=>setPainScale(e.target.checked ? "10":"")}
+                           checked={PainScale=== "10"}
+                          />
                         </div>
                       </div>
                     </div>
@@ -718,7 +926,7 @@ const NursingAssessOnAdmit = () => {
                     textAlign: "center",
                   }}
                 >
-                  <th style={{ border: "2px  solid #20958C" }}>Respiratory</th>
+                  <th style={{ border: "2px  solid #20958C",fontWeight:"bold" }}>Respiratory</th>
                   <td colSpan={2} style={{ border: "2px  solid #20958C" }}>
                     <tr
                       style={{
@@ -795,7 +1003,7 @@ const NursingAssessOnAdmit = () => {
                       <td
                         style={{ width: "50%", border: ".5px  solid #20958C" }}
                       >
-                        Hemoptysis :
+                       <b>Hemoptysis : </b> 
                       </td>
                       <td
                         style={{ width: "50%", border: ".5px  solid #20958C" }}
@@ -815,7 +1023,7 @@ const NursingAssessOnAdmit = () => {
                       <td
                         style={{ width: "50%", border: ".5px  solid #20958C" }}
                       >
-                        Cough :{" "}
+                       <b>Cough :{" "}</b> 
                       </td>
                       <td
                         style={{ width: "50%", border: ".5px  solid #20958C" }}
@@ -833,7 +1041,7 @@ const NursingAssessOnAdmit = () => {
                       <td
                         style={{ width: "50%", border: ".5px  solid #20958C" }}
                       >
-                        Sputum :
+                       <b>Sputum : </b> 
                       </td>
                       <td
                         style={{ width: "50%", border: ".5px  solid #20958C" }}
@@ -851,13 +1059,13 @@ const NursingAssessOnAdmit = () => {
                 </tr>
 
                 <tr style={{ textAlign: "center" }}>
-                  <th style={{ border: "2px  solid #20958C" }}>
+                  <th style={{ border: "2px  solid #20958C",fontWeight:"bold" }}>
                     Cardiovascular
                   </th>
                   <td colSpan={2} style={{ border: "2px  solid #20958C" }}>
                     <tr style={{ textAlign: "left" }}>
                       <td
-                        style={{ width: "50%", border: ".5px  solid #20958C" }}
+                        style={{ width: "50%", border: ".5px  solid #20958C",fontWeight:"bold" }}
                       >
                         Edema :
                       </td>
@@ -875,7 +1083,7 @@ const NursingAssessOnAdmit = () => {
                     </tr>
                     <tr style={{ textAlign: "left" }}>
                       <td
-                        style={{ width: "50%", border: ".5px  solid #20958C" }}
+                        style={{ width: "50%", border: ".5px  solid #20958C",fontWeight:"bold" }}
                       >
                         Loaction of edema :{" "}
                       </td>
@@ -885,14 +1093,16 @@ const NursingAssessOnAdmit = () => {
                         <input type="text" 
                         value={Loactionofedema}
                         onChange={(e)=>setLoactionofedema(e.target.value)}
-                        className="vi_0" />
+                        className="vi_0"
+                        placeholder=" Loaction of edema"
+                        />
                       </td>
                     </tr>
                     <tr style={{ textAlign: "left" }}>
                       <td
                         style={{ width: "50%", border: ".5px  solid #20958C" }}
                       >
-                        Skin perfusion :
+                      <b>Skin perfusion : </b>  
                       </td>
                       <td
                         style={{ width: "50%", border: ".5px  solid #20958C" }}
@@ -924,7 +1134,7 @@ const NursingAssessOnAdmit = () => {
                   <td colSpan={2} style={{ border: "2px  solid #20958C" }}>
                     <tr style={{ textAlign: "left" }}>
                       <td
-                        style={{ width: "50%", border: ".5px  solid #20958C" }}
+                        style={{fontWeight:"bold", width: "50%", border: ".5px  solid #20958C" }}
                       >
                         Capillary refill :
                       </td>
@@ -945,7 +1155,7 @@ const NursingAssessOnAdmit = () => {
                     </tr>
                     <tr style={{ textAlign: "center" }}>
                       <td
-                        style={{ width: "50%", border: ".5px  solid #20958C" }}
+                        style={{fontWeight:"bold", width: "50%", border: ".5px  solid #20958C" }}
                       >
                         Pacemaker :{" "}
                       </td>
@@ -965,7 +1175,7 @@ const NursingAssessOnAdmit = () => {
                 </tr>
 
                 <tr style={{ textAlign: "center" }}>
-                  <th style={{ border: "2px  solid #20958C" }}>
+                  <th style={{ border: "2px  solid #20958C",fontWeight:"bold" }}>
                     Skin & Mucous Membrane
                   </th>
 
@@ -1173,7 +1383,7 @@ const NursingAssessOnAdmit = () => {
                 </tr>
 
                 <tr style={{ textAlign: "center" }}>
-                  <th style={{ border: "2px  solid #20958C" }}>
+                  <th style={{ border: "2px  solid #20958C",fontWeight:"bold" }}>
                     Gastrointestinal
                   </th>
                   <td colSpan={4} style={{ border: "2px  solid #20958C" }}>
@@ -1237,9 +1447,9 @@ const NursingAssessOnAdmit = () => {
                       </td>
                       <td
                         rowSpan={3}
-                        style={{ width: "33%", border: "0.5px  solid #20958C" }}
+                        style={{fontWeight:"bold", width: "33%", border: "0.5px  solid #20958C" }}
                       >
-                        Swallowing diffulty: Yes
+                        Swallowing diffulty : Yes
                         <Checkbox 
                          onChange={(e)=>setSwallowingdiffulty(e.target.checked ? "Yes":"")}
                          checked={Swallowingdiffulty==="Yes"}
@@ -1255,7 +1465,7 @@ const NursingAssessOnAdmit = () => {
                 </tr>
 
                 <tr style={{ textAlign: "center" }}>
-                  <th style={{ border: "2px  solid #20958C" }}>
+                  <th style={{fontWeight:"bold", border: "2px  solid #20958C" }}>
                     Genitourinary
                   </th>
                   <td colSpan={4} style={{ border: "2px  solid #20958C" }}>
@@ -1299,6 +1509,7 @@ const NursingAssessOnAdmit = () => {
                         className="vi_0" 
                         value={Frequency}
                         onChange={(e)=>setFrequency(e.target.value)}
+                        placeholder="Frequency"
                         />
                       </td>
                       <td
@@ -1340,6 +1551,7 @@ const NursingAssessOnAdmit = () => {
                         className="vi_0"
                         value={Insertedon}
                         onChange={(e)=>setInsertedon(e.target.value)}
+                        placeholder="Inserted"
                         />
                       </td>
                     </tr>
@@ -1347,7 +1559,7 @@ const NursingAssessOnAdmit = () => {
                 </tr>
 
                 <tr style={{ textAlign: "center" }}>
-                  <th style={{ border: "2px  solid #20958C" }}>Obstetric</th>
+                  <th style={{ border: "2px  solid #20958C",fontWeight:"bold" }}>Obstetric</th>
                   <td style={{ border: "2px  solid #20958C" }}>G P L A D</td>
                   <td colSpan={3} style={{ border: "2px  solid #20958C" }}>
                     <tr style={{ textAlign: "left" }}>
@@ -1359,6 +1571,7 @@ const NursingAssessOnAdmit = () => {
                           <input type="text" className="vi_0"
                           value={LMP}
                           onChange={(e)=>setLMP(e.target.value)}
+                            placeholder="LMP"
                           />
                         </div>
                       </td>
@@ -1370,6 +1583,7 @@ const NursingAssessOnAdmit = () => {
                           <input type="text" className="vi_0" 
                           value={EDD}
                           onChange={(e)=>setEDD(e.target.value)}
+                          placeholder="EDD"
                           />
                         </div>
                       </td>
@@ -1383,6 +1597,7 @@ const NursingAssessOnAdmit = () => {
                           <input type="text" className="vi_0" 
                             value={DatingScan}
                             onChange={(e)=>setDatingScan(e.target.value)}
+                            placeholder="Dating Scan"
                           />
                         </div>
                       </td>
@@ -1394,6 +1609,7 @@ const NursingAssessOnAdmit = () => {
                           <input type="text" className="vi_0" 
                           value={POG}
                           onChange={(e)=>setPOG(e.target.value)}
+                          placeholder="POG"
                           />
                         </div>
                       </td>
@@ -1402,25 +1618,51 @@ const NursingAssessOnAdmit = () => {
                 </tr>
 
                 <tr>
-                  <th style={{ border: "2px  solid #20958C" }}>
+                  <th style={{fontWeight:"bold", border: "2px  solid #20958C" }}>
                     Any Drug Allergy
                   </th>
                   <td style={{ border: "2px  solid #20958C" }} colSpan={4}>
                     <input type="text" className="vi_0"
                     value={AnyDrugAllergy}
                     onChange={(e)=>setAnyDrugAllergy(e.target.value)}
+                    placeholder="  Any Drug Allergy"
                     />
                   </td>
                 </tr>
 
                 <tr>
-                  <th colSpan={3}>Name & Signature of Nurse:</th>
+                  <th>Name & Signature of Nurse:</th>
+                  <th>
+                  {!NurseSignature ? (
+                                  <div
+                                    style={{
+                                      border: "1px solid #dee2e6",
+                                    }}
+                                  >
+                                    <SignatureCanvas
+                                      ref={sigCanvas1}
+                                      penColor="black"
+                                      canvasProps={{
+                                        width: 180,
+                                        height: 100,
+                                        className: "sigCanvas",
+                                      }}
+                                    />
+                                    <button onClick={clear1}>Clear</button>
+                                    <button onClick={save1}>Save</button>
+                                  </div>
+                                ) : (
+                                  <img src={NurseSignature} alt="Signature" />
+                                )}
+                  </th>
+                 
                   <th>
                     <div className="d-flex align-items-center">
                       <div style={{ width: "40%" }}>Date : </div>
                       <input type="date" className="vi_0" 
                       onChange={(e)=>setFormfillDate(e.target.value)}
                       value={FormfillDate}
+                      min={new Date().toISOString().split('T')[0]} 
                       />
                     </div>
                   </th>

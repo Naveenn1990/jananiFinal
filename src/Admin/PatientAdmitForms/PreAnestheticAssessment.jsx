@@ -1,10 +1,11 @@
+import { Checkbox } from "@mui/material";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Form, Table } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
-
+import { FaBackward } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
+import SignatureCanvas from "react-signature-canvas";
 const PreAnestheticAssessment = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { patientdetails, cause } = location.state || {};
 
@@ -101,95 +102,336 @@ const PreAnestheticAssessment = () => {
   const [PAnesDate, setPAnesDate] = useState("");
   const [PAnesTime, setPAnesTime] = useState("");
   const submitpreAnesthica = async () => {
+
+    if(!Diagnosis){
+      return alert("Enter Diagnosis..! ")
+    }
+    if(!Problem){
+      return alert("Enter Problems..! ")
+    }
+    if(!Surgery){
+      return alert("Enter Surgery Details..! ")
+    }
+    if(!CVS){
+      return alert("Enter CVS..! ")
+    }
+    if(!RS){
+      return alert("Enter RS..! ")
+    }
+    if(!Endocrine){
+      return alert("Enter Endocrine..! ")
+    }
+    if(!Renal){
+      return alert("Enter Renal..! ")
+    }
+    if(!CNSSkeletal){
+      return alert("Enter CNSSkeletal..! ")
+    }
+    if(!GITHematology){
+      return alert("Enter GIT - Hematology..! ")
+    }
+    if(!CurrentMedications){
+      return alert("Enter Current - Medications..! ")
+    }
+    if(!PastAnaesthetic){
+      return alert("Enter Past Anaesthetic..! ")
+    }
+    if(!Temp){
+      return alert("Enter Temp..! ")
+    }
+    if(!Build){
+      return alert("Enter Build..! ")
+    }
+    if(!PR){
+      return alert("Enter PR..! ")
+    }
+    if(!Hydrarion){
+      return alert("Enter Hydrarion..! ")
+    }
+    if(!BP){
+      return alert("Enter BP..! ")
+    }
+    if(!Pallor){
+      return alert("Enter Pallor..! ")
+    }
+    if(!RR){
+      return alert("Enter RR..! ")
+    }
+    if(!Icterus){
+      return alert("Enter Icterus..! ")
+    }
+    if(!Sp02){
+      return alert("Enter Sp02..! ")
+    }
+    if(!Cyanosis){
+      return alert("Enter Cyanosis..! ")
+    }
+    if(!Heart){
+      return alert("Enter Heart..! ")
+    }
+    if(!Oedema){
+      return alert("Enter Oedema..! ")
+    }
+    if(!Lungs){
+      return alert("Enter Lungs..! ")
+    }
+    if(!Peripheral){
+      return alert("Enter Peripheral..! ")
+    }
+    if(!HbPVC){
+      return alert("Enter HbPVC..! ")
+    }
+    if(!WBC){
+      return alert("Enter WBC..! ")
+    }
+    if(!Plat){
+      return alert("Enter Plat..! ")
+    }
+    if(!HIV){
+      return alert("Enter HIV..! ")
+    }
+    if(!HBSAg){
+      return alert("Enter HBSAg..! ")
+    }
+    if(!HCV){
+      return alert("Enter HCV..! ")
+    }
+    if(!FBS){
+      return alert("Enter FBS..! ")
+    }
+    if(!PLBS){
+      return alert("Enter PLBS..! ")
+    }
+    if(!RBS){
+      return alert("Enter RBS..! ")
+    }
+    if(!SCr){
+      return alert("Enter SCr..! ")
+    }
+    if(!BUN){
+      return alert("Enter BUN..! ")
+    }
+    if(!BdUrea){
+      return alert("Enter BdUrea..! ")
+    }
+    if(!Na){
+      return alert("Enter Na..! ")
+    }
+    if(!K){
+      return alert("Enter K..! ")
+    }
+    if(!Cl){
+      return alert("Enter Cl..! ")
+    }
+    if(!SBil){
+      return alert("Enter SBil..! ")
+    }
+    if(!SGPT){
+      return alert("Enter SGPT..! ")
+    }
+    if(!LDH){
+      return alert("Enter LDH..! ")
+    }
+    if(!PT){
+      return alert("Enter PT..! ")
+    }
+    if(!aPTT){
+      return alert("Enter aPTT..! ")
+    }
+    if(!INR){
+      return alert("Enter INR..! ")
+    }
+    if(!Others){
+      return alert("Enter Others..! ")
+    }
+    if(!MouthOpening){
+      return alert("Enter MouthOpening..! ")
+    }
+    if(!ASAGrading){
+      return alert("Enter ASA Grading..! ")
+    }
+    if(!Denittion){
+      return alert("Enter Denittion..! ")
+    }
+    if(!TMJ){
+      return alert("Enter TMJ..! ")
+    }
+    if(!DifficultIntubation){
+      return alert("Enter Difficult Intubation..! ")
+    }
+    if(!NeckExtension){
+      return alert("Enter Neck Extension..! ")
+    }
+    if(!Mallampati){
+      return alert("Enter Mallampati..! ")
+    }
+    if(!Regional){
+      return alert("Select Regional..! ")
+    }
+    if(!SpineGrading){
+      return alert("Enter Spine Grading..! ")
+    }
+    if(!CheckPRBC){
+      return alert("Enter Check Availability PRBC..! ")
+    }
+    if(!CheckFFP){
+      return alert("Enter Check Availability FFP..! ")
+    }
+    if(!CheckCryo){
+      return alert("Enter Check Availability Cryo..! ")
+    }
+    if(!CheckRDP){
+      return alert("Enter Check Availability RDP..! ")
+    }
+    if(!CheckSDP){
+      return alert("Enter Check Availability SDP..! ")
+    }
+    if(!CrossPRBC){
+      return alert("Enter Cross Match & Reserve PRBC..! ")
+    }
+    if(!CrossFFP){
+      return alert("Enter Cross Match & Reserve FFP..! ")
+    }
+    if(!CrossCryo){
+      return alert("Enter Cross Match & Reserve Cryo..! ")
+    }
+    if(!CrossRDP){
+      return alert("Enter Cross Match & Reserve RDP..! ")
+    }
+    if(!CrossSDP){
+      return alert("Enter Cross Match & Reserve SDP..! ")
+    }
+    if(!IssuePRBC){
+      return alert("Enter Issue PRBC..! ")
+    }
+    if(!IssueFFP){
+      return alert("Enter Issue FFP..! ")
+    }
+    if(!IssueCryo){
+      return alert("Enter Issue Cryo..! ")
+    }
+    if(!IssueRDP){
+      return alert("Enter Issue RDP..! ")
+    }
+    if(!IssueSDP){
+      return alert("Enter Issue SDP..! ")
+    }
+    if(!Maybeposted){
+      return alert("Check May be posted..! ")
+    }
+    if(!ReviewPAC){
+      return alert("Enter Review PAC..! ")
+    }
+    if(!PreOPInstructions){
+      return alert("Enter Pre OP Instructions..! ")
+    }
+    if(!AnaesthesiaPlan){
+      return alert("Enter Anaesthesia Plan..! ")
+    }
+    if(!PostOPInstructions){
+      return alert("Enter Post OP Instructions..! ")
+    }
+    if(!PAnesDate){
+      return alert("Select date..! ")
+    }
+    if(!PAnesTime){
+      return alert("Select time..! ")
+    }
+    if(!NurseSign){
+      return alert("Sign Pending..! ")
+    }
+
+    const formdata = new FormData();
+    const nursesignature = await fetch(NurseSign).then((res) => res.blob());
+    formdata.set("patientId", patientdetails?._id);
+    formdata.set("causeId", cause?._id);
+    formdata.set("Diagnosis", Diagnosis);
+    formdata.set("Problem", Problem);
+    formdata.set("Surgery", Surgery);
+    formdata.set("CVS", CVS);
+    formdata.set("RS", RS);
+    formdata.set("Endocrine", Endocrine);
+    formdata.set("Renal", Renal);
+    formdata.set("CNSSkeletal", CNSSkeletal);
+    formdata.set("GITHematology", GITHematology);
+    formdata.set("CurrentMedications", CurrentMedications);
+    formdata.set("PastAnaesthetic", PastAnaesthetic);
+    formdata.set("Temp", Temp);
+    formdata.set("Build", Build);
+    formdata.set("PR", PR);
+    formdata.set("Hydrarion", Hydrarion);
+    formdata.set("BP", BP);
+    formdata.set("Pallor", Pallor);
+    formdata.set("RR", RR);
+    formdata.set("Icterus", Icterus);
+    formdata.set("Sp02", Sp02);
+    formdata.set("Cyanosis", Cyanosis);
+    formdata.set("Heart", Heart);
+    formdata.set("Oedema", Oedema);
+    formdata.set("Lungs", Lungs);
+    formdata.set("Peripheral", Peripheral);
+    formdata.set("HbPVC", HbPVC);
+    formdata.set("WBC", WBC);
+    formdata.set("Plat", Plat);
+    formdata.set("HIV", HIV);
+    formdata.set("HBSAg", HBSAg);
+    formdata.set("HCV", HCV);
+    formdata.set("FBS", FBS);
+    formdata.set("PLBS", PLBS);
+    formdata.set("RBS", RBS);
+    formdata.set("SCr", SCr);
+    formdata.set("BUN", BUN);
+    formdata.set("BdUrea", BdUrea);
+    formdata.set("Na", Na);
+    formdata.set("K", K);
+    formdata.set("Cl", Cl);
+    formdata.set("SBil", SBil);
+    formdata.set("SGPT", SGPT);
+    formdata.set("LDH", LDH);
+    formdata.set("PT", PT);
+    formdata.set("aPTT", aPTT);
+    formdata.set("INR", INR);
+    formdata.set("Others", Others);
+    formdata.set("MouthOpening", MouthOpening);
+    formdata.set("ASAGrading", ASAGrading);
+    formdata.set("Denittion", Denittion);
+    formdata.set("TMJ", TMJ);
+    formdata.set("DifficultIntubation", DifficultIntubation);
+    formdata.set("NeckExtension", NeckExtension);
+    formdata.set("Mallampati", Mallampati);
+    formdata.set("Regional", Regional);
+    formdata.set("SpineGrading", SpineGrading);
+    formdata.set("CheckPRBC", CheckPRBC);
+    formdata.set("CheckFFP", CheckFFP);
+    formdata.set("CheckCryo", CheckCryo);
+    formdata.set("CheckRDP", CheckRDP);
+    formdata.set("CheckSDP", CheckSDP);
+    formdata.set("CrossPRBC", CrossPRBC);
+    formdata.set("CrossFFP", CrossFFP);
+    formdata.set("CrossCryo", CrossCryo);
+    formdata.set("CrossRDP", CrossRDP);
+    formdata.set("CrossSDP", CrossSDP);
+    formdata.set("IssuePRBC", IssuePRBC);
+    formdata.set("IssueFFP", IssueFFP);
+    formdata.set("IssueCryo", IssueCryo);
+    formdata.set("IssueRDP", IssueRDP);
+    formdata.set("IssueSDP", IssueSDP);
+    formdata.set("Maybeposted", Maybeposted);
+    formdata.set("ReviewPAC", ReviewPAC);
+    formdata.set("PreOPInstructions", PreOPInstructions);
+    formdata.set("AnaesthesiaPlan", AnaesthesiaPlan);
+    formdata.set("PostOPInstructions", PostOPInstructions);
+    formdata.set("PAnesDate", PAnesDate);
+    formdata.set("PAnesTime", PAnesTime);
+    formdata.set("nursesignature", nursesignature,"nurse-signature.png");
+   
     try {
       const config = {
         url: "/addpreanaesthetic",
         method: "put",
         baseURL: "http://localhost:8521/api/staff",
-        headers: { "content-type": "application/json" },
-        data: {
-          patientId: patientdetails?._id,
-          causeId: cause?._id,
-          Diagnosis:Diagnosis,
-          Problem:Problem,
-          Surgery:Surgery,
-          CVS:CVS,
-          RS:RS,
-          Endocrine:Endocrine,
-          Renal:Renal,
-          CNSSkeletal:CNSSkeletal,
-          GITHematology:GITHematology,
-          CurrentMedications:CurrentMedications,
-          PastAnaesthetic:PastAnaesthetic,
-          Temp:Temp,
-          Build:Build,
-          PR:PR,
-          Hydrarion:Hydrarion,
-          BP:BP,
-          Pallor:Pallor,
-          RR:RR,
-          Icterus:Icterus,
-          Sp02:Sp02,
-          Cyanosis:Cyanosis,
-          Heart:Heart,
-          Oedema:Oedema,
-          Lungs:Lungs,
-          Peripheral:Peripheral,
-          HbPVC:HbPVC,
-          WBC:WBC,
-          Plat:Plat,
-          HIV:HIV,
-          HBSAg:HBSAg,
-          HCV:HCV,
-          FBS:FBS,
-          PLBS:PLBS,
-          RBS:RBS,
-          SCr:SCr,
-          BUN:BUN,
-          BdUrea:BdUrea,
-          Na:Na,
-          K:K,
-          Cl:Cl,
-          SBil:SBil,
-          SGPT:SGPT,
-          LDH:LDH,
-          PT:PT,
-          aPTT:aPTT,
-          INR:INR,
-          Others:Others,
-          MouthOpening:MouthOpening,
-          ASAGrading:ASAGrading,
-          Denittion:Denittion,
-          TMJ:TMJ,
-          DifficultIntubation:DifficultIntubation,
-          NeckExtension:NeckExtension,
-          Mallampati:Mallampati,
-          Regional:Regional,
-          SpineGrading:SpineGrading,
-          CheckPRBC:CheckPRBC,
-          CheckFFP:CheckFFP,
-          CheckCryo:CheckCryo,
-          CheckRDP:CheckRDP,
-          CheckSDP:CheckSDP,
-          CrossPRBC:CrossPRBC,
-          CrossFFP:CrossFFP,
-          CrossCryo:CrossCryo,
-          CrossRDP:CrossRDP,
-          CrossSDP:CrossSDP,
-          IssuePRBC:IssuePRBC,
-          IssueFFP:IssueFFP,
-          IssueCryo:IssueCryo,
-          IssueRDP:IssueRDP,
-          IssueSDP:IssueSDP,
-          Maybeposted:Maybeposted,
-          ReviewPAC:ReviewPAC,
-          PreOPInstructions:PreOPInstructions,
-          AnaesthesiaPlan:AnaesthesiaPlan,
-          PostOPInstructions:PostOPInstructions,
-          PAnesDate:PAnesDate,
-          PAnesTime:PAnesTime,
-
-        },
+        headers: { "Content-Type": "multipart/form-data" },
+        data: formdata,
       };
       let res = await axios(config);
       if (res.status === 200) {
@@ -199,21 +441,32 @@ const PreAnestheticAssessment = () => {
       alert(error.response.data.error);
     }
   };
+
+  const [NurseSign, setNurseSign] = useState(null);
+  const sigCanvas1 = useRef({});
+  const clear1 = () => sigCanvas1.current.clear();
+  const save1 = () => {
+    const NurseSign = sigCanvas1.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+      setNurseSign(NurseSign);
+  };
   return (
     <div>
       <div>
-        <button
+      <button
           className="mt-2"
           style={{
-            padding: "6px",
-            border: "1px solid white",
+            border: "#20958c",
+            padding: "8px",
             backgroundColor: "#20958c",
             color: "white",
-            borderRadius: "0px",
+            borderRadius: "6px",
+            boxShadow: " 8px 8px 16px #20958c,-8px -8px 16px #20958c",
           }}
-          onClick={() => navigate("/admin/patientform")}
+          onClick={() => window.history.go(-1)}
         >
-          Back
+          <FaBackward /> &nbsp; Back
         </button>
       </div>
 
@@ -258,15 +511,7 @@ const PreAnestheticAssessment = () => {
                 Email:jananihospital2018@gmail.com
               </h6>
             </div>
-          </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
+          </div>         
           <div className="text-center mt-1">
             {" "}
             <h6
@@ -298,6 +543,7 @@ const PreAnestheticAssessment = () => {
                 </tr>
               </thead>
               <tbody>
+                
                 <tr>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
                     PAC Done by Dr{" "}
@@ -330,7 +576,7 @@ const PreAnestheticAssessment = () => {
                             Age & Sex : {ageOutput} ,{patientdetails?.Gender}
                           </td>
                           <td style={{ width: "50%", border: "none" }}>
-                            Allergy :
+                            Allergy :{patientdetails?.patientAllergies}
                           </td>
                         </tr>
                         <tr>
@@ -367,6 +613,7 @@ const PreAnestheticAssessment = () => {
                                 className="vi_0"
                                 value={Diagnosis}
                                 onChange={(e) => setDiagnosis(e.target.value)}
+                                placeholder="Diagnosis.."
                               />
                             </div>
                           </td>
@@ -383,6 +630,7 @@ const PreAnestheticAssessment = () => {
                                 className="vi_0"
                                 value={Problem}
                                 onChange={(e) => setProblem(e.target.value)}
+                                placeholder="Enter Problems"
                               />
                             </div>
                           </td>
@@ -403,6 +651,7 @@ const PreAnestheticAssessment = () => {
                                 className="vi_0"
                                 value={Surgery}
                                 onChange={(e) => setSurgery(e.target.value)}
+                              placeholder="Surgery...!"
                               />
                             </div>
                           </td>
@@ -420,6 +669,7 @@ const PreAnestheticAssessment = () => {
                         className="vi_0"
                         value={CVS}
                         onChange={(e) => setCVS(e.target.value)}
+                        placeholder="CVS..!"
                       />
                     </div>
                   </td>
@@ -431,6 +681,7 @@ const PreAnestheticAssessment = () => {
                         className="vi_0"
                         value={RS}
                         onChange={(e) => setRS(e.target.value)}
+                        placeholder="RS..!"
                       />
                     </div>
                   </td>
@@ -444,6 +695,7 @@ const PreAnestheticAssessment = () => {
                         className="vi_0"
                         value={Endocrine}
                         onChange={(e) => setEndocrine(e.target.value)}
+                        placeholder="Endocrine..!"
                       />
                     </div>
                   </td>
@@ -455,6 +707,7 @@ const PreAnestheticAssessment = () => {
                         className="vi_0"
                         value={Renal}
                         onChange={(e) => setRenal(e.target.value)}
+                        placeholder="Renal..!"
                       />
                     </div>
                   </td>
@@ -468,6 +721,7 @@ const PreAnestheticAssessment = () => {
                         className="vi_0"
                         value={CNSSkeletal}
                         onChange={(e) => setCNSSkeletal(e.target.value)}
+                        placeholder="CNSSkeletal..!"
                       />
                     </div>
                   </td>
@@ -479,6 +733,7 @@ const PreAnestheticAssessment = () => {
                         className="vi_0"
                         value={GITHematology}
                         onChange={(e) => setGITHematology(e.target.value)}
+                        placeholder="GIT - Hematology..!"
                       />
                     </div>
                   </td>
@@ -492,6 +747,7 @@ const PreAnestheticAssessment = () => {
                         className="vi_0"
                         value={CurrentMedications}
                         onChange={(e) => setCurrentMedications(e.target.value)}
+                        placeholder="Current Medications ..!"
                       />
                     </div>
                   </td>
@@ -503,6 +759,7 @@ const PreAnestheticAssessment = () => {
                         className="vi_0"
                         value={PastAnaesthetic}
                         onChange={(e) => setPastAnaesthetic(e.target.value)}
+                        placeholder="Past Anaesthetic"
                       />
                     </div>
                   </td>
@@ -1648,12 +1905,13 @@ const PreAnestheticAssessment = () => {
                       }}
                     >
                       <div style={{ width: "41%" }}>May be posted :</div>
-
-                      <input
-                        type="text"
-                        className="vi_0"
-                        value={Maybeposted}
-                        onChange={(e) => setMaybeposted(e.target.value)}
+                     YES <Checkbox
+                      onChange={(e)=>setMaybeposted(e.target.checked ? "YES":"")}
+                      checked={Maybeposted==="YES"}
+                      />
+                     NO <Checkbox
+                      onChange={(e)=>setMaybeposted(e.target.checked ? "NO":"")}
+                      checked={Maybeposted==="NO"}
                       />
                     </span>
                   </td>
@@ -1677,6 +1935,7 @@ const PreAnestheticAssessment = () => {
                         className="vi_0"
                         value={ReviewPAC}
                         onChange={(e) => setReviewPAC(e.target.value)}
+                        placeholder="Review PAC"
                       />
                     </span>
                   </td>
@@ -1696,6 +1955,7 @@ const PreAnestheticAssessment = () => {
                       className="vi_0"
                       value={PreOPInstructions}
                       onChange={(e) => setPreOPInstructions(e.target.value)}
+                    placeholder=" Pre OP Instructions"
                     />
                   </td>
                   <td
@@ -1719,6 +1979,7 @@ const PreAnestheticAssessment = () => {
                           className="vi_0"
                           value={AnaesthesiaPlan}
                           onChange={(e) => setAnaesthesiaPlan(e.target.value)}
+                          placeholder="Anaesthesia Plan"
                         />
                       </td>
                       <td
@@ -1737,6 +1998,7 @@ const PreAnestheticAssessment = () => {
                           className="vi_0"
                           value={PostOPInstructions}
                           onChange={(e) => setPostOPInstructions(e.target.value)}
+                          placeholder="Post OP Instructions"
                         />
                       </td>
                     </tr>
@@ -1759,6 +2021,7 @@ const PreAnestheticAssessment = () => {
                         className="vi_0"
                         value={PAnesDate}
                         onChange={(e) => setPAnesDate(e.target.value)}
+                        min={new Date().toISOString().split("T")[0]}
                       />
                     </div>
                   </td>
@@ -1788,7 +2051,27 @@ const PreAnestheticAssessment = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    Signature & Name{" "}
+                    Signature & Name :{" "}  {!NurseSign ? (
+                      <div
+                        style={{
+                          border: "1px solid #dee2e6",
+                        }}
+                      >
+                        <SignatureCanvas
+                          ref={sigCanvas1}
+                          penColor="black"
+                          canvasProps={{
+                            width: 180,
+                            height: 100,
+                            className: "sigCanvas",
+                          }}
+                        />
+                        <button onClick={clear1}>Clear</button>
+                        <button onClick={save1}>Save</button>
+                      </div>
+                    ) : (
+                      <img src={NurseSign} alt="Signature" />
+                    )}
                   </td>
                 </tr>
               </tbody>

@@ -1,24 +1,62 @@
-import React from "react";
-import { Button, Table } from "react-bootstrap";
-import { FiDownload } from "react-icons/fi";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import moment from "moment";
+import React, { useEffect, useRef, useState } from "react";
+import { Table } from "react-bootstrap";
+import { useReactToPrint } from "react-to-print";
 
-const NurseNotes = () => {
+const NurseNotes = ({ NursingNote, patientdetail }) => {
+  console.log("NursingNote,patientdetail", NursingNote, patientdetail);
+  const dobString = patientdetail?.DOB;
+  const dob = new Date(dobString);
+  const currentDate = new Date();
+  const differenceMs = currentDate - dob;
+  const ageYears = Math.floor(differenceMs / (1000 * 60 * 60 * 24 * 365.25));
+  let ageOutput;
+  if (ageYears < 1) {
+    const ageMonths = Math.floor(ageYears * 12);
+    ageOutput = `${ageMonths} months`;
+  } else {
+    ageOutput = `${ageYears} years`;
+  }
+
+  const [Doctor, setDoctor] = useState([])
+  useEffect(() => {
+    if(NursingNote){
+      const selecteddoc = patientdetail?.assigndocts?.filter((ele)=>ele?.doctorsId?._id ===  NursingNote?.[0]?.doctorId)
+      setDoctor(selecteddoc)
+    }
+  
+  }, [NursingNote,patientdetail?.assigndocts])
+
+  const pdfdownload = async () => {
+    const pdf = new jsPDF("portrait", "pt", "a4");
+    const data = await html2canvas(document.querySelector("#pdf"));
+    const img = data.toDataURL("image/png");
+    const imgProperties = pdf.getImageProperties(img);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+    pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("preanaestheticasses.pdf");
+  };
+
+  const componentRef = useRef();
+  const handleprint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: "preanaestheticasses.pdf",
+  });
+
   return (
     <>
-      <div className="mt-2 d-dlex text-end gap-2">
-        <Button
-          style={{
-            padding: "6px",
-            border: "none",
-            backgroundColor: "#20958c",
-            color: "white",
-            borderRadius: "0px",
-            marginRight: "20px",
-          }}
-        >
-          Print <FiDownload />
-        </Button>
-      </div>
+      <hr
+        style={{
+          color: "black",
+          height: "3px",
+          width: "100%",
+          backgroundColor: "black",
+          border: "none",
+        }}
+      />
       <div className="text-center mt-1">
         {" "}
         <h6
@@ -39,10 +77,8 @@ const NurseNotes = () => {
           style={{
             padding: "5px",
             border: "2px solid #20958C",
-            // width: "1073px",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1700px",
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -63,14 +99,6 @@ const NurseNotes = () => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
             {" "}
             <h6
@@ -97,13 +125,13 @@ const NurseNotes = () => {
               <tbody>
                 <tr>
                   <td style={{ width: "33%", border: "2px  solid #20958C" }}>
-                    Name:{" "}
+                    Name :{" "}{`${patientdetail?.Firstname} ${patientdetail?.Lastname}`}
                   </td>
                   <td style={{ width: "33%", border: "2px  solid #20958C" }}>
-                    Age:{" "}
+                    Age :{" "} {ageOutput}
                   </td>
                   <td style={{ width: "33%", border: "2px  solid #20958C" }}>
-                    Sex:{" "}
+                    Sex :{" "}{patientdetail?.Gender}
                   </td>
                 </tr>
               </tbody>
@@ -118,7 +146,7 @@ const NurseNotes = () => {
               <tbody>
                 <tr>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Pt ID:{" "}
+                    Pt ID:{" "}{patientdetail?.PatientId}
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
                     Ward:
@@ -129,15 +157,15 @@ const NurseNotes = () => {
                     Dept:{" "}
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Doctor:{" "}
+                    Doctor:{" "}{`${Doctor?.[0]?.doctorsId?.Firstname} ${Doctor?.[0]?.doctorsId?.Lastname}`}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    DOA:{" "}
+                    DOA:{" "}{moment(patientdetail?.createdAt)?.format("DD-MM-YYYY")}
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Known Drug Allergies:{" "}
+                    Known Drug Allergies :{" "}{patientdetail?.patientAllergies}
                   </td>
                 </tr>
                 <tr>
@@ -145,7 +173,7 @@ const NurseNotes = () => {
                     colSpan={2}
                     style={{ width: "100%", border: "2px  solid #20958C" }}
                   >
-                    Diagnosis:
+                    Diagnosis : {NursingNote?.[0]?.Diagnosis}
                   </td>
                 </tr>
               </tbody>
@@ -156,6 +184,7 @@ const NurseNotes = () => {
                 width: "100%",
                 margin: "auto",
               }}
+              bordered
             >
               <thead>
                 <tr style={{ textAlign: "center" }}>
@@ -171,17 +200,25 @@ const NurseNotes = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr style={{ textAlign: "center" }}>
-                  <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    04/05/2024 - 13:00
-                  </td>
-                  <td style={{ width: "60%", border: "2px  solid #20958C" }}>
-                    notes
-                  </td>
-                  <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    sign
-                  </td>
-                </tr>
+                {NursingNote?.map((item)=>{
+                  return(
+                    <tr style={{ textAlign: "center" }}>
+                    <td style={{ width: "20%", border: "2px  solid #20958C" }}>
+                      {moment(item?.timeanddate)?.format("DD-MM-YYYY || HH:MM")}
+                    </td>
+                    <td style={{ width: "60%", border: "2px  solid #20958C" }}>
+                     {item?.NurseReport}
+                    </td>
+                    <td style={{ width: "20%", border: "2px  solid #20958C" }}>
+                    <img
+                            alt="sign"
+                            src={`http://localhost:8521/PatientREG/${item?.NurseSignature}`}
+                          /> 
+                    </td>
+                  </tr>
+                  )
+                })}
+              
               </tbody>
             </Table>
           </div>

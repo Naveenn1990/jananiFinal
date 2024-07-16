@@ -1,11 +1,12 @@
 import { Checkbox } from "@mui/material";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Form, Table } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { FaBackward } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
+import SignatureCanvas from "react-signature-canvas";
 
 const PreOperativeChecklist = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { patientdetails, cause } = location.state || {};
 
@@ -24,128 +25,204 @@ const PreOperativeChecklist = () => {
   }
 
   const [DateTime, setDateTime] = useState("");
-  const [consentSigned1, setConsentSigned1] = useState(false);
-  const [consentSigned2, setConsentSigned2] = useState(false);
+  const [consentSigned, setConsentSigned] = useState("");
   const [consentRemark, setConsentRemark] = useState("");
-  const [PreMedication1, setPreMedication1] = useState(false);
-  const [PreMedication2, setPreMedication2] = useState(false);
+  const [PreMedication, setPreMedication] = useState("");
   const [PreMedicationRemark, setPreMedicationRemark] = useState("");
-  const [Antibiotics1, setAntibiotics1] = useState(false);
-  const [Antibiotics2, setAntibiotics2] = useState(false);
+  const [Antibiotics, setAntibiotics] = useState("");
   const [AntibioticsRemarks, setAntibioticsRemarks] = useState("");
-  const [BloodProductAvl1, setBloodProductAvl1] = useState(false)
-  const [BloodProductAvl2, setBloodProductAvl2] = useState(false)
+  const [BloodProductAvl, setBloodProductAvl] = useState("");
   const [BloodProductAvlRemark, setBloodProductAvlRemark] = useState("");
-  const [LabResult1, setLabResult1] = useState(false)
-  const [LabResult2, setLabResult2] = useState(false)
-  const [LabResultRemark, setLabResultRemark] = useState("")
-  const [Radiology1, setRadiology1] = useState(false)
-  const [Radiology2, setRadiology2] = useState(false)
-  const [RadiologyRemark, setRadiologyRemark] = useState("")
-  const [SavingSkin1, setSavingSkin1] = useState(false)
-  const [SavingSkin2, setSavingSkin2] = useState(false)
-  const [SavingSkinRemark, setSavingSkinRemark] = useState("")
-  const [BathOral1, setBathOral1] = useState(false)
-  const [BathOral2, setBathOral2] = useState(false)
+  const [LabResult, setLabResult] = useState("");
+  const [LabResultRemark, setLabResultRemark] = useState("");
+  const [Radiology, setRadiology] = useState("");
+  const [RadiologyRemark, setRadiologyRemark] = useState("");
+  const [SavingSkin, setSavingSkin] = useState("");
+  const [SavingSkinRemark, setSavingSkinRemark] = useState("");
+  const [BathOral, setBathOral] = useState("");
   const [BathOralRemark, setBathOralRemark] = useState("");
-  const [PatientVoided1, setPatientVoided1] = useState(false)
-  const [PatientVoided2, setPatientVoided2] = useState(false)
-  const [PatientVoidedRemark, setPatientVoidedRemark] = useState("")
-  const [TheatreGown1, setTheatreGown1] = useState(false)
-  const [TheatreGown2, setTheatreGown2] = useState(false)
-  const [TheatreGownRemark, setTheatreGownRemark] = useState("")
-  const [RTInserted1, setRTInserted1] = useState(false)
-  const [RTInserted2, setRTInserted2] = useState(false)
-  const [RTInsertedRemark, setRTInsertedRemark] = useState("")
-  const [PregnancyTest1, setPregnancyTest1] = useState(false)
-  const [PregnancyTest2, setPregnancyTest2] = useState(false)
-  const [PregnancyTestRemark, setPregnancyTestRemark] = useState("")
-  const [HIVTest1, setHIVTest1] = useState(false)
-  const [HIVTest2, setHIVTest2] = useState(false)
-  const [HIVTestRemark, setHIVTestRemark] = useState("")
-  const [Dentures1, setDentures1] = useState(false)
-  const [Dentures2, setDentures2] = useState(false)
-  const [DenturesRemark, setDenturesRemark] = useState("")
-  const [ContactLense1, setContactLense1] = useState(false)
-  const [ContactLense2, setContactLense2] = useState(false)
-  const [ContactLenseRemark, setContactLenseRemark] = useState("")
-  const [NailPolish1, setNailPolish1] = useState(false)
-  const [NailPolish2, setNailPolish2] = useState(false)
-  const [NailPolishRemark, setNailPolishRemark] = useState("")
-  const [Jewellery1, setJewellery1] = useState(false)
-  const [Jewellery2, setJewellery2] = useState(false)
-  const [JewelleryRemark, setJewelleryRemark] = useState("")
-  const [MessageTreat, setMessageTreat] = useState("")
-  const [WardStaff1, setWardStaff1] = useState("")
-  const [WardStaff2, setWardStaff2] = useState("")
+  const [PatientVoided, setPatientVoided] = useState("");
+  const [PatientVoidedRemark, setPatientVoidedRemark] = useState("");
+  const [TheatreGown, setTheatreGown] = useState("");
+  const [TheatreGownRemark, setTheatreGownRemark] = useState("");
+  const [RTInserted, setRTInserted] = useState("");
+  const [RTInsertedRemark, setRTInsertedRemark] = useState("");
+  const [PregnancyTest, setPregnancyTest] = useState("");
+  const [PregnancyTestRemark, setPregnancyTestRemark] = useState("");
+  const [HIVTest, setHIVTest] = useState("");
+  const [HIVTestRemark, setHIVTestRemark] = useState("");
+  const [Dentures, setDentures] = useState("");
+  const [DenturesRemark, setDenturesRemark] = useState("");
+  const [ContactLense, setContactLense] = useState("");
+  const [ContactLenseRemark, setContactLenseRemark] = useState("");
+  const [NailPolish, setNailPolish] = useState("");
+  const [NailPolishRemark, setNailPolishRemark] = useState("");
+  const [Jewellery, setJewellery] = useState("");
+  const [JewelleryRemark, setJewelleryRemark] = useState("");
+  const [MessageTreat, setMessageTreat] = useState("");
+  const [WardStaff, setWardStaff] = useState("");
+  const [WardStaff2, setWardStaff2] = useState("");
 
-  
+  const [SelectDoctor, setSelectDoctor] = useState("");
+
+  const [StaffSign, setStaffSign] = useState(null);
+  const sigCanvas1 = useRef({});
+  const clear1 = () => sigCanvas1.current.clear();
+  const save1 = () => {
+    const StaffSign = sigCanvas1.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setStaffSign(StaffSign);
+  };
+
+  const [StaffSign2, setStaffSign2] = useState(null);
+  const sigCanvas2 = useRef({});
+  const clear2 = () => sigCanvas2.current.clear();
+  const save2 = () => {
+    const StaffSign2 = sigCanvas2.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setStaffSign2(StaffSign2);
+  };
+
+  const [Diagnosis, setDiagnosis] = useState("");
+  const [Fasting, setFasting] = useState("");
+  const [Procedure, setProcedure] = useState("");
+
   const submitpreOperativelist = async () => {
+    if (!SelectDoctor) {
+      return alert("Please Select Doctor");
+    }
+    if (!Diagnosis) {
+      return alert("Enter Diagnosis");
+    }
+    if (!Fasting) {
+      return alert("Enter Fasting From");
+    }
+    if (!Procedure) {
+      return alert("Enter Procedure");
+    }
+    if (!DateTime) {
+      return alert("Select DateTime");
+    }
+    if (!consentSigned) {
+      return alert("consentSigned..?");
+    }
+    if (!PreMedication) {
+      return alert("PreMedication..?");
+    }
+    if (!Antibiotics) {
+      return alert("Antibiotics Adminstered..?");
+    }
+    if (!BloodProductAvl) {
+      return alert("Blood Products Available..?");
+    }
+    if (!LabResult) {
+      return alert("Lab Results Present..?");
+    }
+    if (!Radiology) {
+      return alert("Radiology Films/ CD Present..?");
+    }
+    if (!SavingSkin) {
+      return alert("Saving / Skin Preparation Done..?");
+    }
+    if (!BathOral) {
+      return alert("Bath / Oral Hygeine Done..?");
+    }
+    if (!PatientVoided) {
+      return alert("Patient Voided..?");
+    }
+    if (!TheatreGown) {
+      return alert("Theatre Gown Worn..?");
+    }
+    if (!RTInserted) {
+      return alert("RT Inserted..?");
+    }
+    if (!PregnancyTest) {
+      return alert("Pregnancy Test..?");
+    }
+    if (!HIVTest) {
+      return alert("HIV, HBsAg, HCV Tests..?");
+    }
+    if (!Dentures) {
+      return alert("Dentures: Upper / Lower / Partial (Specify)..?");
+    }
+    if (!ContactLense) {
+      return alert("Contact Lenses..?");
+    }
+    if (!NailPolish) {
+      return alert("Nail Polish..?");
+    }
+    if (!Jewellery) {
+      return alert("Jewellery / Others..?");
+    }
+    if (!MessageTreat) {
+      return alert("Enter Message to Theatre Staff");
+    }
+    if (!WardStaff) {
+      return alert("Enter Ward Staff Name ");
+    }
+    if (!WardStaff2) {
+      return alert("Enter Ward Staff-2 Name ");
+    }
+
+    const formdata = new FormData();
+    const staffsignature = await fetch(StaffSign).then((res) => res.blob());
+    const staffsignature2 = await fetch(StaffSign2).then((res) => res.blob());
+    formdata.set("patientId", patientdetails?._id);
+    formdata.set("causeId", cause?._id);
+    formdata.set("doctorId", SelectDoctor);
+    formdata.set("Diagnosis", Diagnosis);
+    formdata.set("Fasting", Fasting);
+    formdata.set("Procedure", Procedure);
+    formdata.set("DateTime", DateTime);
+    formdata.set("consentSigned", consentSigned);
+    formdata.set("consentRemark", consentRemark);
+    formdata.set("PreMedication", PreMedication);
+    formdata.set("PreMedicationRemark", PreMedicationRemark);
+    formdata.set("Antibiotics", Antibiotics);
+    formdata.set("AntibioticsRemarks", AntibioticsRemarks);
+    formdata.set("BloodProductAvl", BloodProductAvl);
+    formdata.set("BloodProductAvlRemark", BloodProductAvlRemark);
+    formdata.set("LabResult", LabResult);
+    formdata.set("LabResultRemark", LabResultRemark);
+    formdata.set("Radiology", Radiology);
+    formdata.set("RadiologyRemark", RadiologyRemark);
+    formdata.set("SavingSkin", SavingSkin);
+    formdata.set("SavingSkinRemark", SavingSkinRemark);
+    formdata.set("BathOral", BathOral);
+    formdata.set("BathOralRemark", BathOralRemark);
+    formdata.set("PatientVoided", PatientVoided);
+    formdata.set("PatientVoidedRemark", PatientVoidedRemark);
+    formdata.set("TheatreGown", TheatreGown);
+    formdata.set("TheatreGownRemark", TheatreGownRemark);
+    formdata.set("RTInserted", RTInserted);
+    formdata.set("RTInsertedRemark", RTInsertedRemark);
+    formdata.set("PregnancyTest", PregnancyTest);
+    formdata.set("PregnancyTestRemark", PregnancyTestRemark);
+    formdata.set("HIVTest", HIVTest);
+    formdata.set("HIVTestRemark", HIVTestRemark);
+    formdata.set("Dentures", Dentures);
+    formdata.set("DenturesRemark", DenturesRemark);
+    formdata.set("ContactLense", ContactLense);
+    formdata.set("ContactLenseRemark", ContactLenseRemark);
+    formdata.set("NailPolish", NailPolish);
+    formdata.set("NailPolishRemark", NailPolishRemark);
+    formdata.set("Jewellery", Jewellery);
+    formdata.set("JewelleryRemark", JewelleryRemark);
+    formdata.set("MessageTreat", MessageTreat);
+    formdata.set("WardStaff", WardStaff);
+    formdata.set("WardStaff2", WardStaff2);
+    formdata.set("staffsignature", staffsignature, "staff-signature.png");
+    formdata.set("staff2signature", staffsignature2, "staff2-signature.png");
     try {
       const config = {
         url: "/addpreoperativelist",
         method: "put",
         baseURL: "http://localhost:8521/api/staff",
-        headers: { "content-type": "application/json" },
-        data: {
-          patientId: patientdetails?._id,
-          causeId: cause?._id,
-          DateTime: DateTime,
-          consentSigned1:consentSigned1,
-          consentSigned2:consentSigned2,
-          consentRemark:consentRemark,
-          PreMedication1:PreMedication1,
-          PreMedication2:PreMedication2,
-          PreMedicationRemark:PreMedicationRemark,
-          Antibiotics1:Antibiotics1,
-          Antibiotics2:Antibiotics2,
-          AntibioticsRemarks:AntibioticsRemarks,
-          BloodProductAvl1:BloodProductAvl1,
-          BloodProductAvl2:BloodProductAvl2,
-          BloodProductAvlRemark:BloodProductAvlRemark,
-          LabResult1:LabResult1,
-          LabResult2:LabResult2,
-          LabResultRemark:LabResultRemark,
-          Radiology1:Radiology1,
-          Radiology2:Radiology2,
-          RadiologyRemark:RadiologyRemark,
-          SavingSkin1:SavingSkin1,
-          SavingSkin2:SavingSkin2,
-          SavingSkinRemark:SavingSkinRemark,
-          BathOral1:BathOral1,
-          BathOral2:BathOral2,
-          BathOralRemark:BathOralRemark,
-          PatientVoided1:PatientVoided1,
-          PatientVoided2:PatientVoided2,
-          PatientVoidedRemark:PatientVoidedRemark,
-          TheatreGown1:TheatreGown1,
-          TheatreGown2:TheatreGown2,
-          TheatreGownRemark:TheatreGownRemark,
-          RTInserted1:RTInserted1,
-          RTInserted2:RTInserted2,
-          RTInsertedRemark:RTInsertedRemark,
-          PregnancyTest1:PregnancyTest1,
-          PregnancyTest2:PregnancyTest2,
-          PregnancyTestRemark:PregnancyTestRemark,
-          HIVTest1:HIVTest1,
-          HIVTest2:HIVTest2,
-          HIVTestRemark:HIVTestRemark,
-          Dentures1:Dentures1,
-          Dentures2:Dentures2,
-          DenturesRemark:DenturesRemark,
-          ContactLense1:ContactLense1,
-          ContactLense2:ContactLense2,
-          ContactLenseRemark:ContactLenseRemark,
-          NailPolish1:NailPolish1,
-          NailPolish2:NailPolish2,
-          NailPolishRemark:NailPolishRemark,
-          Jewellery1:Jewellery1,
-          Jewellery2:Jewellery2,
-          JewelleryRemark:JewelleryRemark,
-          MessageTreat:MessageTreat,
-          WardStaff1:WardStaff1,
-          WardStaff2:WardStaff2,
-        },
+        headers: { "Content-Type": "multipart/form-data" },
+        data: formdata,
+        
       };
       let res = await axios(config);
       if (res.status === 200) {
@@ -161,15 +238,16 @@ const PreOperativeChecklist = () => {
         <button
           className="mt-2"
           style={{
-            padding: "6px",
-            border: "1px solid white",
+            border: "#20958c",
+            padding: "8px",
             backgroundColor: "#20958c",
             color: "white",
-            borderRadius: "0px",
+            borderRadius: "6px",
+            boxShadow: " 8px 8px 16px #20958c,-8px -8px 16px #20958c",
           }}
-          onClick={() => navigate("/admin/patientform")}
+          onClick={() => window.history.go(-1)}
         >
-          Back
+          <FaBackward /> &nbsp; Back
         </button>
       </div>
 
@@ -192,10 +270,8 @@ const PreOperativeChecklist = () => {
           style={{
             padding: "5px",
             border: "2px solid #20958C",
-            // width: "1073px",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1700px",
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -216,14 +292,6 @@ const PreOperativeChecklist = () => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
             <h6
               className="fw-bold mt-2"
@@ -290,9 +358,51 @@ const PreOperativeChecklist = () => {
                     colSpan={4}
                     style={{ width: "60%", border: "2px  solid #20958C" }}
                   >
-                    Doctor:
+                    Doctor:{" "}
+                    <Form.Select
+                      className="vi_0"
+                      onChange={(e) => setSelectDoctor(e.target.value)}
+                    >
+                      <option value="">Select Doctor</option>
+                      {patientdetails?.assigndocts?.map((item) => {
+                        return (
+                          <option
+                            value={item?.doctorsId?._id}
+                          >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
+                        );
+                      })}
+                    </Form.Select>
                   </td>
                 </tr>
+                <tr>
+                  <td
+                    colSpan={1}
+                    style={{ width: "40%", border: "2px  solid #20958C" }}
+                  >
+                    Diagnosis:
+                    <input
+                      type="text"
+                      className="vi_0"
+                      placeholder="Diagnosis"
+                      onChange={(e) => setDiagnosis(e.target.value)}
+                      value={Diagnosis}
+                    />
+                  </td>
+                  <td
+                    colSpan={4}
+                    style={{ width: "60%", border: "2px  solid #20958C" }}
+                  >
+                    <p>Fasting From: </p>
+                    <input
+                      type="text"
+                      className="vi_0"
+                      placeholder="Fasting From"
+                      onChange={(e) => setFasting(e.target.value)}
+                      value={Fasting}
+                    />
+                  </td>
+                </tr>
+
                 <tr>
                   <td
                     colSpan={1}
@@ -310,7 +420,7 @@ const PreOperativeChecklist = () => {
                     colSpan={2}
                     style={{ width: "30%", border: "2px  solid #20958C" }}
                   >
-                    Allergies:
+                    Allergies: {patientdetails?.patientAllergies}
                   </td>
                 </tr>
                 <tr>
@@ -318,7 +428,14 @@ const PreOperativeChecklist = () => {
                     colSpan={5}
                     style={{ width: "100%", border: "2px  solid #20958C" }}
                   >
-                    Procedure:
+                    Procedure:{" "}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      placeholder="Procedure"
+                      onChange={(e) => setProcedure(e.target.value)}
+                      value={Procedure}
+                    />
                   </td>
                 </tr>
                 <tr>
@@ -374,12 +491,10 @@ const PreOperativeChecklist = () => {
                   >
                     <Checkbox
                       onChange={(e) => {
-                        setConsentSigned1(e.target.checked);
-                        setConsentSigned2(false);
+                        setConsentSigned(e.target.checked ? "YES" : "");
                       }}
-                      checked={consentSigned1}
+                      checked={consentSigned === "YES"}
                       color="primary"
-                      name="consent1"
                     />
                   </td>
                   <td
@@ -390,21 +505,19 @@ const PreOperativeChecklist = () => {
                   >
                     <Checkbox
                       onChange={(e) => {
-                        setConsentSigned2(e.target.checked);
-                        setConsentSigned1(false);
+                        setConsentSigned(e.target.checked ? "NO" : "");
                       }}
-                      checked={consentSigned2}
+                      checked={consentSigned === "NO"}
                       color="primary"
-                      name="consent2"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0"
-                    value={consentRemark}
-                    onChange={(e)=>setConsentRemark(e.target.value)}
-                     />
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={consentRemark}
+                      onChange={(e) => setConsentRemark(e.target.value)}
+                    />
                   </td>
                 </tr>
                 <tr>
@@ -426,14 +539,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                    onChange={(e)=>{
-                      setPreMedication1(e.target.checked);
-                      setPreMedication2(false)
-                    }}
-                    checked={PreMedication1}
-                    color="primary"
-                    name="premedication1"
+                    <Checkbox
+                      onChange={(e) => {
+                        setPreMedication(e.target.checked ? "YES" : "");
+                      }}
+                      checked={PreMedication === "YES"}
+                      color="primary"
                     />
                   </td>
                   <td
@@ -442,22 +553,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                    onChange={(e)=>{
-                      setPreMedication2(e.target.checked)
-                      setPreMedication1(false)
-                    }}
-                    checked={PreMedication2}
-                    color="primary"
-                    name="premedication2"
+                    <Checkbox
+                      onChange={(e) => {
+                        setPreMedication(e.target.checked ? "NO" : "");
+                      }}
+                      checked={PreMedication === "NO"}
+                      color="primary"
                     />
                   </td>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0" 
-                    value={PreMedicationRemark}
-                    onChange={(e)=>setPreMedicationRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={PreMedicationRemark}
+                      onChange={(e) => setPreMedicationRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -480,14 +589,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                    onChange={(e)=>{
-                      setAntibiotics1(e.target.checked);
-                      setAntibiotics2(false)
-                    }}
-                    checked={Antibiotics1}
-                    color="primary"
-                    name="Antibiotics1"
+                    <Checkbox
+                      onChange={(e) => {
+                        setAntibiotics(e.target.checked ? "YES" : "");
+                      }}
+                      checked={Antibiotics === "YES"}
+                      color="primary"
                     />
                   </td>
                   <td
@@ -496,22 +603,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                    onChange={(e)=>{
-                      setAntibiotics2(e.target.checked);
-                      setAntibiotics1(false)
-                    }}
-                    checked={Antibiotics2}
-                    color="primary"
-                    name="Antibiotics2"
+                    <Checkbox
+                      onChange={(e) => {
+                        setAntibiotics(e.target.checked ? "NO" : "");
+                      }}
+                      checked={Antibiotics === "NO"}
+                      color="primary"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0"
-                    value={AntibioticsRemarks}
-                    onChange={(e)=>setAntibioticsRemarks(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={AntibioticsRemarks}
+                      onChange={(e) => setAntibioticsRemarks(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -533,14 +638,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                    onChange={(e)=>{
-                      setBloodProductAvl1(e.target.checked);
-                      setBloodProductAvl2(false)
-                    }}
-                    checked={BloodProductAvl1}
-                    color="primary"
-                    name="BloodProductAvl1"
+                    <Checkbox
+                      onChange={(e) => {
+                        setBloodProductAvl(e.target.checked ? "YES" : "");
+                      }}
+                      checked={BloodProductAvl === "YES"}
+                      color="primary"
                     />
                   </td>
                   <td
@@ -549,22 +652,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setBloodProductAvl2(e.target.checked);
-                      setBloodProductAvl1(false)
-                    }}
-                    checked={BloodProductAvl2}
-                    color="primary"
-                    name="BloodProductAvl2"
+                    <Checkbox
+                      onChange={(e) => {
+                        setBloodProductAvl(e.target.checked ? "NO" : "");
+                      }}
+                      checked={BloodProductAvl === "NO"}
+                      color="primary"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0" 
-                    value={BloodProductAvlRemark}
-                    onChange={(e)=>setBloodProductAvlRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={BloodProductAvlRemark}
+                      onChange={(e) => setBloodProductAvlRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -586,14 +687,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setLabResult1(e.target.checked);
-                      setLabResult2(false)
-                    }}
-                    checked={LabResult1}
-                    color="primary"
-                    name="LabResult1"
+                    <Checkbox
+                      onChange={(e) => {
+                        setLabResult(e.target.checked ? "YES" : "");
+                      }}
+                      checked={LabResult === "YES"}
+                      color="primary"
                     />
                   </td>
                   <td
@@ -602,22 +701,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setLabResult2(e.target.checked);
-                      setLabResult1(false)
-                    }}
-                    checked={LabResult2}
-                    color="primary"
-                    name="LabResult2"
+                    <Checkbox
+                      onChange={(e) => {
+                        setLabResult(e.target.checked ? "NO" : "");
+                      }}
+                      checked={LabResult === "NO"}
+                      color="primary"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0"
-                    value={LabResultRemark}
-                    onChange={(e)=>setLabResultRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={LabResultRemark}
+                      onChange={(e) => setLabResultRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -639,14 +736,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setRadiology1(e.target.checked);
-                      setRadiology2(false)
-                    }}
-                    checked={Radiology1}
-                    color="primary"
-                    name="Radiology1"
+                    <Checkbox
+                      onChange={(e) => {
+                        setRadiology(e.target.checked ? "YES" : "");
+                      }}
+                      checked={Radiology === "YES"}
+                      color="primary"
                     />
                   </td>
                   <td
@@ -655,22 +750,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setRadiology2(e.target.checked);
-                      setRadiology1(false)
-                    }}
-                    checked={Radiology2}
-                    color="primary"
-                    name="Radiology2"
+                    <Checkbox
+                      onChange={(e) => {
+                        setRadiology(e.target.checked ? "NO" : "");
+                      }}
+                      checked={Radiology === "NO"}
+                      color="primary"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0" 
-                    value={RadiologyRemark}
-                    onChange={(e)=>setRadiologyRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={RadiologyRemark}
+                      onChange={(e) => setRadiologyRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -693,13 +786,11 @@ const PreOperativeChecklist = () => {
                     }}
                   >
                     <Checkbox
-                       onChange={(e)=>{
-                        setSavingSkin1(e.target.checked);
-                        setSavingSkin2(false)
+                      onChange={(e) => {
+                        setSavingSkin(e.target.checked ? "YES" : "");
                       }}
-                      checked={SavingSkin1}
+                      checked={SavingSkin === "YES"}
                       color="primary"
-                      name="SavingSkin1"
                     />
                   </td>
                   <td
@@ -708,22 +799,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                       onChange={(e)=>{
-                        setSavingSkin2(e.target.checked);
-                        setSavingSkin1(false)
+                    <Checkbox
+                      onChange={(e) => {
+                        setSavingSkin(e.target.checked ? "NO" : "");
                       }}
-                      checked={SavingSkin2}
+                      checked={SavingSkin === "NO"}
                       color="primary"
-                      name="SavingSkin2"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0"
-                    value={SavingSkinRemark}
-                    onChange={(e)=>setSavingSkinRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={SavingSkinRemark}
+                      onChange={(e) => setSavingSkinRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -745,14 +834,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                       onChange={(e)=>{
-                        setBathOral1(e.target.checked);
-                        setBathOral2(false)
+                    <Checkbox
+                      onChange={(e) => {
+                        setBathOral(e.target.checked ? "YES" : "");
                       }}
-                      checked={BathOral1}
+                      checked={BathOral === "YES"}
                       color="primary"
-                      name="BathOral1"
                     />
                   </td>
                   <td
@@ -761,14 +848,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                       onChange={(e)=>{
-                        setBathOral2(e.target.checked);
-                        setBathOral1(false)
+                    <Checkbox
+                      onChange={(e) => {
+                        setBathOral(e.target.checked ? "NO" : "");
                       }}
-                      checked={BathOral2}
+                      checked={BathOral === "NO"}
                       color="primary"
-                      name="BathOral2"
                     />
                   </td>
                   <td
@@ -777,11 +862,11 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <input 
-                    type="text" 
-                    className="vi_0" 
-                    value={BathOralRemark}
-                    onChange={(e)=>setBathOralRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={BathOralRemark}
+                      onChange={(e) => setBathOralRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -804,14 +889,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                       onChange={(e)=>{
-                        setPatientVoided1(e.target.checked);
-                        setPatientVoided2(false)
+                    <Checkbox
+                      onChange={(e) => {
+                        setPatientVoided(e.target.checked ? "YES" : "");
                       }}
-                      checked={PatientVoided1}
+                      checked={PatientVoided === "YES"}
                       color="primary"
-                      name="PatientVoided1"
                     />
                   </td>
                   <td
@@ -820,22 +903,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                       onChange={(e)=>{
-                        setPatientVoided2(e.target.checked);
-                        setPatientVoided1(false)
+                    <Checkbox
+                      onChange={(e) => {
+                        setPatientVoided(e.target.checked ? "NO" : "");
                       }}
-                      checked={PatientVoided2}
+                      checked={PatientVoided === "NO"}
                       color="primary"
-                      name="PatientVoided2"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0" 
-                    value={PatientVoidedRemark}
-                    onChange={(e)=>setPatientVoidedRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={PatientVoidedRemark}
+                      onChange={(e) => setPatientVoidedRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -859,14 +940,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                      onChange={(e)=>{
-                        setTheatreGown1(e.target.checked);
-                        setTheatreGown2(false)
+                    <Checkbox
+                      onChange={(e) => {
+                        setTheatreGown(e.target.checked ? "YES" : "");
                       }}
-                      checked={TheatreGown1}
+                      checked={TheatreGown === "YES"}
                       color="primary"
-                      name="TheatreGown1"
                     />
                   </td>
                   <td
@@ -876,22 +955,20 @@ const PreOperativeChecklist = () => {
                     }}
                   >
                     {" "}
-                    <Checkbox 
-                      onChange={(e)=>{
-                        setTheatreGown2(e.target.checked);
-                        setTheatreGown1(false)
+                    <Checkbox
+                      onChange={(e) => {
+                        setTheatreGown(e.target.checked ? "NO" : "");
                       }}
-                      checked={TheatreGown2}
+                      checked={TheatreGown === "NO"}
                       color="primary"
-                      name="TheatreGown2"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0" 
-                    value={TheatreGownRemark}
-                    onChange={(e)=>setTheatreGownRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={TheatreGownRemark}
+                      onChange={(e) => setTheatreGownRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -913,14 +990,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                    onChange={(e)=>{
-                      setRTInserted1(e.target.checked);
-                      setRTInserted2(false)
-                    }}
-                    checked={RTInserted1}
-                    color="primary"
-                    name="RTInserted1"
+                    <Checkbox
+                      onChange={(e) => {
+                        setRTInserted(e.target.checked ? "YES" : "");
+                      }}
+                      checked={RTInserted === "YES"}
+                      color="primary"
                     />
                   </td>
                   <td
@@ -929,22 +1004,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setRTInserted2(e.target.checked);
-                      setRTInserted1(false)
-                    }}
-                    checked={RTInserted2}
-                    color="primary"
-                    name="RTInserted2"
+                    <Checkbox
+                      onChange={(e) => {
+                        setRTInserted(e.target.checked ? "NO" : "");
+                      }}
+                      checked={RTInserted === "NO"}
+                      color="primary"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0"
-                    value={RTInsertedRemark}
-                    onChange={(e)=>setRTInsertedRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={RTInsertedRemark}
+                      onChange={(e) => setRTInsertedRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -967,14 +1040,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setPregnancyTest1(e.target.checked);
-                      setPregnancyTest2(false)
-                    }}
-                    checked={PregnancyTest1}
-                    color="primary"
-                    name="PregnancyTest1"
+                    <Checkbox
+                      onChange={(e) => {
+                        setPregnancyTest(e.target.checked ? "YES" : "");
+                      }}
+                      checked={PregnancyTest === "YES"}
+                      color="primary"
                     />
                   </td>
                   <td
@@ -984,21 +1055,19 @@ const PreOperativeChecklist = () => {
                     }}
                   >
                     <Checkbox
-                     onChange={(e)=>{
-                      setPregnancyTest2(e.target.checked);
-                      setPregnancyTest1(false)
-                    }}
-                    checked={PregnancyTest2}
-                    color="primary"
-                    name="PregnancyTest2"
+                      onChange={(e) => {
+                        setPregnancyTest(e.target.checked ? "NO" : "");
+                      }}
+                      checked={PregnancyTest === "NO"}
+                      color="primary"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0" 
-                    value={PregnancyTestRemark}
-                    onChange={(e)=>setPregnancyTestRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={PregnancyTestRemark}
+                      onChange={(e) => setPregnancyTestRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -1021,14 +1090,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setHIVTest1(e.target.checked);
-                      setHIVTest2(false)
-                    }}
-                    checked={HIVTest1}
-                    color="primary"
-                    name="HIVTest1"
+                    <Checkbox
+                      onChange={(e) => {
+                        setHIVTest(e.target.checked ? "YES" : "");
+                      }}
+                      checked={HIVTest === "YES"}
+                      color="primary"
                     />
                   </td>
                   <td
@@ -1037,22 +1104,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setHIVTest2(e.target.checked);
-                      setHIVTest1(false)
-                    }}
-                    checked={HIVTest2}
-                    color="primary"
-                    name="HIVTest2"
+                    <Checkbox
+                      onChange={(e) => {
+                        setHIVTest(e.target.checked ? "NO" : "");
+                      }}
+                      checked={HIVTest === "NO"}
+                      color="primary"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0" 
-                    value={HIVTestRemark}
-                    onChange={(e)=>setHIVTestRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={HIVTestRemark}
+                      onChange={(e) => setHIVTestRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -1096,14 +1161,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                    onChange={(e)=>{
-                      setDentures1(e.target.checked);
-                      setDentures2(false)
-                    }}
-                    checked={Dentures1}
-                    color="primary"
-                    name="Dentures1"
+                    <Checkbox
+                      onChange={(e) => {
+                        setDentures(e.target.checked ? "YES" : "");
+                      }}
+                      checked={Dentures === "YES"}
+                      color="primary"
                     />
                   </td>
                   <td
@@ -1112,22 +1175,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                    onChange={(e)=>{
-                      setDentures2(e.target.checked);
-                      setDentures1(false)
-                    }}
-                    checked={Dentures2}
-                    color="primary"
-                    name="Dentures2"
+                    <Checkbox
+                      onChange={(e) => {
+                        setDentures(e.target.checked ? "NO" : "");
+                      }}
+                      checked={Dentures === "NO"}
+                      color="primary"
                     />
                   </td>
-                  <td style={{ border: "2px  solid #20958C" }}>      
-                    <input 
-                    type="text" 
-                    className="vi_0"
-                    value={DenturesRemark} 
-                    onChange={(e)=>setDenturesRemark(e.target.value)}
+                  <td style={{ border: "2px  solid #20958C" }}>
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={DenturesRemark}
+                      onChange={(e) => setDenturesRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -1151,14 +1212,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setContactLense1(e.target.checked);
-                      setContactLense2(false)
-                    }}
-                    checked={ContactLense1}
-                    color="primary"
-                    name="ContactLense1"
+                    <Checkbox
+                      onChange={(e) => {
+                        setContactLense(e.target.checked ? "YES" : "");
+                      }}
+                      checked={ContactLense === "YES"}
+                      color="primary"
                     />
                   </td>
                   <td
@@ -1167,22 +1226,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setContactLense2(e.target.checked);
-                      setContactLense1(false)
-                    }}
-                    checked={ContactLense2}
-                    color="primary"
-                    name="ContactLense2"
+                    <Checkbox
+                      onChange={(e) => {
+                        setContactLense(e.target.checked ? "NO" : "");
+                      }}
+                      checked={ContactLense === "NO"}
+                      color="primary"
                     />
                   </td>
                   <td style={{ border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0" 
-                    value={ContactLenseRemark}
-                    onChange={(e)=>setContactLenseRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={ContactLenseRemark}
+                      onChange={(e) => setContactLenseRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -1206,14 +1263,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                      onChange={(e)=>{
-                        setNailPolish1(e.target.checked);
-                        setNailPolish2(false)
+                    <Checkbox
+                      onChange={(e) => {
+                        setNailPolish(e.target.checked ? "YES" : "");
                       }}
-                      checked={NailPolish1}
+                      checked={NailPolish === "YES"}
                       color="primary"
-                      name="NailPolish1"
                     />
                   </td>
                   <td
@@ -1222,22 +1277,21 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                     onChange={(e)=>{
-                      setNailPolish2(e.target.checked);
-                      setNailPolish1(false)
-                    }}
-                    checked={NailPolish2}
-                    color="primary"
-                    name="NailPolish2"
+                    {" "}
+                    <Checkbox
+                      onChange={(e) => {
+                        setNailPolish(e.target.checked ? "NO" : "");
+                      }}
+                      checked={NailPolish === "NO"}
+                      color="primary"
                     />
                   </td>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0" 
-                    value={NailPolishRemark}
-                    onChange={(e)=>setNailPolishRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={NailPolishRemark}
+                      onChange={(e) => setNailPolishRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -1261,14 +1315,12 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                      onChange={(e)=>{
-                        setJewellery1(e.target.checked);
-                        setJewellery2(false)
+                    <Checkbox
+                      onChange={(e) => {
+                        setJewellery(e.target.checked ? "YES" : "");
                       }}
-                      checked={Jewellery1}
+                      checked={Jewellery === "YES"}
                       color="primary"
-                      name="Jewellery1"
                     />
                   </td>
                   <td
@@ -1277,22 +1329,20 @@ const PreOperativeChecklist = () => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    <Checkbox 
-                      onChange={(e)=>{
-                        setJewellery2(e.target.checked);
-                        setJewellery1(false)
+                    <Checkbox
+                      onChange={(e) => {
+                        setJewellery(e.target.checked ? "NO" : "");
                       }}
-                      checked={Jewellery2}
+                      checked={Jewellery === "NO"}
                       color="primary"
-                      name="Jewellery2"
                     />
                   </td>
                   <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    <input 
-                    type="text" 
-                    className="vi_0" 
-                    value={JewelleryRemark}
-                    onChange={(e)=>setJewelleryRemark(e.target.value)}
+                    <input
+                      type="text"
+                      className="vi_0"
+                      value={JewelleryRemark}
+                      onChange={(e) => setJewelleryRemark(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -1303,11 +1353,12 @@ const PreOperativeChecklist = () => {
                       <b style={{ width: "40%" }}>
                         Any Message to Theatre Staff:
                       </b>
-                      <input 
-                      type="text" 
-                      className="vi_0" 
-                      value={MessageTreat}
-                      onChange={(e)=>setMessageTreat(e.target.value)}
+                      <input
+                        type="text"
+                        className="vi_0"
+                        value={MessageTreat}
+                        onChange={(e) => setMessageTreat(e.target.value)}
+                        placeholder="Message to Theatre Staff"
                       />
                     </div>
                   </td>
@@ -1342,11 +1393,12 @@ const PreOperativeChecklist = () => {
                   >
                     <div className="d-flex align-items-center gap-2">
                       <b>Name: </b>
-                      <input 
-                      type="text" 
-                      className="vi_0" 
-                      value={WardStaff1}
-                      onChange={(e)=>setWardStaff1(e.target.value)}
+                      <input
+                        type="text"
+                        className="vi_0"
+                        value={WardStaff}
+                        onChange={(e) => setWardStaff(e.target.value)}
+                        placeholder="Ward Staff Name ."
                       />
                     </div>
                   </td>
@@ -1354,7 +1406,28 @@ const PreOperativeChecklist = () => {
                     colSpan={3}
                     style={{ width: "50%", border: "2px  solid #20958C" }}
                   >
-                    Signature:
+                    Signature:{" "}
+                    {!StaffSign ? (
+                      <div
+                        style={{
+                          border: "1px solid #dee2e6",
+                        }}
+                      >
+                        <SignatureCanvas
+                          ref={sigCanvas1}
+                          penColor="black"
+                          canvasProps={{
+                            width: 180,
+                            height: 100,
+                            className: "sigCanvas",
+                          }}
+                        />
+                        <button onClick={clear1}>Clear</button>
+                        <button onClick={save1}>Save</button>
+                      </div>
+                    ) : (
+                      <img src={StaffSign} alt="Signature" />
+                    )}
                   </td>
                 </tr>
                 <tr>
@@ -1367,11 +1440,12 @@ const PreOperativeChecklist = () => {
                   >
                     <div className="d-flex align-items-center gap-2">
                       <b>Name: </b>
-                      <input 
-                      type="text" 
-                      className="vi_0" 
-                      value={WardStaff2}
-                      onChange={(e)=>setWardStaff2(e.target.value)}
+                      <input
+                        type="text"
+                        className="vi_0"
+                        value={WardStaff2}
+                        onChange={(e) => setWardStaff2(e.target.value)}
+                        placeholder="Ward Staff Name ."
                       />
                     </div>
                   </td>
@@ -1380,6 +1454,27 @@ const PreOperativeChecklist = () => {
                     style={{ width: "50%", border: "2px  solid #20958C" }}
                   >
                     Signature:
+                    {!StaffSign2 ? (
+                      <div
+                        style={{
+                          border: "1px solid #dee2e6",
+                        }}
+                      >
+                        <SignatureCanvas
+                          ref={sigCanvas2}
+                          penColor="black"
+                          canvasProps={{
+                            width: 180,
+                            height: 100,
+                            className: "sigCanvas",
+                          }}
+                        />
+                        <button onClick={clear2}>Clear</button>
+                        <button onClick={save2}>Save</button>
+                      </div>
+                    ) : (
+                      <img src={StaffSign2} alt="Signature" />
+                    )}
                   </td>
                 </tr>
               </tbody>
@@ -1389,10 +1484,9 @@ const PreOperativeChecklist = () => {
       </div>
 
       <div className="text-center mt-2 mb-2">
-        <button 
-        className="btn btn-success"
-        onClick={submitpreOperativelist}
-        >Submit</button>
+        <button className="btn btn-success" onClick={submitpreOperativelist}>
+          Submit
+        </button>
       </div>
     </div>
   );

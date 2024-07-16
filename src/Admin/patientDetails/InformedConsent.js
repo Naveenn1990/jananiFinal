@@ -206,7 +206,7 @@ const InformedConsent = ({ HighRiskCForm }) => {
                         <br />
                         I/We, (the relatives/legal guardian of) Mr./Mrs{" "}
                         <span style={{ fontWeight: "bold" }}>
-                          {HighRiskCForm[0]?.RealivesName}
+                        {HighRiskCForm[0]?.patientname}
                         </span>{" "}
                         who is admitted on{" "}
                         <span style={{ fontWeight: "bold" }}>
