@@ -353,10 +353,12 @@ function BookedLabTest() {
           String(o[k]).toLowerCase().includes(search.toLowerCase())
         )
       );
+      setPagination([...filterTable]);
       setFilteredCatList([...filterTable]);
     } else {
       // setSearch(search);
       // vialList();
+      setPagination([...AllTestList1]);
       setFilteredCatList([...AllTestList1]);
     }
   }

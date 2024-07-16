@@ -63,6 +63,16 @@ export default function Bedmanagement() {
   const handleCloseDeleteWardModal = () => setshowDeleteWardModal(false);
   const handleshowDeleteWardModal = () => setshowDeleteWardModal(true);
 
+  const [showupdateBuildingModal, setshowupdateBuildingModal] = useState(false);
+  const handleCloseupdateBuildingModal = () =>
+    setshowupdateBuildingModal(false);
+  const handleshowupdateBuildingModal = () => setshowupdateBuildingModal(true);
+
+  const [showDeleteBuildingModal, setshowDeleteBuildingModal] = useState(false);
+  const handleCloseDeleteBuildingModal = () =>
+    setshowDeleteBuildingModal(false);
+  const handleshowDeleteBuildingModal = () => setshowDeleteBuildingModal(true);
+
   const [allBedList99, setallBedList99] = useState([]);
   const [addBedInput, setaddBedInput] = useState(false);
   const [updateBedCostInput, setupdateBedCostInput] = useState(false);
@@ -168,11 +178,9 @@ export default function Bedmanagement() {
       };
       let res = await axios(config);
       if (res.status === 200) {
-        console.log(res.data);
-        console.log(res.data.success);
+        getBuildingList();
         alert("Building Added");
         setAddBuildingModal(false);
-        getBuildingList();
       }
     } catch (error) {
       console.log(error.response);
@@ -304,8 +312,9 @@ export default function Bedmanagement() {
       };
       let res = await axios(config);
       if (res.status === 200) {
+        // getBuildingList();
+        getFloorList();
         alert("Floor Added");
-        getBuildingList();
         handleCloseAddFloorModal();
       }
     } catch (error) {
@@ -585,8 +594,8 @@ export default function Bedmanagement() {
         .then((res) => {
           if (res.status === 200) {
             // addcauseBill();
-            setupdatedWardno(0);
-            setupdatedWard(0);
+            setupdatedWardno();
+            setupdatedWard();
             handleCloseUpdateWardModal();
             handleClose99();
             getFloorList();
@@ -628,6 +637,67 @@ export default function Bedmanagement() {
         });
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const [updatedBuildingName, setupdatedBuildingName] = useState("");
+  const updateBuildingInfo = () => {
+    try {
+      const config = {
+        url: `/admin/editBuilding`,
+        method: "put",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          buildingid: causeBillBuildingid,
+          buildingName: updatedBuildingName,
+        },
+      };
+      axios(config)
+        .then((res) => {
+          if (res.status === 200) {
+            setupdatedBuildingName("");
+            handleCloseupdateBuildingModal();
+            handleCloseCheckAvailability();
+            getBuildingList();
+            alert(res.data.success);
+          }
+        })
+        .catch((error) => {
+          alert(error.response.data.error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteBuildingInfo = () => {
+    try {
+      const config = {
+        url: `/admin/deleteBuilding`,
+        method: "put",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          buildingid: causeBillBuildingid,
+        },
+      };
+      axios(config)
+        .then((res) => {
+          if (res.status === 200) {
+            handleCloseDeleteBuildingModal();
+            handleCloseCheckAvailability();
+            getBuildingList();
+            alert(res.data.success);
+          }
+        })
+        .catch((error) => {
+          alert(error.response.data.error);
+          handleCloseDeleteBuildingModal();
+        });
+    } catch (error) {
+      console.log(error);
+      handleCloseDeleteBuildingModal();
     }
   };
 
@@ -1151,7 +1221,7 @@ export default function Bedmanagement() {
               height: "39px",
               width: "121px",
             }}
-            onClick={handleCloseCheckAvailability}
+            onClick={handleshowupdateBuildingModal}
           >
             Update
           </button>
@@ -1167,7 +1237,7 @@ export default function Bedmanagement() {
               height: "39px",
               width: "121px",
             }}
-            onClick={handleCloseCheckAvailability}
+            onClick={handleshowDeleteBuildingModal}
           >
             Delete
           </button>
@@ -1184,6 +1254,120 @@ export default function Bedmanagement() {
               width: "121px",
             }}
             onClick={handleCloseCheckAvailability}
+          >
+            Close
+          </button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        size="md"
+        show={showupdateBuildingModal}
+        onHide={handleCloseupdateBuildingModal}
+      >
+        <Modal.Header>
+          <Modal.Title>Update Building Information </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <div style={{ color: "white" }}>
+              <b>Building Name: </b>
+            </div>
+            <div>
+              <input
+                placeholder={CauseBillHospitalService}
+                value={updatedBuildingName}
+                style={{ width: "100%" }}
+                onChange={(e) => setupdatedBuildingName(e.target.value)}
+              />
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            style={{
+              fontSize: "12px",
+              fontWeight: "600",
+              backgroundColor: "#3b71ca",
+              color: "white",
+              border: "none",
+              borderRadius: "0px",
+              marginRight: "10px",
+              height: "39px",
+              width: "121px",
+            }}
+            onClick={updateBuildingInfo}
+          >
+            Update
+          </button>
+
+          <button
+            style={{
+              fontSize: "12px",
+              fontWeight: "600",
+              backgroundColor: "white",
+              color: "#20958c",
+              border: "none",
+              borderRadius: "0px",
+              marginRight: "10px",
+              height: "39px",
+              width: "121px",
+            }}
+            onClick={handleCloseupdateBuildingModal}
+          >
+            Close
+          </button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        size="md"
+        show={showDeleteBuildingModal}
+        onHide={handleCloseDeleteBuildingModal}
+      >
+        <Modal.Header>
+          <Modal.Title>Delete Building Information </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <b style={{ color: "white" }}>
+              Are You sure? You want to{" "}
+              <span style={{ color: "#dc4c64" }}>delete</span> the information
+              of the building?
+            </b>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            style={{
+              fontSize: "12px",
+              fontWeight: "600",
+              backgroundColor: "#dc4c64",
+              color: "white",
+              border: "none",
+              borderRadius: "0px",
+              marginRight: "10px",
+              height: "39px",
+              width: "121px",
+            }}
+            onClick={deleteBuildingInfo}
+          >
+            Delete
+          </button>
+
+          <button
+            style={{
+              fontSize: "12px",
+              fontWeight: "600",
+              backgroundColor: "white",
+              color: "#20958c",
+              border: "none",
+              borderRadius: "0px",
+              marginRight: "10px",
+              height: "39px",
+              width: "121px",
+            }}
+            onClick={handleCloseDeleteBuildingModal}
           >
             Close
           </button>
