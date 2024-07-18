@@ -1194,7 +1194,18 @@ export default function Bedmanagement() {
                             }}
                           >
                             <div className="d-flex justify-content-end">
-                              <b>{item?.roomType}</b>
+                              <div>
+                                <b>{item?.roomType}</b>
+                                <div>
+                                  {/* only available beds will show here */}(
+                                  {
+                                    item?.bedsinfo?.filter(
+                                      (data) => data.bedOccupied === "available"
+                                    )?.length
+                                  }
+                                  )
+                                </div>
+                              </div>
                             </div>
                             <FaBuilding className="WebMI" />
                             {item?.roomno}
@@ -1391,6 +1402,85 @@ export default function Bedmanagement() {
             <b>
               Ward no: {allBedList99?.roomno} ({allBedList99?.roomType})
             </b>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              margin: "10px",
+            }}
+          >
+            <div style={{ display: "flex", gap: "5px", marginRight: "20px" }}>
+              <div
+                style={{
+                  border: "2px solid white",
+                  width: "25px",
+                  height: "25px",
+                  borderRadius: "50%",
+                  backgroundColor: "#008000",
+                }}
+              ></div>
+              <div style={{ color: "white" }}>
+                <b>
+                  Available(
+                  {
+                    allBedList99?.bedsinfo?.filter(
+                      (val) => val.bedOccupied === "available"
+                      //  ||
+                      //   val.bedOccupied === "maintenance"
+                    )?.length
+                  }
+                  )
+                </b>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "5px", marginRight: "20px" }}>
+              <div
+                style={{
+                  border: "2px solid white",
+                  width: "25px",
+                  height: "25px",
+                  borderRadius: "50%",
+                  backgroundColor: "red",
+                }}
+              ></div>
+              <div style={{ color: "white" }}>
+                <b>
+                  Unavailable(
+                  {
+                    allBedList99?.bedsinfo?.filter(
+                      (val) => val.bedOccupied === "unavailable"
+                    )?.length
+                  }
+                  )
+                </b>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "5px", marginRight: "20px" }}>
+              <div
+                style={{
+                  border: "2px solid white",
+                  width: "25px",
+                  height: "25px",
+                  borderRadius: "50%",
+                  backgroundColor: "blue",
+                }}
+              ></div>
+              <div style={{ color: "white" }}>
+                <b>
+                  Maintenance(
+                  {
+                    allBedList99?.bedsinfo?.filter(
+                      (val) => val.bedOccupied === "maintenance"
+                    )?.length
+                  }
+                  )
+                </b>
+              </div>
+            </div>
           </div>
 
           <div
