@@ -13,7 +13,7 @@ import moment from "moment";
 import { FaPlus } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCancel } from "@fortawesome/free-solid-svg-icons";
-import { LuView } from "react-icons/lu";;
+import { LuView } from "react-icons/lu";
 export default function Inpatientlist() {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
@@ -80,51 +80,6 @@ export default function Inpatientlist() {
   const handleClose14 = () => setShow14(false);
   const handleShow14 = () => setShow14(true);
 
-  function ValidateEmail(mail) {
-    if (
-      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-        mail
-      )
-    ) {
-      return true;
-    }
-    alert("You have entered an invalid email address!");
-    return false;
-  }
-
-  function validatename(inputtxt) {
-    var phoneno = /^[a-zA-Z ]{2,30}$/; // var no = /^\d{10}$/;
-    if (inputtxt.match(phoneno)) {
-      return true;
-    } else {
-      alert("You have entered an invalid name!");
-      return false;
-    }
-  }
-
-  function phonenumber(inputtxt) {
-    var phoneno = /^[6-9]\d{9}$/; // var no = /^\d{10}$/;
-    if (inputtxt.match(phoneno)) {
-      return true;
-    } else {
-      alert("You have entered an invalid mobile number!");
-      return false;
-    }
-  }
-
-  function CheckPassword(inputtxt) {
-    var decimal =
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,20}$/;
-    if (inputtxt.match(decimal)) {
-      return true;
-    } else {
-      alert(
-        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character, should be total 8 character!"
-      );
-      return false;
-    }
-  }
-
   const [medications, setmedications] = useState(false);
   const [medicinesTaking, setmedicinesTaking] = useState();
   let formdata = new FormData();
@@ -158,68 +113,208 @@ export default function Inpatientlist() {
   const [insuranceDoc, setinsuranceDoc] = useState("");
   const [insuranceProviderCompany, setinsuranceProviderCompany] = useState("");
   const [insuranceAmt, setinsuranceAmt] = useState("");
-  let [patientAllergies, setpatientAllergies] = useState([]);
   const [clickedAddAllergyBtn, setclickedAddAllergyBtn] = useState("");
   const [Aadharcard, setAadharcard] = useState("");
   const [Aadharno, setAadharno] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const [patientAllergies, setpatientAllergies] = useState([]);
+
+  //Regex
+  const namePattern = /^[A-Za-z]{2,30}(?:[-'][A-Za-z]{2,30})?$/;
+  const relativepattern = /^[A-Za-z]{2,30}$/;
+  const mobilePattern = /^[0-9]{10}$/;
+  const pincodePattern = /^[0-9]{6}$/;
+  const aadharnoPattern = /^[0-9]{12}$/;
+  const emailPattern = /^[^\s@]+@gmail\.com$/;
+  const passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
   const signup = async (e) => {
     e.preventDefault();
+    if (!patientfirstname) {
+      return alert("Enter your first name");
+    } else if (!namePattern.test(patientfirstname)) {
+      return alert(
+        "Enter a valid first name (2-30 characters, letters only, optional hyphen or apostrophe)"
+      );
+    }
+    if (!patientlastname) {
+      return alert("Enter your last name");
+    } else if (!namePattern.test(patientlastname)) {
+      return alert(
+        "Enter a valid last name (2-30 characters, letters only, optional hyphen or apostrophe)"
+      );
+    }
+    if (!gender) {
+      return alert("Select Your gender..!");
+    }
+    if (!mobileno) {
+      return alert("Enter mobile number..!");
+    } else if (!mobilePattern.test(mobileno)) {
+      return alert("Enter a valid 10-digit mobile number");
+    }
+    if (!alternatePhoneNumber) {
+      return alert("Enter alternate mobile number..!");
+    } else if (!mobilePattern.test(alternatePhoneNumber)) {
+      return alert("Enter a valid 10-digit mobile number");
+    }
+    if (!email) {
+      return alert("Enter Email Id");
+    } else if (!emailPattern.test(email)) {
+      return alert("Enter a valid Gmail address (e.g., example@gmail.com)");
+    }
+    if (!DOB) {
+      return alert("Select Birth date and Year.!");
+    }
+    if (!Address) {
+      return alert("Enter Street Address..!");
+    }
+    if (!City) {
+      return alert("Enter City name..!");
+    } else if (!namePattern.test(City)) {
+      return alert(
+        "Enter a valid City name (2-30 characters, letters only, optional hyphen or apostrophe)"
+      );
+    }
+    if (!State) {
+      return alert("Enter State name..!");
+    } else if (!namePattern.test(State)) {
+      return alert(
+        "Enter a valid State name (2-30 characters, letters only, optional hyphen or apostrophe)"
+      );
+    }
+    if (!Zipcode) {
+      return alert("Enter Zipcode..!");
+    } else if (!pincodePattern.test(Zipcode)) {
+      return alert("Enter a valid 6-digit Indian Zipcode");
+    }
+    if (!password) {
+      return alert("Enter password..!");
+    } else if (!passwordPattern.test(password)) {
+      return alert(
+        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
+      );
+    }
+    if (!conpassword) {
+      return alert("Enter Confirm password..!");
+    } else if (!passwordPattern.test(conpassword)) {
+      return alert(
+        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
+      );
+    }
+    if (password !== conpassword) {
+      return alert("Passwords do not match. Please check again.");
+    }
+    if (!MaritalStatus) {
+      return alert("Please Select Marital Status..!");
+    }
+    if (!PatientAge18) {
+      return alert("Please Select and Confirm +18..!");
+    }
+    if (!Aadharcard) {
+      return alert("Please Upload Aadhar Card..!");
+    }
+    if (!Aadharno) {
+      return alert("Enter Aadharno..!");
+    } else if (!aadharnoPattern.test(Aadharno)) {
+      return alert("Enter a valid 12-digit Indian aadhar no");
+    }
+    if (!relationWithPatient) {
+      return alert("Enter Relation with patient..!");
+    } else if (!relativepattern.test(relationWithPatient)) {
+      return alert(
+        "Enter a valid Relation with patient)"
+      );
+    }
+    if (!relativeName) {
+      return alert("Enter Relative name..!");
+    } else if (!relativepattern.test(relativeName)) {
+      return alert(
+        "Enter a valid Relative name )"
+      );
+    }
+    if (!relativePhone) {
+      return alert("Enter Relative mobile no..!");
+    } else if (!mobilePattern.test(relativePhone)) {
+      return alert("Enter a valid mobile no )");
+    }
+    if (!AdmitDate) {
+      return alert("Select Admission Date..!");
+    }
+    if (!followUpsDate) {
+      return alert("Select Follow-up Date..!");
+    }
+    if (!haveInsurance) {
+      return alert("Select Insurance ");
+    }
+    if (haveInsurance === "yes") {
+      if (!insuranceProviderCompany) {
+        return alert("Enter Helth Insurance Company Name..!");
+      }
+      if (!insuranceAmt) {
+        return alert("Enter Helth Insurance Amount..!");
+      }
+    }
+
+    if (medications === true) {
+      if (!medicinesTaking) {
+        return alert("Please Enter medication name");
+      }
+    }
+
     try {
-      if (
-        validatename(patientfirstname) &&
-        ValidateEmail(email) &&
-        phonenumber(mobileno) &&
-        CheckPassword(password)
-      ) {
-        formdata.set("Firstname", patientfirstname);
-        formdata.set("Lastname", patientlastname);
-        formdata.set("Gender", gender);
-        formdata.set("DOB", DOB);
-        formdata.set("profilepic", ProfilePic);
-        formdata.set("PhoneNumber", mobileno);
-        formdata.set("alternatePhoneNumber", alternatePhoneNumber);
-        formdata.set("Email", email);
-        formdata.set("Address1", Address);
-        formdata.set("Address2", Address1);
-        formdata.set("City1", City);
-        formdata.set("State1", State);
-        formdata.set("Zipcode", Zipcode);
-        formdata.set("MaritalStatus", MaritalStatus);
-        formdata.set("PatientAge18", PatientAge18);
-        formdata.set("relativeName", relativeName);
-        formdata.set("relationWithPatient", relationWithPatient);
-        formdata.set("relativePhone", relativePhone);
-        formdata.set("AdmitDate", AdmitDate);
-        formdata.set("followUpsDate", followUpsDate);
-        formdata.set("haveInsurance", haveInsurance);
-        formdata.set("insuranceDoc", insuranceDoc);
-        formdata.set("insuranceProviderCompany", insuranceProviderCompany);
-        formdata.set("insuranceAmt", insuranceAmt);
-        formdata.set("Password", password);
-        formdata.set("ConfirmPassword", conpassword);
-        formdata.set("registrationType", "IPD");
-        formdata.set("registeredFrom", "staff");
-        formdata.set("patientAllergies", patientAllergies);
-        formdata.set("takingAnyMedication", medications);
-        formdata.set("medicinesTaking", medicinesTaking);
-        formdata.set("Aadharcard", Aadharcard);
-        formdata.set("Aadharno", Aadharno);
-        const config = {
-          url: "/user/addPatient",
-          method: "post",
-          baseURL: "http://localhost:8521/api",
-          headers: { "content-type": "multipart/form-data" },
-          data: formdata,
-        };
-        let res = await axios(config);
-        if (res.status === 200) {
-          setmedicinesTaking("");
-          setpatientAllergies([]);
-          alert("IPD Patient Register Successfully.!");
-          getipdpatients();
-          handleClose2();
-        }
+      formdata.set("Firstname", patientfirstname);
+      formdata.set("Lastname", patientlastname);
+      formdata.set("Gender", gender);
+      formdata.set("DOB", DOB);
+      formdata.set("profilepic", ProfilePic);
+      formdata.set("PhoneNumber", mobileno);
+      formdata.set("alternatePhoneNumber", alternatePhoneNumber);
+      formdata.set("Email", email);
+      formdata.set("Address1", Address);
+      formdata.set("Address2", Address1);
+      formdata.set("City1", City);
+      formdata.set("State1", State);
+      formdata.set("Zipcode", Zipcode);
+      formdata.set("MaritalStatus", MaritalStatus);
+      formdata.set("PatientAge18", PatientAge18);
+      formdata.set("relativeName", relativeName);
+      formdata.set("relationWithPatient", relationWithPatient);
+      formdata.set("relativePhone", relativePhone);
+      formdata.set("AdmitDate", AdmitDate);
+      formdata.set("followUpsDate", followUpsDate);
+      formdata.set("haveInsurance", haveInsurance);
+      formdata.set("insuranceDoc", insuranceDoc);
+      formdata.set("insuranceProviderCompany", insuranceProviderCompany);
+      formdata.set("insuranceAmt", insuranceAmt);
+      formdata.set("Password", password);
+      formdata.set("ConfirmPassword", conpassword);
+      formdata.set("registrationType", "IPD");
+      formdata.set("registeredFrom", "staff");
+      formdata.set("patientAllergies", patientAllergies);
+      formdata.set("takingAnyMedication", medications);
+      formdata.set("medicinesTaking", medicinesTaking);
+      formdata.set("Aadharcard", Aadharcard);
+      formdata.set("Aadharno", Aadharno);
+      const config = {
+        url: "/user/addPatient",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "multipart/form-data" },
+        data: formdata,
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        setmedicinesTaking("");
+        setpatientAllergies([]);
+        alert("IPD Patient Register Successfully.!");
+        getipdpatients();
+        handleClose2();
       }
     } catch (error) {
       console.log(error.response.data.error);
@@ -472,46 +567,76 @@ export default function Inpatientlist() {
     }
   };
 
-  const [EditPatientDetails, setEditPatientDetails] = useState({})
-  console.log("EditPatientDetails",EditPatientDetails);
+  const [EditPatientDetails, setEditPatientDetails] = useState({});
   useEffect(() => {
-  if(EditPatientDetails){
-    setpatientfirstname(EditPatientDetails?.Firstname || "")
-    setpatientlastname(EditPatientDetails?.Lastname || "")
-    setgender(EditPatientDetails?.Gender || "")
-    setmobileno(EditPatientDetails?.PhoneNumber || "")
-    setalternatePhoneNumber(EditPatientDetails?.alternatePhoneNumber || "")
-    setemail(EditPatientDetails?.Email || "")
-    setDOB(EditPatientDetails?.DOB || "")
-    setAddress(EditPatientDetails?.Address1 || "")
-    setAddress1(EditPatientDetails?.Address2 || "")
-    setCity(EditPatientDetails?.City1 || "")
-    setState(EditPatientDetails?.State1 || "")
-    setZipcode(EditPatientDetails?.Zipcode || "")
-    setMaritalStatus(EditPatientDetails?.MaritalStatus || "")
-    setPatientAge18(EditPatientDetails?.PatientAge18 || "")
-    setAadharno(EditPatientDetails?.Aadharno || "")
-    setrelationWithPatient(EditPatientDetails?.relationWithPatient || "")
-    setrelativeName(EditPatientDetails?.relativeName || "")
-    setrelativePhone(EditPatientDetails?.relativePhone || "")
-    setAdmitDate(EditPatientDetails?.AdmitDate || "")
-    setfollowUpsDate(EditPatientDetails?.followUpsDate || "")
-    sethaveInsurance(EditPatientDetails?.haveInsurance || "")
-  }
-  }, [])
-  
-
-const EditPatient = async()=>{
-  try {
-    const config ={
-      url:"/editpatientdetails",
-      method:"put",
-      baseURL:""
+    if (EditPatientDetails) {
+      setpatientfirstname(EditPatientDetails?.Firstname || "");
+      setpatientlastname(EditPatientDetails?.Lastname || "");
+      setgender(EditPatientDetails?.Gender || "");
+      setmobileno(EditPatientDetails?.PhoneNumber || "");
+      setalternatePhoneNumber(EditPatientDetails?.alternatePhoneNumber || "");
+      setemail(EditPatientDetails?.Email || "");
+      setDOB(EditPatientDetails?.DOB || "");
+      setAddress(EditPatientDetails?.Address1 || "");
+      setAddress1(EditPatientDetails?.Address2 || "");
+      setCity(EditPatientDetails?.City1 || "");
+      setState(EditPatientDetails?.State1 || "");
+      setZipcode(EditPatientDetails?.Zipcode || "");
+      setMaritalStatus(EditPatientDetails?.MaritalStatus || "");
+      setPatientAge18(EditPatientDetails?.PatientAge18 || "");
+      setAadharno(EditPatientDetails?.Aadharno || "");
+      setrelationWithPatient(EditPatientDetails?.relationWithPatient || "");
+      setrelativeName(EditPatientDetails?.relativeName || "");
+      setrelativePhone(EditPatientDetails?.relativePhone || "");
+      setProfilePic(EditPatientDetails?.profilepic || "");
+      setAadharcard(EditPatientDetails?.Aadharcard || "");
+      setinsuranceDoc(EditPatientDetails?.insuranceDoc || "");
     }
-  } catch (error) {
-    alert (error.response.data.error)
-  }
-}
+  }, [EditPatientDetails]);
+
+console.log("relativePhone :",relativePhone );
+
+  const EditPatient = async () => {
+    try {
+      formdata.set("IPDpatientId", EditPatientDetails?._id);
+      formdata.set("Firstname", patientfirstname);
+      formdata.set("Lastname", patientlastname);
+      formdata.set("Gender", gender);
+      formdata.set("DOB", DOB);    
+      formdata.set("PhoneNumber", mobileno);
+      formdata.set("alternatePhoneNumber", alternatePhoneNumber);
+      formdata.set("Email", email);
+      formdata.set("Address1", Address);
+      formdata.set("Address2", Address1);
+      formdata.set("City1", City);
+      formdata.set("State1", State);
+      formdata.set("Zipcode", Zipcode);
+      formdata.set("MaritalStatus", MaritalStatus);
+      formdata.set("PatientAge18", PatientAge18);
+      formdata.set("relativeName", relativeName);
+      formdata.set("relationWithPatient", relationWithPatient);   
+      formdata.set("Aadharno", Aadharno);
+      formdata.set("relativePhone", relativePhone);
+      formdata.set("profilepic", ProfilePic);
+      formdata.set("Aadharcard", Aadharcard);
+      const config = {
+        url: "/editpatientdetails",
+        method: "put",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "multipart/form-data" },
+        data: formdata,
+      };
+      let res = await axios(config);
+      if(res.status === 200) {
+        alert (res.data.success)
+        handleClose14();
+        getipdpatients();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    
+    }
+  };
 
   return (
     <div>
@@ -548,10 +673,11 @@ const EditPatient = async()=>{
         <Modal.Body>
           <div className="row" style={{ color: "white" }}>
             <div className="col-lg-4">
-              <img 
-              alt="profile-pic"
-              src={`http://localhost:8521/PatientREG/${PatientDetailsView?.profilepic}`} 
-              style={{ width: "100%" }} />
+              <img
+                alt="profile-pic"
+                src={`http://localhost:8521/PatientREG/${PatientDetailsView?.profilepic}`}
+                style={{ width: "100%" }}
+              />
               <div style={{ border: "1px solid lightgrey" }}>
                 <h6
                   style={{
@@ -570,7 +696,7 @@ const EditPatient = async()=>{
                     marginTop: "2%",
                   }}
                 >
-                  <b>Patient ID : </b>  
+                  <b>Patient ID : </b>
                   {PatientDetailsView?.PatientId}
                 </h6>
                 <h6
@@ -580,7 +706,7 @@ const EditPatient = async()=>{
                     marginTop: "2%",
                   }}
                 >
-                  <b>Name : </b>  
+                  <b>Name : </b>
                   {`${PatientDetailsView?.Firstname} ${PatientDetailsView?.Lastname}`}
                 </h6>
                 <h6
@@ -590,7 +716,7 @@ const EditPatient = async()=>{
                     marginTop: "2%",
                   }}
                 >
-                  <b>Email ID  : </b> {PatientDetailsView?.Email} 
+                  <b>Email ID : </b> {PatientDetailsView?.Email}
                 </h6>
                 <h6
                   style={{
@@ -599,7 +725,7 @@ const EditPatient = async()=>{
                     marginTop: "2%",
                   }}
                 >
-                  <b>Mobile : </b>  {PatientDetailsView?.PhoneNumber} 
+                  <b>Mobile : </b> {PatientDetailsView?.PhoneNumber}
                 </h6>
                 <h6
                   style={{
@@ -608,7 +734,7 @@ const EditPatient = async()=>{
                     marginTop: "2%",
                   }}
                 >
-                  <b>Marital Status : </b>  {PatientDetailsView?.MaritalStatus}
+                  <b>Marital Status : </b> {PatientDetailsView?.MaritalStatus}
                 </h6>
                 <h6
                   style={{
@@ -617,7 +743,7 @@ const EditPatient = async()=>{
                     marginTop: "2%",
                   }}
                 >
-                  <b>Gender : </b>  {PatientDetailsView?.Gender}
+                  <b>Gender : </b> {PatientDetailsView?.Gender}
                 </h6>
                 <h6
                   style={{
@@ -626,77 +752,98 @@ const EditPatient = async()=>{
                     marginTop: "2%",
                   }}
                 >
-                  <b>D-O-B : </b>  {PatientDetailsView?.DOB}
+                  <b>D-O-B : </b> {PatientDetailsView?.DOB}
                 </h6>
               </div>
             </div>
             <div className="col-lg-8">
-              <div style={{backgroundColor:"white",padding:'10px'}}>
-              <Table bordered>
-              <thead>
-                <tr>
-                <th>Content </th>
-                <th>
-                Patient Details 
-                  </th>
-                </tr>                
-              </thead>
-              <tbody>
-                <tr>
-                  <td><b>Aadharcard No</b></td>
-                  <td>
-                 <p>{PatientDetailsView?.Aadharno}</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td><b>Aadharcard</b></td>
-                  <td>
-                  <a                   
-                 target="_blank"
-                 href={`http://localhost:8521/PatientREG/${PatientDetailsView?.Aadharcard}`}>View</a> 
-                  </td>
-                </tr>
-                <tr>
-                  <td><b>Insurance Complany</b></td>
-                  <td>
-                 <p>{PatientDetailsView?.insuranceProviderCompany}</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td><b>Insurance Documents</b></td>
-                  <td>
-                  <a                   
-                 target="_blank"
-                 href={`http://localhost:8521/PatientREG/${PatientDetailsView?.insuranceDoc}`}>
-                  View</a> 
-                  </td>
-                </tr>
-                <tr>
-                  <td><b>Address</b></td>
-                  <td>
-                  <p>{PatientDetailsView?.Address1},
-                  {PatientDetailsView?.Address2},
-                  {PatientDetailsView?.City1},
-                  {PatientDetailsView?.State1},
-                  {PatientDetailsView?.Zipcode}
-                  
-                  </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td><b>Relatives</b></td>
-                  <td>
-                  <p>{PatientDetailsView?.relativeName} ({PatientDetailsView?.relationWithPatient}) </p>
-                  </td>
-                </tr>
-              </tbody>
-             </Table>
+              <div style={{ backgroundColor: "white", padding: "10px" }}>
+                <Table bordered>
+                  <thead>
+                    <tr>
+                      <th>Content </th>
+                      <th>Patient Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <b>Aadharcard No</b>
+                      </td>
+                      <td>
+                        <p>{PatientDetailsView?.Aadharno}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Aadharcard</b>
+                      </td>
+                      <td>
+                        <a
+                          target="_blank"
+                          href={`http://localhost:8521/PatientREG/${PatientDetailsView?.Aadharcard}`}
+                        >
+                          View
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Insurance Complany</b>
+                      </td>
+                      <td>
+                        <p>{PatientDetailsView?.insuranceProviderCompany}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Insurance Documents</b>
+                      </td>
+                      <td>
+                        <a
+                          target="_blank"
+                          href={`http://localhost:8521/PatientREG/${PatientDetailsView?.insuranceDoc}`}
+                        >
+                          View
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Address</b>
+                      </td>
+                      <td 
+                      style={{ 
+                        maxWidth: "300px", 
+                        wordWrap: "break-word", 
+                        overflowWrap: "break-word", 
+                        whiteSpace: "normal" 
+                        }}>
+                        <p style={{width:"auto",textAlign:"justify"}}>
+                          {PatientDetailsView?.Address1},
+                          {PatientDetailsView?.Address2},
+                          {PatientDetailsView?.City1},
+                          {PatientDetailsView?.State1},
+                          {PatientDetailsView?.Zipcode}
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Relatives</b>
+                      </td>
+                      <td>
+                        <p>
+                          {PatientDetailsView?.relativeName} (
+                          {PatientDetailsView?.relationWithPatient}){" "}
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
               </div>
-            
             </div>
           </div>
-        
-      
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -724,6 +871,7 @@ const EditPatient = async()=>{
           >
             <div className="col-lg-6">
               <input
+                type="text"
                 placeholder="First Name"
                 style={{
                   width: "100%",
@@ -732,12 +880,13 @@ const EditPatient = async()=>{
                   border: "1px solid #ebebeb",
                   backgroundColor: "#ebebeb",
                 }}
+                value={patientfirstname}
                 onChange={(e) => setpatientfirstname(e.target.value)}
-              ></input>
+              />
             </div>
-
             <div className="col-lg-6">
               <input
+                type="text"
                 placeholder="Last Name"
                 style={{
                   width: "100%",
@@ -746,8 +895,9 @@ const EditPatient = async()=>{
                   border: "1px solid #ebebeb",
                   backgroundColor: "#ebebeb",
                 }}
+                value={patientlastname}
                 onChange={(e) => setpatientlastname(e.target.value)}
-              ></input>
+              />
             </div>
 
             <div className="col-lg-6">
@@ -762,9 +912,10 @@ const EditPatient = async()=>{
                 }}
                 onChange={(e) => setgender(e.target.value)}
               >
-                <option>Select Gender</option>
+                <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
+                <option value="Other">Other</option>
               </select>
             </div>
 
@@ -779,8 +930,11 @@ const EditPatient = async()=>{
                   border: "1px solid #ebebeb",
                   backgroundColor: "#ebebeb",
                 }}
+                type="text"
+                value={mobileno}
+                maxLength={10}
                 onChange={(e) => setmobileno(e.target.value)}
-              ></input>
+              />
             </div>
 
             <div className="col-lg-6">
@@ -794,12 +948,16 @@ const EditPatient = async()=>{
                   border: "1px solid #ebebeb",
                   backgroundColor: "#ebebeb",
                 }}
+                maxLength={10}
+                type="text"
+                value={alternatePhoneNumber}
                 onChange={(e) => setalternatePhoneNumber(e.target.value)}
-              ></input>
+              />
             </div>
 
             <div className="col-lg-6">
               <input
+                type="email"
                 placeholder="Email"
                 style={{
                   width: "100%",
@@ -809,8 +967,9 @@ const EditPatient = async()=>{
                   border: "1px solid #ebebeb",
                   backgroundColor: "#ebebeb",
                 }}
+                value={email}
                 onChange={(e) => setemail(e.target.value)}
-              ></input>
+              />
             </div>
 
             <div className="col-lg-6">
@@ -821,7 +980,6 @@ const EditPatient = async()=>{
                   </h6>
                 </div>
                 <div className="col-lg-7">
-                  {" "}
                   <input
                     type="date"
                     style={{
@@ -832,8 +990,10 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "4%",
                     }}
+                    max={new Date().toISOString().split("T")[0]}
+                    value={DOB}
                     onChange={(e) => setDOB(e.target.value)}
-                  ></input>
+                  />
                 </div>
               </div>
             </div>
@@ -846,7 +1006,6 @@ const EditPatient = async()=>{
                   </h6>
                 </div>
                 <div className="col-lg-8">
-                  {" "}
                   <input
                     type="file"
                     style={{
@@ -857,8 +1016,9 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "4%",
                     }}
+                    accept="image/*"
                     onChange={(e) => setProfilePic(e.target.files[0])}
-                  ></input>
+                  />
                 </div>
               </div>
             </div>
@@ -871,7 +1031,6 @@ const EditPatient = async()=>{
                   </h6>
                 </div>
                 <div className="col-lg-9">
-                  {" "}
                   <input
                     type="text"
                     placeholder="Street Address"
@@ -883,12 +1042,12 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "6%",
                     }}
+                    value={Address}
                     onChange={(e) => setAddress(e.target.value)}
-                  ></input>
+                  />
                 </div>
               </div>
             </div>
-
             <div className="col-lg-6">
               <input
                 placeholder="Street Address Line 2"
@@ -900,10 +1059,10 @@ const EditPatient = async()=>{
                   backgroundColor: "#ebebeb",
                   marginTop: "4%",
                 }}
+                value={Address1}
                 onChange={(e) => setAddress1(e.target.value)}
-              ></input>
+              />
             </div>
-
             <div className="col-lg-3">
               <input
                 placeholder="City"
@@ -915,8 +1074,9 @@ const EditPatient = async()=>{
                   backgroundColor: "#ebebeb",
                   marginTop: "8%",
                 }}
+                value={City}
                 onChange={(e) => setCity(e.target.value)}
-              ></input>
+              />
             </div>
 
             <div className="col-lg-3">
@@ -931,8 +1091,9 @@ const EditPatient = async()=>{
                   backgroundColor: "#ebebeb",
                   marginTop: "8%",
                 }}
+                value={State}
                 onChange={(e) => setState(e.target.value)}
-              ></input>
+              />
             </div>
 
             <div className="col-lg-6">
@@ -946,12 +1107,15 @@ const EditPatient = async()=>{
                   backgroundColor: "#ebebeb",
                   marginTop: "4%",
                 }}
+                maxLength={6}
+                type="text"
+                value={Zipcode}
                 onChange={(e) => setZipcode(e.target.value)}
-              ></input>
+              />
             </div>
-
-            <div className="col-lg-6">
+            <div className="col-lg-6" style={{ position: "relative" }}>
               <input
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 style={{
                   width: "100%",
@@ -961,12 +1125,26 @@ const EditPatient = async()=>{
                   backgroundColor: "#ebebeb",
                   marginTop: "4%",
                 }}
+                value={password}
                 onChange={(e) => setpassword(e.target.value)}
-              ></input>
+              />
+              <span
+                onClick={togglePasswordVisibility}
+                style={{
+                  position: "absolute",
+                  right: "20px",
+                  top: "60%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                }}
+              >
+                {showPassword ? "👁️" : "🙈"}
+              </span>
             </div>
 
-            <div className="col-lg-6">
+            <div className="col-lg-6" style={{ position: "relative" }}>
               <input
+                type={showPassword ? "text" : "password"}
                 placeholder="ConfirmPassword"
                 style={{
                   width: "100%",
@@ -976,8 +1154,21 @@ const EditPatient = async()=>{
                   backgroundColor: "#ebebeb",
                   marginTop: "4%",
                 }}
+                value={conpassword}
                 onChange={(e) => setconpassword(e.target.value)}
-              ></input>
+              />
+              <span
+                onClick={togglePasswordVisibility}
+                style={{
+                  position: "absolute",
+                  right: "20px",
+                  top: "60%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                }}
+              >
+                {showPassword ? "👁️" : "🙈"}
+              </span>
             </div>
 
             <div className="col-lg-6">
@@ -988,10 +1179,7 @@ const EditPatient = async()=>{
                   </h6>
                 </div>
                 <div className="col-lg-9">
-                  {" "}
                   <select
-                    type="text"
-                    placeholder="Street Address"
                     style={{
                       width: "100%",
                       padding: "8px 20px",
@@ -1000,11 +1188,14 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "6%",
                     }}
+                    value={MaritalStatus}
                     onChange={(e) => setMaritalStatus(e.target.value)}
                   >
                     <option value="">Select Option</option>
                     <option value="Single">Single</option>
                     <option value="Married">Married</option>
+                    <option value="Divorce">Divorce</option>
+                    <option value="Complicated">Complicated</option>
                   </select>
                 </div>
               </div>
@@ -1017,7 +1208,6 @@ const EditPatient = async()=>{
                   </h6>
                 </div>
                 <div className="col-lg-9">
-                  {" "}
                   <select
                     type="text"
                     style={{
@@ -1028,6 +1218,7 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "6%",
                     }}
+                    value={PatientAge18}
                     onChange={(e) => setPatientAge18(e.target.value)}
                   >
                     <option value="">Select Option</option>
@@ -1045,7 +1236,6 @@ const EditPatient = async()=>{
                   </h6>
                 </div>
                 <div className="col-lg-9">
-                  {" "}
                   <input
                     type="file"
                     style={{
@@ -1056,8 +1246,9 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "6%",
                     }}
+                    accept="image/*"
                     onChange={(e) => setAadharcard(e.target.files[0])}
-                  ></input>
+                  />
                 </div>
               </div>
             </div>
@@ -1069,7 +1260,6 @@ const EditPatient = async()=>{
                   </h6>
                 </div>
                 <div className="col-lg-9">
-                  {" "}
                   <input
                     type="text"
                     style={{
@@ -1080,8 +1270,11 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "6%",
                     }}
+                    placeholder="Enter Aadhar Card No"
+                    maxLength={12}
+                    value={Aadharno}
                     onChange={(e) => setAadharno(e.target.value)}
-                  ></input>
+                  />
                 </div>
               </div>
             </div>
@@ -1091,8 +1284,6 @@ const EditPatient = async()=>{
                 padding: "2%",
                 borderRadius: "0px",
                 borderTop: "1px solid #ebebeb",
-                // borderBottom: "1px solid #ebebeb",
-                // backgroundColor: "#ebebeb",
                 marginTop: "4%",
               }}
             >
@@ -1110,8 +1301,10 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "2%",
                     }}
+                    type="text"
+                    value={relationWithPatient}
                     onChange={(e) => setrelationWithPatient(e.target.value)}
-                  ></input>
+                  />
                 </div>
 
                 <div className="col-lg-6">
@@ -1125,10 +1318,11 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "2%",
                     }}
+                    type="text"
+                    value={relativeName}
                     onChange={(e) => setrelativeName(e.target.value)}
-                  ></input>
+                  />
                 </div>
-
                 <div className="col-lg-6">
                   <input
                     placeholder="Relative Mobileno."
@@ -1140,8 +1334,11 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "4%",
                     }}
+                    type="text"
+                    maxLength={10}
+                    value={relativePhone}
                     onChange={(e) => setrelativePhone(e.target.value)}
-                  ></input>
+                  />
                 </div>
               </div>
             </div>
@@ -1152,8 +1349,6 @@ const EditPatient = async()=>{
                 padding: "2%",
                 borderRadius: "0px",
                 borderTop: "1px solid #ebebeb",
-                // borderBottom: "1px solid #ebebeb",
-                // backgroundColor: "#ebebeb",
                 marginTop: "4%",
               }}
             >
@@ -1177,7 +1372,7 @@ const EditPatient = async()=>{
                           marginTop: "2%",
                         }}
                         onChange={(e) => setAdmitDate(e.target.value)}
-                      ></input>
+                      />
                     </div>
                   </div>
                 </div>
@@ -1198,8 +1393,9 @@ const EditPatient = async()=>{
                           backgroundColor: "#ebebeb",
                           marginTop: "2%",
                         }}
+                        min={new Date().toISOString().split("T")[0]}
                         onChange={(e) => setfollowUpsDate(e.target.value)}
-                      ></input>
+                      />
                     </div>
                   </div>
                 </div>
@@ -1215,7 +1411,6 @@ const EditPatient = async()=>{
                       </h6>
                     </div>
                     <div className="col-lg-9">
-                      {" "}
                       <select
                         style={{
                           width: "100%",
@@ -1234,93 +1429,103 @@ const EditPatient = async()=>{
                     </div>
                   </div>
                 </div>
-
-                <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Health Insurance Doc(if available):
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <input
-                        type="file"
-                        accept="image/*"
+                {haveInsurance === "yes" && (
+                  <>
+                    <div className="col-lg-6">
+                      <div
+                        className="row"
                         style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
-                        onChange={(e) => setinsuranceDoc(e.target.files[0])}
-                      ></input>
+                      >
+                        <div className="col-lg-3">
+                          <h6 style={{ color: "white", marginTop: "6%" }}>
+                            Health Insurance Doc(if available):
+                          </h6>
+                        </div>
+                        <div className="col-lg-9">
+                          {" "}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            style={{
+                              width: "100%",
+                              padding: "8px 20px",
+                              borderRadius: "0px",
+                              border: "1px solid #ebebeb",
+                              backgroundColor: "#ebebeb",
+                              marginTop: "6%",
+                            }}
+                            onChange={(e) => setinsuranceDoc(e.target.files[0])}
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Health Insurance Provider:
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <input
-                        type="test"
+                    <div className="col-lg-6">
+                      <div
+                        className="row"
                         style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
-                        onChange={(e) =>
-                          setinsuranceProviderCompany(e.target.value)
-                        }
-                      ></input>
+                      >
+                        <div className="col-lg-3">
+                          <h6 style={{ color: "white", marginTop: "6%" }}>
+                            Health Insurance Provider:
+                          </h6>
+                        </div>
+                        <div className="col-lg-9">
+                          <input
+                            type="test"
+                            style={{
+                              width: "100%",
+                              padding: "8px 20px",
+                              borderRadius: "0px",
+                              border: "1px solid #ebebeb",
+                              backgroundColor: "#ebebeb",
+                              marginTop: "6%",
+                            }}
+                            placeholder="Insurance Provider Name.."
+                            onChange={(e) =>
+                              setinsuranceProviderCompany(e.target.value)
+                            }
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Health Insurance Amount:
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <input
-                        type="Number"
+                    <div className="col-lg-6">
+                      <div
+                        className="row"
                         style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
-                        onChange={(e) => setinsuranceAmt(e.target.value)}
-                      ></input>
+                      >
+                        <div className="col-lg-3">
+                          <h6 style={{ color: "white", marginTop: "6%" }}>
+                            Health Insurance Amount:
+                          </h6>
+                        </div>
+                        <div className="col-lg-9">
+                          <input
+                            type="Number"
+                            style={{
+                              width: "100%",
+                              padding: "8px 20px",
+                              borderRadius: "0px",
+                              border: "1px solid #ebebeb",
+                              backgroundColor: "#ebebeb",
+                              marginTop: "6%",
+                            }}
+                            placeholder="Insurance Amount"
+                            onChange={(e) => setinsuranceAmt(e.target.value)}
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -1342,18 +1547,18 @@ const EditPatient = async()=>{
                 <div className="col-lg-3">
                   <input
                     type="checkbox"
-                    checked={medications == true}
+                    checked={medications === true}
                     onChange={() => setmedications(true)}
-                  ></input>{" "}
+                  />
                   Yes
                 </div>
 
                 <div className="col-lg-3">
                   <input
                     type="checkbox"
-                    checked={medications == false}
+                    checked={medications === false}
                     onChange={() => setmedications(false)}
-                  ></input>{" "}
+                  />
                   No
                 </div>
               </div>
@@ -1377,11 +1582,10 @@ const EditPatient = async()=>{
                       width: "100%",
                       padding: "8px 20px",
                       borderRadius: "0px",
-
                       border: "1px solid #ebebeb",
                       backgroundColor: "#ebebeb",
                     }}
-                  ></textarea>
+                  />
                 </div>
               </>
             ) : null}
@@ -1400,7 +1604,6 @@ const EditPatient = async()=>{
                   </h6>
                 </div>
                 <div className="col-lg-6">
-                  {" "}
                   <input
                     type="text"
                     value={allergy}
@@ -1413,14 +1616,14 @@ const EditPatient = async()=>{
                       marginTop: "6%",
                     }}
                     onChange={(e) => setallergy(e.target.value)}
-                  ></input>
+                    placeholder="write allergy "
+                  />
                 </div>
                 <div className="col-lg-3">
                   <Button
                     variant="warning"
                     onClick={() => {
-                      patientAllergies.push(allergy);                     ;
-                      console.log(patientAllergies);
+                      patientAllergies.push(allergy);
                       setclickedAddAllergyBtn("clicked");
                     }}
                   >
@@ -1430,23 +1633,26 @@ const EditPatient = async()=>{
               </div>
             </div>
             <div className="col-lg-6 mt-3">
-              <Table responsive>
-                <thead>
-                  <th>S.no.</th>
-                  <th>Allergies</th>
-                </thead>
-                <tbody>
-                  {patientAllergies.map((item, i) => {
-                    console.log("patientAllergies", patientAllergies);
-                    return (
-                      <tr>
-                        <td>{++i}</td>
-                        <td>{item}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
+              <div style={{ padding: "5px", backgroundColor: "white" }}>
+                <Table responsive bordered>
+                  <thead>
+                    <tr>
+                      <th>S.N.</th>
+                      <th>Allergies</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {patientAllergies?.map((item, i) => {
+                      return (
+                        <tr>
+                          <td>{++i}</td>
+                          <td>{item}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              </div>
             </div>
           </div>
         </Modal.Body>
@@ -1549,9 +1755,10 @@ const EditPatient = async()=>{
                 onChange={(e) => setgender(e.target.value)}
                 value={gender}
               >
-                <option>Select Gender</option>
+                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
+                <option value="Other">Other</option>
               </select>
             </div>
 
@@ -1566,6 +1773,8 @@ const EditPatient = async()=>{
                   border: "1px solid #ebebeb",
                   backgroundColor: "#ebebeb",
                 }}
+                maxLength={10}
+                type="text"
                 onChange={(e) => setmobileno(e.target.value)}
                 value={mobileno}
               />
@@ -1582,6 +1791,8 @@ const EditPatient = async()=>{
                   border: "1px solid #ebebeb",
                   backgroundColor: "#ebebeb",
                 }}
+                maxLength={10}
+                type="text"
                 onChange={(e) => setalternatePhoneNumber(e.target.value)}
                 value={alternatePhoneNumber}
               />
@@ -1623,6 +1834,7 @@ const EditPatient = async()=>{
                     }}
                     onChange={(e) => setDOB(e.target.value)}
                     value={DOB}
+                    max={new Date().toISOString().split("T")[0]}
                   />
                 </div>
               </div>
@@ -1647,6 +1859,7 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "4%",
                     }}
+                      accept="image/*"
                     onChange={(e) => setProfilePic(e.target.files[0])}
                   />
                 </div>
@@ -1739,38 +1952,10 @@ const EditPatient = async()=>{
                   backgroundColor: "#ebebeb",
                   marginTop: "4%",
                 }}
+                   maxLength={6}
+                type="text"
                 onChange={(e) => setZipcode(e.target.value)}
                 value={Zipcode}
-              />
-            </div>
-
-            <div className="col-lg-6">
-              <input
-                placeholder="Password"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                  marginTop: "4%",
-                }}
-                onChange={(e) => setpassword(e.target.value)}
-              />
-            </div>
-
-            <div className="col-lg-6">
-              <input
-                placeholder="ConfirmPassword"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                  marginTop: "4%",
-                }}
-                onChange={(e) => setconpassword(e.target.value)}
               />
             </div>
 
@@ -1792,13 +1977,15 @@ const EditPatient = async()=>{
                       border: "1px solid #ebebeb",
                       backgroundColor: "#ebebeb",
                       marginTop: "6%",
-                    }}                 
+                    }}
                     onChange={(e) => setMaritalStatus(e.target.value)}
                     value={MaritalStatus}
                   >
-                    <option value="">Select Option</option>
+                     <option value="">Select Option</option>
                     <option value="Single">Single</option>
                     <option value="Married">Married</option>
+                    <option value="Divorce">Divorce</option>
+                    <option value="Complicated">Complicated</option>
                   </select>
                 </div>
               </div>
@@ -1849,6 +2036,7 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "6%",
                     }}
+                    accept="image/*"
                     onChange={(e) => setAadharcard(e.target.files[0])}
                   />
                 </div>
@@ -1872,7 +2060,7 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "6%",
                     }}
-                    maxLength="12"
+                    maxLength={12}
                     onChange={(e) => setAadharno(e.target.value)}
                     value={Aadharno}
                   />
@@ -1934,7 +2122,7 @@ const EditPatient = async()=>{
                       backgroundColor: "#ebebeb",
                       marginTop: "4%",
                     }}
-                    maxLength="10"
+                    maxLength={10}
                     onChange={(e) => setrelativePhone(e.target.value)}
                     value={relativePhone}
                   />
@@ -1942,184 +2130,6 @@ const EditPatient = async()=>{
               </div>
             </div>
 
-            <div
-              style={{
-                width: "100%",
-                padding: "2%",
-                borderRadius: "0px",
-                borderTop: "1px solid #ebebeb",
-                marginTop: "4%",
-              }}
-            >
-              <h6 style={{ color: "white" }}>Admission Information</h6>
-
-              <div className="row">
-                <div className="col-lg-6">
-                  <div className="row" style={{ justifyContent: "center" }}>
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white" }}>Admission Date: </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      <input
-                        type="date"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "2%",
-                        }}
-                        onChange={(e) => setAdmitDate(e.target.value)}
-                        value={AdmitDate}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div className="row" style={{ justifyContent: "center" }}>
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white" }}>Follow-up Date: </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      <input
-                        type="date"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "2%",
-                        }}
-                        onChange={(e) => setfollowUpsDate(e.target.value)}
-                        value={followUpsDate}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Health Insurance*:
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <select
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
-                        }}
-                        onChange={(e) => sethaveInsurance(e.target.value)}
-                        value={haveInsurance}
-                      >
-                        <option value="">Select Option</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Health Insurance Doc(if available):
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
-                        }}
-                        onChange={(e) => setinsuranceDoc(e.target.files[0])}
-                      ></input>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Health Insurance Provider:
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <input
-                        type="test"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
-                        }}
-                        onChange={(e) =>
-                          setinsuranceProviderCompany(e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Health Insurance Amount:
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <input
-                        type="Number"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
-                        }}
-                        onChange={(e) => setinsuranceAmt(e.target.value)}
-                      ></input>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -2135,7 +2145,7 @@ const EditPatient = async()=>{
                 padding: "4px 10px",
               }}
               onClick={() => {
-                handleClose14()
+                handleClose14();
               }}
             >
               CANCEL
@@ -2150,6 +2160,7 @@ const EditPatient = async()=>{
                 fontWeight: "600",
                 padding: "4px 10px",
               }}
+              onClick={()=>EditPatient()}
             >
               Edit
             </button>
@@ -2381,7 +2392,6 @@ const EditPatient = async()=>{
               </div>
             </div>
           </div>
-         
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose5}>
@@ -2623,7 +2633,7 @@ const EditPatient = async()=>{
                       }}
                     >
                       View Visitors
-                    </button>                    
+                    </button>
                   </td>
                   <td>
                     <button
@@ -2651,7 +2661,7 @@ const EditPatient = async()=>{
                         backgroundColor: "#20958c",
                         color: "white",
                         borderRadius: "0px",
-                      }}                   
+                      }}
                       onClick={() => {
                         handleShow6();
                         setViewCause(item);
@@ -2711,17 +2721,17 @@ const EditPatient = async()=>{
                   </td>
                   <td>
                     <div className="d-flex gap-2">
-                      <MdEdit 
-                      style={{ 
-                        color: "#20958c", 
-                        fontSize: "20px",
-                        cursor:"pointer",
-                         }} 
-                         onClick={()=>{
+                      <MdEdit
+                        style={{
+                          color: "#20958c",
+                          fontSize: "20px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
                           handleShow14();
                           setEditPatientDetails(item);
-                         }}
-                         />
+                        }}
+                      />
                       <AiFillDelete
                         style={{
                           color: "red",

@@ -228,9 +228,10 @@ export const AddPatient = () => {
                 label="Phone Number"
               >
                 <Form.Control
-                  type="number"
+                  type="text"
                   placeholder="Phone Number"
                   onChange={(e) => setmobileno(e.target.value)}
+                  maxLength={10}
                 />
               </FloatingLabel>
             </div>
@@ -256,6 +257,7 @@ export const AddPatient = () => {
                   type="date"
                   placeholder="Birth Date"
                   onChange={(e) => setDOB(e.target.value)}
+                  max={new Date().toISOString().split('T')[0]} 
                 />
               </FloatingLabel>
             </div>

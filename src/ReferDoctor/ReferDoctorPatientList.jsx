@@ -1,21 +1,13 @@
 import {
-  faAngleLeft,
-  faAngleRight,
   faCancel,
   faCheck,
-  faEllipsis,
   faFilePdf,
-  faFilter,
-  faPenToSquare,
-  faTrash,
-  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import {
   Button,
   Container,
-  Dropdown,
   FloatingLabel,
   Form,
   FormLabel,
@@ -28,7 +20,7 @@ import axios from "axios";
 import { Pagination, Stack } from "@mui/material";
 import { MdDelete } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
-
+import Select from "react-select";
 export const ReferDoctorPatientList = () => {
   const ReferralDocDetails = JSON.parse(
     sessionStorage.getItem("RDoctorDetails")
@@ -69,7 +61,7 @@ export const ReferDoctorPatientList = () => {
       });
   };
 
-  console.log("RefPatientList",RefPatientList);
+  console.log("RefPatientList", RefPatientList);
 
   // Get Near By Lab List
   const [clinicalLabs, setclinicalLabs] = useState([]);
@@ -197,14 +189,14 @@ export const ReferDoctorPatientList = () => {
   const [SelectTest, setSelectTest] = useState("");
 
   const ReferlabTest = async () => {
-    if(!SelectPincode){
-     return alert("Please Select the pincode")
+    if (!SelectPincode) {
+      return alert("Please Select the pincode");
     }
-    if(!SelectLab){
-      return alert("Please Select the Lab")
+    if (!SelectLab) {
+      return alert("Please Select the Lab");
     }
-     if(!SelectTest){
-      return alert("Please Select the Lab Test")
+    if (!SelectTest) {
+      return alert("Please Select the Lab Test");
     }
     try {
       const config = {
@@ -213,7 +205,7 @@ export const ReferDoctorPatientList = () => {
         baseURL: "http://localhost:8521/api/Clinic",
         data: {
           testid: SelectTest,
-          labid:SelectLab,
+          labid: SelectLab,
         },
       };
       let res = await axios(config);
@@ -227,7 +219,73 @@ export const ReferDoctorPatientList = () => {
     }
   };
 
+  const [ReferLab, setReferLab] = useState(true);
+  const [HospitalLabList, setHospitalLabList] = useState([]);
+  const getHospitallabList = () => {
+    axios
+      .get("http://localhost:8521/api/admin/getHospitalLabTestlist")
+      .then(function (response) {
+        if (response.status === 200) {
+          const data = response.data.HospitalLabTests;
+          data.forEach((item) => {
+            item.label = item.testName;
+            item.value = item.testName;
+          });
+          setHospitalLabList(data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        setHospitalLabList([]);
+      });
+  };
+  console.log("HospitalLabList", HospitalLabList);
+  const [Labtests1, setLabtests1] = useState([]);
+  let [selectedOptions, setSelectedOptions] = useState([]);
+  const hasSelectedOptions = Labtests1 && Labtests1.length > 0;
+  const AddLabTest = (Labtests) => {
+    setSelectedOptions(
+      Labtests?.map((val) => {
+        return {
+          testid: val?._id,
+          testName: val?.testName,
+          priceNonInsurance: val?.priceNonInsurance,
+          priceInsurance: val?.priceInsurance,
+          unit: val?.unit,
+          generalRefVal: val?.generalRefVal,
+        };
+      })
+    );
+    setLabtests1(Labtests);
+  };
+  const Referjananilab = async () => {
+    if (!selectedOptions) {
+      return alert("Please Select Lab..!");
+    }
+    try {
+      const config = {
+        url: "/referlabpatientforhospital",
+        method: "put",
+        baseURL: "http://localhost:8521/api/Clinic",
+        headers: { "Content-Type": "application/json" },
+        data: {
+          patientid: ViewData?._id,
+          Labtests: JSON.stringify(selectedOptions),
+        },
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        handleClose3();
+      }
+    } catch (error) {
+      console.log(error);
+      alert(error.response.data.error);
+    }
+  };
+
   useEffect(() => {
+    getHospitallabList();
     getRefPatientList();
     getClinicalLabsList();
     getTestCategory();
@@ -252,132 +310,121 @@ export const ReferDoctorPatientList = () => {
                 onChange={(e) => setSearchItem(e.target.value)}
               />
             </Form>
-
-            {/* <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
-                <FontAwesomeIcon icon={faFilter} /> Filtered By
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                <Dropdown.Item href="#">Last 7 Days</Dropdown.Item>
-                <Dropdown.Item href="#">Last 1 Month</Dropdown.Item>
-                <Dropdown.Item href="#">Last 6 Month</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown> */}
             <Link to={"/referaddpatient"}>
               <Button className="green-btn-9"></Button>
             </Link>
           </div>
         </div>
-        <Table bordered>
-          <thead>
-            <tr className="admin-table-head">
-              <th className="fw-bold">Name</th>
-              <th className="fw-bold">Gender</th>
-              <th className="fw-bold">Address</th>
-              <th className="fw-bold">Mobile</th>
-              <th className="fw-bold">DOB</th>
-              <th className="fw-bold">Blood Group </th>
-              <th className="fw-bold">Diesease </th>
-              <th className="fw-bold">Refer</th>
-              <th className="fw-bold">Actions </th>
-            </tr>
-          </thead>
+        <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+          <Table bordered>
+            <thead>
+              <tr className="admin-table-head">
+                <th className="fw-bold">Sl.No</th>
+                <th className="fw-bold">Name</th>
+                <th className="fw-bold">Gender</th>
+                <th className="fw-bold">Address</th>
+                <th className="fw-bold">Mobile</th>
+                <th className="fw-bold">DOB</th>
+                <th className="fw-bold">Blood Group </th>
+                <th className="fw-bold">Diesease </th>
+                <th className="fw-bold">Refer</th>
+                <th className="fw-bold">Actions </th>
+              </tr>
+            </thead>
 
-          <tbody>
-            {RefPatientList?.slice(
-              pagesVisited,
-              pagesVisited + usersPerPage
-            )?.map((item) => {
-              if (
-                SearchItem === "" ||
-                Object.values(item).some((value) =>
-                  String(value).toLowerCase().includes(SearchItem.toLowerCase())
+            <tbody>
+              {RefPatientList?.slice(
+                pagesVisited,
+                pagesVisited + usersPerPage
+              )?.map((item, i) => {
+                if (
+                  SearchItem === "" ||
+                  Object.values(item).some((value) =>
+                    String(value)
+                      .toLowerCase()
+                      .includes(SearchItem.toLowerCase())
+                  )
                 )
-              )
-                return (
-                  <tr className="admin-table-row">
-                    <td>{`${item?.Firstname} ${item?.Lastname}`}</td>
-                    <td>{item?.Gender}</td>
-                    <td>{item?.Address1}</td>
-                    <td>{item?.PhoneNumber}</td>
-                    <td>
-                      <p>{item?.DOB}</p>
-                      <p>Age : {item?.age}</p>
-                    </td>
-                    <td>{item?.BloodGroup}</td>
+                  return (
+                    <tr className="admin-table-row">
+                      <td>{i + 1}</td>
+                      <td>{`${item?.Firstname} ${item?.Lastname}`}</td>
+                      <td>{item?.Gender}</td>
+                      <td>{item?.Address1}</td>
+                      <td>{item?.PhoneNumber}</td>
+                      <td>
+                        <div style={{ width: "123px" }}>
+                          <p>DOB : {item?.DOB}</p>
+                          <p>Age : {item?.age}</p>
+                        </div>
+                      </td>
+                      <td>{item?.BloodGroup}</td>
 
-                    <td>
-                      <div
-                        className="Diseases-btn"
-                        style={{ color: "green", border: "1px solid green" }}
-                      >
-                        {item?.InjuryCondition}
-                      </div>
-                    </td>
+                      <td>
+                        <div
+                          className="Diseases-btn"
+                          style={{ color: "green", border: "1px solid green" }}
+                        >
+                          {item?.InjuryCondition}
+                        </div>
+                      </td>
 
-                    <td>
-                      {item?.isRefer === true ?(<>
-                         <Button
-                         className="mb-2"
-                         onClick={() => {
-                           handleShow3();
-                           setViewData(item);
-                         }}
-                       >
-                         Refer
-                       </Button>
-                       <Button
-                       
-                       onClick={()=>{
-                         setViewData(item);
-                         handleShow4();
-                       }}
-                       >View list</Button>
-                      </>):(<>
+                      <td>
+                        {item?.isRefer === true && (
+                            <Button
+                              onClick={() => {
+                                setViewData(item);
+                                handleShow4();
+                              }}
+                            >
+                              View list
+                            </Button>                          
+                        ) }
+                        {item?.isReferHospital === true && (
+                           <p>Refer by Janani Hospital</p>                        
+                        )}
+
                         <Button
-                         onClick={() => {
-                           handleShow3();
-                           setViewData(item);
-                         }}
-                       >
-                         Refer
-                       </Button>
-                      </>                        
-                      )}
-                     
-                    </td>
-                    <td>
-                      <div className="d-flex gap-3 ">
-                        <CiEdit
-                          style={{
-                            color: "green",
-                            fontSize: "20px",
-                            cursor: "pointer",
-                          }}
                           onClick={() => {
-                            handleShow();
+                            handleShow3();
                             setViewData(item);
                           }}
-                        />
-                        <MdDelete
-                          onClick={() => {
-                            deleteBtnShow();
-                            setViewData(item);
-                          }}
-                          style={{
-                            color: "red",
-                            fontSize: "20px",
-                            cursor: "pointer",
-                          }}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                );
-            })}
-          </tbody>
-        </Table>
+                        >
+                          Refer
+                        </Button>
+                      </td>
+                      <td>
+                        <div className="d-flex gap-3 ">
+                          <CiEdit
+                            style={{
+                              color: "green",
+                              fontSize: "20px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              handleShow();
+                              setViewData(item);
+                            }}
+                          />
+                          <MdDelete
+                            onClick={() => {
+                              deleteBtnShow();
+                              setViewData(item);
+                            }}
+                            style={{
+                              color: "red",
+                              fontSize: "20px",
+                              cursor: "pointer",
+                            }}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+              })}
+            </tbody>
+          </Table>
+        </div>
 
         <div
           className="my-3 d-flex justify-end"
@@ -822,50 +869,105 @@ export const ReferDoctorPatientList = () => {
           <Modal.Title>Refer For Lab Test</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Please Select Pincode</Form.Label>
-              <Form.Select onChange={(e) => setSelectPincode(e.target.value)}>
-                <option>select Pincode</option>
-                {clinicalLabs?.map((item) => {
-                  return <option value={item?.zipcode}>{item?.zipcode}</option>;
-                })}
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Please Select Lab</Form.Label>
-              <Form.Select onChange={(e) => setSelectLab(e.target.value)}>
-                <option>select Lab</option>
-                {clinicalLabs
-                  ?.filter((ele) => ele.zipcode === SelectPincode)
-                  ?.map((item) => {
-                    return (
-                      <option value={item?._id}>{item?.ClinicLabName}</option>
-                    );
-                  })}
-              </Form.Select>
-            </Form.Group>
+          <div style={{ backgroundColor: "white", padding: "7px" }}>
+            <div className="d-flex gap-4">
+              <Button onClick={() => setReferLab(true)}>Near By Lab</Button>
+              <Button onClick={() => setReferLab(false)}>
+                Janani Hospital
+              </Button>
+            </div>
+            <hr />
+            {ReferLab === true && (
+              <Form>
+                <div style={{ textAlign: "center" }}>
+                  <b>Refer Near By Lab</b>
+                </div>
+                <hr />
+                <Form.Group className="mb-3">
+                  <Form.Label>Please Select Pincode</Form.Label>
+                  <Form.Select
+                    onChange={(e) => setSelectPincode(e.target.value)}
+                  >
+                    <option>select Pincode</option>
+                    {clinicalLabs?.map((item) => {
+                      return (
+                        <option value={item?.zipcode}>{item?.zipcode}</option>
+                      );
+                    })}
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Please Select Lab</Form.Label>
+                  <Form.Select onChange={(e) => setSelectLab(e.target.value)}>
+                    <option>select Lab</option>
+                    {clinicalLabs
+                      ?.filter((ele) => ele.zipcode === SelectPincode)
+                      ?.map((item) => {
+                        return (
+                          <option value={item?._id}>
+                            {item?.ClinicLabName}
+                          </option>
+                        );
+                      })}
+                  </Form.Select>
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label> Select Test</Form.Label>
-              <Form.Select onChange={(e) => setSelectTest(e.target.value)}>
-                <option>select Test</option>
-                {TestCategoryList?.filter(
-                  (ele) => ele.LabId === SelectLab
-                )?.map((item) => {
-                  return <option value={item?._id}>{item?.testcatname}</option>;
-                })}
-              </Form.Select>
-            </Form.Group>
-          </Form>
+                <Form.Group className="mb-3">
+                  <Form.Label> Select Test</Form.Label>
+                  <Form.Select onChange={(e) => setSelectTest(e.target.value)}>
+                    <option>select Test</option>
+                    {TestCategoryList?.filter(
+                      (ele) => ele.LabId === SelectLab
+                    )?.map((item) => {
+                      return (
+                        <option value={item?._id}>{item?.testcatname}</option>
+                      );
+                    })}
+                  </Form.Select>
+                </Form.Group>
+              </Form>
+            )}
+            {ReferLab === false && (
+              <div>
+                <div style={{ textAlign: "center" }}>
+                  <b>Refer Janani Hospital</b>
+                </div>
+                <hr />
+                <FloatingLabel
+                  style={{ width: "400px" }}
+                  className="col-md-5 p-1"
+                  controlId="floatingName"
+                  label={hasSelectedOptions ? "" : "Select Lab Tests"}
+                >
+                  <Select
+                    isMulti
+                    name="labTests"
+                    options={HospitalLabList}
+                    className="basic-multi-select"
+                    classNamePrefix=""
+                    value={Labtests1}
+                    onChange={AddLabTest}
+                    placeholder=""
+                    style={{ width: "400px" }}
+                  />
+                </FloatingLabel>
+              </div>
+            )}
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose3}>
             Close
           </Button>
-          <Button variant="primary" onClick={ReferlabTest}>
-            Refer
-          </Button>
+          {ReferLab === true ? (
+            <Button variant="primary" onClick={ReferlabTest}>
+              Refer
+            </Button>
+          ) : (
+            <Button variant="primary" onClick={() => Referjananilab()}>
+              Refer to Janani Hospital
+            </Button>
+          )}
         </Modal.Footer>
       </Modal>
       <Modal size="md" show={show4} onHide={handleClose4}>
@@ -873,7 +975,7 @@ export const ReferDoctorPatientList = () => {
           <Modal.Title>Lab Test List</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{backgroundColor:"white",padding:"10px"}}>
+          <div style={{ backgroundColor: "white", padding: "10px" }}>
             <Table bordered>
               <thead>
                 <tr>
@@ -884,36 +986,36 @@ export const ReferDoctorPatientList = () => {
                 </tr>
               </thead>
               <tbody>
-                {ViewData?.Labtests?.map((item,i)=>{
-                  return(
+                {ViewData?.referlabtest?.map((item, i) => {
+                  return (
                     <tr>
-                    <td>{i+1}</td>
-                    <td>{item?.testid?.testcatname}</td>
-                    <td>{item?.labid?.ClinicLabName}</td>
-                    <td>
-                      {item?.testReport ? (
-                         <>
-                         <span>
-                           <a
-                             href={`http://localhost:8521/Doctor/${item?.testReport}`}
-                             target="blank_"
-                           >
-                             View Doc
-                           </a>
-                           <img
-                             src="./img/new.gif"
-                             style={{ width: "40px", height: "30px" }}
-                             alt=""
-                           />
-                         </span>
-                       </>
-                      ):(<p>Processing</p>)}
-                   
-                    </td>
-                  </tr>
-                  )
+                      <td>{i + 1}</td>
+                      <td>{item?.testid?.testcatname}</td>
+                      <td>{item?.labid?.ClinicLabName}</td>
+                      <td>
+                        {item?.testReport ? (
+                          <>
+                            <span>
+                              <a
+                                href={`http://localhost:8521/Doctor/${item?.testReport}`}
+                                target="blank_"
+                              >
+                                View Doc
+                              </a>
+                              <img
+                                src="./img/new.gif"
+                                style={{ width: "40px", height: "30px" }}
+                                alt=""
+                              />
+                            </span>
+                          </>
+                        ) : (
+                          <p>Processing</p>
+                        )}
+                      </td>
+                    </tr>
+                  );
                 })}
-               
               </tbody>
             </Table>
           </div>
