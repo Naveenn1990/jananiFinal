@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Table, Modal } from "react-bootstrap";
+import { LuView } from "react-icons/lu";
 
 export default function OPDtoIPD() {
   const [show1, setShow1] = useState(false);
@@ -11,6 +12,15 @@ export default function OPDtoIPD() {
   const handleShow1 = () => {
     setShow1(true);
   };
+
+  const [show2, setShow2] = useState(false);
+  const handleClose2 = () => {
+    setShow2(false);
+  };
+  const handleShow2 = () => {
+    setShow2(true);
+  };
+  const [View, setView] = useState({});
   const [category, setcategory] = useState([]);
   const [selectedPatientid, setselectedPatientid] = useState("");
   const getcategory = () => {
@@ -65,7 +75,8 @@ export default function OPDtoIPD() {
             <th>Sex</th>
             <th>Address</th>
             <th>Mobile</th>
-            <th>Age</th>
+            <th>Date Of Birth</th>
+            <th>Reason</th>
             <th>Action</th>
             {/* <th>Action</th>
             <th>Read More</th> */}
@@ -85,14 +96,20 @@ export default function OPDtoIPD() {
                     color: "red",
                   }}
                 >
+                  {/* D:\hospital_final_27-2-24\j-f-final\jananiFinal\public\img\unknown-img.png */}
                   <td>
                     <img
-                      src="/Images/doctor1.jpg"
+                      src={
+                        item?.profilepic
+                          ? `http://localhost:8521/PatientREG/${item?.profilepic}`
+                          : `/img/unknown-img.png`
+                      }
                       style={{
                         width: "50px",
                         height: "50px",
                         borderRadius: "50%",
                       }}
+                      alt="no-data"
                     />
                   </td>
                   <td>{item?.PatientId}</td>
@@ -101,6 +118,20 @@ export default function OPDtoIPD() {
                   <td>{item?.Address1}</td>
                   <td>{item?.PhoneNumber}</td>
                   <td>{item?.DOB}</td>
+                  <td>
+                    <LuView
+                      style={{
+                        color: "green",
+                        fontWeight: "bold",
+                        fontSize: "20px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        setView(item);
+                        handleShow2();
+                      }}
+                    />
+                  </td>
                   <td>
                     <Button
                       onClick={() => {
@@ -145,13 +176,36 @@ export default function OPDtoIPD() {
 
       <Modal show={show1} onHide={handleClose1}>
         <Modal.Header closeButton>
-          <Modal.Title></Modal.Title>
+          <Modal.Title>OPD To IPD</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div>Are you sure, you want to change OPD to IPD?</div>
+          <div style={{ color: "white" }}>
+            <b>Are you sure, you want to change OPD to IPD?</b>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose1}>
+            Close
+          </Button>
+          <Button variant="success" onClick={opdtoipdFn}>
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={show2} onHide={handleClose2}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reason</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <b style={{ color: "white" }}>
+              {View?.reasonForRecommendationOfIPD}
+            </b>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose2}>
             Close
           </Button>
           <Button variant="success" onClick={opdtoipdFn}>

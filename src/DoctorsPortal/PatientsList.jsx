@@ -92,6 +92,8 @@ export const PatientsList = () => {
       });
   };
 
+  const [reasonForRecommendationOfIPD, setreasonForRecommendationOfIPD] =
+    useState("");
   const getDocReqFromOPDtoIPD = async () => {
     try {
       const config = {
@@ -102,6 +104,7 @@ export const PatientsList = () => {
         data: {
           requestedDoc: doctorData?._id,
           patientid: selectedPatient,
+          reasonForRecommendationOfIPD,
         },
       };
       const res = await axios(config);
@@ -615,12 +618,18 @@ export const PatientsList = () => {
           <Modal.Title>OPD to IPD</Modal.Title>
         </Modal.Header>
         <Modal.Body className="all-bg-green p-4">
-          <div style={{ color: "white", margin: "10px" }}>
-            Are you sure, you want to admit this patient to the IPD?
+          <div style={{ margin: "10px" }}>
+            <label style={{ color: "white" }}>
+              <b>Reason for admitting the patient to IPD: </b>
+            </label>
+            <textarea
+              style={{ width: "100%" }}
+              // cols={50}
+              rows={5}
+              placeholder="Reason..."
+              onChange={(e) => setreasonForRecommendationOfIPD(e.target.value)}
+            ></textarea>
           </div>
-          {/* <div style={{ margin: "10px" }}>
-            <textarea cols={50} rows={10} placeholder="Reason"></textarea>
-          </div> */}
         </Modal.Body>
         <Modal.Footer>
           <button onClick={medHistoryClose2} className="btn btn-danger">
