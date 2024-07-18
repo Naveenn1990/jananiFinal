@@ -37,7 +37,7 @@ export default function OPDtoIPDBedAssign() {
         </div>
       </div>
 
-      <div style={{ color: "white", marginTop: "10px" }}>
+      <div style={{ marginTop: "10px" }}>
         <label>
           <b>Recommendation By: </b>
         </label>
@@ -72,7 +72,7 @@ export default function OPDtoIPDBedAssign() {
         </Table>
       </div>
 
-      <div style={{ color: "white", marginTop: "10px" }}>
+      <div style={{ marginTop: "10px" }}>
         <label>
           <b>Assign Bed: </b>
         </label>
