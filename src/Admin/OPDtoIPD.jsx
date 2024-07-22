@@ -1,11 +1,22 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
+import { Button, Table, Modal } from "react-bootstrap";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
+=======
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import { LuView } from "react-icons/lu";
 import { FaPlus } from "react-icons/fa";
 import { GrView } from "react-icons/gr";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
 
 export default function OPDtoIPD() {
   const navigate = useNavigate();
@@ -18,6 +29,9 @@ export default function OPDtoIPD() {
   const handleShow1 = () => {
     setShow1(true);
   };
+<<<<<<< HEAD
+  const [data, setdata] = useState([]);
+=======
 
   const [show2, setShow2] = useState(false);
   const handleClose2 = () => {
@@ -41,13 +55,18 @@ export default function OPDtoIPD() {
 
   const [View, setView] = useState({});
   const [category, setcategory] = useState([]);
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
   const [selectedPatientid, setselectedPatientid] = useState("");
-  const getcategory = () => {
+  const getdata = () => {
     axios
       .get("http://localhost:8521/api/user/getPatientList")
       .then(function (response) {
         // handle success
-        setcategory(response.data.UsersInfo);
+        setdata(
+          response.data.UsersInfo?.filter(
+            (val) => val?.registrationType === "OPD" && val?.docReqToIPD
+          )
+        );
       })
       .catch(function (error) {
         // handle error
@@ -70,7 +89,7 @@ export default function OPDtoIPD() {
       let response = await axios(config);
       if (response.status === 200) {
         alert(response.data.success);
-        getcategory();
+        getdata();
         handleClose1();
       }
     } catch (error) {
@@ -130,18 +149,161 @@ export default function OPDtoIPD() {
   };
 
   useEffect(() => {
-    getcategory();
+    getdata();
   }, []);
 
+<<<<<<< HEAD
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 10;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("OPD-IPD-Conversion");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
+  console.log("data", data);
+
+=======
   console.log("PatientDetailsView: ", PatientDetailsView);
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
   return (
     <div>
-      <Table responsive="md" style={{ marginTop: "1%" }}>
-        <thead>
-          <tr style={{ fontSize: "15px", textAlign: "center" }}>
-            <th>Profile</th>
-            <th>Patient-Id</th>
+      <h6
+        style={{
+          fontSize: "22px",
+          fontWeight: "600",
+          color: "grey",
+          marginTop: "2%",
+        }}
+      >
+        OPD to IPD Conversion
+      </h6>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "2%",
+          marginBottom: "2%",
+        }}
+      >
+        <input
+          placeholder="Search"
+          style={{
+            padding: "5px 10px",
+            border: "1px solid #20958c",
+            borderRadius: "0px",
+          }}
+          onChange={handleFilter}
+        />
+        <button
+          style={{
+            backgroundColor: "#20958c",
+            color: "white",
+            border: "none",
+            fontSize: "12px",
+            borderRadius: "4px",
+          }}
+          onClick={ExportToExcel}
+        >
+          EXPORT <AiFillFileExcel />
+        </button>
+      </div>
+      <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+        <Table responsive="md" style={{ marginTop: "1%" }}>
+          <thead>
+            <tr style={{ fontSize: "15px", textAlign: "center" }}>
+              <th>Profile</th>
+              <th>Patient-Id</th>
 
+<<<<<<< HEAD
+              <th> Name</th>
+              <th>Sex</th>
+              <th>Address</th>
+              <th>Mobile</th>
+              <th>Age</th>
+              <th>Action</th>
+              {/* <th>Action</th>
+            <th>Read More</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {search.length > 0
+              ? tableFilter
+                  .slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item, index) => {
+                    return (
+                      <tr
+                        style={{
+                          fontSize: "15px",
+                          textAlign: "center",
+                          color: "red",
+                        }}
+                      >
+                        <td>
+                          <img
+                            src="/Images/doctor1.jpg"
+                            style={{
+                              width: "50px",
+                              height: "50px",
+                              borderRadius: "50%",
+                            }}
+                          />
+                        </td>
+                        <td>{item?.PatientId}</td>
+                        <td>{item?.Firstname}</td>
+                        <td>{item?.Gender}</td>
+                        <td>{item?.Address1}</td>
+                        <td>{item?.PhoneNumber}</td>
+                        <td>{item?.DOB}</td>
+                        <td>
+                          <Button
+                            onClick={() => {
+                              setselectedPatientid(item?._id);
+                              handleShow1();
+                            }}
+                            style={{ backgroundColor: "#20958C" }}
+                          >
+                            OPD to IPD
+                          </Button>
+                        </td>
+                        {/* <td>
+=======
             <th> Name</th>
             <th>Sex</th>
             <th>Address</th>
@@ -250,6 +412,7 @@ export default function OPDtoIPD() {
                     </Button>
                   </td>
                   {/* <td>
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
                     <div
                       style={{
                         display: "flex",
@@ -274,6 +437,97 @@ export default function OPDtoIPD() {
                       Read More
                     </button>
                   </td> */}
+<<<<<<< HEAD
+                      </tr>
+                    );
+                  })
+              : data
+                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item, index) => {
+                    return (
+                      <tr
+                        style={{
+                          fontSize: "15px",
+                          textAlign: "center",
+                          color: "red",
+                        }}
+                      >
+                        <td>
+                          <img
+                            src="/Images/doctor1.jpg"
+                            style={{
+                              width: "50px",
+                              height: "50px",
+                              borderRadius: "50%",
+                            }}
+                          />
+                        </td>
+                        <td>{item?.PatientId}</td>
+                        <td>{item?.Firstname}</td>
+                        <td>{item?.Gender}</td>
+                        <td>{item?.Address1}</td>
+                        <td>{item?.PhoneNumber}</td>
+                        <td>{item?.DOB}</td>
+                        <td>
+                          <Button
+                            onClick={() => {
+                              setselectedPatientid(item?._id);
+                              handleShow1();
+                            }}
+                            style={{ backgroundColor: "#20958C" }}
+                          >
+                            OPD to IPD
+                          </Button>
+                        </td>
+                        {/* <td>
+                    <div
+                      style={{
+                        display: "flex",
+                        textAlign: "center",
+                        justifyContent: "space-evenly",
+                      }}
+                    >
+                      <MdEdit style={{ color: "#20958c", marginRight: "1%" }} />
+                      <AiFillDelete style={{ color: "red" }} />
+                    </div>
+                  </td>
+                  <td>
+                    <button
+                      style={{
+                        border: "none",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "0px",
+                      }}
+                      onClick={() => setShow(true)}
+                    >
+                      Read More
+                    </button>
+                  </td> */}
+                      </tr>
+                    );
+                  })}
+          </tbody>
+        </Table>
+      </div>
+      <div style={{ display: "flex" }}>
+        <p style={{ width: "100%", marginTop: "20px" }}>
+          Total Count: {data?.length}
+        </p>
+        <ReactPaginate
+          previousLabel={"Back"}
+          nextLabel={"Next"}
+          pageCount={pageCount}
+          onPageChange={changePage}
+          containerClassName={"paginationBttns"}
+          previousLinkClassName={"previousBttn"}
+          nextLinkClassName={"nextBttn"}
+          disabledClassName={"paginationDisabled"}
+          activeClassName={"paginationActive"}
+        />
+      </div>
+      <Modal show={show1} onHide={handleClose1}>
+=======
                 </tr>
               );
             })}
@@ -281,6 +535,7 @@ export default function OPDtoIPD() {
       </Table>
 
       <Modal show={show1} size="lg" onHide={handleClose1}>
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
         <Modal.Header closeButton>
           <Modal.Title>OPD To IPD</Modal.Title>
         </Modal.Header>

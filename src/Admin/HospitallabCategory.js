@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Table } from "react-bootstrap";
-import { AiFillDelete, AiFillFileExcel } from "react-icons/ai";
 import { BsFillEyeFill } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { FaUserMd } from "react-icons/fa";
 import { ImLab } from "react-icons/im";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Pagination, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
 
 export default function HospitallabCategory() {
   const [show, setShow] = useState(false);
@@ -66,7 +71,10 @@ export default function HospitallabCategory() {
     }
   };
 
-  const [HospitalLabCatList, setHospitalLabCatList] = useState([]);
+  useEffect(() => {
+    HospitallabCategories();
+  }, []);
+  const [data, setdata] = useState([]);
   const HospitallabCategories = () => {
     axios
       .get("http://localhost:8521/api/admin/HospitalLabTestCategoryList")
@@ -74,15 +82,13 @@ export default function HospitallabCategory() {
         // handle success
         if (response.status === 200) {
           const data = response.data.list;
-          setHospitalLabCatList(data);
-          setFilteredCatList(data);
-          setPagination(data);
+          setdata(data);
         }
       })
       .catch(function (error) {
         // handle error
         console.log(error);
-        setHospitalLabCatList([]);
+        setdata([]);
       });
   };
 
@@ -147,55 +153,39 @@ export default function HospitallabCategory() {
 
   // search
   const [search, setSearch] = useState("");
-  const [FilteredCatList, setFilteredCatList] = useState([]);
-  function handleFilter() {
-    if (search != "") {
-      // setSearch(search);
-      const filterTable = HospitalLabCatList.filter((o) =>
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 10;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data.filter((o) =>
         Object.keys(o).some((k) =>
-          String(o[k]).toLowerCase().includes(search.toLowerCase())
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
         )
       );
-      setFilteredCatList([...filterTable]);
+      settableFilter([...filterTable]);
     } else {
-      // setSearch(search);
-      // vialList();
-      setFilteredCatList([...HospitalLabCatList]);
+      setSearch(e.target.value);
+      setdata([...data]);
     }
-  }
-
-  useEffect(() => {
-    handleFilter();
-  }, [search]);
-
-  useEffect(() => {
-    HospitallabCategories();
-  }, []);
-
-  // ==========================
-
-  // Pagination
-  const [pagination, setPagination] = useState([]);
-  const [pageNumber, setPageNumber] = useState(0);
-  const usersPerPage = 4;
-  const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(pagination?.length / usersPerPage);
-  const changePage = (selected) => {
-    setPageNumber(selected);
   };
 
   const exportType = "xls";
 
-  const [fileName, setfileName] = useState("Lab test categories");
+  const [fileName, setfileName] = useState("Hospital-Lab-Category");
 
   const ExportToExcel = () => {
     if (fileName) {
-      if (HospitalLabCatList.length != 0) {
-        exportFromJSON({
-          data: JSON.parse(JSON.stringify(HospitalLabCatList)),
-          fileName,
-          exportType,
-        });
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
         // setfileName("");
       } else {
         alert("There is no data to export");
@@ -205,6 +195,8 @@ export default function HospitallabCategory() {
       alert("Enter file name to export");
     }
   };
+
+  console.log("data", data);
 
   return (
     <div>
@@ -217,14 +209,13 @@ export default function HospitallabCategory() {
           }}
         >
           <input
-            placeholder="Search Hospital Lab Category"
+            placeholder="Search"
             style={{
               padding: "5px 10px",
               border: "1px solid #20958c",
               borderRadius: "0px",
             }}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleFilter}
           />
           <button
             style={{
@@ -484,73 +475,126 @@ export default function HospitallabCategory() {
           </Modal.Footer>
         </Modal>
 
-        <Table responsive="md" style={{ marginTop: "1%" }}>
-          <thead>
-            <tr style={{ fontSize: "15px", textAlign: "center" }}>
-              <th>S.no.</th>
-              <th>Test Category</th>
-              <th>Image</th>
+        <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+          <Table responsive="md" style={{ marginTop: "1%" }}>
+            <thead>
+              <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                <th>S.no.</th>
+                <th>Test Category</th>
+                <th>Image</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              {search.length > 0
+                ? tableFilter
+                    .slice(pagesVisited, pagesVisited + usersPerPage)
+                    ?.map((item, index) => {
+                      return (
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                          <td>{index + 1}</td>
+                          <td>{item?.testCategory}</td>
+                          <td>
+                            <img
+                              src={`http://localhost:8521/HospitalLabTest/${item?.testCategoryImg}`}
+                              style={{ width: "100px", height: "80px" }}
+                              alt="no-img"
+                            />
+                          </td>
 
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody>
-            {FilteredCatList?.slice(
-              pagesVisited,
-              pagesVisited + usersPerPage
-            )?.map((val, index) => {
-              return (
-                <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                  <td>{index + 1}</td>
-                  <td>{val?.testCategory}</td>
-                  <td>
-                    <img
-                      src={`http://localhost:8521/HospitalLabTest/${val?.testCategoryImg}`}
-                      style={{ width: "100px" }}
-                      alt="no-img"
-                    />
-                  </td>
+                          <td>
+                            <div
+                              style={{
+                                display: "flex",
+                                textAlign: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <MdEdit
+                                style={{
+                                  color: "#20958c",
+                                  marginRight: "15px",
+                                }}
+                                onClick={() => {
+                                  setView(item);
+                                  handleShow4();
+                                }}
+                              />
+                              <AiFillDelete
+                                style={{ color: "red" }}
+                                onClick={() => {
+                                  setView(item);
+                                  handleShow1();
+                                }}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                : data
+                    ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                    ?.map((item, index) => {
+                      return (
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                          <td>{index + 1}</td>
+                          <td>{item?.testCategory}</td>
+                          <td>
+                            <img
+                              src={`http://localhost:8521/HospitalLabTest/${item?.testCategoryImg}`}
+                              style={{ width: "100px" }}
+                              alt="no-img"
+                            />
+                          </td>
 
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        textAlign: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <MdEdit
-                        style={{ color: "#20958c", marginRight: "15px" }}
-                        onClick={() => {
-                          setView(val);
-                          handleShow4();
-                        }}
-                      />
-                      <AiFillDelete
-                        style={{ color: "red" }}
-                        onClick={() => {
-                          setView(val);
-                          handleShow1();
-                        }}
-                      />
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
-
-        <div style={{ float: "left" }} className="my-3 d-flex justify-end">
-          <Stack spacing={2}>
-            <Pagination
-              count={pageCount}
-              onChange={(event, value) => {
-                changePage(value - 1);
-              }}
-              color="primary"
-            />
-          </Stack>
+                          <td>
+                            <div
+                              style={{
+                                display: "flex",
+                                textAlign: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <MdEdit
+                                style={{
+                                  color: "#20958c",
+                                  marginRight: "15px",
+                                }}
+                                onClick={() => {
+                                  setView(item);
+                                  handleShow4();
+                                }}
+                              />
+                              <AiFillDelete
+                                style={{ color: "red" }}
+                                onClick={() => {
+                                  setView(item);
+                                  handleShow1();
+                                }}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+            </tbody>
+          </Table>
+        </div>
+        <div style={{ display: "flex" }}>
+          <p style={{ width: "100%", marginTop: "20px" }}>
+            Total Count: {data?.length}
+          </p>
+          <ReactPaginate
+            previousLabel={"Back"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
         </div>
       </div>
     </div>

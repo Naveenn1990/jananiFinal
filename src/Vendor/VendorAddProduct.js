@@ -172,7 +172,7 @@ export const VendorAddProducts = () => {
           }}
         >
           <input
-            placeholder="Search Hospital doctors"
+            placeholder="Search"
             style={{
               padding: "5px 10px",
               border: "1px solid #20958c",

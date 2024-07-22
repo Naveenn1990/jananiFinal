@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Table } from "react-bootstrap";
-import { AiFillDelete, AiFillFileExcel } from "react-icons/ai";
 import { MdEdit } from "react-icons/md";
 import { ImLab } from "react-icons/im";
 import { IoEye } from "react-icons/io5";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Pagination, Stack } from "@mui/material";
 import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
 
 export default function Hospitallab() {
   const [show, setShow] = useState(false);
@@ -286,7 +290,7 @@ export default function Hospitallab() {
     }
   };
 
-  const [HospitalLabList, setHospitalLabList] = useState([]);
+  const [data, setdata] = useState([]);
   const [HospitalLabListImmutable, setHospitalLabListImmutable] = useState([]);
   const HospitallabList = () => {
     axios
@@ -295,16 +299,13 @@ export default function Hospitallab() {
         // handle success
         if (response.status === 200) {
           const data = response.data.HospitalLabTests;
-          setHospitalLabList(data);
+          setdata(data);
           setHospitalLabListImmutable(data);
-          setFilteredCatList(data);
-          setPagination(data);
         }
       })
       .catch(function (error) {
         // handle error
         console.log(error);
-        setHospitalLabList([]);
       });
   };
 
@@ -327,27 +328,6 @@ export default function Hospitallab() {
       });
   };
 
-  // search
-  const [search, setSearch] = useState("");
-  const [FilteredCatList, setFilteredCatList] = useState([]);
-  function handleFilter() {
-    if (search != "") {
-      // setSearch(search);
-      const filterTable = HospitalLabList.filter((o) =>
-        Object.keys(o).some((k) =>
-          String(o[k]).toLowerCase().includes(search.toLowerCase())
-        )
-      );
-      setFilteredCatList([...filterTable]);
-    } else {
-      setFilteredCatList([...HospitalLabList]);
-    }
-  }
-
-  useEffect(() => {
-    handleFilter();
-  }, [search]);
-
   useEffect(() => {
     HospitallabCategories();
     HospitallabList();
@@ -356,14 +336,30 @@ export default function Hospitallab() {
 
   // ==========================
 
-  // Pagination
-  const [pagination, setPagination] = useState([]);
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
-  const usersPerPage = 2;
+
+  const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(pagination?.length / usersPerPage);
-  const changePage = (selected) => {
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
     setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
   };
 
   const exportType = "xls";
@@ -372,12 +368,8 @@ export default function Hospitallab() {
 
   const ExportToExcel = () => {
     if (fileName) {
-      if (HospitalLabList.length != 0) {
-        exportFromJSON({
-          data: JSON.parse(JSON.stringify(HospitalLabList)),
-          fileName,
-          exportType,
-        });
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
         // setfileName("");
       } else {
         alert("There is no data to export");
@@ -387,6 +379,8 @@ export default function Hospitallab() {
       alert("Enter file name to export");
     }
   };
+
+  console.log("data", data);
 
   return (
     <div>
@@ -399,14 +393,13 @@ export default function Hospitallab() {
           }}
         >
           <input
-            value={search}
-            placeholder="Search Hospital Lab test"
+            placeholder="Search"
             style={{
               padding: "5px 10px",
               border: "1px solid #20958c",
               borderRadius: "0px",
             }}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleFilter}
           />
           <button
             style={{
@@ -1377,83 +1370,83 @@ export default function Hospitallab() {
               </tr>
             </thead>
             <tbody>
-              {FilteredCatList?.slice(
-                pagesVisited,
-                pagesVisited + usersPerPage
-              )?.map((valitem, index) => {
-                return (
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td>{index + 1}</td>
-                    <td>{valitem?.testCategory?.testCategory}</td>
-                    <td>{valitem?.testName}</td>
-                    <td>
-                      <img
-                        src={`http://localhost:8521/HospitalLabTest/${valitem?.testImg}`}
-                        style={{ width: "100px" }}
-                        alt="no-img"
-                      />
-                    </td>
-                    <td>{valitem?.priceNonInsurance}</td>
-                    <td>{valitem?.priceInsurance}</td>
-                    <td>{valitem?.unit}</td>
-                    {/* <td>{valitem?.beforeFoodRefVal}</td>
+              {search.length > 0
+                ? tableFilter
+                    .slice(pagesVisited, pagesVisited + usersPerPage)
+                    ?.map((valitem, index) => {
+                      return (
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                          <td>{index + 1}</td>
+                          <td>{valitem?.testCategory?.testCategory}</td>
+                          <td>{valitem?.testName}</td>
+                          <td>
+                            <img
+                              src={`http://localhost:8521/HospitalLabTest/${valitem?.testImg}`}
+                              style={{ width: "100px" }}
+                              alt="no-img"
+                            />
+                          </td>
+                          <td>{valitem?.priceNonInsurance}</td>
+                          <td>{valitem?.priceInsurance}</td>
+                          <td>{valitem?.unit}</td>
+                          {/* <td>{valitem?.beforeFoodRefVal}</td>
                   <td>{valitem?.afterFoodRefVal}</td> */}
-                    <td>{valitem?.generalRefVal}</td>
-                    <td>{valitem?.tat} Hr.</td>
-                    <td>
-                      {!valitem?.testDescription ? (
-                        "--/--"
-                      ) : (
-                        <IoEye
-                          style={{ fontSize: "20px", color: "#20958c" }}
-                          onClick={() => {
-                            setShowTestDetails(valitem?.testDescription);
-                            handleShow7();
-                          }}
-                        />
-                      )}{" "}
-                    </td>
-                    <td>
-                      <IoEye
-                        style={{ fontSize: "20px", color: "#20958c" }}
-                        onClick={() => {
-                          setvialneededArr(valitem?.vialsneeded);
-                          handleShowvialDetailsModal();
-                        }}
-                      />
-                    </td>
-                    <td>
-                      <MdEdit
-                        style={{ color: "#20958c", marginRight: "1%" }}
-                        onClick={() => {
-                          setView(valitem);
-                          handleShow5();
-                        }}
-                      />
-                    </td>
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          textAlign: "center",
-                          justifyContent: "space-evenly",
-                        }}
-                      >
-                        <MdEdit
-                          style={{ color: "#20958c", marginRight: "1%" }}
-                          onClick={() => {
-                            setView(valitem);
-                            handleShow4();
-                          }}
-                        />
-                        <AiFillDelete
-                          style={{ color: "red" }}
-                          onClick={() => {
-                            setView(valitem);
-                            handleShow6();
-                          }}
-                        />
-                        {/* <button
+                          <td>{valitem?.generalRefVal}</td>
+                          <td>{valitem?.tat} Hr.</td>
+                          <td>
+                            {!valitem?.testDescription ? (
+                              "--/--"
+                            ) : (
+                              <IoEye
+                                style={{ fontSize: "20px", color: "#20958c" }}
+                                onClick={() => {
+                                  setShowTestDetails(valitem?.testDescription);
+                                  handleShow7();
+                                }}
+                              />
+                            )}{" "}
+                          </td>
+                          <td>
+                            <IoEye
+                              style={{ fontSize: "20px", color: "#20958c" }}
+                              onClick={() => {
+                                setvialneededArr(valitem?.vialsneeded);
+                                handleShowvialDetailsModal();
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <MdEdit
+                              style={{ color: "#20958c", marginRight: "1%" }}
+                              onClick={() => {
+                                setView(valitem);
+                                handleShow5();
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <div
+                              style={{
+                                display: "flex",
+                                textAlign: "center",
+                                justifyContent: "space-evenly",
+                              }}
+                            >
+                              <MdEdit
+                                style={{ color: "#20958c", marginRight: "1%" }}
+                                onClick={() => {
+                                  setView(valitem);
+                                  handleShow4();
+                                }}
+                              />
+                              <AiFillDelete
+                                style={{ color: "red" }}
+                                onClick={() => {
+                                  setView(valitem);
+                                  handleShow6();
+                                }}
+                              />
+                              {/* <button
                         style={{
                           fontSize: "12px",
                           border: "none",
@@ -1465,25 +1458,121 @@ export default function Hospitallab() {
                       >
                         BLOCK
                       </button> */}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                : data
+                    ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                    ?.map((valitem, index) => {
+                      return (
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                          <td>{index + 1}</td>
+                          <td>{valitem?.testCategory?.testCategory}</td>
+                          <td>{valitem?.testName}</td>
+                          <td>
+                            <img
+                              src={`http://localhost:8521/HospitalLabTest/${valitem?.testImg}`}
+                              style={{ width: "100px" }}
+                              alt="no-img"
+                            />
+                          </td>
+                          <td>{valitem?.priceNonInsurance}</td>
+                          <td>{valitem?.priceInsurance}</td>
+                          <td>{valitem?.unit}</td>
+                          {/* <td>{valitem?.beforeFoodRefVal}</td>
+                  <td>{valitem?.afterFoodRefVal}</td> */}
+                          <td>{valitem?.generalRefVal}</td>
+                          <td>{valitem?.tat} Hr.</td>
+                          <td>
+                            {!valitem?.testDescription ? (
+                              "--/--"
+                            ) : (
+                              <IoEye
+                                style={{ fontSize: "20px", color: "#20958c" }}
+                                onClick={() => {
+                                  setShowTestDetails(valitem?.testDescription);
+                                  handleShow7();
+                                }}
+                              />
+                            )}{" "}
+                          </td>
+                          <td>
+                            <IoEye
+                              style={{ fontSize: "20px", color: "#20958c" }}
+                              onClick={() => {
+                                setvialneededArr(valitem?.vialsneeded);
+                                handleShowvialDetailsModal();
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <MdEdit
+                              style={{ color: "#20958c", marginRight: "1%" }}
+                              onClick={() => {
+                                setView(valitem);
+                                handleShow5();
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <div
+                              style={{
+                                display: "flex",
+                                textAlign: "center",
+                                justifyContent: "space-evenly",
+                              }}
+                            >
+                              <MdEdit
+                                style={{ color: "#20958c", marginRight: "1%" }}
+                                onClick={() => {
+                                  setView(valitem);
+                                  handleShow4();
+                                }}
+                              />
+                              <AiFillDelete
+                                style={{ color: "red" }}
+                                onClick={() => {
+                                  setView(valitem);
+                                  handleShow6();
+                                }}
+                              />
+                              {/* <button
+                        style={{
+                          fontSize: "12px",
+                          border: "none",
+                          backgroundColor: "#20958c",
+                          color: "white",
+                          fontWeight: "600",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        BLOCK
+                      </button> */}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
             </tbody>
           </Table>
-
-          <div style={{ float: "left" }} className="my-3 d-flex justify-end">
-            <Stack spacing={2}>
-              <Pagination
-                count={pageCount}
-                onChange={(event, value) => {
-                  changePage(value - 1);
-                }}
-                color="primary"
-              />
-            </Stack>
-          </div>
+        </div>
+        <div style={{ display: "flex" }}>
+          <p style={{ width: "100%", marginTop: "20px" }}>
+            Total Count: {data?.length}
+          </p>
+          <ReactPaginate
+            previousLabel={"Back"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
         </div>
       </div>
     </div>
