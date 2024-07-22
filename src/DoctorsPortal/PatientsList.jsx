@@ -155,6 +155,29 @@ export const PatientsList = () => {
     getAppointmentList();
   }, []);
 
+  const [filteredPatients, setFilteredPatients] = useState([]);
+
+  useEffect(() => {
+    if (FilterPatientType === "OPD") {
+      setFilteredPatients([
+        ...patientlist?.filter(
+          (val) => val?.registrationType === FilterPatientType
+        ),
+      ]);
+    }
+    if (FilterPatientType === "IPD") {
+      setFilteredPatients([
+        ...patientlist?.filter(
+          (val) => val?.registrationType === FilterPatientType
+        ),
+      ]);
+    }
+  }, [patientlist, FilterPatientType]);
+  //  &&
+  //   val?.consultationBillDetails[
+  //     val?.consultationBillDetails?.length - 1
+  //   ]["Doctor"]?.toString() === doctor?._id?.toString()
+
   console.log("patientlist: ", patientlist);
   const [selectedcauseid, setselectedcauseid] = useState("");
   const [Patientcauseid, setPatientcauseid] = useState("");
@@ -179,184 +202,182 @@ export const PatientsList = () => {
       </Button>
       <Container className="p-4">
         <div className="row mb-4">
-          {patientlist
-            ?.filter((val) => val?.registrationType === FilterPatientType)
-            ?.map((item) => {
-              return (
-                <div className="col-lg-4 mb-3">
-                  <Card
-                    style={{
-                      width: "20rem",
-                      boxShadow: "0px 8px 16px 0px rgba(0, 0, 0, 0.2)",
-                    }}
-                  >
-                    <Card.Header>
-                      <div className="d-flex gap-3 align-items-center ">
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <div style={{ marginRight: "10px" }}>
-                            <FaUserTag
-                              style={{
-                                fontSize: "50px",
-                                borderRadius: "50%",
-                                margin: "4px",
-                              }}
-                            />
-                            <span
-                              className="fw-bold"
-                              style={{ color: "rgb(32, 139, 140)" }}
-                            >
-                              {item?.Firstname}{" "}
-                            </span>
-                          </div>
-                          <div style={{ marginLeft: "62px" }}>
-                            <button
-                              title="medical History"
-                              className="table-details-btn"
-                              onClick={() => {
-                                setchosenPatient(item._id);
-                                medHistoryShow1();
-                              }}
-                            >
-                              past medical observation
-                            </button>
-                          </div>
+          {filteredPatients?.map((item) => {
+            return (
+              <div className="col-lg-4 mb-3">
+                <Card
+                  style={{
+                    width: "20rem",
+                    boxShadow: "0px 8px 16px 0px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
+                  <Card.Header>
+                    <div className="d-flex gap-3 align-items-center ">
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ marginRight: "10px" }}>
+                          <FaUserTag
+                            style={{
+                              fontSize: "50px",
+                              borderRadius: "50%",
+                              margin: "4px",
+                            }}
+                          />
+                          <span
+                            className="fw-bold"
+                            style={{ color: "rgb(32, 139, 140)" }}
+                          >
+                            {item?.Firstname}{" "}
+                          </span>
                         </div>
-                        <div>
-                          {/* <span className='ms-auto fw-bold'>10:00 - 10:30 AM</span> */}
+                        <div style={{ marginLeft: "62px" }}>
+                          <button
+                            title="medical History"
+                            className="table-details-btn"
+                            onClick={() => {
+                              setchosenPatient(item._id);
+                              medHistoryShow1();
+                            }}
+                          >
+                            past medical observation
+                          </button>
                         </div>
                       </div>
-                      <p>Patient Id : {item?.PatientId} </p>
-                    </Card.Header>
+                      <div>
+                        {/* <span className='ms-auto fw-bold'>10:00 - 10:30 AM</span> */}
+                      </div>
+                    </div>
+                    <p>Patient Id : {item?.PatientId} </p>
+                  </Card.Header>
 
-                    <ListGroup variant="flush">
-                      <ListGroup.Item className="d-flex">
-                        <div style={{ width: "82%" }}>
-                          <p>
-                            {" "}
-                            <FontAwesomeIcon
-                              icon={faLocationDot}
-                              className="me-3 "
-                            />
-                            {item?.Address1}{" "}
-                          </p>
-                          <p>
-                            {" "}
-                            <FontAwesomeIcon icon={faPhoneVolume} /> +
-                            {item?.PhoneNumber}
-                          </p>
-                        </div>
-                        <div>
-                          {FilterPatientType === "OPD" ? (
-                            <button
-                              title="Daily Doctor report"
-                              className="table-details-btn mb-2"
-                              onClick={() => {
-                                handleShow6();
-                                setselectedcauseid(item);
-                              }}
-                            >
-                              Prescription
-                            </button>
-                          ) : (
-                            <></>
-                          )}
-                          {FilterPatientType === "IPD" ? (
-                            <button
-                              title="Daily Doctor report"
-                              className="table-details-btn mb-2"
-                              // onClick={() => {
-                              //   setchosenPatient(item._id);
-                              //   medHistoryShow1();
-                              // }}
-                              // onClick={() => navigate(`/doctorforms`, { state: { item, causeId: selectedcauseid } })}
-                              onClick={() => {
-                                handleShow3();
-                                setselectedcauseid(item);
-                              }}
-                            >
-                              DDR +
-                            </button>
-                          ) : (
-                            <></>
-                          )}
-                          {FilterPatientType === "IPD" ? (
-                            <button
-                              title="Daily Doctor report"
-                              className="table-details-btn mb-2"
-                              // onClick={() => {
-                              //   setchosenPatient(item._id);
-                              //   medHistoryShow1();
-                              // }}
-                              // onClick={() => navigate(`/doctorforms`, { state: { item, causeId: selectedcauseid } })}
-                              onClick={() => {
-                                handleShow5();
-                                setselectedcauseid(item);
-                              }}
-                            >
-                              DDR <GrView />
-                            </button>
-                          ) : (
-                            <></>
-                          )}
-
-                          {FilterPatientType === "IPD" ? (
-                            <button
-                              title="Daily Doctor report"
-                              className="table-details-btn"
-                              // onClick={() => {
-                              //   setchosenPatient(item._id);
-                              //   medHistoryShow1();
-                              // }}
-                            >
-                              Other Reports
-                            </button>
-                          ) : (
-                            <></>
-                          )}
-                        </div>
-                      </ListGroup.Item>
-                      <ListGroup.Item>
-                        {/* <p>Blood Group: O+</p> */}
-                        <p className="d-flex justify-content-between">
-                          <span>
-                            Reports:{" "}
-                            <FontAwesomeIcon
-                              icon={faFilePdf}
-                              className="text-danger"
-                            />
-                          </span>
-                          {item.registrationType === "OPD" ? (
-                            <span>
-                              <Button
-                                onClick={() => {
-                                  setselectedPatient(item);
-                                  medHistoryShow2();
-                                }}
-                              >
-                                Admit to IPD
-                              </Button>
-                            </span>
-                          ) : (
-                            <></>
-                          )}
+                  <ListGroup variant="flush">
+                    <ListGroup.Item className="d-flex">
+                      <div style={{ width: "82%" }}>
+                        <p>
+                          {" "}
+                          <FontAwesomeIcon
+                            icon={faLocationDot}
+                            className="me-3 "
+                          />
+                          {item?.Address1}{" "}
                         </p>
-                      </ListGroup.Item>
-                      <ListGroup.Item className="text-center">
-                        <button
-                          onClick={() => {
-                            ReadMoreShow();
-                            setShowPatientData(item);
-                          }}
-                          className="table-details-btn"
-                        >
-                          Read More
-                        </button>
-                      </ListGroup.Item>
-                    </ListGroup>
-                  </Card>
-                </div>
-              );
-            })}
+                        <p>
+                          {" "}
+                          <FontAwesomeIcon icon={faPhoneVolume} /> +
+                          {item?.PhoneNumber}
+                        </p>
+                      </div>
+                      <div>
+                        {FilterPatientType === "OPD" ? (
+                          <button
+                            title="Daily Doctor report"
+                            className="table-details-btn mb-2"
+                            onClick={() => {
+                              handleShow6();
+                              setselectedcauseid(item);
+                            }}
+                          >
+                            Prescription
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+                        {FilterPatientType === "IPD" ? (
+                          <button
+                            title="Daily Doctor report"
+                            className="table-details-btn mb-2"
+                            // onClick={() => {
+                            //   setchosenPatient(item._id);
+                            //   medHistoryShow1();
+                            // }}
+                            // onClick={() => navigate(`/doctorforms`, { state: { item, causeId: selectedcauseid } })}
+                            onClick={() => {
+                              handleShow3();
+                              setselectedcauseid(item);
+                            }}
+                          >
+                            DDR +
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+                        {FilterPatientType === "IPD" ? (
+                          <button
+                            title="Daily Doctor report"
+                            className="table-details-btn mb-2"
+                            // onClick={() => {
+                            //   setchosenPatient(item._id);
+                            //   medHistoryShow1();
+                            // }}
+                            // onClick={() => navigate(`/doctorforms`, { state: { item, causeId: selectedcauseid } })}
+                            onClick={() => {
+                              handleShow5();
+                              setselectedcauseid(item);
+                            }}
+                          >
+                            DDR <GrView />
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+
+                        {FilterPatientType === "IPD" ? (
+                          <button
+                            title="Daily Doctor report"
+                            className="table-details-btn"
+                            // onClick={() => {
+                            //   setchosenPatient(item._id);
+                            //   medHistoryShow1();
+                            // }}
+                          >
+                            Other Reports
+                          </button>
+                        ) : (
+                          <></>
+                        )}
+                      </div>
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      {/* <p>Blood Group: O+</p> */}
+                      <p className="d-flex justify-content-between">
+                        <span>
+                          Reports:{" "}
+                          <FontAwesomeIcon
+                            icon={faFilePdf}
+                            className="text-danger"
+                          />
+                        </span>
+                        {item.registrationType === "OPD" ? (
+                          <span>
+                            <Button
+                              onClick={() => {
+                                setselectedPatient(item);
+                                medHistoryShow2();
+                              }}
+                            >
+                              Admit to IPD
+                            </Button>
+                          </span>
+                        ) : (
+                          <></>
+                        )}
+                      </p>
+                    </ListGroup.Item>
+                    <ListGroup.Item className="text-center">
+                      <button
+                        onClick={() => {
+                          ReadMoreShow();
+                          setShowPatientData(item);
+                        }}
+                        className="table-details-btn"
+                      >
+                        Read More
+                      </button>
+                    </ListGroup.Item>
+                  </ListGroup>
+                </Card>
+              </div>
+            );
+          })}
         </div>
       </Container>
       {/* Read More Modal */}
