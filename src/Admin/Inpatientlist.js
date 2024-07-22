@@ -316,16 +316,12 @@ export default function Inpatientlist() {
     }
   };
 
-  const [data, setdata] = useState([]);
+  const [IPDPatientList, setIPDPatientList] = useState([]);
   const getipdpatients = () => {
     axios
       .get("http://localhost:8521/api/user/getPatientList")
       .then(function (response) {
-        setdata(
-          response.data.UsersInfo?.filter(
-            (val) => val?.registrationType === "IPD"
-          )
-        );
+        setIPDPatientList(response.data.UsersInfo);
       })
       .catch(function (error) {
         console.log(error);
@@ -633,91 +629,30 @@ export default function Inpatientlist() {
     }
   };
 
-  const [search, setSearch] = useState("");
-  const [tableFilter, settableFilter] = useState([]);
-  const [pageNumber, setPageNumber] = useState(0);
-
-  const usersPerPage = 10;
-  const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(data.length / usersPerPage);
-  const changePage = ({ selected }) => {
-    setPageNumber(selected);
-  };
-
-  const handleFilter = (e) => {
-    if (e.target.value != "") {
-      setSearch(e.target.value);
-      const filterTable = data.filter((o) =>
-        Object.keys(o).some((k) =>
-          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
-        )
-      );
-      settableFilter([...filterTable]);
-    } else {
-      setSearch(e.target.value);
-      setdata([...data]);
-    }
-  };
-
-  const exportType = "xls";
-
-  const [fileName, setfileName] = useState("IPD-Patient-List");
-
-  const ExportToExcel = () => {
-    if (fileName) {
-      if (data.length != 0) {
-        exportFromJSON({ data, fileName, exportType });
-        // setfileName("");
-      } else {
-        alert("There is no data to export");
-        // setfileName("");
-      }
-    } else {
-      alert("Enter file name to export");
-    }
-  };
-
-  console.log("data", data);
-
   return (
     <div>
-      <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-        In-Patient List
-      </h6>
-
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           marginTop: "2%",
-          marginBottom: "2%",
         }}
       >
-        <input
-          placeholder="Search"
-          style={{
-            padding: "5px 10px",
-            border: "1px solid #20958c",
-            borderRadius: "0px",
-          }}
-          onChange={handleFilter}
-        />
-        <button
-          style={{
-            backgroundColor: "#20958c",
-            color: "white",
-            border: "none",
-            fontSize: "12px",
-            borderRadius: "4px",
-          }}
-          onClick={ExportToExcel}
-        >
-          EXPORT <AiFillFileExcel />
-        </button>
+        <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
+          In-Patient List
+        </h6>
         <div className="d-flex gap-2">
           <AiOutlinePlusCircle
             className="AddIcon1"
             onClick={() => handleShow2()}
+          />
+          <input
+            placeholder="Search In-Patient List"
+            style={{
+              padding: "5px 10px",
+              border: "1px solid #20958c",
+              borderRadius: "0px",
+            }}
           />
         </div>
       </div>
@@ -1195,7 +1130,7 @@ export default function Inpatientlist() {
                   cursor: "pointer",
                 }}
               >
-                {showPassword ? "👁️" : "🙈"}
+                {showPassword ? "=A" : "=H"}
               </span>
             </div>
 
@@ -1224,7 +1159,7 @@ export default function Inpatientlist() {
                   cursor: "pointer",
                 }}
               >
-                {showPassword ? "👁️" : "🙈"}
+                {showPassword ? "=A" : "=H"}
               </span>
             </div>
 
@@ -2555,11 +2490,10 @@ export default function Inpatientlist() {
         </Modal.Footer>
       </Modal>
 
-      <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+      <div style={{ overflowX: "scroll" }}>
         <Table responsive="md" style={{ marginTop: "1%" }} bordered>
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
-              <th>Sl No.</th>
               <th>Profile</th>
               <th>Name</th>
               <th>Mobile</th>
@@ -2824,22 +2758,6 @@ export default function Inpatientlist() {
             })}
           </tbody>
         </Table>
-      </div>
-      <div style={{ display: "flex" }}>
-        <p style={{ width: "100%", marginTop: "20px" }}>
-          Total Count: {data?.length}
-        </p>
-        <ReactPaginate
-          previousLabel={"Back"}
-          nextLabel={"Next"}
-          pageCount={pageCount}
-          onPageChange={changePage}
-          containerClassName={"paginationBttns"}
-          previousLinkClassName={"previousBttn"}
-          nextLinkClassName={"nextBttn"}
-          disabledClassName={"paginationDisabled"}
-          activeClassName={"paginationActive"}
-        />
       </div>
       <Modal show={show6} onHide={handleClose6}>
         <Modal.Header closeButton>
