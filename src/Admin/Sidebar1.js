@@ -223,7 +223,6 @@ export default function Sidebar1() {
           }}
         >
           <Link to={"/admin/AddProductCategory"}>
-<<<<<<< HEAD
             <h6 className="sidebarItem1">Add Product Category</h6>
           </Link>
 
@@ -233,80 +232,6 @@ export default function Sidebar1() {
 
           <Link to={"/admin/addinventory"}>
             <h6 className="sidebarItem1">Inventory</h6>
-=======
-            <h6
-              className="sidebarItem1"
-              // onClick={() =>
-              // navigate("/admin/AddProductCategory")
-              // }
-            >
-              Add Product Category
-            </h6>
-          </Link>
-
-          <Link to={"/admin/ProductBrands"}>
-            <h6
-              className="sidebarItem1"
-              // onClick={() => navigate("/admin/ProductBrands")}
-            >
-              Add Brands
-            </h6>
-          </Link>
-          <Link to="/admin/ProductCustomerOrders">
-            <h6
-              className="sidebarItem1"
-              // onClick={() =>
-              //   navigate("/admin/ProductCustomerOrders")
-              // }
-            >
-              Customer Orders
-            </h6>
-          </Link>
-          <Link to="/admin/AddVendor">
-            <h6
-              className="sidebarItem1"
-              // onClick={() => navigate("/admin/AddVendor")}
-            >
-              Create Vendor
-            </h6>
-          </Link>
-          {/* v6 */}
-          <Link to="/admin/VendorAddedProduct">
-            <h6
-              className="sidebarItem1"
-              // onClick={() => navigate("/admin/VendorAddedProduct")}
-            >
-              Vendor Added Products
-            </h6>
-          </Link>
-
-          {/* v6 */}
-          <Link to={"/admin/VendorAddedProductsStatus"}>
-            <h6
-              className="sidebarItem1"
-              // onClick={() =>
-              //   navigate("/admin/VendorAddedProductsStatus")
-              // }
-            >
-              Create Purchase Order
-            </h6>
-          </Link>
-
-          {/* <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/ProductOrders")}
-            >
-              Order History
-            </h6> */}
-
-          <Link to={"/admin/addinventory"}>
-            <h6
-              className="sidebarItem1"
-              // onClick={() => navigate("/admin/addinventory")}
-            >
-              Inventory
-            </h6>
->>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
           </Link>
         </div>
         <h6 className="sidebarItem" onClick={() => setEcom(!Ecom)}>
@@ -356,37 +281,11 @@ export default function Sidebar1() {
           <Link to={"/admin/Adminorder"}>
             <h6 className="sidebarItem1">Order History</h6>
           </Link>
-<<<<<<< HEAD
-=======
-
-          {/* <h6
-          className="sidebarItem1"
-          onClick={() => navigate("/admin/AddWastageReturn")}
-        >
-          Add Wastage Return
-        </h6>
-
-        <h6
-          className="sidebarItem1"
-          onClick={() => navigate("/admin/AddManufacturerReturn")}
-        >
-          Add Manufacturer Return
-        </h6> */}
->>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
         </div>
 
         {admin?.websiteManagement === true ? (
           <Link to={"/admin/Websitemanagement"}>
-<<<<<<< HEAD
             <h6 className="sidebarItem">Website management</h6>
-=======
-            <h6
-              className="sidebarItem"
-              // onClick={() => navigate("/admin/Websitemanagement")}
-            >
-              Website management
-            </h6>
->>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
           </Link>
         ) : null}
 

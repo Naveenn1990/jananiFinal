@@ -7,25 +7,13 @@ import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { CiBarcode } from "react-icons/ci";
-<<<<<<< HEAD
-
-=======
->>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
 import { useReactToPrint } from "react-to-print";
 import { GrView } from "react-icons/gr";
 import moment from "moment";
 import { FaPlus } from "react-icons/fa";
-<<<<<<< HEAD
-import exportFromJSON from "export-from-json";
-import ReactPaginate from "react-paginate";
-import { AiFillFileExcel } from "react-icons/ai";
-import { FaUserMd } from "react-icons/fa";
-
-=======
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCancel } from "@fortawesome/free-solid-svg-icons";
 import { LuView } from "react-icons/lu";
->>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
 export default function Inpatientlist() {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
@@ -151,16 +139,12 @@ export default function Inpatientlist() {
     if (!patientfirstname) {
       return alert("Enter your first name");
     } else if (!namePattern.test(patientfirstname)) {
-      return alert(
-        "Enter a valid first name (letters only)"
-      );
+      return alert("Enter a valid first name (letters only)");
     }
     if (!patientlastname) {
       return alert("Enter your last name");
     } else if (!namePattern.test(patientlastname)) {
-      return alert(
-        "Enter a valid last name  letters only)"
-      );
+      return alert("Enter a valid last name  letters only)");
     }
     if (!gender) {
       return alert("Select Your gender..!");
@@ -239,16 +223,12 @@ export default function Inpatientlist() {
     if (!relationWithPatient) {
       return alert("Enter Relation with patient..!");
     } else if (!relativepattern.test(relationWithPatient)) {
-      return alert(
-        "Enter a valid Relation with patient)"
-      );
+      return alert("Enter a valid Relation with patient)");
     }
     if (!relativeName) {
       return alert("Enter Relative name..!");
     } else if (!relativepattern.test(relativeName)) {
-      return alert(
-        "Enter a valid Relative name )"
-      );
+      return alert("Enter a valid Relative name )");
     }
     if (!relativePhone) {
       return alert("Enter Relative mobile no..!");
@@ -336,16 +316,12 @@ export default function Inpatientlist() {
     }
   };
 
-  const [data, setdata] = useState([]);
+  const [IPDPatientList, setIPDPatientList] = useState([]);
   const getipdpatients = () => {
     axios
       .get("http://localhost:8521/api/user/getPatientList")
       .then(function (response) {
-        setdata(
-          response.data.UsersInfo?.filter(
-            (val) => val?.registrationType === "IPD"
-          )
-        );
+        setIPDPatientList(response.data.UsersInfo);
       })
       .catch(function (error) {
         console.log(error);
@@ -565,8 +541,6 @@ export default function Inpatientlist() {
       }
     } catch (error) {
       alert(error.response.data.error);
-<<<<<<< HEAD
-=======
     }
   };
 
@@ -612,7 +586,7 @@ export default function Inpatientlist() {
     }
   }, [EditPatientDetails]);
 
-console.log("relativePhone :",relativePhone );
+  console.log("relativePhone :", relativePhone);
 
   const EditPatient = async () => {
     try {
@@ -620,7 +594,7 @@ console.log("relativePhone :",relativePhone );
       formdata.set("Firstname", patientfirstname);
       formdata.set("Lastname", patientlastname);
       formdata.set("Gender", gender);
-      formdata.set("DOB", DOB);    
+      formdata.set("DOB", DOB);
       formdata.set("PhoneNumber", mobileno);
       formdata.set("alternatePhoneNumber", alternatePhoneNumber);
       formdata.set("Email", email);
@@ -632,7 +606,7 @@ console.log("relativePhone :",relativePhone );
       formdata.set("MaritalStatus", MaritalStatus);
       formdata.set("PatientAge18", PatientAge18);
       formdata.set("relativeName", relativeName);
-      formdata.set("relationWithPatient", relationWithPatient);   
+      formdata.set("relationWithPatient", relationWithPatient);
       formdata.set("Aadharno", Aadharno);
       formdata.set("relativePhone", relativePhone);
       formdata.set("profilepic", ProfilePic);
@@ -645,103 +619,40 @@ console.log("relativePhone :",relativePhone );
         data: formdata,
       };
       let res = await axios(config);
-      if(res.status === 200) {
-        alert (res.data.success)
+      if (res.status === 200) {
+        alert(res.data.success);
         handleClose14();
         getipdpatients();
       }
     } catch (error) {
       alert(error.response.data.error);
-    
->>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
     }
   };
-
-  const [search, setSearch] = useState("");
-  const [tableFilter, settableFilter] = useState([]);
-  const [pageNumber, setPageNumber] = useState(0);
-
-  const usersPerPage = 10;
-  const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(data.length / usersPerPage);
-  const changePage = ({ selected }) => {
-    setPageNumber(selected);
-  };
-
-  const handleFilter = (e) => {
-    if (e.target.value != "") {
-      setSearch(e.target.value);
-      const filterTable = data.filter((o) =>
-        Object.keys(o).some((k) =>
-          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
-        )
-      );
-      settableFilter([...filterTable]);
-    } else {
-      setSearch(e.target.value);
-      setdata([...data]);
-    }
-  };
-
-  const exportType = "xls";
-
-  const [fileName, setfileName] = useState("IPD-Patient-List");
-
-  const ExportToExcel = () => {
-    if (fileName) {
-      if (data.length != 0) {
-        exportFromJSON({ data, fileName, exportType });
-        // setfileName("");
-      } else {
-        alert("There is no data to export");
-        // setfileName("");
-      }
-    } else {
-      alert("Enter file name to export");
-    }
-  };
-
-  console.log("data", data);
 
   return (
     <div>
-      <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-        In-Patient List
-      </h6>
-
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           marginTop: "2%",
-          marginBottom: "2%",
         }}
       >
-        <input
-          placeholder="Search"
-          style={{
-            padding: "5px 10px",
-            border: "1px solid #20958c",
-            borderRadius: "0px",
-          }}
-          onChange={handleFilter}
-        />
-        <button
-          style={{
-            backgroundColor: "#20958c",
-            color: "white",
-            border: "none",
-            fontSize: "12px",
-            borderRadius: "4px",
-          }}
-          onClick={ExportToExcel}
-        >
-          EXPORT <AiFillFileExcel />
-        </button>
+        <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
+          In-Patient List
+        </h6>
         <div className="d-flex gap-2">
           <AiOutlinePlusCircle
             className="AddIcon1"
             onClick={() => handleShow2()}
+          />
+          <input
+            placeholder="Search In-Patient List"
+            style={{
+              padding: "5px 10px",
+              border: "1px solid #20958c",
+              borderRadius: "0px",
+            }}
           />
         </div>
       </div>
@@ -892,14 +803,15 @@ console.log("relativePhone :",relativePhone );
                       <td>
                         <b>Address</b>
                       </td>
-                      <td 
-                      style={{ 
-                        maxWidth: "300px", 
-                        wordWrap: "break-word", 
-                        overflowWrap: "break-word", 
-                        whiteSpace: "normal" 
-                        }}>
-                        <p style={{width:"auto",textAlign:"justify"}}>
+                      <td
+                        style={{
+                          maxWidth: "300px",
+                          wordWrap: "break-word",
+                          overflowWrap: "break-word",
+                          whiteSpace: "normal",
+                        }}
+                      >
+                        <p style={{ width: "auto", textAlign: "justify" }}>
                           {PatientDetailsView?.Address1},
                           {PatientDetailsView?.Address2},
                           {PatientDetailsView?.City1},
@@ -1218,7 +1130,7 @@ console.log("relativePhone :",relativePhone );
                   cursor: "pointer",
                 }}
               >
-                {showPassword ? "👁️" : "🙈"}
+                {showPassword ? "=A" : "=H"}
               </span>
             </div>
 
@@ -1247,7 +1159,7 @@ console.log("relativePhone :",relativePhone );
                   cursor: "pointer",
                 }}
               >
-                {showPassword ? "👁️" : "🙈"}
+                {showPassword ? "=A" : "=H"}
               </span>
             </div>
 
@@ -1835,7 +1747,7 @@ console.log("relativePhone :",relativePhone );
                 onChange={(e) => setgender(e.target.value)}
                 value={gender}
               >
-                 <option value="">Select Gender</option>
+                <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
@@ -1939,7 +1851,7 @@ console.log("relativePhone :",relativePhone );
                       backgroundColor: "#ebebeb",
                       marginTop: "4%",
                     }}
-                      accept="image/*"
+                    accept="image/*"
                     onChange={(e) => setProfilePic(e.target.files[0])}
                   />
                 </div>
@@ -2032,7 +1944,7 @@ console.log("relativePhone :",relativePhone );
                   backgroundColor: "#ebebeb",
                   marginTop: "4%",
                 }}
-                   maxLength={6}
+                maxLength={6}
                 type="text"
                 onChange={(e) => setZipcode(e.target.value)}
                 value={Zipcode}
@@ -2061,7 +1973,7 @@ console.log("relativePhone :",relativePhone );
                     onChange={(e) => setMaritalStatus(e.target.value)}
                     value={MaritalStatus}
                   >
-                     <option value="">Select Option</option>
+                    <option value="">Select Option</option>
                     <option value="Single">Single</option>
                     <option value="Married">Married</option>
                     <option value="Divorce">Divorce</option>
@@ -2209,7 +2121,6 @@ console.log("relativePhone :",relativePhone );
                 </div>
               </div>
             </div>
-
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -2240,7 +2151,7 @@ console.log("relativePhone :",relativePhone );
                 fontWeight: "600",
                 padding: "4px 10px",
               }}
-              onClick={()=>EditPatient()}
+              onClick={() => EditPatient()}
             >
               Edit
             </button>
@@ -2579,11 +2490,10 @@ console.log("relativePhone :",relativePhone );
         </Modal.Footer>
       </Modal>
 
-      <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+      <div style={{ overflowX: "scroll" }}>
         <Table responsive="md" style={{ marginTop: "1%" }} bordered>
           <thead>
             <tr style={{ fontSize: "15px", textAlign: "center" }}>
-              <th>Sl No.</th>
               <th>Profile</th>
               <th>Name</th>
               <th>Mobile</th>
@@ -2602,493 +2512,6 @@ console.log("relativePhone :",relativePhone );
             </tr>
           </thead>
           <tbody>
-<<<<<<< HEAD
-            {search.length > 0
-              ? tableFilter
-                  .slice(pagesVisited, pagesVisited + usersPerPage)
-                  ?.map((item, index) => {
-                    return (
-                      <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                        <td>{index + 1}</td>
-                        <td>
-                          <img
-                            alt="profile-img"
-                            src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
-                            style={{
-                              width: "50px",
-                              height: "50px",
-                              borderRadius: "50%",
-                            }}
-                          />
-                          {item?.PatientId}
-                        </td>
-                        <td>{`${item?.Firstname} ${item?.Lastname}`}</td>
-                        <td>{item?.PhoneNumber}</td>
-                        <td>{item?.Gender}</td>
-                        <td>{item?.Address1}</td>
-                        <td>
-                          <div style={{ width: "80px", fontWeight: "bold" }}>
-                            {item?.DOB}
-                          </div>
-                        </td>
-                        <td>
-                          <CiBarcode
-                            style={{ cursor: "pointer", fontSize: "35px" }}
-                            onClick={() => handleShow10(item)}
-                          />
-                        </td>
-                        <td>
-                          <Button
-                            onClick={() => {
-                              handleShow11();
-                              setPatientDetailsView(item);
-                            }}
-                          >
-                            <FaPlus /> Cause{" "}
-                          </Button>
-                          <div
-                            style={{
-                              backgroundColor: "#20958c",
-                              padding: "5px",
-                              marginTop: "14px",
-                              borderRadius: "6px",
-                            }}
-                          >
-                            <GrView
-                              style={{
-                                cursor: "pointer",
-                                fontSize: "28px",
-                                color: "white",
-                              }}
-                              onClick={() => {
-                                handleShow12();
-                                setPatientDetailsView(item);
-                              }}
-                            />
-                          </div>
-                        </td>
-                        <td>
-                          <Button
-                            onClick={() => {
-                              handleShow9();
-                              setAdmissionForm(item);
-                            }}
-                          >
-                            Admission From
-                          </Button>
-                        </td>
-
-                        <td>
-                          {item?.visitor?.length === 4 ? (
-                            <p style={{ color: "red" }}>
-                              Four (4) visitors are allowed
-                            </p>
-                          ) : (
-                            <>
-                              <button
-                                style={{
-                                  padding: "6px",
-                                  border: "none",
-                                  backgroundColor: "#20958c",
-                                  color: "white",
-                                  borderRadius: "0px",
-                                }}
-                                onClick={() => {
-                                  handleShow3();
-                                  setPatientVisitId(item?._id);
-                                }}
-                              >
-                                Add Visitors
-                              </button>
-                            </>
-                          )}
-                          <br />
-                          <button
-                            style={{
-                              padding: "6px",
-                              border: "1px solid white",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "0px",
-                            }}
-                            onClick={() => {
-                              handleShow4();
-                              setPatientVisitId(item);
-                            }}
-                          >
-                            View Visitors
-                          </button>
-                          {/* <b
-                        style={{ cursor: "pointer" }}
-                        className="mt-3"
-                        // variant="success"
-                        onClick={() => {
-                          handleShow4();
-                          setPatientVisitId(item);
-                        }}
-                      >
-                        {" "}
-                        View Visitors
-                      </b> */}
-                        </td>
-                        <td>
-                          <button
-                            style={{
-                              padding: "6px",
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "0px",
-                            }}
-                            onClick={() =>
-                              navigate(
-                                `/admin/InpatientlistConsentForms/${item?._id}`
-                              )
-                            }
-                          >
-                            Consent Forms
-                          </button>
-                        </td>
-                        <td>
-                          <button
-                            style={{
-                              padding: "6px",
-                              border: "1px solid white",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "0px",
-                            }}
-                            // onClick={() => navigate("/admin/patientform",{state:item})}
-                            onClick={() => {
-                              handleShow6();
-                              setViewCause(item);
-                            }}
-                          >
-                            View Forms
-                          </button>
-                        </td>
-                        {/* <td>
-                    <button
-                        style={{
-                          border: "none",
-                          backgroundColor: "#20958c",
-                          color: "white",
-                          borderRadius: "0px",
-                        }}
-                        onClick={handleShow7}
-                      >
-                        Assign
-                      </button>
-
-                    </td> */}
-                        <td>
-                          <button
-                            style={{
-                              padding: "6px",
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "5px",
-                            }}
-                            onClick={() => {
-                              handleShow7();
-                              setViewCause(item);
-                            }}
-                          >
-                            Assign
-                          </button>
-                          <button
-                            className="mt-2"
-                            style={{
-                              padding: "6px",
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "5px",
-                            }}
-                            onClick={() => {
-                              handleShow8();
-                              setViewCause(item);
-                            }}
-                          >
-                            View List
-                          </button>
-                        </td>
-                        <td>
-                          <div
-                            style={{
-                              display: "flex",
-                              textAlign: "center",
-                              justifyContent: "space-evenly",
-                            }}
-                          >
-                            <MdEdit
-                              style={{ color: "#20958c", marginRight: "1%" }}
-                            />
-                            <AiFillDelete style={{ color: "red" }} />
-                          </div>
-                        </td>
-                        <td>
-                          <button
-                            style={{
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "0px",
-                            }}
-                            onClick={() =>
-                              navigate(`/admin/patientdetails/${item?._id}`)
-                            }
-                          >
-                            Read More
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-              : data
-                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
-                  ?.map((item, index) => {
-                    return (
-                      <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                        <td>{index + 1}</td>
-                        <td>
-                          <img
-                            alt="profile-img"
-                            src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
-                            style={{
-                              width: "50px",
-                              height: "50px",
-                              borderRadius: "50%",
-                            }}
-                          />
-                          {item?.PatientId}
-                        </td>
-                        <td>{`${item?.Firstname} ${item?.Lastname}`}</td>
-                        <td>{item?.PhoneNumber}</td>
-                        <td>{item?.Gender}</td>
-                        <td>{item?.Address1}</td>
-                        <td>
-                          <div style={{ width: "80px", fontWeight: "bold" }}>
-                            {item?.DOB}
-                          </div>
-                        </td>
-                        <td>
-                          <CiBarcode
-                            style={{ cursor: "pointer", fontSize: "35px" }}
-                            onClick={() => handleShow10(item)}
-                          />
-                        </td>
-                        <td>
-                          <Button
-                            onClick={() => {
-                              handleShow11();
-                              setPatientDetailsView(item);
-                            }}
-                          >
-                            <FaPlus /> Cause{" "}
-                          </Button>
-                          <div
-                            style={{
-                              backgroundColor: "#20958c",
-                              padding: "5px",
-                              marginTop: "14px",
-                              borderRadius: "6px",
-                            }}
-                          >
-                            <GrView
-                              style={{
-                                cursor: "pointer",
-                                fontSize: "28px",
-                                color: "white",
-                              }}
-                              onClick={() => {
-                                handleShow12();
-                                setPatientDetailsView(item);
-                              }}
-                            />
-                          </div>
-                        </td>
-                        <td>
-                          <Button
-                            onClick={() => {
-                              handleShow9();
-                              setAdmissionForm(item);
-                            }}
-                          >
-                            Admission From
-                          </Button>
-                        </td>
-
-                        <td>
-                          {item?.visitor?.length === 4 ? (
-                            <p style={{ color: "red" }}>
-                              Four (4) visitors are allowed
-                            </p>
-                          ) : (
-                            <>
-                              <button
-                                style={{
-                                  padding: "6px",
-                                  border: "none",
-                                  backgroundColor: "#20958c",
-                                  color: "white",
-                                  borderRadius: "0px",
-                                }}
-                                onClick={() => {
-                                  handleShow3();
-                                  setPatientVisitId(item?._id);
-                                }}
-                              >
-                                Add Visitors
-                              </button>
-                            </>
-                          )}
-                          <br />
-                          <button
-                            style={{
-                              padding: "6px",
-                              border: "1px solid white",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "0px",
-                            }}
-                            onClick={() => {
-                              handleShow4();
-                              setPatientVisitId(item);
-                            }}
-                          >
-                            View Visitors
-                          </button>
-                          {/* <b
-                        style={{ cursor: "pointer" }}
-                        className="mt-3"
-                        // variant="success"
-                        onClick={() => {
-                          handleShow4();
-                          setPatientVisitId(item);
-                        }}
-                      >
-                        {" "}
-                        View Visitors
-                      </b> */}
-                        </td>
-                        <td>
-                          <button
-                            style={{
-                              padding: "6px",
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "0px",
-                            }}
-                            onClick={() =>
-                              navigate(
-                                `/admin/InpatientlistConsentForms/${item?._id}`
-                              )
-                            }
-                          >
-                            Consent Forms
-                          </button>
-                        </td>
-                        <td>
-                          <button
-                            style={{
-                              padding: "6px",
-                              border: "1px solid white",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "0px",
-                            }}
-                            // onClick={() => navigate("/admin/patientform",{state:item})}
-                            onClick={() => {
-                              handleShow6();
-                              setViewCause(item);
-                            }}
-                          >
-                            View Forms
-                          </button>
-                        </td>
-                        {/* <td>
-                    <button
-                        style={{
-                          border: "none",
-                          backgroundColor: "#20958c",
-                          color: "white",
-                          borderRadius: "0px",
-                        }}
-                        onClick={handleShow7}
-                      >
-                        Assign
-                      </button>
-
-                    </td> */}
-                        <td>
-                          <button
-                            style={{
-                              padding: "6px",
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "5px",
-                            }}
-                            onClick={() => {
-                              handleShow7();
-                              setViewCause(item);
-                            }}
-                          >
-                            Assign
-                          </button>
-                          <button
-                            className="mt-2"
-                            style={{
-                              padding: "6px",
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "5px",
-                            }}
-                            onClick={() => {
-                              handleShow8();
-                              setViewCause(item);
-                            }}
-                          >
-                            View List
-                          </button>
-                        </td>
-                        <td>
-                          <div
-                            style={{
-                              display: "flex",
-                              textAlign: "center",
-                              justifyContent: "space-evenly",
-                            }}
-                          >
-                            <MdEdit
-                              style={{ color: "#20958c", marginRight: "1%" }}
-                            />
-                            <AiFillDelete style={{ color: "red" }} />
-                          </div>
-                        </td>
-                        <td>
-                          <button
-                            style={{
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              borderRadius: "0px",
-                            }}
-                            onClick={() =>
-                              navigate(`/admin/patientdetails/${item?._id}`)
-                            }
-                          >
-                            Read More
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-=======
             {IPDPatientList?.filter(
               (val) => val?.registrationType === "IPD"
             )?.map((item) => {
@@ -3333,25 +2756,8 @@ console.log("relativePhone :",relativePhone );
                 </tr>
               );
             })}
->>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
           </tbody>
         </Table>
-      </div>
-      <div style={{ display: "flex" }}>
-        <p style={{ width: "100%", marginTop: "20px" }}>
-          Total Count: {data?.length}
-        </p>
-        <ReactPaginate
-          previousLabel={"Back"}
-          nextLabel={"Next"}
-          pageCount={pageCount}
-          onPageChange={changePage}
-          containerClassName={"paginationBttns"}
-          previousLinkClassName={"previousBttn"}
-          nextLinkClassName={"nextBttn"}
-          disabledClassName={"paginationDisabled"}
-          activeClassName={"paginationActive"}
-        />
       </div>
       <Modal show={show6} onHide={handleClose6}>
         <Modal.Header closeButton>
@@ -4041,8 +3447,6 @@ console.log("relativePhone :",relativePhone );
           <Button variant="secondary" onClick={handleClose12}>
             Close
           </Button>
-<<<<<<< HEAD
-=======
         </Modal.Footer>
       </Modal>
       <Modal
@@ -4079,7 +3483,6 @@ console.log("relativePhone :",relativePhone );
             <FontAwesomeIcon icon={faCancel} className=" me-2" />
             Delete
           </Button>
->>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
         </Modal.Footer>
       </Modal>
     </div>

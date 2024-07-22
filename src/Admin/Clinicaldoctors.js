@@ -4,13 +4,6 @@ import { FaUserMd } from "react-icons/fa";
 import { HiDocumentText } from "react-icons/hi";
 import axios from "axios";
 import { MdDelete, MdEdit } from "react-icons/md";
-import exportFromJSON from "export-from-json";
-import ReactPaginate from "react-paginate";
-import {
-  AiFillDelete,
-  AiFillFileExcel,
-  AiOutlinePlusCircle,
-} from "react-icons/ai";
 
 export default function Clinicaldoctors() {
   const [View, setView] = useState({});
@@ -112,22 +105,18 @@ export default function Clinicaldoctors() {
   const passwordPattern =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   const signupdocclinic = async () => {
-    if(!ClinicName){
-      return alert ("Enter Clinic Name...")
+    if (!ClinicName) {
+      return alert("Enter Clinic Name...");
     }
     if (!doctorfirstname) {
       return alert("Enter first name");
     } else if (!nameRegex.test(doctorfirstname)) {
-      return alert(
-        "Enter a valid first name (letters only)"
-      );
+      return alert("Enter a valid first name (letters only)");
     }
     if (!doctorlastname) {
       return alert("Enter  last name");
     } else if (!nameRegex.test(doctorlastname)) {
-      return alert(
-        "Enter a valid last name (letters only)"
-      );
+      return alert("Enter a valid last name (letters only)");
     }
     if (!email) {
       return alert("Enter Email Id");
@@ -141,14 +130,14 @@ export default function Clinicaldoctors() {
       return alert("Enter a valid 10-digit mobile number");
     }
 
-    if(!gender){
-      return alert("Please Select gender..!")
+    if (!gender) {
+      return alert("Please Select gender..!");
     }
-    if(!DOB){
-      return alert("Please Select date of birth..!")
+    if (!DOB) {
+      return alert("Please Select date of birth..!");
     }
-    if(!Department){
-      return alert("Please Select Department..!")
+    if (!Department) {
+      return alert("Please Select Department..!");
     }
 
     if (!password) {
@@ -166,71 +155,70 @@ export default function Clinicaldoctors() {
         "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
       );
     }
-    if(password !== conpassword){
+    if (password !== conpassword) {
       return alert("Passwords do not match. Please check again.");
     }
 
-    if(!Address1){
-      return alert ("Enter Address..!")
+    if (!Address1) {
+      return alert("Enter Address..!");
     }
-    if(!Education){
-      return alert ("Enter Education..!")
+    if (!Education) {
+      return alert("Enter Education..!");
     }
-    if(!ProfileImg){
-      return alert ("Upload profile pic..!")
+    if (!ProfileImg) {
+      return alert("Upload profile pic..!");
     }
-    if(!Docs){
-      return alert ("Upload Certificate ..!")
+    if (!Docs) {
+      return alert("Upload Certificate ..!");
     }
-    if(!Description){
-      return alert ("Enter Description..!")
+    if (!Description) {
+      return alert("Enter Description..!");
     }
 
-      formdata.set("ClinicName", ClinicName);
-      formdata.set("Firstname", doctorfirstname);
-      formdata.set("Lastname", doctorlastname);
-      formdata.set("Gender", gender);
-      formdata.set("DOB", DOB);
-      formdata.set("PhoneNumber", mobileno);
-      formdata.set("Email", email);
-      formdata.set("Department", Department);
-      formdata.set("Address1", Address1);
-      formdata.set("Education", Education);
-      formdata.set("Description", Description);
-      formdata.set("Password", password);
-      formdata.set("ConfirmPassword", conpassword);
-      formdata.set("ProfileImg", ProfileImg);
-      formdata.set("certificate", Docs);
-      try {
-        const config = {
-          url: "/Clinic/addClinic",
-          method: "post",
-          baseURL: "http://localhost:8521/api",
-          data: formdata,
-        };
-        let res = await axios(config);
-        if (res.status === 200) {
-          alert(res.data.success);
-          handleClose();
-          getdata();
-        }
-      } catch (error) {
-        console.log(error);
-        alert(error.response.data.error);
+    formdata.set("ClinicName", ClinicName);
+    formdata.set("Firstname", doctorfirstname);
+    formdata.set("Lastname", doctorlastname);
+    formdata.set("Gender", gender);
+    formdata.set("DOB", DOB);
+    formdata.set("PhoneNumber", mobileno);
+    formdata.set("Email", email);
+    formdata.set("Department", Department);
+    formdata.set("Address1", Address1);
+    formdata.set("Education", Education);
+    formdata.set("Description", Description);
+    formdata.set("Password", password);
+    formdata.set("ConfirmPassword", conpassword);
+    formdata.set("ProfileImg", ProfileImg);
+    formdata.set("certificate", Docs);
+    try {
+      const config = {
+        url: "/Clinic/addClinic",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        data: formdata,
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        handleClose();
+        getClinicDoctors();
       }
-    
+    } catch (error) {
+      console.log(error);
+      alert(error.response.data.error);
+    }
   };
 
-  const [data, setdata] = useState([]);
-  const getdata = () => {
+  const [ClinicDoctors, setClinicDoctors] = useState([]);
+  const getClinicDoctors = () => {
     axios
       .get("http://localhost:8521/api/Clinic/getClinicList")
       .then(function (response) {
-        setdata(response.data.ClinicalDoctorsInfo);
+        setClinicDoctors(response.data.ClinicalDoctorsInfo);
       })
       .catch(function (error) {
         console.log(error);
-        setdata([]);
+        setClinicDoctors([]);
       });
   };
   const ClinicDoctorBlock = async () => {
@@ -245,7 +233,7 @@ export default function Clinicaldoctors() {
       if (res.status === 200) {
         alert(res.data.success);
         handleClose1();
-        getdata();
+        getClinicDoctors();
       }
     } catch (error) {
       console.log(error);
@@ -260,15 +248,58 @@ export default function Clinicaldoctors() {
       if (res.status === 200) {
         alert(res.data.success);
         handleClose2();
-        getdata();
+        getClinicDoctors();
       }
     } catch (error) {
       console.log(error);
       alert(error.response.data.error);
     }
   };
-<<<<<<< HEAD
+
+  useEffect(() => {
+    if (View) {
+      setClinicName(View?.ClinicName || "");
+      setdoctorfirstname(View?.Firstname || "");
+      setdoctorlastname(View?.Lastname || "");
+      setemail(View?.Email || "");
+      setmobileno(View?.PhoneNumber || "");
+      setgender(View?.Gender || "");
+      setDOB(View?.DOB || "");
+      setDepartment(View?.Department || "");
+      setDepartment(View?.Department || "");
+    }
+  }, [View]);
+
   const EditDocClinic = async () => {
+    if (!nameRegex.test(doctorfirstname)) {
+      return alert("Enter a valid first name (letters only)");
+    }
+    if (!nameRegex.test(doctorlastname)) {
+      return alert("Enter a valid last name (letters only)");
+    }
+
+    if (!emailPattern.test(email)) {
+      return alert("Enter a valid Gmail address (e.g., example@gmail.com)");
+    }
+
+    if (!mobilePattern.test(mobileno)) {
+      return alert("Enter a valid 10-digit mobile number");
+    }
+
+    if (!passwordPattern.test(password)) {
+      return alert(
+        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
+      );
+    }
+
+    if (!passwordPattern.test(conpassword)) {
+      return alert(
+        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
+      );
+    }
+    if (password !== conpassword) {
+      return alert("Passwords do not match. Please check again.");
+    }
     formdata.set("ClinicName", ClinicName);
     formdata.set("Firstname", doctorfirstname);
     formdata.set("Lastname", doctorlastname);
@@ -295,90 +326,7 @@ export default function Clinicaldoctors() {
       if (res.status === 200) {
         alert(res.data.success);
         handleClose3();
-        getdata();
-=======
-
-  useEffect(() => {
-    if(View){
-      setClinicName(View?.ClinicName || "");
-      setdoctorfirstname(View?.Firstname || "");
-      setdoctorlastname(View?.Lastname || "");
-      setemail(View?.Email || "");
-      setmobileno(View?.PhoneNumber || "");
-      setgender(View?.Gender || "");
-      setDOB(View?.DOB || "");
-      setDepartment(View?.Department || "");
-      setDepartment(View?.Department || "");
-    }
- 
-  }, [View])
-  
-  const EditDocClinic = async () => {  
-    if (!nameRegex.test(doctorfirstname)) {
-      return alert(
-        "Enter a valid first name (letters only)"
-      );
-    }
-  if (!nameRegex.test(doctorlastname)) {
-      return alert(
-        "Enter a valid last name (letters only)"
-      );
-    }
-
-   if (!emailPattern.test(email)) {
-      return alert("Enter a valid Gmail address (e.g., example@gmail.com)");
-    }
-
-   if (!mobilePattern.test(mobileno)) {
-      return alert("Enter a valid 10-digit mobile number");
-    }  
-
-    if (!passwordPattern.test(password)) {
-      return alert(
-        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
-      );
-    }
-
-    if (!passwordPattern.test(conpassword)) {
-      return alert(
-        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
-      );
-    }
-    if(password !== conpassword){
-      return alert("Passwords do not match. Please check again.");
-    }
-      formdata.set("ClinicName", ClinicName);
-      formdata.set("Firstname", doctorfirstname);
-      formdata.set("Lastname", doctorlastname);
-      formdata.set("Gender", gender);
-      formdata.set("DOB", DOB);
-      formdata.set("PhoneNumber", mobileno);
-      formdata.set("Email", email);
-      formdata.set("Department", Department);
-      formdata.set("Address1", Address1);
-      formdata.set("Education", Education);
-      formdata.set("Description", Description);
-      formdata.set("Password", password);
-      formdata.set("ConfirmPassword", conpassword);
-      formdata.set("ProfileImg", ProfileImg);
-      formdata.set("certificate", Docs);
-      try {
-        const config = {
-          url: "/Clinic/editClinicDetails/" + View?._id,
-          method: "put",
-          baseURL: "http://localhost:8521/api",
-          data: formdata,
-        };
-        let res = await axios(config);
-        if (res.status === 200) {
-          alert(res.data.success);
-          handleClose3();
-          getClinicDoctors();
-        }
-      } catch (error) {
-        console.log(error);
-        alert(error.response.data.error);
->>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
+        getClinicDoctors();
       }
     } catch (error) {
       console.log(error);
@@ -386,55 +334,9 @@ export default function Clinicaldoctors() {
     }
   };
   useEffect(() => {
-    getdata();
+    getClinicDoctors();
     GetDepartment();
   }, []);
-
-  const [search, setSearch] = useState("");
-  const [tableFilter, settableFilter] = useState([]);
-  const [pageNumber, setPageNumber] = useState(0);
-
-  const usersPerPage = 10;
-  const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(data.length / usersPerPage);
-  const changePage = ({ selected }) => {
-    setPageNumber(selected);
-  };
-
-  const handleFilter = (e) => {
-    if (e.target.value != "") {
-      setSearch(e.target.value);
-      const filterTable = data.filter((o) =>
-        Object.keys(o).some((k) =>
-          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
-        )
-      );
-      settableFilter([...filterTable]);
-    } else {
-      setSearch(e.target.value);
-      setdata([...data]);
-    }
-  };
-
-  const exportType = "xls";
-
-  const [fileName, setfileName] = useState("Clinical-Doctors");
-
-  const ExportToExcel = () => {
-    if (fileName) {
-      if (data.length != 0) {
-        exportFromJSON({ data, fileName, exportType });
-        // setfileName("");
-      } else {
-        alert("There is no data to export");
-        // setfileName("");
-      }
-    } else {
-      alert("Enter file name to export");
-    }
-  };
-
-  console.log("data", data);
 
   return (
     <div>
@@ -442,7 +344,6 @@ export default function Clinicaldoctors() {
         <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
           Clinical doctors
         </h6>
-
         <div
           style={{
             display: "flex",
@@ -451,34 +352,14 @@ export default function Clinicaldoctors() {
           }}
         >
           <input
-            placeholder="Search"
+            placeholder="Search Clinical doctors"
             style={{
               padding: "5px 10px",
               border: "1px solid #20958c",
               borderRadius: "0px",
             }}
-            onChange={handleFilter}
           />
-          <button
-            style={{
-              backgroundColor: "#20958c",
-              color: "white",
-              border: "none",
-              fontSize: "12px",
-              borderRadius: "4px",
-            }}
-            onClick={ExportToExcel}
-          >
-            EXPORT <AiFillFileExcel />
-          </button>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              position: "relative",
-              zIndex: "999",
-            }}
-          >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <FaUserMd className="AddIcon1" onClick={() => handleShow()} />
           </div>
         </div>
@@ -595,7 +476,7 @@ export default function Clinicaldoctors() {
                         backgroundColor: "#ebebeb",
                         marginTop: "4%",
                       }}
-                      max={new Date().toISOString().split('T')[0]} 
+                      max={new Date().toISOString().split("T")[0]}
                       onChange={(e) => setDOB(e.target.value)}
                     />
                   </div>
@@ -711,7 +592,7 @@ export default function Clinicaldoctors() {
                 >
                   Upload Clinic Certificate
                 </label>
-                <br/>
+                <br />
                 <input
                   type="file"
                   style={{
@@ -796,214 +677,99 @@ export default function Clinicaldoctors() {
               </tr>
             </thead>
             <tbody>
-              {search.length > 0
-                ? tableFilter
-                    .slice(pagesVisited, pagesVisited + usersPerPage)
-                    ?.map((item, index) => {
-                      return (
-                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                          <td>{++index}</td>
-                          <td>
-                            <img
-                              src={`http://localhost:8521/Clinic/${item?.ProfileImg}`}
-                              style={{
-                                width: "50px",
-                                height: "50px",
-                                borderRadius: "50%",
-                              }}
-                              alt=""
-                            />
-                            {item?.ClinicDocId}
-                          </td>
-                          <td>
-                            {item?.Firstname} {item?.Lastname}
-                          </td>
-                          <td>{item?.Email}</td>
-                          <td>{item?.Department}</td>
-                          <td>{item?.PhoneNumber}</td>
-                          <td>{item?.DOB}</td>
-                          <td>
-                            <p>
-                              <HiDocumentText
-                                onClick={() => {
-                                  setView(item);
-                                }}
-                                style={{ color: "#20958c", fontSize: "28px" }}
-                              />
-                            </p>
-                          </td>
-                          <td>
-                            {item?.blocked === false ? (
-                              <>
-                                <Button
-                                  onClick={() => {
-                                    handleShow1();
-                                    setView(item);
-                                  }}
-                                >
-                                  Block
-                                </Button>
-                                <b style={{ color: "green" }}>
-                                  {" "}
-                                  User is UnBlock{" "}
-                                </b>
-                              </>
-                            ) : (
-                              <>
-                                <Button
-                                  onClick={() => {
-                                    handleShow1();
-                                    setView(item);
-                                  }}
-                                >
-                                  Unblock
-                                </Button>
-                                <b style={{ color: "red" }}> User is Block </b>
-                              </>
-                            )}
-                          </td>
-                          <td>
-                            <div className="d-flex gap-4">
-                              <MdEdit
-                                style={{
-                                  color: "green",
-                                  fontSize: "20px",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() => {
-                                  handleShow3();
-                                  setView(item);
-                                }}
-                              />
-                              <MdDelete
-                                style={{
-                                  color: "red",
-                                  fontSize: "20px",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() => {
-                                  handleShow2();
-                                  setView(item);
-                                }}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                : data
-                    ?.slice(pagesVisited, pagesVisited + usersPerPage)
-                    ?.map((item, index) => {
-                      return (
-                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                          <td>{++index}</td>
-                          <td>
-                            <img
-                              src={`http://localhost:8521/Clinic/${item?.ProfileImg}`}
-                              style={{
-                                width: "50px",
-                                height: "50px",
-                                borderRadius: "50%",
-                              }}
-                              alt=""
-                            />
-                            {item?.ClinicDocId}
-                          </td>
-                          <td>
-                            {item?.Firstname} {item?.Lastname}
-                          </td>
-                          <td>{item?.Email}</td>
-                          <td>{item?.Department}</td>
-                          <td>{item?.PhoneNumber}</td>
-                          <td>{item?.DOB}</td>
-                          <td>
-                            <p>
-                              <HiDocumentText
-                                onClick={() => {
-                                  setView(item);
-                                }}
-                                style={{ color: "#20958c", fontSize: "28px" }}
-                              />
-                            </p>
-                          </td>
-                          <td>
-                            {item?.blocked === false ? (
-                              <>
-                                <Button
-                                  onClick={() => {
-                                    handleShow1();
-                                    setView(item);
-                                  }}
-                                >
-                                  Block
-                                </Button>
-                                <b style={{ color: "green" }}>
-                                  {" "}
-                                  User is UnBlock{" "}
-                                </b>
-                              </>
-                            ) : (
-                              <>
-                                <Button
-                                  onClick={() => {
-                                    handleShow1();
-                                    setView(item);
-                                  }}
-                                >
-                                  Unblock
-                                </Button>
-                                <b style={{ color: "red" }}> User is Block </b>
-                              </>
-                            )}
-                          </td>
-                          <td>
-                            <div className="d-flex gap-4">
-                              <MdEdit
-                                style={{
-                                  color: "green",
-                                  fontSize: "20px",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() => {
-                                  handleShow3();
-                                  setView(item);
-                                }}
-                              />
-                              <MdDelete
-                                style={{
-                                  color: "red",
-                                  fontSize: "20px",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() => {
-                                  handleShow2();
-                                  setView(item);
-                                }}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+              {ClinicDoctors?.map((item, index) => {
+                return (
+                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                    <td>{++index}</td>
+                    <td>
+                      <img
+                        src={`http://localhost:8521/Clinic/${item?.ProfileImg}`}
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          borderRadius: "50%",
+                        }}
+                        alt=""
+                      />
+                      {item?.ClinicDocId}
+                    </td>
+                    <td>
+                      {item?.Firstname} {item?.Lastname}
+                    </td>
+                    <td>{item?.Email}</td>
+                    <td>{item?.Department}</td>
+                    <td>{item?.PhoneNumber}</td>
+                    <td>{item?.DOB}</td>
+                    <td>
+                      <p>
+                        <HiDocumentText
+                          onClick={() => {
+                            setView(item);
+                          }}
+                          style={{ color: "#20958c", fontSize: "28px" }}
+                        />
+                      </p>
+                    </td>
+                    <td>
+                      {item?.blocked === false ? (
+                        <>
+                          <Button
+                            onClick={() => {
+                              handleShow1();
+                              setView(item);
+                            }}
+                          >
+                            Block
+                          </Button>
+                          <b style={{ color: "green" }}> User is UnBlock </b>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            onClick={() => {
+                              handleShow1();
+                              setView(item);
+                            }}
+                          >
+                            Unblock
+                          </Button>
+                          <b style={{ color: "red" }}> User is Block </b>
+                        </>
+                      )}
+                    </td>
+                    <td>
+                      <div className="d-flex gap-4">
+                        <MdEdit
+                          style={{
+                            color: "green",
+                            fontSize: "20px",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            handleShow3();
+                            setView(item);
+                          }}
+                        />
+                        <MdDelete
+                          style={{
+                            color: "red",
+                            fontSize: "20px",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            handleShow2();
+                            setView(item);
+                          }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         </div>
-        <div style={{ display: "flex" }}>
-          <p style={{ width: "100%", marginTop: "20px" }}>
-            Total Count: {data?.length}
-          </p>
-          <ReactPaginate
-            previousLabel={"Back"}
-            nextLabel={"Next"}
-            pageCount={pageCount}
-            onPageChange={changePage}
-            containerClassName={"paginationBttns"}
-            previousLinkClassName={"previousBttn"}
-            nextLinkClassName={"nextBttn"}
-            disabledClassName={"paginationDisabled"}
-            activeClassName={"paginationActive"}
-          />
-        </div>
+
         <Modal size="md" show={show1} onHide={handleClose1}>
           <Modal.Header>
             <Modal.Title>Block Doctor Clinic Authentication</Modal.Title>
@@ -1085,7 +851,7 @@ export default function Clinicaldoctors() {
                 />
               </div>
               <div className="col-lg-6">
-                <input                 
+                <input
                   style={{
                     width: "100%",
                     padding: "8px 20px",
