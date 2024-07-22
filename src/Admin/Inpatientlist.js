@@ -2,21 +2,30 @@ import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useEffect } from "react";
 import Barcode from "react-barcode";
-import { Table, Modal, ProgressBar, Button, Form, Card } from "react-bootstrap";
+import { Table, Modal, Button, Form } from "react-bootstrap";
 import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { CiBarcode } from "react-icons/ci";
+<<<<<<< HEAD
 
+=======
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
 import { useReactToPrint } from "react-to-print";
 import { GrView } from "react-icons/gr";
 import moment from "moment";
 import { FaPlus } from "react-icons/fa";
+<<<<<<< HEAD
 import exportFromJSON from "export-from-json";
 import ReactPaginate from "react-paginate";
 import { AiFillFileExcel } from "react-icons/ai";
 import { FaUserMd } from "react-icons/fa";
 
+=======
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCancel } from "@fortawesome/free-solid-svg-icons";
+import { LuView } from "react-icons/lu";
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
 export default function Inpatientlist() {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
@@ -75,50 +84,13 @@ export default function Inpatientlist() {
   const handleClose12 = () => setShow12(false);
   const handleShow12 = () => setShow12(true);
 
-  function ValidateEmail(mail) {
-    if (
-      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-        mail
-      )
-    ) {
-      return true;
-    }
-    alert("You have entered an invalid email address!");
-    return false;
-  }
+  const [show13, setShow13] = useState(false);
+  const handleClose13 = () => setShow13(false);
+  const handleShow13 = () => setShow13(true);
 
-  function validatename(inputtxt) {
-    var phoneno = /^[a-zA-Z ]{2,30}$/; // var no = /^\d{10}$/;
-    if (inputtxt.match(phoneno)) {
-      return true;
-    } else {
-      alert("You have entered an invalid name!");
-      return false;
-    }
-  }
-
-  function phonenumber(inputtxt) {
-    var phoneno = /^[6-9]\d{9}$/; // var no = /^\d{10}$/;
-    if (inputtxt.match(phoneno)) {
-      return true;
-    } else {
-      alert("You have entered an invalid mobile number!");
-      return false;
-    }
-  }
-
-  function CheckPassword(inputtxt) {
-    var decimal =
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,20}$/;
-    if (inputtxt.match(decimal)) {
-      return true;
-    } else {
-      alert(
-        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character, should be total 8 character!"
-      );
-      return false;
-    }
-  }
+  const [show14, setShow14] = useState(false);
+  const handleClose14 = () => setShow14(false);
+  const handleShow14 = () => setShow14(true);
 
   const [medications, setmedications] = useState(false);
   const [medicinesTaking, setmedicinesTaking] = useState();
@@ -153,68 +125,208 @@ export default function Inpatientlist() {
   const [insuranceDoc, setinsuranceDoc] = useState("");
   const [insuranceProviderCompany, setinsuranceProviderCompany] = useState("");
   const [insuranceAmt, setinsuranceAmt] = useState("");
-  let [patientAllergies, setpatientAllergies] = useState([]);
   const [clickedAddAllergyBtn, setclickedAddAllergyBtn] = useState("");
   const [Aadharcard, setAadharcard] = useState("");
   const [Aadharno, setAadharno] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const [patientAllergies, setpatientAllergies] = useState([]);
+
+  //Regex
+  const namePattern = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
+  const relativepattern = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
+  const mobilePattern = /^[0-9]{10}$/;
+  const pincodePattern = /^[0-9]{6}$/;
+  const aadharnoPattern = /^[0-9]{12}$/;
+  const emailPattern = /^[^\s@]+@gmail\.com$/;
+  const passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
   const signup = async (e) => {
     e.preventDefault();
+    if (!patientfirstname) {
+      return alert("Enter your first name");
+    } else if (!namePattern.test(patientfirstname)) {
+      return alert(
+        "Enter a valid first name (letters only)"
+      );
+    }
+    if (!patientlastname) {
+      return alert("Enter your last name");
+    } else if (!namePattern.test(patientlastname)) {
+      return alert(
+        "Enter a valid last name  letters only)"
+      );
+    }
+    if (!gender) {
+      return alert("Select Your gender..!");
+    }
+    if (!mobileno) {
+      return alert("Enter mobile number..!");
+    } else if (!mobilePattern.test(mobileno)) {
+      return alert("Enter a valid 10-digit mobile number");
+    }
+    if (!alternatePhoneNumber) {
+      return alert("Enter alternate mobile number..!");
+    } else if (!mobilePattern.test(alternatePhoneNumber)) {
+      return alert("Enter a valid 10-digit mobile number");
+    }
+    if (!email) {
+      return alert("Enter Email Id");
+    } else if (!emailPattern.test(email)) {
+      return alert("Enter a valid Gmail address (e.g., example@gmail.com)");
+    }
+    if (!DOB) {
+      return alert("Select Birth date and Year.!");
+    }
+    if (!Address) {
+      return alert("Enter Street Address..!");
+    }
+    if (!City) {
+      return alert("Enter City name..!");
+    } else if (!namePattern.test(City)) {
+      return alert(
+        "Enter a valid City name (2-30 characters, letters only, optional hyphen or apostrophe)"
+      );
+    }
+    if (!State) {
+      return alert("Enter State name..!");
+    } else if (!namePattern.test(State)) {
+      return alert(
+        "Enter a valid State name (2-30 characters, letters only, optional hyphen or apostrophe)"
+      );
+    }
+    if (!Zipcode) {
+      return alert("Enter Zipcode..!");
+    } else if (!pincodePattern.test(Zipcode)) {
+      return alert("Enter a valid 6-digit Indian Zipcode");
+    }
+    if (!password) {
+      return alert("Enter password..!");
+    } else if (!passwordPattern.test(password)) {
+      return alert(
+        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
+      );
+    }
+    if (!conpassword) {
+      return alert("Enter Confirm password..!");
+    } else if (!passwordPattern.test(conpassword)) {
+      return alert(
+        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
+      );
+    }
+    if (password !== conpassword) {
+      return alert("Passwords do not match. Please check again.");
+    }
+    if (!MaritalStatus) {
+      return alert("Please Select Marital Status..!");
+    }
+    if (!PatientAge18) {
+      return alert("Please Select and Confirm +18..!");
+    }
+    if (!Aadharcard) {
+      return alert("Please Upload Aadhar Card..!");
+    }
+    if (!Aadharno) {
+      return alert("Enter Aadharno..!");
+    } else if (!aadharnoPattern.test(Aadharno)) {
+      return alert("Enter a valid 12-digit Indian aadhar no");
+    }
+    if (!relationWithPatient) {
+      return alert("Enter Relation with patient..!");
+    } else if (!relativepattern.test(relationWithPatient)) {
+      return alert(
+        "Enter a valid Relation with patient)"
+      );
+    }
+    if (!relativeName) {
+      return alert("Enter Relative name..!");
+    } else if (!relativepattern.test(relativeName)) {
+      return alert(
+        "Enter a valid Relative name )"
+      );
+    }
+    if (!relativePhone) {
+      return alert("Enter Relative mobile no..!");
+    } else if (!mobilePattern.test(relativePhone)) {
+      return alert("Enter a valid mobile no )");
+    }
+    if (!AdmitDate) {
+      return alert("Select Admission Date..!");
+    }
+    if (!followUpsDate) {
+      return alert("Select Follow-up Date..!");
+    }
+    if (!haveInsurance) {
+      return alert("Select Insurance ");
+    }
+    if (haveInsurance === "yes") {
+      if (!insuranceProviderCompany) {
+        return alert("Enter Helth Insurance Company Name..!");
+      }
+      if (!insuranceAmt) {
+        return alert("Enter Helth Insurance Amount..!");
+      }
+    }
+
+    if (medications === true) {
+      if (!medicinesTaking) {
+        return alert("Please Enter medication name");
+      }
+    }
+
     try {
-      if (
-        validatename(patientfirstname) &&
-        ValidateEmail(email) &&
-        phonenumber(mobileno) &&
-        CheckPassword(password)
-      ) {
-        formdata.set("Firstname", patientfirstname);
-        formdata.set("Lastname", patientlastname);
-        formdata.set("Gender", gender);
-        formdata.set("DOB", DOB);
-        formdata.set("profilepic", ProfilePic);
-        formdata.set("PhoneNumber", mobileno);
-        formdata.set("alternatePhoneNumber", alternatePhoneNumber);
-        formdata.set("Email", email);
-        formdata.set("Address1", Address);
-        formdata.set("Address2", Address1);
-        formdata.set("City1", City);
-        formdata.set("State1", State);
-        formdata.set("Zipcode", Zipcode);
-        formdata.set("MaritalStatus", MaritalStatus);
-        formdata.set("PatientAge18", PatientAge18);
-        formdata.set("relativeName", relativeName);
-        formdata.set("relationWithPatient", relationWithPatient);
-        formdata.set("relativePhone", relativePhone);
-        formdata.set("AdmitDate", AdmitDate);
-        formdata.set("followUpsDate", followUpsDate);
-        formdata.set("haveInsurance", haveInsurance);
-        formdata.set("insuranceDoc", insuranceDoc);
-        formdata.set("insuranceProviderCompany", insuranceProviderCompany);
-        formdata.set("insuranceAmt", insuranceAmt);
-        formdata.set("Password", password);
-        formdata.set("ConfirmPassword", conpassword);
-        formdata.set("registrationType", "IPD");
-        formdata.set("registeredFrom", "staff");
-        formdata.set("patientAllergies", patientAllergies);
-        formdata.set("takingAnyMedication", medications);
-        formdata.set("medicinesTaking", medicinesTaking);
-        formdata.set("Aadharcard", Aadharcard);
-        formdata.set("Aadharno", Aadharno);
-        const config = {
-          url: "/user/addPatient",
-          method: "post",
-          baseURL: "http://localhost:8521/api",
-          headers: { "content-type": "multipart/form-data" },
-          data: formdata,
-        };
-        let res = await axios(config);
-        if (res.status === 200) {
-          setmedicinesTaking("");
-          setpatientAllergies([]);
-          alert("IPD Patient Register Successfully.!");
-          getipdpatients();
-          handleClose2();
-        }
+      formdata.set("Firstname", patientfirstname);
+      formdata.set("Lastname", patientlastname);
+      formdata.set("Gender", gender);
+      formdata.set("DOB", DOB);
+      formdata.set("profilepic", ProfilePic);
+      formdata.set("PhoneNumber", mobileno);
+      formdata.set("alternatePhoneNumber", alternatePhoneNumber);
+      formdata.set("Email", email);
+      formdata.set("Address1", Address);
+      formdata.set("Address2", Address1);
+      formdata.set("City1", City);
+      formdata.set("State1", State);
+      formdata.set("Zipcode", Zipcode);
+      formdata.set("MaritalStatus", MaritalStatus);
+      formdata.set("PatientAge18", PatientAge18);
+      formdata.set("relativeName", relativeName);
+      formdata.set("relationWithPatient", relationWithPatient);
+      formdata.set("relativePhone", relativePhone);
+      formdata.set("AdmitDate", AdmitDate);
+      formdata.set("followUpsDate", followUpsDate);
+      formdata.set("haveInsurance", haveInsurance);
+      formdata.set("insuranceDoc", insuranceDoc);
+      formdata.set("insuranceProviderCompany", insuranceProviderCompany);
+      formdata.set("insuranceAmt", insuranceAmt);
+      formdata.set("Password", password);
+      formdata.set("ConfirmPassword", conpassword);
+      formdata.set("registrationType", "IPD");
+      formdata.set("registeredFrom", "staff");
+      formdata.set("patientAllergies", patientAllergies);
+      formdata.set("takingAnyMedication", medications);
+      formdata.set("medicinesTaking", medicinesTaking);
+      formdata.set("Aadharcard", Aadharcard);
+      formdata.set("Aadharno", Aadharno);
+      const config = {
+        url: "/user/addPatient",
+        method: "post",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "multipart/form-data" },
+        data: formdata,
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        setmedicinesTaking("");
+        setpatientAllergies([]);
+        alert("IPD Patient Register Successfully.!");
+        getipdpatients();
+        handleClose2();
       }
     } catch (error) {
       console.log(error.response.data.error);
@@ -241,7 +353,6 @@ export default function Inpatientlist() {
   };
 
   const [Doctors, setDoctors] = useState([]);
-
   const getDoctors = () => {
     axios
       .get("http://localhost:8521/api/Doctor/getDoctorsList")
@@ -308,6 +419,7 @@ export default function Inpatientlist() {
         alert(res.data.message);
         handleClose3();
         getipdpatients();
+        // setPatientVisitId(res.data.visitor)
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -361,7 +473,9 @@ export default function Inpatientlist() {
   const [Selectcause, setSelectcause] = useState({});
   // Assigned Doctors
 
-  const [selCause, setselCause] = useState();
+  const [selCause, setselCause] = useState("");
+  const [selectedId, ...causeParts] = selCause ? selCause.split(" ") : ["", ""];
+  const selectedCauseName = causeParts.join(" ");
   const [selDoc, setselDoc] = useState();
   const AssignDoctor = async () => {
     try {
@@ -372,7 +486,8 @@ export default function Inpatientlist() {
         headers: { "content-type": "application/json" },
         data: {
           patientId: ViewCause?._id,
-          causeId: selCause,
+          causeId: selectedId,
+          causename: selectedCauseName,
           doctorsId: selDoc,
         },
       };
@@ -382,6 +497,7 @@ export default function Inpatientlist() {
         handleClose7();
         setselCause("");
         setselDoc("");
+        getipdpatients();
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -449,6 +565,95 @@ export default function Inpatientlist() {
       }
     } catch (error) {
       alert(error.response.data.error);
+<<<<<<< HEAD
+=======
+    }
+  };
+
+  const DeletePatient = async () => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:8521/api/user/deletepatientbyid/${PatientDetailsView?._id}`
+      );
+      if (res.status === 200) {
+        alert(res.data.success);
+        getipdpatients();
+        handleClose13();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
+  const [EditPatientDetails, setEditPatientDetails] = useState({});
+  useEffect(() => {
+    if (EditPatientDetails) {
+      setpatientfirstname(EditPatientDetails?.Firstname || "");
+      setpatientlastname(EditPatientDetails?.Lastname || "");
+      setgender(EditPatientDetails?.Gender || "");
+      setmobileno(EditPatientDetails?.PhoneNumber || "");
+      setalternatePhoneNumber(EditPatientDetails?.alternatePhoneNumber || "");
+      setemail(EditPatientDetails?.Email || "");
+      setDOB(EditPatientDetails?.DOB || "");
+      setAddress(EditPatientDetails?.Address1 || "");
+      setAddress1(EditPatientDetails?.Address2 || "");
+      setCity(EditPatientDetails?.City1 || "");
+      setState(EditPatientDetails?.State1 || "");
+      setZipcode(EditPatientDetails?.Zipcode || "");
+      setMaritalStatus(EditPatientDetails?.MaritalStatus || "");
+      setPatientAge18(EditPatientDetails?.PatientAge18 || "");
+      setAadharno(EditPatientDetails?.Aadharno || "");
+      setrelationWithPatient(EditPatientDetails?.relationWithPatient || "");
+      setrelativeName(EditPatientDetails?.relativeName || "");
+      setrelativePhone(EditPatientDetails?.relativePhone || "");
+      setProfilePic(EditPatientDetails?.profilepic || "");
+      setAadharcard(EditPatientDetails?.Aadharcard || "");
+      setinsuranceDoc(EditPatientDetails?.insuranceDoc || "");
+    }
+  }, [EditPatientDetails]);
+
+console.log("relativePhone :",relativePhone );
+
+  const EditPatient = async () => {
+    try {
+      formdata.set("IPDpatientId", EditPatientDetails?._id);
+      formdata.set("Firstname", patientfirstname);
+      formdata.set("Lastname", patientlastname);
+      formdata.set("Gender", gender);
+      formdata.set("DOB", DOB);    
+      formdata.set("PhoneNumber", mobileno);
+      formdata.set("alternatePhoneNumber", alternatePhoneNumber);
+      formdata.set("Email", email);
+      formdata.set("Address1", Address);
+      formdata.set("Address2", Address1);
+      formdata.set("City1", City);
+      formdata.set("State1", State);
+      formdata.set("Zipcode", Zipcode);
+      formdata.set("MaritalStatus", MaritalStatus);
+      formdata.set("PatientAge18", PatientAge18);
+      formdata.set("relativeName", relativeName);
+      formdata.set("relationWithPatient", relationWithPatient);   
+      formdata.set("Aadharno", Aadharno);
+      formdata.set("relativePhone", relativePhone);
+      formdata.set("profilepic", ProfilePic);
+      formdata.set("Aadharcard", Aadharcard);
+      const config = {
+        url: "/editpatientdetails",
+        method: "put",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "multipart/form-data" },
+        data: formdata,
+      };
+      let res = await axios(config);
+      if(res.status === 200) {
+        alert (res.data.success)
+        handleClose14();
+        getipdpatients();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
     }
   };
 
@@ -548,7 +753,11 @@ export default function Inpatientlist() {
         <Modal.Body>
           <div className="row" style={{ color: "white" }}>
             <div className="col-lg-4">
-              <img src="/Images/Patient.png" style={{ width: "100%" }} />
+              <img
+                alt="profile-pic"
+                src={`http://localhost:8521/PatientREG/${PatientDetailsView?.profilepic}`}
+                style={{ width: "100%" }}
+              />
               <div style={{ border: "1px solid lightgrey" }}>
                 <h6
                   style={{
@@ -567,7 +776,8 @@ export default function Inpatientlist() {
                     marginTop: "2%",
                   }}
                 >
-                  <b>NAME</b> : John
+                  <b>Patient ID : </b>
+                  {PatientDetailsView?.PatientId}
                 </h6>
                 <h6
                   style={{
@@ -576,7 +786,8 @@ export default function Inpatientlist() {
                     marginTop: "2%",
                   }}
                 >
-                  <b>EmailID</b> : John@gmail.com
+                  <b>Name : </b>
+                  {`${PatientDetailsView?.Firstname} ${PatientDetailsView?.Lastname}`}
                 </h6>
                 <h6
                   style={{
@@ -585,7 +796,7 @@ export default function Inpatientlist() {
                     marginTop: "2%",
                   }}
                 >
-                  <b>Mobile</b> : 9563256325
+                  <b>Email ID : </b> {PatientDetailsView?.Email}
                 </h6>
                 <h6
                   style={{
@@ -594,94 +805,938 @@ export default function Inpatientlist() {
                     marginTop: "2%",
                   }}
                 >
-                  <b>Occupation</b> : Engineer
+                  <b>Mobile : </b> {PatientDetailsView?.PhoneNumber}
+                </h6>
+                <h6
+                  style={{
+                    paddingLeft: "4%",
+                    fontSize: "14px",
+                    marginTop: "2%",
+                  }}
+                >
+                  <b>Marital Status : </b> {PatientDetailsView?.MaritalStatus}
+                </h6>
+                <h6
+                  style={{
+                    paddingLeft: "4%",
+                    fontSize: "14px",
+                    marginTop: "2%",
+                  }}
+                >
+                  <b>Gender : </b> {PatientDetailsView?.Gender}
+                </h6>
+                <h6
+                  style={{
+                    paddingLeft: "4%",
+                    fontSize: "14px",
+                    marginTop: "2%",
+                  }}
+                >
+                  <b>D-O-B : </b> {PatientDetailsView?.DOB}
                 </h6>
               </div>
             </div>
             <div className="col-lg-8">
-              <div style={{ border: "1px solid lightgrey", padding: "2%" }}>
-                <span style={{ fontSize: "14px", textAlign: "justify" }}>
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s,
-                </span>
-                <hr></hr>
-                <h6>General Report</h6>
-                <hr></hr>
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Heart Beat
-                </span>
-                <ProgressBar
-                  variant="success"
-                  style={{ height: "6px" }}
-                  now={40}
-                />
-
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Blood Pressure
-                </span>
-                <ProgressBar
-                  variant="info"
-                  style={{ height: "6px" }}
-                  now={60}
-                />
-
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Sugar
-                </span>
-                <ProgressBar
-                  variant="warning"
-                  style={{ height: "6px" }}
-                  now={60}
-                />
-
-                <span style={{ fontSize: "14px", fontWeight: "600" }}>
-                  Haemoglobin
-                </span>
-                <ProgressBar
-                  variant="danger"
-                  style={{ height: "6px" }}
-                  now={60}
-                />
+              <div style={{ backgroundColor: "white", padding: "10px" }}>
+                <Table bordered>
+                  <thead>
+                    <tr>
+                      <th>Content </th>
+                      <th>Patient Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <b>Aadharcard No</b>
+                      </td>
+                      <td>
+                        <p>{PatientDetailsView?.Aadharno}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Aadharcard</b>
+                      </td>
+                      <td>
+                        <a
+                          target="_blank"
+                          href={`http://localhost:8521/PatientREG/${PatientDetailsView?.Aadharcard}`}
+                        >
+                          View
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Insurance Complany</b>
+                      </td>
+                      <td>
+                        <p>{PatientDetailsView?.insuranceProviderCompany}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Insurance Documents</b>
+                      </td>
+                      <td>
+                        <a
+                          target="_blank"
+                          href={`http://localhost:8521/PatientREG/${PatientDetailsView?.insuranceDoc}`}
+                        >
+                          View
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Address</b>
+                      </td>
+                      <td 
+                      style={{ 
+                        maxWidth: "300px", 
+                        wordWrap: "break-word", 
+                        overflowWrap: "break-word", 
+                        whiteSpace: "normal" 
+                        }}>
+                        <p style={{width:"auto",textAlign:"justify"}}>
+                          {PatientDetailsView?.Address1},
+                          {PatientDetailsView?.Address2},
+                          {PatientDetailsView?.City1},
+                          {PatientDetailsView?.State1},
+                          {PatientDetailsView?.Zipcode}
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Relatives</b>
+                      </td>
+                      <td>
+                        <p>
+                          {PatientDetailsView?.relativeName} (
+                          {PatientDetailsView?.relationWithPatient}){" "}
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
               </div>
             </div>
           </div>
-          <h6 style={{ marginTop: "4%" }}>Past Visit History</h6>
-          <Table responsive="md" style={{ marginTop: "1%" }}>
-            <thead>
-              <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                <th>Date</th>
-                <th>Doctor</th>
-                <th> Treatment</th>
-                <th>Charges</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                <td>06/10/1987</td>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
-                <td>Devid</td>
-                <td>Check Up</td>
-                <td>500</td>
-                <td>
-                  {" "}
-                  <div
+      <Modal size="lg" show={show2} onHide={handleClose2}>
+        <Modal.Header>
+          <Modal.Title>Add In-Patient</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h6 style={{ color: "white", margin: "0% 2% 2% 2%" }}>
+            Personal Information
+          </h6>
+          <div
+            className="row"
+            style={{
+              border: "1px solid white",
+              padding: "2% 0%",
+              margin: "0% 1%",
+              borderRadius: "0px",
+            }}
+          >
+            <div className="col-lg-6">
+              <input
+                type="text"
+                placeholder="First Name"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                value={patientfirstname}
+                onChange={(e) => setpatientfirstname(e.target.value)}
+              />
+            </div>
+            <div className="col-lg-6">
+              <input
+                type="text"
+                placeholder="Last Name"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                value={patientlastname}
+                onChange={(e) => setpatientlastname(e.target.value)}
+              />
+            </div>
+
+            <div className="col-lg-6">
+              <select
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  marginTop: "4%",
+                  backgroundColor: "#ebebeb",
+                }}
+                onChange={(e) => setgender(e.target.value)}
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="Contact Number"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  marginTop: "4%",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                type="text"
+                value={mobileno}
+                maxLength={10}
+                onChange={(e) => setmobileno(e.target.value)}
+              />
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="Alternate Phone Number"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  marginTop: "4%",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                maxLength={10}
+                type="text"
+                value={alternatePhoneNumber}
+                onChange={(e) => setalternatePhoneNumber(e.target.value)}
+              />
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                type="email"
+                placeholder="Email"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  marginTop: "4%",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                }}
+                value={email}
+                onChange={(e) => setemail(e.target.value)}
+              />
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-5">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Date of Birth :
+                  </h6>
+                </div>
+                <div className="col-lg-7">
+                  <input
+                    type="date"
                     style={{
-                      display: "flex",
-                      textAlign: "center",
-                      justifyContent: "space-evenly",
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    max={new Date().toISOString().split("T")[0]}
+                    value={DOB}
+                    onChange={(e) => setDOB(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-4">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Profile Pic :
+                  </h6>
+                </div>
+                <div className="col-lg-8">
+                  <input
+                    type="file"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    accept="image/*"
+                    onChange={(e) => setProfilePic(e.target.files[0])}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Address:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  <input
+                    type="text"
+                    placeholder="Street Address"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    value={Address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <input
+                placeholder="Street Address Line 2"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                value={Address1}
+                onChange={(e) => setAddress1(e.target.value)}
+              />
+            </div>
+            <div className="col-lg-3">
+              <input
+                placeholder="City"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "8%",
+                }}
+                value={City}
+                onChange={(e) => setCity(e.target.value)}
+              />
+            </div>
+
+            <div className="col-lg-3">
+              <input
+                placeholder="
+                State / Province"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "8%",
+                }}
+                value={State}
+                onChange={(e) => setState(e.target.value)}
+              />
+            </div>
+
+            <div className="col-lg-6">
+              <input
+                placeholder="Postal / Zip Code"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                maxLength={6}
+                type="text"
+                value={Zipcode}
+                onChange={(e) => setZipcode(e.target.value)}
+              />
+            </div>
+            <div className="col-lg-6" style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                value={password}
+                onChange={(e) => setpassword(e.target.value)}
+              />
+              <span
+                onClick={togglePasswordVisibility}
+                style={{
+                  position: "absolute",
+                  right: "20px",
+                  top: "60%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                }}
+              >
+                {showPassword ? "👁️" : "🙈"}
+              </span>
+            </div>
+
+            <div className="col-lg-6" style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="ConfirmPassword"
+                style={{
+                  width: "100%",
+                  padding: "8px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #ebebeb",
+                  backgroundColor: "#ebebeb",
+                  marginTop: "4%",
+                }}
+                value={conpassword}
+                onChange={(e) => setconpassword(e.target.value)}
+              />
+              <span
+                onClick={togglePasswordVisibility}
+                style={{
+                  position: "absolute",
+                  right: "20px",
+                  top: "60%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                }}
+              >
+                {showPassword ? "👁️" : "🙈"}
+              </span>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Marrital Status:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  <select
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    value={MaritalStatus}
+                    onChange={(e) => setMaritalStatus(e.target.value)}
+                  >
+                    <option value="">Select Option</option>
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                    <option value="Divorce">Divorce</option>
+                    <option value="Complicated">Complicated</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Age is 18+:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  <select
+                    type="text"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    value={PatientAge18}
+                    onChange={(e) => setPatientAge18(e.target.value)}
+                  >
+                    <option value="">Select Option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Aadhar Card:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  <input
+                    type="file"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    accept="image/*"
+                    onChange={(e) => setAadharcard(e.target.files[0])}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="row" style={{ justifyContent: "center" }}>
+                <div className="col-lg-3">
+                  <h6 style={{ marginTop: "20px", color: "white" }}>
+                    Aadhar No:
+                  </h6>
+                </div>
+                <div className="col-lg-9">
+                  <input
+                    type="text"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    placeholder="Enter Aadhar Card No"
+                    maxLength={12}
+                    value={Aadharno}
+                    onChange={(e) => setAadharno(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                width: "100%",
+                padding: "2%",
+                borderRadius: "0px",
+                borderTop: "1px solid #ebebeb",
+                marginTop: "4%",
+              }}
+            >
+              <h6 style={{ color: "white" }}>Relative / next to kin*</h6>
+
+              <div className="row">
+                <div className="col-lg-6">
+                  <input
+                    placeholder="Relation with patient"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "2%",
+                    }}
+                    type="text"
+                    value={relationWithPatient}
+                    onChange={(e) => setrelationWithPatient(e.target.value)}
+                  />
+                </div>
+
+                <div className="col-lg-6">
+                  <input
+                    placeholder="Relative Name"
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "2%",
+                    }}
+                    type="text"
+                    value={relativeName}
+                    onChange={(e) => setrelativeName(e.target.value)}
+                  />
+                </div>
+                <div className="col-lg-6">
+                  <input
+                    placeholder="Relative Mobileno."
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "4%",
+                    }}
+                    type="text"
+                    maxLength={10}
+                    value={relativePhone}
+                    onChange={(e) => setrelativePhone(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                width: "100%",
+                padding: "2%",
+                borderRadius: "0px",
+                borderTop: "1px solid #ebebeb",
+                marginTop: "4%",
+              }}
+            >
+              <h6 style={{ color: "white" }}>Admission Information</h6>
+
+              <div className="row">
+                <div className="col-lg-6">
+                  <div className="row" style={{ justifyContent: "center" }}>
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white" }}>Admission Date: </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      <input
+                        type="date"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "2%",
+                        }}
+                        onChange={(e) => setAdmitDate(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div className="row" style={{ justifyContent: "center" }}>
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white" }}>Follow-up Date: </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      <input
+                        type="date"
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "2%",
+                        }}
+                        min={new Date().toISOString().split("T")[0]}
+                        onChange={(e) => setfollowUpsDate(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div
+                    className="row"
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <div className="col-lg-3">
+                      <h6 style={{ color: "white", marginTop: "6%" }}>
+                        Health Insurance*:
+                      </h6>
+                    </div>
+                    <div className="col-lg-9">
+                      <select
+                        style={{
+                          width: "100%",
+                          padding: "8px 20px",
+                          borderRadius: "0px",
+                          border: "1px solid #ebebeb",
+                          backgroundColor: "#ebebeb",
+                          marginTop: "6%",
+                        }}
+                        onChange={(e) => sethaveInsurance(e.target.value)}
+                      >
+                        <option value="">Select Option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                {haveInsurance === "yes" && (
+                  <>
+                    <div className="col-lg-6">
+                      <div
+                        className="row"
+                        style={{
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <div className="col-lg-3">
+                          <h6 style={{ color: "white", marginTop: "6%" }}>
+                            Health Insurance Doc(if available):
+                          </h6>
+                        </div>
+                        <div className="col-lg-9">
+                          {" "}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            style={{
+                              width: "100%",
+                              padding: "8px 20px",
+                              borderRadius: "0px",
+                              border: "1px solid #ebebeb",
+                              backgroundColor: "#ebebeb",
+                              marginTop: "6%",
+                            }}
+                            onChange={(e) => setinsuranceDoc(e.target.files[0])}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-6">
+                      <div
+                        className="row"
+                        style={{
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <div className="col-lg-3">
+                          <h6 style={{ color: "white", marginTop: "6%" }}>
+                            Health Insurance Provider:
+                          </h6>
+                        </div>
+                        <div className="col-lg-9">
+                          <input
+                            type="test"
+                            style={{
+                              width: "100%",
+                              padding: "8px 20px",
+                              borderRadius: "0px",
+                              border: "1px solid #ebebeb",
+                              backgroundColor: "#ebebeb",
+                              marginTop: "6%",
+                            }}
+                            placeholder="Insurance Provider Name.."
+                            onChange={(e) =>
+                              setinsuranceProviderCompany(e.target.value)
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-6">
+                      <div
+                        className="row"
+                        style={{
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <div className="col-lg-3">
+                          <h6 style={{ color: "white", marginTop: "6%" }}>
+                            Health Insurance Amount:
+                          </h6>
+                        </div>
+                        <div className="col-lg-9">
+                          <input
+                            type="Number"
+                            style={{
+                              width: "100%",
+                              padding: "8px 20px",
+                              borderRadius: "0px",
+                              border: "1px solid #ebebeb",
+                              backgroundColor: "#ebebeb",
+                              marginTop: "6%",
+                            }}
+                            placeholder="Insurance Amount"
+                            onChange={(e) => setinsuranceAmt(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="row"
+            style={{
+              border: "1px solid white",
+              padding: "2% 0%",
+              margin: "0% 1%",
+              borderRadius: "0px",
+            }}
+          >
+            <div className="col-lg-6" style={{ color: "white" }}>
+              Taking any medications, currently?
+            </div>
+            <div className="col-lg-6" style={{ color: "white" }}>
+              <div className="row">
+                <div className="col-lg-3">
+                  <input
+                    type="checkbox"
+                    checked={medications === true}
+                    onChange={() => setmedications(true)}
+                  />
+                  Yes
+                </div>
+
+                <div className="col-lg-3">
+                  <input
+                    type="checkbox"
+                    checked={medications === false}
+                    onChange={() => setmedications(false)}
+                  />
+                  No
+                </div>
+              </div>
+            </div>
+
+            {medications ? (
+              <>
+                <label style={{ color: "white", marginTop: "4%" }}>
+                  If yes, please list it here
+                </label>
+                <div
+                  className="col-lg-12"
+                  style={{ color: "white", textAlign: "center" }}
+                >
+                  <textarea
+                    cols={6}
+                    placeholder="Please list all medications"
+                    value={medicinesTaking}
+                    onChange={(e) => setmedicinesTaking(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                    }}
+                  />
+                </div>
+              </>
+            ) : null}
+
+            <div className="col-lg-6">
+              <div
+                className="row"
+                style={{
+                  display: "flex",
+                  alignItems: "baseline",
+                }}
+              >
+                <div className="col-lg-3">
+                  <h6 style={{ color: "white", marginTop: "6%" }}>
+                    Allergies:
+                  </h6>
+                </div>
+                <div className="col-lg-6">
+                  <input
+                    type="text"
+                    value={allergy}
+                    style={{
+                      width: "100%",
+                      padding: "8px 20px",
+                      borderRadius: "0px",
+                      border: "1px solid #ebebeb",
+                      backgroundColor: "#ebebeb",
+                      marginTop: "6%",
+                    }}
+                    onChange={(e) => setallergy(e.target.value)}
+                    placeholder="write allergy "
+                  />
+                </div>
+                <div className="col-lg-3">
+                  <Button
+                    variant="warning"
+                    onClick={() => {
+                      patientAllergies.push(allergy);
+                      setclickedAddAllergyBtn("clicked");
                     }}
                   >
-                    <MdEdit style={{ color: "#20958c", marginRight: "1%" }} />
-                    <AiFillDelete style={{ color: "red" }} />
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </Table>
+                    Add
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6 mt-3">
+              <div style={{ padding: "5px", backgroundColor: "white" }}>
+                <Table responsive bordered>
+                  <thead>
+                    <tr>
+                      <th>S.N.</th>
+                      <th>Allergies</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {patientAllergies?.map((item, i) => {
+                      return (
+                        <tr>
+                          <td>{++i}</td>
+                          <td>{item}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              </div>
+            </div>
+          </div>
         </Modal.Body>
-        {/* <Modal.Footer>
+        <Modal.Footer>
           <div style={{ display: "flex" }}>
             <button
               style={{
@@ -694,7 +1749,7 @@ export default function Inpatientlist() {
                 padding: "4px 10px",
               }}
               onClick={() => {
-                setShow(false);
+                setShow2(false);
               }}
             >
               CANCEL
@@ -709,20 +1764,19 @@ export default function Inpatientlist() {
                 fontWeight: "600",
                 padding: "4px 10px",
               }}
-              onClick={() => {
-                setShow(false);
-                alert("Doctor Added");
+              onClick={(e) => {
+                signup(e);
               }}
             >
               SUBMIT
             </button>
           </div>
-        </Modal.Footer> */}
+        </Modal.Footer>
       </Modal>
 
-      <Modal size="lg" show={show2} onHide={handleClose2}>
+      <Modal size="lg" show={show14} onHide={handleClose14}>
         <Modal.Header>
-          <Modal.Title>Add In-Patient</Modal.Title>
+          <Modal.Title>Edit In-Patient</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <h6 style={{ color: "white", margin: "0% 2% 2% 2%" }}>
@@ -748,7 +1802,8 @@ export default function Inpatientlist() {
                   backgroundColor: "#ebebeb",
                 }}
                 onChange={(e) => setpatientfirstname(e.target.value)}
-              ></input>
+                value={patientfirstname}
+              />
             </div>
 
             <div className="col-lg-6">
@@ -762,7 +1817,8 @@ export default function Inpatientlist() {
                   backgroundColor: "#ebebeb",
                 }}
                 onChange={(e) => setpatientlastname(e.target.value)}
-              ></input>
+                value={patientlastname}
+              />
             </div>
 
             <div className="col-lg-6">
@@ -777,10 +1833,12 @@ export default function Inpatientlist() {
                   backgroundColor: "#ebebeb",
                 }}
                 onChange={(e) => setgender(e.target.value)}
+                value={gender}
               >
-                <option>Select Gender</option>
-                <option>Male</option>
-                <option>Female</option>
+                 <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
               </select>
             </div>
 
@@ -795,8 +1853,11 @@ export default function Inpatientlist() {
                   border: "1px solid #ebebeb",
                   backgroundColor: "#ebebeb",
                 }}
+                maxLength={10}
+                type="text"
                 onChange={(e) => setmobileno(e.target.value)}
-              ></input>
+                value={mobileno}
+              />
             </div>
 
             <div className="col-lg-6">
@@ -810,8 +1871,11 @@ export default function Inpatientlist() {
                   border: "1px solid #ebebeb",
                   backgroundColor: "#ebebeb",
                 }}
+                maxLength={10}
+                type="text"
                 onChange={(e) => setalternatePhoneNumber(e.target.value)}
-              ></input>
+                value={alternatePhoneNumber}
+              />
             </div>
 
             <div className="col-lg-6">
@@ -826,7 +1890,8 @@ export default function Inpatientlist() {
                   backgroundColor: "#ebebeb",
                 }}
                 onChange={(e) => setemail(e.target.value)}
-              ></input>
+                value={email}
+              />
             </div>
 
             <div className="col-lg-6">
@@ -837,7 +1902,6 @@ export default function Inpatientlist() {
                   </h6>
                 </div>
                 <div className="col-lg-7">
-                  {" "}
                   <input
                     type="date"
                     style={{
@@ -849,7 +1913,9 @@ export default function Inpatientlist() {
                       marginTop: "4%",
                     }}
                     onChange={(e) => setDOB(e.target.value)}
-                  ></input>
+                    value={DOB}
+                    max={new Date().toISOString().split("T")[0]}
+                  />
                 </div>
               </div>
             </div>
@@ -873,8 +1939,9 @@ export default function Inpatientlist() {
                       backgroundColor: "#ebebeb",
                       marginTop: "4%",
                     }}
+                      accept="image/*"
                     onChange={(e) => setProfilePic(e.target.files[0])}
-                  ></input>
+                  />
                 </div>
               </div>
             </div>
@@ -900,7 +1967,8 @@ export default function Inpatientlist() {
                       marginTop: "6%",
                     }}
                     onChange={(e) => setAddress(e.target.value)}
-                  ></input>
+                    value={Address}
+                  />
                 </div>
               </div>
             </div>
@@ -917,9 +1985,9 @@ export default function Inpatientlist() {
                   marginTop: "4%",
                 }}
                 onChange={(e) => setAddress1(e.target.value)}
-              ></input>
+                value={Address1}
+              />
             </div>
-
             <div className="col-lg-3">
               <input
                 placeholder="City"
@@ -932,7 +2000,8 @@ export default function Inpatientlist() {
                   marginTop: "8%",
                 }}
                 onChange={(e) => setCity(e.target.value)}
-              ></input>
+                value={City}
+              />
             </div>
 
             <div className="col-lg-3">
@@ -948,7 +2017,8 @@ export default function Inpatientlist() {
                   marginTop: "8%",
                 }}
                 onChange={(e) => setState(e.target.value)}
-              ></input>
+                value={State}
+              />
             </div>
 
             <div className="col-lg-6">
@@ -962,38 +2032,11 @@ export default function Inpatientlist() {
                   backgroundColor: "#ebebeb",
                   marginTop: "4%",
                 }}
+                   maxLength={6}
+                type="text"
                 onChange={(e) => setZipcode(e.target.value)}
-              ></input>
-            </div>
-
-            <div className="col-lg-6">
-              <input
-                placeholder="Password"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                  marginTop: "4%",
-                }}
-                onChange={(e) => setpassword(e.target.value)}
-              ></input>
-            </div>
-
-            <div className="col-lg-6">
-              <input
-                placeholder="ConfirmPassword"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                  marginTop: "4%",
-                }}
-                onChange={(e) => setconpassword(e.target.value)}
-              ></input>
+                value={Zipcode}
+              />
             </div>
 
             <div className="col-lg-6">
@@ -1004,7 +2047,6 @@ export default function Inpatientlist() {
                   </h6>
                 </div>
                 <div className="col-lg-9">
-                  {" "}
                   <select
                     type="text"
                     placeholder="Street Address"
@@ -1017,10 +2059,13 @@ export default function Inpatientlist() {
                       marginTop: "6%",
                     }}
                     onChange={(e) => setMaritalStatus(e.target.value)}
+                    value={MaritalStatus}
                   >
-                    <option value="">Select Option</option>
+                     <option value="">Select Option</option>
                     <option value="Single">Single</option>
                     <option value="Married">Married</option>
+                    <option value="Divorce">Divorce</option>
+                    <option value="Complicated">Complicated</option>
                   </select>
                 </div>
               </div>
@@ -1033,7 +2078,6 @@ export default function Inpatientlist() {
                   </h6>
                 </div>
                 <div className="col-lg-9">
-                  {" "}
                   <select
                     type="text"
                     style={{
@@ -1045,6 +2089,7 @@ export default function Inpatientlist() {
                       marginTop: "6%",
                     }}
                     onChange={(e) => setPatientAge18(e.target.value)}
+                    value={PatientAge18}
                   >
                     <option value="">Select Option</option>
                     <option value="yes">Yes</option>
@@ -1061,7 +2106,6 @@ export default function Inpatientlist() {
                   </h6>
                 </div>
                 <div className="col-lg-9">
-                  {" "}
                   <input
                     type="file"
                     style={{
@@ -1072,8 +2116,9 @@ export default function Inpatientlist() {
                       backgroundColor: "#ebebeb",
                       marginTop: "6%",
                     }}
+                    accept="image/*"
                     onChange={(e) => setAadharcard(e.target.files[0])}
-                  ></input>
+                  />
                 </div>
               </div>
             </div>
@@ -1085,7 +2130,6 @@ export default function Inpatientlist() {
                   </h6>
                 </div>
                 <div className="col-lg-9">
-                  {" "}
                   <input
                     type="text"
                     style={{
@@ -1096,8 +2140,10 @@ export default function Inpatientlist() {
                       backgroundColor: "#ebebeb",
                       marginTop: "6%",
                     }}
+                    maxLength={12}
                     onChange={(e) => setAadharno(e.target.value)}
-                  ></input>
+                    value={Aadharno}
+                  />
                 </div>
               </div>
             </div>
@@ -1107,8 +2153,6 @@ export default function Inpatientlist() {
                 padding: "2%",
                 borderRadius: "0px",
                 borderTop: "1px solid #ebebeb",
-                // borderBottom: "1px solid #ebebeb",
-                // backgroundColor: "#ebebeb",
                 marginTop: "4%",
               }}
             >
@@ -1127,7 +2171,8 @@ export default function Inpatientlist() {
                       marginTop: "2%",
                     }}
                     onChange={(e) => setrelationWithPatient(e.target.value)}
-                  ></input>
+                    value={relationWithPatient}
+                  />
                 </div>
 
                 <div className="col-lg-6">
@@ -1142,7 +2187,8 @@ export default function Inpatientlist() {
                       marginTop: "2%",
                     }}
                     onChange={(e) => setrelativeName(e.target.value)}
-                  ></input>
+                    value={relativeName}
+                  />
                 </div>
 
                 <div className="col-lg-6">
@@ -1156,427 +2202,14 @@ export default function Inpatientlist() {
                       backgroundColor: "#ebebeb",
                       marginTop: "4%",
                     }}
+                    maxLength={10}
                     onChange={(e) => setrelativePhone(e.target.value)}
-                  ></input>
+                    value={relativePhone}
+                  />
                 </div>
               </div>
             </div>
 
-            <div
-              style={{
-                width: "100%",
-                padding: "2%",
-                borderRadius: "0px",
-                borderTop: "1px solid #ebebeb",
-                // borderBottom: "1px solid #ebebeb",
-                // backgroundColor: "#ebebeb",
-                marginTop: "4%",
-              }}
-            >
-              <h6 style={{ color: "white" }}>Admission Information</h6>
-
-              <div className="row">
-                <div className="col-lg-6">
-                  <div className="row" style={{ justifyContent: "center" }}>
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white" }}>Admission Date: </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      <input
-                        type="date"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "2%",
-                        }}
-                        onChange={(e) => setAdmitDate(e.target.value)}
-                      ></input>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div className="row" style={{ justifyContent: "center" }}>
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white" }}>Follow-up Date: </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      <input
-                        type="date"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "2%",
-                        }}
-                        onChange={(e) => setfollowUpsDate(e.target.value)}
-                      ></input>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Health Insurance*:
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <select
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
-                        }}
-                        onChange={(e) => sethaveInsurance(e.target.value)}
-                      >
-                        <option value="">Select Option</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Health Insurance Doc(if available):
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
-                        }}
-                        onChange={(e) => setinsuranceDoc(e.target.files[0])}
-                      ></input>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Health Insurance Provider:
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <input
-                        type="test"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
-                        }}
-                        onChange={(e) =>
-                          setinsuranceProviderCompany(e.target.value)
-                        }
-                      ></input>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Health Insurance Amount:
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <input
-                        type="Number"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
-                        }}
-                        onChange={(e) => setinsuranceAmt(e.target.value)}
-                      ></input>
-                    </div>
-                  </div>
-                </div>
-
-                {/* <div className="col-lg-6">
-                  <div
-                    className="row"
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <div className="col-lg-3">
-                      <h6 style={{ color: "white", marginTop: "6%" }}>
-                        Accidental Case*:
-                      </h6>
-                    </div>
-                    <div className="col-lg-9">
-                      {" "}
-                      <select
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid #ebebeb",
-                          backgroundColor: "#ebebeb",
-                          marginTop: "6%",
-                        }}
-                        // onChange={(e) => setAddress(e.target.value)}
-                      >
-                        <option value="">Select Option</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                      </select>
-                    </div>
-                  </div>
-                </div> */}
-              </div>
-            </div>
-
-            {/* <div className="col-lg-6">
-              <textarea
-                placeholder="Address"
-                cols={4}
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                  marginTop: "4%",
-                }}
-              ></textarea>
-            </div> */}
-          </div>
-
-          {/* <h6 style={{ color: "white", margin: "2%" }}>In case of emergency</h6> */}
-          {/* <div
-            className="row"
-            style={{
-              border: "1px solid white",
-              padding: "2% 0%",
-              margin: "0% 1%",
-              borderRadius: "0px",
-            }}
-          >
-            <div className="col-lg-6">
-              <input
-                placeholder="First Name"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                }}
-              ></input>
-            </div>
-
-            <div className="col-lg-6">
-              <input
-                placeholder="Last Name"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                }}
-              ></input>
-            </div>
-
-            <div className="col-lg-6">
-              <input
-                placeholder="Relationship"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  border: "1px solid #ebebeb",
-                  marginTop: "4%",
-                  backgroundColor: "#ebebeb",
-                }}
-              ></input>
-            </div>
-
-            <div className="col-lg-6">
-              <input
-                placeholder="Contact Number"
-                style={{
-                  width: "100%",
-                  padding: "8px 20px",
-                  borderRadius: "0px",
-                  marginTop: "4%",
-
-                  border: "1px solid #ebebeb",
-                  backgroundColor: "#ebebeb",
-                }}
-              ></input>
-            </div>
-          </div> */}
-
-          <div
-            className="row"
-            style={{
-              border: "1px solid white",
-              padding: "2% 0%",
-              margin: "0% 1%",
-              borderRadius: "0px",
-            }}
-          >
-            <div className="col-lg-6" style={{ color: "white" }}>
-              Taking any medications, currently?
-            </div>
-            <div className="col-lg-6" style={{ color: "white" }}>
-              <div className="row">
-                <div className="col-lg-3">
-                  <input
-                    type="checkbox"
-                    checked={medications == true}
-                    onChange={() => setmedications(true)}
-                  ></input>{" "}
-                  Yes
-                </div>
-
-                <div className="col-lg-3">
-                  <input
-                    type="checkbox"
-                    checked={medications == false}
-                    onChange={() => setmedications(false)}
-                  ></input>{" "}
-                  No
-                </div>
-              </div>
-            </div>
-
-            {medications ? (
-              <>
-                <label style={{ color: "white", marginTop: "4%" }}>
-                  If yes, please list it here
-                </label>
-                <div
-                  className="col-lg-12"
-                  style={{ color: "white", textAlign: "center" }}
-                >
-                  <textarea
-                    cols={6}
-                    placeholder="Please list all medications"
-                    value={medicinesTaking}
-                    onChange={(e) => setmedicinesTaking(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "8px 20px",
-                      borderRadius: "0px",
-
-                      border: "1px solid #ebebeb",
-                      backgroundColor: "#ebebeb",
-                    }}
-                  ></textarea>
-                </div>
-              </>
-            ) : null}
-
-            <div className="col-lg-6">
-              <div
-                className="row"
-                style={{
-                  display: "flex",
-                  alignItems: "baseline",
-                }}
-              >
-                <div className="col-lg-3">
-                  <h6 style={{ color: "white", marginTop: "6%" }}>
-                    Allergies:
-                  </h6>
-                </div>
-                <div className="col-lg-6">
-                  {" "}
-                  <input
-                    type="text"
-                    value={allergy}
-                    style={{
-                      width: "100%",
-                      padding: "8px 20px",
-                      borderRadius: "0px",
-                      border: "1px solid #ebebeb",
-                      backgroundColor: "#ebebeb",
-                      marginTop: "6%",
-                    }}
-                    onChange={(e) => setallergy(e.target.value)}
-                  ></input>
-                </div>
-                <div className="col-lg-3">
-                  <Button
-                    variant="warning"
-                    onClick={() => {
-                      patientAllergies.push(allergy);
-                      // setpatientAllergies(patientAllergies);
-                      console.log(patientAllergies);
-                      setclickedAddAllergyBtn("clicked");
-                    }}
-                  >
-                    Add
-                  </Button>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6 mt-3">
-              <Table responsive>
-                <thead>
-                  <th>S.no.</th>
-                  <th>Allergies</th>
-                </thead>
-                <tbody>
-                  {patientAllergies.map((item, i) => {
-                    console.log("patientAllergies", patientAllergies);
-                    return (
-                      <tr>
-                        <td>{++i}</td>
-                        <td>{item}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
-            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -1589,11 +2222,10 @@ export default function Inpatientlist() {
                 borderRadius: "4px",
                 fontWeight: "600",
                 marginRight: "20px",
-                border: "1px solid white",
                 padding: "4px 10px",
               }}
               onClick={() => {
-                setShow2(false);
+                handleClose14();
               }}
             >
               CANCEL
@@ -1606,14 +2238,11 @@ export default function Inpatientlist() {
                 border: "none",
                 borderRadius: "4px",
                 fontWeight: "600",
-                border: "1px solid white",
                 padding: "4px 10px",
               }}
-              onClick={(e) => {
-                signup(e);
-              }}
+              onClick={()=>EditPatient()}
             >
-              SUBMIT
+              Edit
             </button>
           </div>
         </Modal.Footer>
@@ -1670,8 +2299,10 @@ export default function Inpatientlist() {
               <Form.Label>Mobile Number</Form.Label>
               <Form.Control
                 onChange={(e) => setMobileNumber(e.target.value)}
-                type="number"
+                type="text"
                 placeholder="enter Mobile Number"
+                value={MobileNumber}
+                maxLength={10}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1704,53 +2335,55 @@ export default function Inpatientlist() {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Table className="text-center" border>
-            <thead>
-              <tr>
-                <th>SN.</th>
-                <th>Visitor Name</th>
-                <th>RelationWithPatient</th>
-                <th>Address</th>
-                <th>Phone Number</th>
-                <th>Card</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {PatientVisitId?.visitor?.map((item, i) => {
-                return (
-                  <tr>
-                    <td>{i + 1}</td>
-                    <td>{item?.VisitorName}</td>
-                    <td>{item?.RelationWithPatient}</td>
-                    <td>{item?.VisiterAddress}</td>
-                    <td>{item?.MobileNumber}</td>
-                    <td>
-                      <GrView
-                        onClick={() => {
-                          handleShow5();
-                          setVisitingCard(item);
-                        }}
-                        style={{
-                          color: "green",
-                          cursor: "pointer",
-                        }}
-                      />
-                    </td>
-                    <td>
-                      <MdDelete
-                        style={{
-                          cursor: "pointer",
-                          color: "red",
-                        }}
-                        onClick={() => DeleteVisitor(item?._id)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+          <div style={{ padding: "5px", backgroundColor: "white" }}>
+            <Table className="text-center" bordered>
+              <thead>
+                <tr>
+                  <th>SN.</th>
+                  <th>Visitor Name</th>
+                  <th>RelationWithPatient</th>
+                  <th>Address</th>
+                  <th>Phone Number</th>
+                  <th>Card</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {PatientVisitId?.visitor?.map((item, i) => {
+                  return (
+                    <tr>
+                      <td>{i + 1}</td>
+                      <td>{item?.VisitorName}</td>
+                      <td>{item?.RelationWithPatient}</td>
+                      <td>{item?.VisiterAddress}</td>
+                      <td>{item?.MobileNumber}</td>
+                      <td>
+                        <GrView
+                          onClick={() => {
+                            handleShow5();
+                            setVisitingCard(item);
+                          }}
+                          style={{
+                            color: "green",
+                            cursor: "pointer",
+                          }}
+                        />
+                      </td>
+                      <td>
+                        <MdDelete
+                          style={{
+                            cursor: "pointer",
+                            color: "red",
+                          }}
+                          onClick={() => DeleteVisitor(item?._id)}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose4}>
@@ -1839,22 +2472,6 @@ export default function Inpatientlist() {
               </div>
             </div>
           </div>
-          {/* <div ref={componentRef1} className="d-flex justify-content-center">
-          <Card style={{ width: '18rem', boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', transition: '0.3s', borderRadius: '10px' }} className="mb-2">
-      <Card.Header style={{ backgroundColor: '#007bff', color: 'white', textAlign: 'center', borderRadius: '10px 10px 0 0' }}>
-        <img src="./Images/logo.png" alt="" width="30" height="30" style={{ marginRight: '5px' }} />
-        Janani Hospital
-      </Card.Header>
-      <Card.Body style={{ backgroundColor: '#f7f7f7' }}>
-        <Card.Title style={{ color: '#007bff', marginBottom: '20px', textAlign: 'center' }}>Visitor Card</Card.Title>
-        <Card.Text style={{ textAlign: 'left', lineHeight: '1.5' }}>
-          <p style={{ marginBottom: '5px' }}><strong>Patient name:</strong> {PatientVisitId?.Firstname} {PatientVisitId?.Lastname}</p>
-          <p style={{ marginBottom: '5px' }}><strong>Relation with Patient:</strong> {VisitingCard?.RelationWithPatient}</p>
-          <p style={{ marginBottom: '5px' }}><strong>Visitor Name:</strong> {VisitingCard?.VisitorName}</p>
-        </Card.Text>
-      </Card.Body>
-    </Card>
-          </div> */}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose5}>
@@ -1883,7 +2500,11 @@ export default function Inpatientlist() {
           >
             <option>select cause</option>
             {ViewCause?.cause?.map((item) => {
-              return <option value={item?._id}>{item?.CauseName}</option>;
+              return (
+                <option value={`${item?._id} ${item?.CauseName}`}>
+                  {item?.CauseName}
+                </option>
+              );
             })}
           </Form.Select>
           <br />
@@ -1922,32 +2543,34 @@ export default function Inpatientlist() {
           <Modal.Title>ASSIGN DOCTORS LIST</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Table bordered>
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Cause Name</th>
-                <th>Doctor Name</th>
-                <th>Doctor ID</th>
-                <th>Designation</th>
-                <th>Assign Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ViewCause?.assigndocts?.map((item, i) => {
-                return (
-                  <tr>
-                    <td>{i + 1}</td>
-                    <td>jskdj</td>
-                    <td>{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</td>
-                    <td>{item?.doctorsId?.DoctorId}</td>
-                    <td>{item?.doctorsId?.Designation}</td>
-                    <td>{moment(item?.createdAt).format("DD-MM-YYYY")}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+          <div style={{ padding: "8px", backgroundColor: "white" }}>
+            <Table bordered>
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Cause Name</th>
+                  <th>Doctor Name</th>
+                  <th>Doctor ID</th>
+                  <th>Department</th>
+                  <th>Assign Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ViewCause?.assigndocts?.map((item, i) => {
+                  return (
+                    <tr>
+                      <td>{i + 1}</td>
+                      <td>{item?.causename}</td>
+                      <td>{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</td>
+                      <td>{item?.doctorsId?.DoctorId}</td>
+                      <td>{item?.doctorsId?.Department}</td>
+                      <td>{moment(item?.createdAt).format("DD-MM-YYYY")}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose8}>
@@ -1974,11 +2597,12 @@ export default function Inpatientlist() {
               <th>Consent Forms</th>
               <th>Patient Forms</th>
               <th>Assign Doctor</th>
-              <th>Action</th>
               <th>Read More</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
+<<<<<<< HEAD
             {search.length > 0
               ? tableFilter
                   .slice(pagesVisited, pagesVisited + usersPerPage)
@@ -2464,6 +3088,252 @@ export default function Inpatientlist() {
                       </tr>
                     );
                   })}
+=======
+            {IPDPatientList?.filter(
+              (val) => val?.registrationType === "IPD"
+            )?.map((item) => {
+              return (
+                <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                  <td>
+                    <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        borderRadius: "50%",
+                      }}
+                    />
+                    {item?.PatientId}
+                  </td>
+                  <td>{`${item?.Firstname} ${item?.Lastname}`}</td>
+                  <td>{item?.PhoneNumber}</td>
+                  <td>{item?.Gender}</td>
+                  <td>{item?.Address1}</td>
+                  <td>
+                    <div style={{ width: "80px", fontWeight: "bold" }}>
+                      {item?.DOB}
+                    </div>
+                  </td>
+                  <td>
+                    <CiBarcode
+                      style={{ cursor: "pointer", fontSize: "35px" }}
+                      onClick={() => handleShow10(item)}
+                    />
+                  </td>
+                  <td>
+                    <Button
+                      onClick={() => {
+                        handleShow11();
+                        setPatientDetailsView(item);
+                      }}
+                    >
+                      <FaPlus /> Cause{" "}
+                    </Button>
+                    <div
+                      style={{
+                        backgroundColor: "#20958c",
+                        padding: "5px",
+                        marginTop: "14px",
+                        borderRadius: "6px",
+                      }}
+                    >
+                      <GrView
+                        style={{
+                          cursor: "pointer",
+                          fontSize: "28px",
+                          color: "white",
+                        }}
+                        onClick={() => {
+                          handleShow12();
+                          setPatientDetailsView(item);
+                        }}
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <Button
+                      onClick={() => {
+                        handleShow9();
+                        setAdmissionForm(item);
+                      }}
+                    >
+                      Admission From
+                    </Button>
+                  </td>
+
+                  <td>
+                    {item?.visitor?.length === 4 ? (
+                      <p style={{ color: "red" }}>
+                        Four (4) visitors are allowed
+                      </p>
+                    ) : (
+                      <>
+                        <button
+                          style={{
+                            padding: "6px",
+                            border: "none",
+                            backgroundColor: "#20958c",
+                            color: "white",
+                            borderRadius: "0px",
+                          }}
+                          onClick={() => {
+                            handleShow3();
+                            setPatientVisitId(item?._id);
+                          }}
+                        >
+                          Add Visitors
+                        </button>
+                      </>
+                    )}
+                    <br />
+                    <button
+                      style={{
+                        padding: "6px",
+                        border: "1px solid white",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "0px",
+                      }}
+                      onClick={() => {
+                        handleShow4();
+                        setPatientVisitId(item);
+                      }}
+                    >
+                      View Visitors
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      style={{
+                        padding: "6px",
+                        border: "none",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "0px",
+                      }}
+                      onClick={() =>
+                        navigate(
+                          `/admin/InpatientlistConsentForms/${item?._id}`
+                        )
+                      }
+                    >
+                      Consent Forms
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      style={{
+                        padding: "6px",
+                        border: "1px solid white",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "0px",
+                      }}
+                      onClick={() => {
+                        handleShow6();
+                        setViewCause(item);
+                      }}
+                    >
+                      View Forms
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      style={{
+                        padding: "6px",
+                        border: "none",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "5px",
+                      }}
+                      onClick={() => {
+                        handleShow7();
+                        setViewCause(item);
+                      }}
+                    >
+                      Assign
+                    </button>
+                    <button
+                      className="mt-2"
+                      style={{
+                        padding: "6px",
+                        border: "none",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "5px",
+                      }}
+                      onClick={() => {
+                        handleShow8();
+                        setViewCause(item);
+                      }}
+                    >
+                      View List
+                    </button>
+                  </td>
+
+                  <td>
+                    <button
+                      style={{
+                        border: "none",
+                        backgroundColor: "#20958c",
+                        color: "white",
+                        borderRadius: "0px",
+                      }}
+                      onClick={() =>
+                        navigate(`/admin/patientdetails/${item?._id}`)
+                      }
+                    >
+                      Read More
+                    </button>
+                  </td>
+                  <td>
+                    <div className="d-flex gap-2">
+                      <MdEdit
+                        style={{
+                          color: "#20958c",
+                          fontSize: "20px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          handleShow14();
+                          setEditPatientDetails(item);
+                        }}
+                      />
+                      <AiFillDelete
+                        style={{
+                          color: "red",
+                          fontSize: "20px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          handleShow13();
+                          setPatientDetailsView(item);
+                        }}
+                      />
+                    </div>
+                    <hr />
+                    <div className="">
+                      <p
+                        style={{
+                          color: "green",
+                          fontWeight: "bold",
+                          fontSize: "30px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          handleShow();
+                          setPatientDetailsView(item);
+                        }}
+                      >
+                        <LuView />
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
           </tbody>
         </Table>
       </div>
@@ -3171,6 +4041,45 @@ export default function Inpatientlist() {
           <Button variant="secondary" onClick={handleClose12}>
             Close
           </Button>
+<<<<<<< HEAD
+=======
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={show13}
+        onHide={handleClose13}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title></Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div className="text-center">
+            <img
+              style={{
+                width: "80px",
+                height: "80px",
+                borderRadius: "5px",
+                marginBottom: "10px",
+              }}
+              src="/img/delete-btn.png"
+              alt=""
+            />
+            <h4 className="fw-bold text-dark mb-2">Are You Sure</h4>
+            <p>This event data will be removed permanently</p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={handleClose13}>
+            Cancle
+          </Button>
+          <Button variant="danger" onClick={DeletePatient}>
+            <FontAwesomeIcon icon={faCancel} className=" me-2" />
+            Delete
+          </Button>
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
         </Modal.Footer>
       </Modal>
     </div>

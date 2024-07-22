@@ -1,7 +1,10 @@
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import moment from "moment";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
+import { useReactToPrint } from "react-to-print";
 
 const PreOperative = ({CHECKLIST , patientdetail}) => {
   console.log("DoctTreatmentChat",CHECKLIST);
@@ -20,6 +23,32 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
   } else {
     ageOutput = `${ageYears} years`;
   }
+
+  const [Doctor, setDoctor] = useState([])
+  useEffect(() => {
+    if(CHECKLIST){
+      const selecteddoc = patientdetail?.assigndocts?.filter((ele)=>ele?.doctorsId?._id ===  CHECKLIST?.[0]?.doctorId)
+      setDoctor(selecteddoc)
+    }
+  
+  }, [CHECKLIST,patientdetail?.assigndocts])
+
+  const pdfdownload = async () => {
+    const pdf = new jsPDF("portrait", "pt", "a4");
+    const data = await html2canvas(document.querySelector("#pdf"));
+    const img = data.toDataURL("image/png");
+    const imgProperties = pdf.getImageProperties(img);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+    pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("preoperativechecklist.pdf");
+  };
+
+  const componentRef = useRef();
+  const handleprint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: "preoperativechecklist.pdf",
+  });
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">
@@ -32,11 +61,18 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
             borderRadius: "0px",
             marginRight: "20px",
           }}
+          onClick={()=>handleprint()}
         >
           Print <FiDownload />
         </Button>
       </div>
-      <div className="text-center mt-1">
+      {CHECKLIST?.map((item)=>{
+        return(
+          <>
+             <hr
+        style={{ color: "black", height: "3px", width: "100%", backgroundColor: "black", border: "none" }}
+        />
+             <div className="text-center mt-1">
         {" "}
         <h6
           className="fw-bold mt-2"
@@ -46,6 +82,7 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
         </h6>
       </div>
       <div
+      ref={componentRef}
         id="pdf"
         style={{
           padding: "15px",
@@ -78,14 +115,6 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
             {" "}
             <h6
@@ -152,7 +181,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                     colSpan={4}
                     style={{ width: "60%", border: "2px  solid #20958C" }}
                   >
-                    Doctor:{" "}
+                    Doctor:{" "}{`${Doctor?.[0]?.doctorsId?.Firstname} ${Doctor?.[0]?.doctorsId?.Lastname}`}
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    colSpan={1}
+                    style={{ width: "40%", border: "2px  solid #20958C" }}
+                  >
+                    Diagnosis:{" "}{item?.Diagnosis}
+                  </td>
+                  <td
+                    colSpan={4}
+                    style={{ width: "60%", border: "2px  solid #20958C" }}
+                  >
+                    Fasting From:{" "}{item?.Fasting}
                   </td>
                 </tr>
                 <tr>
@@ -172,7 +215,7 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                     colSpan={2}
                     style={{ width: "30%", border: "2px  solid #20958C" }}
                   >
-                    Allergies:{" "}
+                    Allergies:{" "} {patientdetail?.patientAllergies}
                   </td>
                 </tr>
                 <tr>
@@ -180,7 +223,7 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                     colSpan={5}
                     style={{ width: "100%", border: "2px  solid #20958C" }}
                   >
-                    Procedure:{" "}
+                    Procedure:{" "}{item?.Procedure}
                   </td>
                 </tr>
                 <tr>
@@ -188,7 +231,7 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                     colSpan={5}
                     style={{ width: "100%", border: "2px  solid #20958C" }}
                   >
-                    Date/Time: {moment(CHECKLIST[0]?.DateTime).format("DD-MM-YYYY / HH:MM")}
+                    Date/Time: {moment(item?.DateTime).format("DD-MM-YYYY / HH:MM")}
                   </td>
                 </tr>
               </tbody>
@@ -235,19 +278,25 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
                   >
-                    {CHECKLIST[0]?.consentSigned1 == "true" ? ("YES"):("")}
+                    {item?.consentSigned === "YES" ?
+                     (
+                      <p>{item?.consentSigned}</p>
+                      ):("")}
+                    
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
                   >
-                     {CHECKLIST[0]?.consentSigned1 !== "true" ? ("NO"):
-                     ("")}
+                  {item?.consentSigned === "NO" ?
+                     (
+                      <p>{item?.consentSigned}</p>
+                      ):("")}
                     
                   </td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
                   >
-                     {CHECKLIST[0]?.consentRemark}
+                     {item?.consentRemark}
                   </td>
                 </tr>
                 <tr>
@@ -265,16 +314,23 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.PreMedication1 == "true" ? ("YES"):("")}</td>
+                  >
+                    {item?.PreMedication === "YES" ?
+                     (
+                      <p>{item?.PreMedication}</p>
+                      ):("")}
+                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
                   >
-                     {CHECKLIST[0]?.PreMedication1 !== "true" ? ("NO"):
-                     ("")}
+                     {item?.PreMedication === "NO" ?
+                     (
+                      <p>{item?.PreMedication}</p>
+                      ):("")}
                   </td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.PreMedicationRemark}</td>
+                  >{item?.PreMedicationRemark}</td>
                 </tr>
                 <tr>
                   <th
@@ -291,14 +347,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.Antibiotics1 == "true" ? ("YES"):("")}</td>
+                  >
+                     {item?.Antibiotics === "YES" ?
+                     (
+                      <p>{item?.Antibiotics}</p>
+                      ):("")}
+                    </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.Antibiotics1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  >  {item?.Antibiotics === "NO" ?
+                    (
+                     <p>{item?.Antibiotics}</p>
+                     ):("")}</td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.AntibioticsRemarks}</td>
+                  >{item?.AntibioticsRemarks}</td>
                 </tr>
                 <tr>
                   <th
@@ -315,14 +378,23 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.BloodProductAvl1 == "true" ? ("YES"):("")}</td>
+                  >
+                     {item?.BloodProductAvl === "YES" ?
+                     (
+                      <p>{item?.BloodProductAvl}</p>
+                      ):("")}
+                    </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.BloodProductAvl1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  > 
+                   {item?.BloodProductAvl === "NO" ?
+                     (
+                      <p>{item?.BloodProductAvl}</p>
+                      ):("")}
+                  </td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.BloodProductAvlRemark}</td>
+                  > {item?.BloodProductAvlRemark}</td>
                 </tr>
                 <tr>
                   <th
@@ -339,14 +411,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.LabResult1 == "true" ? ("YES"):("")}</td>
+                  >
+                     {item?.LabResult === "YES" ?
+                     (
+                      <p>{item?.LabResult}</p>
+                      ):("")}
+                  </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.LabResult1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  >  {item?.LabResult === "NO" ?
+                    (
+                     <p>{item?.LabResult}</p>
+                     ):("")}</td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.LabResultRemark}</td>
+                  >{item?.LabResultRemark}</td>
                 </tr>
                 <tr>
                   <th
@@ -363,16 +442,23 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.Radiology1 == "true" ? ("YES"):("")}</td>
+                  >
+                     {item?.Radiology === "YES" ?
+                     (
+                      <p>{item?.Radiology}</p>
+                      ):("")}
+                    </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
                   >
-                     {CHECKLIST[0]?.Radiology1 !== "true" ? ("NO"):
-                     ("")}
+                    {item?.Radiology === "NO" ?
+                     (
+                      <p>{item?.Radiology}</p>
+                      ):("")}
                   </td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.RadiologyRemark}</td>
+                  > {item?.RadiologyRemark}</td>
                 </tr>
                 <tr>
                   <th
@@ -389,14 +475,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.SavingSkin1 == "true" ? ("YES"):("")}</td>
+                  >
+                    {item?.SavingSkin === "YES" ?
+                     (
+                      <p>{item?.SavingSkin}</p>
+                      ):("")}
+                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.SavingSkin1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  >  {item?.SavingSkin === "NO" ?
+                    (
+                     <p>{item?.SavingSkin}</p>
+                     ):("")}</td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.SavingSkinRemark}</td>
+                  >{item?.SavingSkinRemark}</td>
                 </tr>
                 <tr>
                   <th
@@ -413,14 +506,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.BathOral1 == "true" ? ("YES"):("")}</td>
+                  >
+                     {item?.BathOral === "YES" ?
+                     (
+                      <p>{item?.BathOral}</p>
+                      ):("")}
+                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.BathOral1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  > {item?.BathOral === "NO" ?
+                    (
+                     <p>{item?.BathOral}</p>
+                     ):("")}</td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.BathOralRemark}</td>
+                  >{item?.BathOralRemark}</td>
                 </tr>
 
                 <tr>
@@ -438,14 +538,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.PatientVoided1 == "true" ? ("YES"):("")}</td>
+                  >
+                     {item?.PatientVoided === "YES" ?
+                     (
+                      <p>{item?.PatientVoided}</p>
+                      ):("")}
+                    </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.PatientVoided1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  >{item?.PatientVoided === "NO" ?
+                    (
+                     <p>{item?.PatientVoided}</p>
+                     ):("")}</td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.PatientVoidedRemark}</td>
+                  >{item?.PatientVoidedRemark}</td>
                 </tr>
 
                 <tr>
@@ -463,14 +570,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.TheatreGown1 == "true" ? ("YES"):("")}</td>
+                  > 
+                  {item?.TheatreGown === "YES" ?
+                     (
+                      <p>{item?.TheatreGown}</p>
+                      ):("")}
+                  </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.TheatreGown1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  > {item?.TheatreGown === "NO" ?
+                    (
+                     <p>{item?.TheatreGown}</p>
+                     ):("")}</td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.TheatreGownRemark}</td>
+                  >{item?.TheatreGownRemark}</td>
                 </tr>
 
                 <tr>
@@ -488,14 +602,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >  {CHECKLIST[0]?.RTInserted1 == "true" ? ("YES"):("")}</td>
+                  >  
+                  {item?.RTInserted === "YES" ?
+                     (
+                      <p>{item?.RTInserted}</p>
+                      ):("")}
+                 </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.RTInserted1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  > {item?.RTInserted === "NO" ?
+                    (
+                     <p>{item?.RTInserted}</p>
+                     ):("")}</td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.RTInsertedRemark}</td>
+                  >{item?.RTInsertedRemark}</td>
                 </tr>
 
                 <tr>
@@ -513,14 +634,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >  {CHECKLIST[0]?.PregnancyTest1 == "true" ? ("YES"):("")}</td>
+                  >  
+                   {item?.PregnancyTest === "YES" ?
+                     (
+                      <p>{item?.PregnancyTest}</p>
+                      ):("")}
+                </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.PregnancyTest1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  > {item?.PregnancyTest === "NO" ?
+                    (
+                     <p>{item?.PregnancyTest}</p>
+                     ):("")}</td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.PregnancyTestRemark}</td>
+                  >{item?.PregnancyTestRemark}</td>
                 </tr>
 
                 <tr>
@@ -538,14 +666,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.HIVTest1 == "true" ? ("YES"):("")}</td>
+                  > 
+                  {item?.HIVTest === "YES" ?
+                     (
+                      <p>{item?.HIVTest}</p>
+                      ):("")}
+                  </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.HIVTest1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  > {item?.HIVTest === "NO" ?
+                    (
+                     <p>{item?.HIVTest}</p>
+                     ):("")}</td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.HIVTestRemark}</td>
+                  >{item?.HIVTestRemark}</td>
                 </tr>
 
                 <tr style={{ textAlign: "center" }}>
@@ -586,14 +721,23 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.Dentures1 == "true" ? ("YES"):("")}</td>
+                  >
+                     {item?.Dentures === "YES" ?
+                     (
+                      <p>{item?.Dentures}</p>
+                      ):("")}
+                     </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.Dentures1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  >
+                    {item?.Dentures === "NO" ?
+                     (
+                      <p>{item?.Dentures}</p>
+                      ):("")}
+                  </td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.DenturesRemark}</td>
+                  >{item?.DenturesRemark}</td>
                 </tr>
 
                 <tr>
@@ -611,14 +755,23 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.ContactLense1 == "true" ? ("YES"):("")}</td>
+                  >
+                    {item?.ContactLense === "YES" ?
+                     (
+                      <p>{item?.ContactLense}</p>
+                      ):("")}
+                    </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.ContactLense1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  >
+                     {item?.ContactLense === "NO" ?
+                     (
+                      <p>{item?.ContactLense}</p>
+                      ):("")}
+                  </td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  > {CHECKLIST[0]?.ContactLenseRemark}</td>
+                  > {item?.ContactLenseRemark}</td>
                 </tr>
 
                 <tr>
@@ -636,14 +789,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >  {CHECKLIST[0]?.NailPolish1 == "true" ? ("YES"):("")}</td>
+                  >  {item?.NailPolish === "YES" ?
+                    (
+                     <p>{item?.NailPolish}</p>
+                     ):("")} </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.NailPolish1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  >
+                    {item?.NailPolish === "NO" ?
+                    (
+                     <p>{item?.NailPolish}</p>
+                     ):("")} 
+                  </td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.NailPolishRemark}</td>
+                  >{item?.NailPolishRemark}</td>
                 </tr>
 
                 <tr>
@@ -661,14 +821,21 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.Jewellery1 == "true" ? ("YES"):("")}</td>
+                  >
+                    {item?.Jewellery === "YES" ?
+                    (
+                     <p>{item?.Jewellery}</p>
+                     ):("")} 
+                   </td>
                   <td
                     style={{ width: "15%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.Jewellery1 !== "true" ? ("NO"):
-                  ("")}</td>
+                  >{item?.Jewellery === "NO" ?
+                    (
+                     <p>{item?.Jewellery}</p>
+                     ):("")} </td>
                   <td
                     style={{ width: "20%", border: "2px  solid #20958C" }}
-                  >{CHECKLIST[0]?.JewelleryRemark}</td>
+                  >{item?.JewelleryRemark}</td>
                 </tr>
 
                 <tr>
@@ -676,7 +843,7 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                     colSpan={5}
                     style={{ width: "100%", border: "2px  solid #20958C" }}
                   >
-                    Any Message to Theatre Staff:{" "} {CHECKLIST[0]?.MessageTreat}
+                    Any Message to Theatre Staff:{" "} {item?.MessageTreat}
                   </td>
                 </tr>
 
@@ -707,13 +874,16 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    Name : {CHECKLIST[0]?.WardStaff1}
+                    Name : {item?.WardStaff1}
                   </td>
                   <td
                     colSpan={3}
                     style={{ width: "50%", border: "2px  solid #20958C" }}
                   >
-                    Signature:
+                    Signature:   <img
+                      alt="sign"
+                      src={`http://localhost:8521/PatientREG/${item?.staffsignature}`}
+                    /> 
                   </td>
                 </tr>
                 <tr>
@@ -724,13 +894,16 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                       border: "2px  solid #20958C",
                     }}
                   >
-                    Name :{CHECKLIST[0]?.WardStaff1}
+                    Name :{item?.WardStaff1}
                   </td>
                   <td
                     colSpan={3}
                     style={{ width: "50%", border: "2px  solid #20958C" }}
                   >
-                    Signature:
+                    Signature:<img
+                      alt="sign"
+                      src={`http://localhost:8521/PatientREG/${item?.staff2signature}`}
+                    /> 
                   </td>
                 </tr>
               </tbody>
@@ -738,6 +911,10 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
           </div>
         </div>
       </div>
+          </>
+        )
+      })}
+   
     </>
   );
 };

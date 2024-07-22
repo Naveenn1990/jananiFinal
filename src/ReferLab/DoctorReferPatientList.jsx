@@ -120,7 +120,7 @@ function DoctorReferPatientList() {
                   </td>
 
                   <td className="d-flex gap-2 align-items-center">
-                    {item?.Labtests?.slice(
+                    {item?.referlabtest?.slice(
                       pagesVisited,
                       pagesVisited + usersPerPage
                     )?.map((ele, i) => {
@@ -259,7 +259,7 @@ function DoctorReferPatientList() {
                 </tr>
               </thead>
               <tbody>
-                {ViewData?.Labtests?.map((item, i) => {
+                {ViewData?.referlabtest?.map((item, i) => {
                   return (
                     <tr>
                       <td>{i + 1}</td>

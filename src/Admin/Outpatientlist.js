@@ -12,11 +12,9 @@ import moment from "moment";
 import exportFromJSON from "export-from-json";
 import ReactPaginate from "react-paginate";
 import {
-  AiFillDelete,
   AiFillFileExcel,
   AiOutlinePlusCircle,
 } from "react-icons/ai";
-import { FaUserMd } from "react-icons/fa";
 
 export default function Outpatientlist() {
   const [View, setView] = useState({});
@@ -4000,6 +3998,7 @@ export default function Outpatientlist() {
                             />
                           ) : (
                             <img
+                            alt=""
                               src="/img/dummyprofile.png"
                               style={{
                                 width: "50px",

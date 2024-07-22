@@ -1,6 +1,7 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { Button, Table } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Form, Table } from "react-bootstrap";
+import { FaBackward } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -61,18 +62,71 @@ const InatkeOutput = () => {
     );
     setIntakeOutP(updatedDrugList);
   };
+  const [SelectDoctor, setSelectDoctor] = useState("");
+  const [DoctorDept, setDoctorDept] = useState([]);
+  useEffect(() => {
+    if (SelectDoctor) {
+      const assignDocDept = patientdetails?.assigndocts?.filter(
+        (ele) => ele?.doctorsId?._id === SelectDoctor
+      );
+      setDoctorDept(assignDocDept);
+    }
+  }, [SelectDoctor, patientdetails]);
 
   const submitIntakeOut = async () => {
+    if(!SelectDoctor){
+      return alert("Please Select Doctor")
+    }
+    if(!IODate){
+      return alert("Please Select date")
+    }
+    if(!IOTime){
+      return alert("Please Select time")
+    }
+    if(!Parental){
+      return alert(" Enter Parental")
+    }
+    if(!Quantity1){
+      return alert(" Enter Quantity")
+    }
+    if(!OralRT){
+      return alert(" Enter Oral/ RT")
+    }
+    if(!Quantity2){
+      return alert(" Enter Quantity2")
+    }
+    if(!Urine){
+      return alert(" Enter Urine Status")
+    }
+    if(!Drainage){
+      return alert(" Enter Drainage Status")
+    }
+    if(!VomitusBowels){
+      return alert(" Enter Vomitus/ Bowels Status")
+    }
+    if(!RyTubeAspiration){
+      return alert(" EnterRyle's Tube Aspiration Status")
+    }
     try {
       const config = {
         url: "/addintakeout",
         method: "put",
         baseURL: "http://localhost:8521/api/staff",
         headers: { "content-type": "application/json" },
-        data: {
-          patientId: patientdetails?._id,
-          causeId: cause?._id,
-          IntakeOutP: IntakeOutP,
+        data:{
+            patientId: patientdetails?._id,
+            causeId : cause?._id,
+            doctorId : SelectDoctor,
+            IODate:IODate,
+            IOTime:IOTime,
+            Parental:Parental,
+            Quantity1:Quantity1,
+            OralRT:OralRT,
+            Quantity2:Quantity2,
+            Urine:Urine,
+            Drainage:Drainage,
+            VomitusBowels:VomitusBowels,
+            RyTubeAspiration:RyTubeAspiration,
         },
       };
       let res = await axios(config);
@@ -86,18 +140,21 @@ const InatkeOutput = () => {
   return (
     <div>
       <div>
-        <button
+      <button
           className="mt-2"
           style={{
-            padding: "6px",
-            border: "1px solid white",
+            border:"#20958c",
+            padding: "8px",
             backgroundColor: "#20958c",
             color: "white",
-            borderRadius: "0px",
+            borderRadius: "6px",
+             boxShadow: " 8px 8px 16px #20958c,-8px -8px 16px #20958c",
+           
           }}
-          onClick={() => navigate(-1)}
+          onClick={() => window.history.go(-1)}
         >
-          Back
+         <FaBackward />  &nbsp;      
+         Back
         </button>
       </div>
 
@@ -124,10 +181,8 @@ const InatkeOutput = () => {
           style={{
             padding: "5px",
             border: "2px solid #20958C",
-            // width: "1073px",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1724px",
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -148,14 +203,6 @@ const InatkeOutput = () => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
             {" "}
             <h6
@@ -179,7 +226,7 @@ const InatkeOutput = () => {
               <div className="container">
                 <div className="row" style={{ border: "1px solid #20958C" }}>
                   <div
-                    className="col-md-7"
+                    className="col-md-6"
                     style={{
                       border: "1px solid #20958C",
                       paddingLeft: "unset",
@@ -262,7 +309,21 @@ const InatkeOutput = () => {
                       fontSize: "17px",
                     }}
                   >
-                    Doctor: <span>DR. JK Das</span>
+                    Doctor: <span>
+                    <Form.Select
+                        className="vi_0"
+                        onChange={(e) => setSelectDoctor(e.target.value)}
+                      >
+                        <option value="">Select Doctor</option>
+                        {patientdetails?.assigndocts?.map((item) => {
+                          return (
+                            <option
+                              value={item?.doctorsId?._id}
+                            >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
+                          );
+                        })}
+                      </Form.Select>
+                    </span>
                   </div>
                 </div>
 
@@ -271,7 +332,7 @@ const InatkeOutput = () => {
             </p>
           </div>
 
-          <div className="mt-2">
+          <div className="container mt-2" style={{overflow:"hidden",overflowX:"scroll"}}>
                   <Table className="text-center" bordered>
                     <thead>
                       <tr>
@@ -279,7 +340,7 @@ const InatkeOutput = () => {
                         <th>Time</th>
                         <th colspan="4">INTAKE </th>
                         <th colspan="4">OUTPUT</th>
-                        <th>Action</th>
+                       
                       </tr>
                     </thead>
                     <tbody>
@@ -293,8 +354,7 @@ const InatkeOutput = () => {
                         <td>Urine</td>
                         <td>Drainage</td>
                         <td>Vomitus/ Bowels</td>
-                        <td>Ryle's Tube Aspiration</td>
-                        <td></td>
+                        <td>Ryle's Tube Aspiration</td>                        
                       </tr>
                       <tr>
                         <td>
@@ -303,6 +363,7 @@ const InatkeOutput = () => {
                             className="vi_0"
                             value={IODate}
                             onChange={(e) => setIODate(e.target.value)}
+                            min={new Date().toISOString().split('T')[0]} 
                           />
                         </td>
                         <td>
@@ -313,9 +374,7 @@ const InatkeOutput = () => {
                             onChange={(e) => setIOTime(e.target.value)}
                           />
                         </td>
-
-                        <td>
-                         
+                        <td>                         
                           <input
                             type="text"
                             className="vi_0"
@@ -380,11 +439,6 @@ const InatkeOutput = () => {
                               setRyTubeAspiration(e.target.value)
                             }
                           />
-                        </td>
-                        <td>
-                          <Button onClick={AddIntakeOutP}>
-                            <IoMdAdd />
-                          </Button>
                         </td>
                       </tr>
                       {IntakeOutP?.map((item, i) => {

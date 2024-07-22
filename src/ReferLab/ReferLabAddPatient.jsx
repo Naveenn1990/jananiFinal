@@ -6,8 +6,6 @@ import {
   Form,
   FormLabel,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { CkEditorComponent } from "../CkEditor/CkEditorComponent";
 import axios from "axios";
 import Select from "react-select";
 
@@ -40,7 +38,7 @@ export const ReferLabAddPatient = () => {
         setHospitalLabList([]);
       });
   };
-
+console.log("HospitalLabList",HospitalLabList);
   const [Labtests1, setLabtests1] = useState([]);
   let [selectedOptions, setSelectedOptions] = useState([]);
   const hasSelectedOptions = Labtests1 && Labtests1.length > 0;

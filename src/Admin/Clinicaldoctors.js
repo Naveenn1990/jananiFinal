@@ -106,14 +106,86 @@ export default function Clinicaldoctors() {
   const [Description, setDescription] = useState();
   const [Docs, setDocs] = useState();
   const formdata = new FormData();
-
+  const nameRegex = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
+  const emailPattern = /^[^\s@]+@gmail\.com$/;
+  const mobilePattern = /^[0-9]{10}$/;
+  const passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   const signupdocclinic = async () => {
-    if (
-      validatename(doctorfirstname) &&
-      ValidateEmail(email) &&
-      phonenumber(mobileno) &&
-      CheckPassword(password)
-    ) {
+    if(!ClinicName){
+      return alert ("Enter Clinic Name...")
+    }
+    if (!doctorfirstname) {
+      return alert("Enter first name");
+    } else if (!nameRegex.test(doctorfirstname)) {
+      return alert(
+        "Enter a valid first name (letters only)"
+      );
+    }
+    if (!doctorlastname) {
+      return alert("Enter  last name");
+    } else if (!nameRegex.test(doctorlastname)) {
+      return alert(
+        "Enter a valid last name (letters only)"
+      );
+    }
+    if (!email) {
+      return alert("Enter Email Id");
+    } else if (!emailPattern.test(email)) {
+      return alert("Enter a valid Gmail address (e.g., example@gmail.com)");
+    }
+
+    if (!mobileno) {
+      return alert("Enter mobile number..!");
+    } else if (!mobilePattern.test(mobileno)) {
+      return alert("Enter a valid 10-digit mobile number");
+    }
+
+    if(!gender){
+      return alert("Please Select gender..!")
+    }
+    if(!DOB){
+      return alert("Please Select date of birth..!")
+    }
+    if(!Department){
+      return alert("Please Select Department..!")
+    }
+
+    if (!password) {
+      return alert("Enter password..!");
+    } else if (!passwordPattern.test(password)) {
+      return alert(
+        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
+      );
+    }
+
+    if (!conpassword) {
+      return alert("Enter confirm password..!");
+    } else if (!passwordPattern.test(conpassword)) {
+      return alert(
+        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
+      );
+    }
+    if(password !== conpassword){
+      return alert("Passwords do not match. Please check again.");
+    }
+
+    if(!Address1){
+      return alert ("Enter Address..!")
+    }
+    if(!Education){
+      return alert ("Enter Education..!")
+    }
+    if(!ProfileImg){
+      return alert ("Upload profile pic..!")
+    }
+    if(!Docs){
+      return alert ("Upload Certificate ..!")
+    }
+    if(!Description){
+      return alert ("Enter Description..!")
+    }
+
       formdata.set("ClinicName", ClinicName);
       formdata.set("Firstname", doctorfirstname);
       formdata.set("Lastname", doctorlastname);
@@ -146,7 +218,7 @@ export default function Clinicaldoctors() {
         console.log(error);
         alert(error.response.data.error);
       }
-    }
+    
   };
 
   const [data, setdata] = useState([]);
@@ -195,6 +267,7 @@ export default function Clinicaldoctors() {
       alert(error.response.data.error);
     }
   };
+<<<<<<< HEAD
   const EditDocClinic = async () => {
     formdata.set("ClinicName", ClinicName);
     formdata.set("Firstname", doctorfirstname);
@@ -223,6 +296,89 @@ export default function Clinicaldoctors() {
         alert(res.data.success);
         handleClose3();
         getdata();
+=======
+
+  useEffect(() => {
+    if(View){
+      setClinicName(View?.ClinicName || "");
+      setdoctorfirstname(View?.Firstname || "");
+      setdoctorlastname(View?.Lastname || "");
+      setemail(View?.Email || "");
+      setmobileno(View?.PhoneNumber || "");
+      setgender(View?.Gender || "");
+      setDOB(View?.DOB || "");
+      setDepartment(View?.Department || "");
+      setDepartment(View?.Department || "");
+    }
+ 
+  }, [View])
+  
+  const EditDocClinic = async () => {  
+    if (!nameRegex.test(doctorfirstname)) {
+      return alert(
+        "Enter a valid first name (letters only)"
+      );
+    }
+  if (!nameRegex.test(doctorlastname)) {
+      return alert(
+        "Enter a valid last name (letters only)"
+      );
+    }
+
+   if (!emailPattern.test(email)) {
+      return alert("Enter a valid Gmail address (e.g., example@gmail.com)");
+    }
+
+   if (!mobilePattern.test(mobileno)) {
+      return alert("Enter a valid 10-digit mobile number");
+    }  
+
+    if (!passwordPattern.test(password)) {
+      return alert(
+        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
+      );
+    }
+
+    if (!passwordPattern.test(conpassword)) {
+      return alert(
+        "Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be at least 8 characters long."
+      );
+    }
+    if(password !== conpassword){
+      return alert("Passwords do not match. Please check again.");
+    }
+      formdata.set("ClinicName", ClinicName);
+      formdata.set("Firstname", doctorfirstname);
+      formdata.set("Lastname", doctorlastname);
+      formdata.set("Gender", gender);
+      formdata.set("DOB", DOB);
+      formdata.set("PhoneNumber", mobileno);
+      formdata.set("Email", email);
+      formdata.set("Department", Department);
+      formdata.set("Address1", Address1);
+      formdata.set("Education", Education);
+      formdata.set("Description", Description);
+      formdata.set("Password", password);
+      formdata.set("ConfirmPassword", conpassword);
+      formdata.set("ProfileImg", ProfileImg);
+      formdata.set("certificate", Docs);
+      try {
+        const config = {
+          url: "/Clinic/editClinicDetails/" + View?._id,
+          method: "put",
+          baseURL: "http://localhost:8521/api",
+          data: formdata,
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          alert(res.data.success);
+          handleClose3();
+          getClinicDoctors();
+        }
+      } catch (error) {
+        console.log(error);
+        alert(error.response.data.error);
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
       }
     } catch (error) {
       console.log(error);
@@ -389,7 +545,7 @@ export default function Clinicaldoctors() {
               </div>
               <div className="col-lg-6">
                 <input
-                  type="number"
+                  type="text"
                   placeholder="Mobile number"
                   style={{
                     width: "100%",
@@ -399,6 +555,7 @@ export default function Clinicaldoctors() {
                     backgroundColor: "#ebebeb",
                     marginTop: "4%",
                   }}
+                  maxLength={10}
                   onChange={(e) => setmobileno(e.target.value)}
                 />
               </div>
@@ -438,6 +595,7 @@ export default function Clinicaldoctors() {
                         backgroundColor: "#ebebeb",
                         marginTop: "4%",
                       }}
+                      max={new Date().toISOString().split('T')[0]} 
                       onChange={(e) => setDOB(e.target.value)}
                     />
                   </div>
@@ -542,6 +700,7 @@ export default function Clinicaldoctors() {
                     padding: "2%",
                     border: "1px solid lightgrey",
                   }}
+                  accept="image/*"
                   onChange={(e) => setProfileImg(e.target.files[0])}
                 ></input>
               </div>
@@ -552,7 +711,7 @@ export default function Clinicaldoctors() {
                 >
                   Upload Clinic Certificate
                 </label>
-                <br></br>
+                <br/>
                 <input
                   type="file"
                   style={{
@@ -578,7 +737,7 @@ export default function Clinicaldoctors() {
                     marginTop: "4%",
                   }}
                   onChange={(e) => setDescription(e.target.value)}
-                ></textarea>
+                />
               </div>
             </div>
           </Modal.Body>
@@ -914,7 +1073,6 @@ export default function Clinicaldoctors() {
             <div className="row">
               <div className="col-lg-6">
                 <input
-                  placeholder={View?.ClinicName}
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -922,12 +1080,12 @@ export default function Clinicaldoctors() {
                     border: "1px solid #ebebeb",
                     backgroundColor: "#ebebeb",
                   }}
+                  value={ClinicName}
                   onChange={(e) => setClinicName(e.target.value)}
                 />
               </div>
               <div className="col-lg-6">
-                <input
-                  placeholder={View?.Firstname}
+                <input                 
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -935,12 +1093,12 @@ export default function Clinicaldoctors() {
                     border: "1px solid #ebebeb",
                     backgroundColor: "#ebebeb",
                   }}
+                  value={doctorfirstname}
                   onChange={(e) => setdoctorfirstname(e.target.value)}
                 />
               </div>
               <div className="col-lg-6">
                 <input
-                  placeholder={View?.Lastname}
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -949,12 +1107,12 @@ export default function Clinicaldoctors() {
                     backgroundColor: "#ebebeb",
                     marginTop: "4%",
                   }}
+                  value={doctorlastname}
                   onChange={(e) => setdoctorlastname(e.target.value)}
                 />
               </div>
               <div className="col-lg-6">
                 <input
-                  placeholder={View?.Email}
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -963,13 +1121,13 @@ export default function Clinicaldoctors() {
                     backgroundColor: "#ebebeb",
                     marginTop: "4%",
                   }}
+                  value={email}
                   onChange={(e) => setemail(e.target.value)}
                 />
               </div>
               <div className="col-lg-6">
                 <input
                   type="number"
-                  placeholder={View?.PhoneNumber}
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -978,6 +1136,7 @@ export default function Clinicaldoctors() {
                     backgroundColor: "#ebebeb",
                     marginTop: "4%",
                   }}
+                  value={mobileno}
                   onChange={(e) => setmobileno(e.target.value)}
                 />
               </div>
@@ -991,6 +1150,7 @@ export default function Clinicaldoctors() {
                     backgroundColor: "#ebebeb",
                     marginTop: "4%",
                   }}
+                  value={gender}
                   onChange={(e) => setgender(e.target.value)}
                 >
                   <option>Select Gender*</option>
@@ -1017,6 +1177,7 @@ export default function Clinicaldoctors() {
                         backgroundColor: "#ebebeb",
                         marginTop: "4%",
                       }}
+                      value={DOB}
                       onChange={(e) => setDOB(e.target.value)}
                     />
                   </div>
@@ -1032,6 +1193,7 @@ export default function Clinicaldoctors() {
                     backgroundColor: "#ebebeb",
                     marginTop: "4%",
                   }}
+                  value={Department}
                   onChange={(e) => setDepartment(e.target.value)}
                 >
                   <option>Select Department *</option>

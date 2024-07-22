@@ -272,16 +272,7 @@ const PatientConsentForms = () => {
                         </h6>
                       </div>
                     </div>
-                    <div
-                      className="text-center"
-                      style={{
-                        borderBottom: "1px solid #20958C",
-                        width: "100%",
-                        textAlign: "center",
-                      }}
-                    ></div>
                     <div className="text-center mt-1">
-                      {" "}
                       <h6
                         className="fw-bold mt-2"
                         style={{ color: "#20958C", fontSize: "30px" }}
@@ -397,7 +388,12 @@ const PatientConsentForms = () => {
                                 border: "1.5px  solid #20958C",
                               }}
                             >
-                              Sign: <span style={{ fontWeight: "bold" }}></span>{" "}
+                              Sign: <span style={{ fontWeight: "bold" }}>
+                              <img
+                      alt="profile-img"
+                      src={`http://localhost:8521/ConsentForm/${item?.patientsign}`}
+                    />
+                                </span>{" "}
                             </td>
                           </tr>
                           <tr>
@@ -407,7 +403,12 @@ const PatientConsentForms = () => {
                                 border: "1.5px  solid #20958C",
                               }}
                             >
-                              Sign: <span style={{ fontWeight: "bold" }}></span>{" "}
+                              Sign: <span style={{ fontWeight: "bold" }}>
+                              <img
+                                alt="profile-img"
+                                src={`http://localhost:8521/ConsentForm/${item?.doctorsign}`}                     
+                              />
+                                </span>{" "}
                             </td>
                             <td
                               style={{

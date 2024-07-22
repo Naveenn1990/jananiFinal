@@ -1,12 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
+import { FaBackward } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const MedicationChartAdd = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const location = useLocation();
   const { patientdetails, cause } = location.state || {};
   
@@ -81,15 +82,18 @@ console.log("causeName",causeName);
         <button
           className="mt-2"
           style={{
-            padding: "6px",
-            border: "1px solid white",
+            border:"#20958c",
+            padding: "8px",
             backgroundColor: "#20958c",
             color: "white",
-            borderRadius: "0px",
+            borderRadius: "6px",
+             boxShadow: " 8px 8px 16px #20958c,-8px -8px 16px #20958c",
+           
           }}
-          onClick={() => navigate(-1)}
+          onClick={() => window.history.go(-1)}
         >
-          Back
+         <FaBackward />  &nbsp;      
+         Back
         </button>
       </div>
 
@@ -113,10 +117,8 @@ console.log("causeName",causeName);
           style={{
             padding: "5px",
             border: "2px solid #20958C",
-            // width: "1073px",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1724px",
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -137,14 +139,6 @@ console.log("causeName",causeName);
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
             {" "}
             <h6
@@ -165,28 +159,14 @@ console.log("causeName",causeName);
               <div className="container">
                 <div className="row" style={{ border: "1px solid #20958C" }}>
                   <div
-                    className="col-md-7"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
+                    className="col-md-7 consentformhd">
                     Patient Name:{" "}
                     <span>
                       {`${patientdetails?.Firstname} ${patientdetails?.Lastname} `}
                     </span>
                   </div>
                   <div
-                    className="col-md-2"
-                    style={{
-                      border: "1px solid #20958C",
-                      paddingLeft: "unset",
-                      paddingRight: "unset",
-                      fontSize: "17px",
-                    }}
-                  >
+                    className="col-md-2 consentformhd">
                     Age: <span>{ageOutput}</span>
                   </div>
                   <div
@@ -228,7 +208,7 @@ console.log("causeName",causeName);
                   </div>
                 </div>
                 <div className="mt-2">
-                  <Table className="text-center">
+                  <Table className="text-center" bordered>
                     <thead>
                       <tr>
                         <th>Cause</th>

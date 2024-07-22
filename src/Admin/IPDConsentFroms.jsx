@@ -149,9 +149,6 @@ const IPDConsentFroms = () => {
   };
 
   const [PatientName, setPatientName] = useState("");
-  useEffect(() => {
-    setPatientName(`${userdetail?.Firstname} ${userdetail?.Lastname}` || "");
-  }, [userdetail]);
 
   const [Patientage, setPatientage] = useState("");
   const [OpNumber, setOpNumber] = useState("");
@@ -209,11 +206,13 @@ const IPDConsentFroms = () => {
       }
     }
 
-    if(ConsentFormName === "HospitalizedConsentForms"){
-      if(!WardRoomCharges){
-        return alert("Please Enter Ward/ Room Charges")
+    if (ConsentFormName === "HospitalizedConsentForms") {
+      if (!WardRoomCharges) {
+        return alert("Please Enter Ward/ Room Charges");
       }
-
+      if (!RealivesName) {
+        return alert("Please Enter Relatives Name");
+      }
     }
 
     if (ConsentFormName === "HighriskConsentForms") {
@@ -354,6 +353,9 @@ const IPDConsentFroms = () => {
     const LegalGuardianSignature = await fetch(LegalGuardian).then((res) =>
       res.blob()
     );
+    const RelativeSign = await fetch(RelativeSignature).then((res) =>
+      res.blob()
+    );
 
     formdata.set("causeId", CauseId);
     formdata.set("patientId", userdetail?._id);
@@ -411,6 +413,7 @@ const IPDConsentFroms = () => {
       LegalGuardianSignature,
       "legalgurdiation-signature.png"
     );
+    formdata.set("relativesign", RelativeSign, "relative-signature.png");
     try {
       const config = {
         url: "/consentform",
@@ -490,6 +493,18 @@ const IPDConsentFroms = () => {
       .getTrimmedCanvas()
       .toDataURL("image/png");
     setLegalGuardian(LegalGuardian);
+  };
+
+  const [RelativeSignature, setRelativeSignature] = useState(null);
+  const sigCanvas5 = useRef({});
+
+  const clear5 = () => sigCanvas5.current.clear();
+
+  const save5 = () => {
+    const RelativeSignature = sigCanvas5.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setRelativeSignature(RelativeSignature);
   };
 
   return (
@@ -914,7 +929,7 @@ const IPDConsentFroms = () => {
                               style={{
                                 fontSize: "17px",
                                 padding: "5px",
-                                textAlign:"justify"
+                                textAlign: "justify",
                               }}
                             >
                               Ward/ Room Category Charges per Day (Including
@@ -939,8 +954,7 @@ const IPDConsentFroms = () => {
                               value={WardRemark}
                             />
                           </div>
-                          <div
-                            className="col-md-12 consentformhd">
+                          <div className="col-md-12 consentformhd">
                             <textarea
                               onChange={(e) => setWardText1(e.target.value)}
                               cols="90"
@@ -962,7 +976,8 @@ const IPDConsentFroms = () => {
                           </div>
                         </div>
                       </div>
-                    </p><br/>
+                    </p>
+                    <br />
                     <p style={{ fontSize: "18px" }}>
                       <b>2. Surgery Package Charges</b>
                       <div className="container">
@@ -1143,7 +1158,7 @@ const IPDConsentFroms = () => {
                         })}
                       </div>
                     </p>
-                    <br/>
+                    <br />
                     <p style={{ fontSize: "18px" }}>
                       <b>3.Special Procedure Charges</b>
                       <div className="container">
@@ -1151,19 +1166,10 @@ const IPDConsentFroms = () => {
                           className="row"
                           style={{ border: "1px solid #20958C" }}
                         >
-                          <div
-                            className="col-md-3 consentformhd" >
+                          <div className="col-md-3 consentformhd">
                             Name of the Procedure/ Procedures
                           </div>
-                          <div
-                            className="col-md-3"
-                            style={{
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                              fontSize: "18px",
-                            }}
-                          >
+                          <div className="col-md-3 consentformhd">
                             Estimated Cost
                           </div>
                           <div
@@ -1500,6 +1506,7 @@ const IPDConsentFroms = () => {
                         })}
                       </div>
                     </p>
+                    <br />
                     <p style={{ fontSize: "18px" }}>
                       <span style={{ color: "#20958C", fontWeight: "600" }}>
                         Note
@@ -1528,91 +1535,155 @@ const IPDConsentFroms = () => {
                       </h4>
                     </p>
                     <p style={{ fontSize: "18px" }}>
-                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; I,
+                      I,&nbsp;
                       <span>
                         <input
                           type="text"
                           className="vi_0"
-                          style={{ width: "490px" }}
-                          value={PatientName}
-                          onChange={(e) => setPatientName(e.target.value)}
-                        />
-                      </span>{" "}
-                      have been explained in detail the above mentioned charges
-                      in a language that I understand.
-                      <br />
-                      <br />
-                      Patient/ Patient Relative Name & Signature :{" "}
-                      <span>
-                        <input
-                          type="text"
-                          className="vi_0"
-                          style={{ width: "270px" }}
-                          value={RealivesName}
-                          onChange={(e) => setRealivesName(e.target.value)}
+                          style={{ width: "350px" }}
+                          value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}
                         />
                       </span>
+                      &nbsp; have been explained in detail the above mentioned
+                      charges in a language that I understand.
+                      <div className="mt-2 d-flex gap-1 align-items-center">
+                       <p>Patient/ Patient Relative Name & Signature :{" "}</p> 
+                        <span>
+                          <input
+                            type="text"
+                            className="vi_0"
+                            style={{ width: "270px" }}
+                            value={RealivesName}
+                            onChange={(e) => setRealivesName(e.target.value)}
+                            placeholder="Relative Name"
+                          />
+                        </span>
+                        <div>
+                          {!RelativeSignature ? (
+                            <div
+                              style={{
+                                border: "1px solid #dee2e6",
+                              }}
+                            >
+                              <SignatureCanvas
+                                ref={sigCanvas5}
+                                penColor="black"
+                                canvasProps={{
+                                  width: 180,
+                                  height: 100,
+                                  className: "sigCanvas",
+                                }}
+                              />
+                              <button onClick={clear5}>Clear</button>
+                              <button onClick={save5}>Save</button>
+                            </div>
+                          ) : (
+                            <img src={RelativeSignature} alt="Signature" />
+                          )}
+                        </div>
+                      </div>
                     </p>
 
-                    <p style={{ fontSize: "18px" }}>
+                    <p style={{ fontSize: "18px",marginTop:"8px" }}>
                       <span>
-                        Witness-1/ Relative-1{" "}
+                        Witness-1/ Relative-1 :{" "}
                         <input
                           type="text"
                           className="vi_0"
-                          style={{ width: "270px" }}
+                          style={{ width: "280px" }}
                           onChange={(e) => setWitness1(e.target.value)}
                           placeholder=" Witness-1/ Relative-1"
-                        />
-                        Witness-2/ Relative-2{" "}
+                        /> &nbsp;
+                        Witness-2/ Relative-2 :{" "}
                         <input
                           type="text"
                           className="vi_0"
-                          style={{ width: "270px" }}
+                          style={{ width: "280px" }}
                           onChange={(e) => setWitness2(e.target.value)}
                           placeholder=" Witness-2/ Relative-2"
                         />
                       </span>
                     </p>
-                    <p style={{ fontSize: "18px" }}>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <p style={{ fontSize: "18px",marginTop:"8px" }}>
                       <span>
                         Phone No :{" "}
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <input
                           type="text"
                           className="vi_0"
-                          style={{ width: "270px" }}
+                          style={{ width: "280px" }}
                           placeholder="enter number"
                           onChange={(e) => setWitness1Number(e.target.value)}
+                          maxLength={10}
                         />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Phone No
+                        &nbsp;&nbsp;&nbsp;Phone No
                         :{" "}
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <input
                           type="text"
                           className="vi_0"
                           style={{ width: "270px" }}
                           placeholder="enter number"
                           onChange={(e) => setWitness2Number(e.target.value)}
+                          maxLength={10}
                         />
                       </span>
                     </p>
-                    <p style={{ fontSize: "18px" }}>
-                      Name: Designation & Signature of the hospital staff
-                      Explaining the Estinated Cost
-                      <textarea
-                        name=""
-                        id=""
-                        cols="90"
-                        rows="2"
-                        className="vi_0"
-                      ></textarea>
+                    <div className="mt-2">
+                    <p style={{ fontSize: "18px",fontWeight:"bold" }}>
+                      Name : Designation & Signature of the hospital staff
+                      Explaining the Estinated Cost                      
                     </p>
-                    <p style={{ fontSize: "18px", textAlignLast: "end" }}>
-                      Signature
-                      <input type="text" name="" id="" className="vi_0" />
-                    </p>
+                    <div className="d-flex gap-3 align-items-center">   
+                      <p>
+                      <input
+                          type="text"
+                          className="vi_0"
+                          style={{ width: "270px" }}
+                          placeholder="Your Name "
+                          onChange={(e) => setWitness2Number(e.target.value)}
+                          maxLength={10}
+                        />
+                        </p>                 
+                       <p>
+                       <input
+                          type="text"
+                          className="vi_0"
+                          style={{ width: "270px" }}
+                          placeholder="Your designation"
+                          onChange={(e) => setWitness2Number(e.target.value)}
+                          maxLength={10}
+                        />
+                       </p>                      
+                        {!RelativeSignature ? (
+                            <div
+                              style={{
+                                border: "1px solid #dee2e6",
+                              }}
+                            >
+                              <SignatureCanvas
+                                ref={sigCanvas5}
+                                penColor="black"
+                                canvasProps={{
+                                  width: 180,
+                                  height: 100,
+                                  className: "sigCanvas",
+                                }}
+                              />
+                              <button onClick={clear5}>Clear</button>
+                              <button onClick={save5}>Save</button>
+                            </div>
+                          ) : (
+                            <img src={RelativeSignature} alt="Signature" />
+                          )}
+                          </div>
+                    </div>
+                    
+                    
                   </div>
                 </div>
                 <div className="mt-2 d-flex justify-content-center">
@@ -1729,7 +1800,7 @@ const IPDConsentFroms = () => {
                                 <span
                                   style={{ borderBottom: "1px solid black" }}
                                 >
-                                   <input
+                                  <input
                                     type="text"
                                     className="vi_0"
                                     style={{ width: "301px" }}
@@ -1737,9 +1808,8 @@ const IPDConsentFroms = () => {
                                     onChange={(e) =>
                                       setStaffName(e.target.value)
                                     }
-                                    placeholder="Enter Staff Name"
-                                  /> 
-                                    
+                                    placeholder="Enter Name"
+                                  />
                                 </span>
                                 &nbsp; have been explained about the medical
                                 condition and <br />
@@ -1826,10 +1896,7 @@ const IPDConsentFroms = () => {
                                     type="text"
                                     className="vi_0"
                                     style={{ width: "200px" }}
-                                    value={RealivesName}
-                                    onChange={(e) =>
-                                      setRealivesName(e.target.value)
-                                    }
+                                    value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}
                                   />
                                 </span>
                                 &nbsp;&nbsp; who is admitted on{" "}
@@ -2390,8 +2457,8 @@ const IPDConsentFroms = () => {
                                         onChange={(e) =>
                                           setNameOfSurgery(e.target.value)
                                         }
-                                      placeholder="Enter Surgery Name"
-                                      />      
+                                        placeholder="Enter Surgery Name"
+                                      />
                                       &nbsp; at Janani Multispeciality Hospital
                                       I understand that the above mentioned
                                       procedure necessitates the administration
@@ -2501,8 +2568,8 @@ const IPDConsentFroms = () => {
                                           style={{ width: "331px" }}
                                           value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}
                                         />
-                                      </span> &nbsp;
-                                      hence I,{" "}
+                                      </span>{" "}
+                                      &nbsp; hence I,{" "}
                                       <span>
                                         <input
                                           type="text"
@@ -2542,7 +2609,7 @@ const IPDConsentFroms = () => {
                                       type="text"
                                       className="vi_0"
                                       style={{ width: "161px" }}
-                                      value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}         
+                                      value={`${userdetail?.Firstname} ${userdetail?.Lastname}`}
                                     />
                                   </td>
                                   <td>

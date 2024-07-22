@@ -9,6 +9,7 @@ import Hospitallabtestreport from "./Hospitallabreport";
 import Clinicallab from "./Clinicallab";
 import TotalLabRevenue from "./TotalLabRevenue";
 import ReferalPatientList from "./ReferalPatientList";
+import ReferalClinicalDoctorForLAB from "./ReferalClinicalDoctorForLAB";
 export default function ClinicalLabPanel() {
 
   const [ViewModal, setViewModal] = useState();
@@ -66,7 +67,7 @@ export default function ClinicalLabPanel() {
             <div className="col-lg-4">
               {" "}
               <div
-                className="websiteMcards"
+                className="websiteMcards d-flex"
                 onClick={() => {
                   setViewModal(<ReferalPatientList />);
                   setTitle("REFERAL LAB PATIENT LIST");
@@ -74,7 +75,22 @@ export default function ClinicalLabPanel() {
                 }}
               >
                 <GiTestTubes className="WebMI" />
-                REFERAL LAB PATIENTS
+                <p>REFERAL LAB (LAB PATIENTS)</p>
+              </div>
+            </div>
+
+            <div className="col-lg-4">
+              {" "}
+              <div
+                className="websiteMcards d-flex"
+                onClick={() => {
+                  setViewModal(<ReferalClinicalDoctorForLAB />);
+                  setTitle("REFER CLINIC DOCTOR (LAB PATIENTS)");
+                  setView(true);
+                }}
+              >
+                <GiTestTubes className="WebMI" />
+               <p>REFER CLINIC DOCTOR (LAB PATIENTS)</p> 
               </div>
             </div>
             {/* <div className="col-lg-4">

@@ -17,9 +17,6 @@ const ConsentView = ({ SelectCause }) => {
   const [HighRiskCForm, setHighRiskCForm] = useState([]);
   const [AnesthesiaCForm, setAnesthesiaCForm] = useState([]);
 
-  console.log("GeneralCForm", GeneralCForm);
-  console.log("SelectCause", SelectCause);
-
   useEffect(() => {
     if (SelectCause) {
       const generalCFLen = SelectCause?.consentform?.filter(

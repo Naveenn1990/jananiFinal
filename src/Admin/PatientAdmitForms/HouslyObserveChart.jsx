@@ -1,15 +1,18 @@
 import axios from "axios";
 import moment from "moment";
-import React, { useState } from "react";
-import { Button, Table } from "react-bootstrap";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Form, Table } from "react-bootstrap";
+import { FaBackward } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import SignatureCanvas from "react-signature-canvas";
 const HouslyObserveChart = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { patientdetails, cause } = location.state || {};
+
+  console.log("patientdetails",patientdetails);
 
   const dobString = patientdetails?.DOB;
   const dob = new Date(dobString);
@@ -42,11 +45,11 @@ const HouslyObserveChart = () => {
       causename: cause?.CauseName,
       OTime: OTime,
       HRmin: HRmin,
-      RRmin:RRmin,
-      SPO2:SPO2,
-      BP:BP,
-      GRBs:GRBs,
-      O2:O2,
+      RRmin: RRmin,
+      SPO2: SPO2,
+      BP: BP,
+      GRBs: GRBs,
+      O2: O2,
     };
     setHourlyNotes((prevDrug) => [...prevDrug, newNote]);
   };
@@ -57,42 +60,130 @@ const HouslyObserveChart = () => {
     setHourlyNotes(updatedDrugList);
   };
 
-  const submitNurseNote = async()=>{
+  const [NurseSignature, setNurseSignature] = useState(null);
+  const sigCanvas1 = useRef({});
+  const clear1 = () => sigCanvas1.current.clear();
+  const save1 = () => {
+    const NurseSignature = sigCanvas1.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setNurseSignature(NurseSignature);
+  };
+
+  const [SelectDoctor, setSelectDoctor] = useState("");
+  const [DoctorDept, setDoctorDept] = useState([]);
+  useEffect(() => {
+    if (SelectDoctor) {
+      const assignDocDept = patientdetails?.assigndocts?.filter(
+        (ele) => ele?.doctorsId?._id === SelectDoctor
+      );
+      setDoctorDept(assignDocDept);
+    }
+  }, [SelectDoctor, patientdetails]);
+
+
+  const [userdetail, setuserdetail] = useState({});
+  const getpatientbyid = async () => {
     try {
-      const config ={
-        url:"/addhourlynotes",
-        method:"put",
-        baseURL:"http://localhost:8521/api/staff",
-        headers:{"content-type":"application/json"},
-        data:{
-          patientId:patientdetails?._id,
-          causeId:cause?._id,
-          HourlyNotes:HourlyNotes
-        }
-      }
-      let res = await axios(config);
-      if(res.status === 200){
-        alert(res.data.success)
+      let res = await axios.get(
+        `http://localhost:8521/api/user/getPatientDetailByid/${patientdetails?._id}`
+      );
+      if (res.status === 200) {
+        setuserdetail(res.data.success);
       }
     } catch (error) {
-      alert(error.response.data.error)
+      console.log(error);
     }
-  }
+  };
+  useEffect(() => {
+    getpatientbyid();
+  }, []);
+
+  const [SelectedCause, setSelectedCause] = useState([])
+  useEffect(() => {
+    if(cause){
+      const findcause = userdetail?.cause?.filter((ele)=>ele._id === cause?._id)
+      setSelectedCause(findcause)
+    }
+
+  }, [cause,userdetail])
+
+  const submitNurseNote = async () => {
+    if(!SelectDoctor){
+      return alert("Please Select Doctor")
+    }
+    if(!OTime){
+      return alert("Please Select Time")
+    }
+    if(!HRmin){
+      return alert("Please Enter HR/Min")
+    }
+    if(!RRmin){
+      return alert("Please Enter RR/Min")
+    }
+    if(!SPO2){
+      return alert("Please Enter SPO2")
+    }
+    if(!BP){
+      return alert("Please Enter BP")
+    }
+    if(!GRBs){
+      return alert("Please Enter GRBs")
+    }
+    if(!O2){
+      return alert("Please Enter O2")
+    }
+    if(!NurseSignature){
+      return alert("Nurse Signature Pending..!")
+    }
+    const formdata = new FormData();
+    const Nursesign = await fetch(NurseSignature).then((res) => res.blob());
+    formdata.set("patientId", patientdetails?._id);
+    formdata.set("causeId", cause?._id);
+    formdata.set("doctorId", SelectDoctor);
+    formdata.set("OTime", OTime);
+    formdata.set("HRmin", HRmin);
+    formdata.set("RRmin", RRmin);
+    formdata.set("SPO2", SPO2);
+    formdata.set("BP", BP);
+    formdata.set("GRBs", GRBs);
+    formdata.set("O2", O2);
+    formdata.set("NurseSignature", Nursesign,"nurse-signature.png");
+    try {
+      const config = {
+        url: "/addhourlynotes",
+        method: "put",
+        baseURL: "http://localhost:8521/api/staff",
+        headers: { "Content-Type": "multipart/form-data" },
+        data: formdata,
+      };
+      let res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        sessionStorage.setItem("PatientUser", JSON.stringify(res.data.updateddata))
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
   return (
     <div>
       <div>
-        <button
+      <button
           className="mt-2"
           style={{
-            padding: "6px",
-            border: "1px solid white",
+            border:"#20958c",
+            padding: "8px",
             backgroundColor: "#20958c",
             color: "white",
-            borderRadius: "0px",
+            borderRadius: "6px",
+             boxShadow: " 8px 8px 16px #20958c,-8px -8px 16px #20958c",
+           
           }}
-          onClick={() => navigate(-1)}
+          onClick={() => window.history.go(-1)}
         >
-          Back
+         <FaBackward />  &nbsp;      
+         Back
         </button>
       </div>
 
@@ -116,10 +207,8 @@ const HouslyObserveChart = () => {
           style={{
             padding: "5px",
             border: "2px solid #20958C",
-            // width: "1073px",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1724px",
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -140,14 +229,6 @@ const HouslyObserveChart = () => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
             {" "}
             <h6
@@ -176,7 +257,7 @@ const HouslyObserveChart = () => {
                   }}
                 >
                   <div
-                    className="col-md-6"
+                    className="col-md-5"
                     style={{
                       border: "1px solid #20958C",
                       paddingLeft: "unset",
@@ -186,7 +267,7 @@ const HouslyObserveChart = () => {
                   >
                     Name:{" "}
                     <span>
-                    {`${patientdetails?.Firstname} ${patientdetails?.Lastname} `}
+                      {`${patientdetails?.Firstname} ${patientdetails?.Lastname} `}
                     </span>
                   </div>
                   <div
@@ -199,12 +280,10 @@ const HouslyObserveChart = () => {
                     }}
                   >
                     ID No:
-                    <span>
-                    {patientdetails?.PatientId}
-                    </span>
+                    <span>{patientdetails?.PatientId}</span>
                   </div>
                   <div
-                    className="col-md-3"
+                    className="col-md-4"
                     style={{
                       border: "1px solid #20958C",
                       paddingLeft: "unset",
@@ -214,10 +293,7 @@ const HouslyObserveChart = () => {
                       alignItems: "center",
                     }}
                   >
-                    Sex:{" "}
-                    <span>
-                    {patientdetails?.Gender}
-                    </span>
+                    Sex: <span>{patientdetails?.Gender}</span>
                   </div>
                 </div>
                 <div
@@ -227,7 +303,7 @@ const HouslyObserveChart = () => {
                   }}
                 >
                   <div
-                    className="col-md-6"
+                    className="col-md-5"
                     style={{
                       border: "1px solid #20958C",
                       paddingLeft: "unset",
@@ -237,7 +313,7 @@ const HouslyObserveChart = () => {
                   >
                     DOA:{" "}
                     <span>
-                    {moment(patientdetails?.createdAt).format("DD-MM-YYYY")}
+                      {moment(patientdetails?.createdAt).format("DD-MM-YYYY")}
                     </span>
                   </div>
                   <div
@@ -249,13 +325,10 @@ const HouslyObserveChart = () => {
                       fontSize: "17px",
                     }}
                   >
-                    Age :
-                    <span>
-                    {ageOutput}
-                    </span>
+                    Age :<span>{ageOutput}</span>
                   </div>
                   <div
-                    className="col-md-3"
+                    className="col-md-4"
                     style={{
                       border: "1px solid #20958C",
                       paddingLeft: "unset",
@@ -265,20 +338,32 @@ const HouslyObserveChart = () => {
                       alignItems: "center",
                     }}
                   >
-                    Unit Dr : 
+                    Unit Dr :
                     <span>
-                     Dr.JK Das
+                      <Form.Select
+                        className="vi_0"
+                        onChange={(e) => setSelectDoctor(e.target.value)}
+                      >
+                        <option value="">Select Doctor</option>
+                        {patientdetails?.assigndocts?.map((item) => {
+                          return (
+                            <option
+                              value={item?.doctorsId?._id}
+                            >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
+                          );
+                        })}
+                      </Form.Select>
                     </span>
                   </div>
-                </div>          
-              
+                </div>
+
                 <div className="mt-2 text-center">
                   <span style={{ color: "red", fontFamily: "bold" }}>
                     {cause?.CauseName}
                   </span>
                 </div>
-                <div className="mt-2">
-                  <Table className="text-center">
+                <div className="row mt-2">
+                  <Table className="text-center" bordered>
                     <thead>
                       <tr>
                         <th>Time</th>
@@ -289,10 +374,29 @@ const HouslyObserveChart = () => {
                         <th>GRBS</th>
                         <th>O2</th>
                         <th>Sign</th>
-                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
+                    {SelectedCause?.[0]?.hourlynote?.map((item)=>{
+                        return(
+                          <tr>
+                          <td>{item?.OTime}</td>
+                          <td>{item?.HRmin}</td>
+                          <td>{item?.RRmin}</td>
+                          <td>{item?.SPO2}</td>
+                          <td>{item?.BP}</td>
+                          <td>{item?.GRBs}</td>
+                          <td>{item?.O2}</td>
+                          <td>
+                          <img
+                            alt="sign"
+                            src={`http://localhost:8521/PatientREG/${item?.NurseSignature}`}
+                          /> 
+                          </td>
+                        </tr>
+                        )
+                      })
+                      }
                       <tr>
                         <td>
                           <input
@@ -311,7 +415,7 @@ const HouslyObserveChart = () => {
                           />
                         </td>
                         <td>
-                        <input
+                          <input
                             type="text"
                             className="vi_0"
                             value={RRmin}
@@ -319,7 +423,7 @@ const HouslyObserveChart = () => {
                           />
                         </td>
                         <td>
-                        <input
+                          <input
                             type="text"
                             className="vi_0"
                             value={SPO2}
@@ -327,7 +431,7 @@ const HouslyObserveChart = () => {
                           />
                         </td>
                         <td>
-                        <input
+                          <input
                             type="text"
                             className="vi_0"
                             value={BP}
@@ -335,7 +439,7 @@ const HouslyObserveChart = () => {
                           />
                         </td>
                         <td>
-                        <input
+                          <input
                             type="text"
                             className="vi_0"
                             value={GRBs}
@@ -343,24 +447,41 @@ const HouslyObserveChart = () => {
                           />
                         </td>
                         <td>
-                        <input
+                          <input
                             type="text"
                             className="vi_0"
                             value={O2}
                             onChange={(e) => setO2(e.target.value)}
                           />
                         </td>
-                        
+
                         <td>
-                        
+                          {!NurseSignature ? (
+                            <div
+                              style={{
+                                border: "1px solid #dee2e6",
+                                margin: "10px",
+                              }}
+                            >
+                              <SignatureCanvas
+                                ref={sigCanvas1}
+                                penColor="black"
+                                canvasProps={{
+                                  width: 180,
+                                  height: 100,
+                                  className: "sigCanvas",
+                                }}
+                              />
+                              <div className="d-flex gap-3">
+                                <button onClick={clear1}>Clear</button>
+                                <button onClick={save1}>Save</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <img src={NurseSignature} alt="Signature" />
+                          )}
                         </td>
-                        <td>
-                          <Button 
-                          onClick={AddHourlyNotes}
-                          >
-                            <IoMdAdd />
-                          </Button>
-                        </td>
+                       
                       </tr>
                       {HourlyNotes?.map((item, i) => {
                         return (
@@ -371,7 +492,7 @@ const HouslyObserveChart = () => {
                             <td>{item?.SPO2}</td>
                             <td>{item?.BP}</td>
                             <td>{item?.GRBs}</td>
-                            <td>{item?.O2}</td>                          
+                            <td>{item?.O2}</td>
                             <td>Sing</td>
                             <td>
                               <MdDelete
@@ -388,17 +509,15 @@ const HouslyObserveChart = () => {
                     </tbody>
                   </Table>
                 </div>
-              
               </div>
             </p>
           </div>
         </div>
       </div>
       <div className="text-center mt-2 mb-2">
-        <button 
-        className="btn btn-success"
-        onClick={submitNurseNote}
-        >Submit</button>
+        <button className="btn btn-success" onClick={submitNurseNote}>
+          Submit
+        </button>
       </div>
     </div>
   );

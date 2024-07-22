@@ -32,7 +32,7 @@ export default function Sidebar1() {
         <h6
           className="sidebarItem"
           // style={{ backgroundColor: SelectedItem == 1 ? "#20958c" : "white" }}
-          onClick={() => window.location.assign("/admin/dashboard")}
+          onClick={() => navigate("/admin/dashboard")}
         >
           Dashboard
         </h6>
@@ -40,7 +40,7 @@ export default function Sidebar1() {
         {admin?.subadmin === true ? (
           <h6
             className="sidebarItem"
-            onClick={() => window.location.assign("/admin/subadmin")}
+            onClick={() => navigate("/admin/subadmin")}
           >
             {" "}
             Subadmin
@@ -60,13 +60,13 @@ export default function Sidebar1() {
         >
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/Hospitaldoctors")}
+            onClick={() => navigate("/admin/Hospitaldoctors")}
           >
             Hospital doctors
           </h6>
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/Clinicaldoctors")}
+            onClick={() => navigate("/admin/Clinicaldoctors")}
           >
             Clinical doctors
           </h6>
@@ -79,7 +79,7 @@ export default function Sidebar1() {
           <h6
             className="sidebarItem"
             onClick={() =>
-              window.location.assign("/admin/Staffmanagementdashboard")
+              navigate("/admin/Staffmanagementdashboard")
             }
           >
             Staff management
@@ -100,19 +100,19 @@ export default function Sidebar1() {
         >
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/opdtoipd")}
+            onClick={() => navigate("/admin/opdtoipd")}
           >
             OPD TO IPD
           </h6>
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/Inpatientlist")}
+            onClick={() => navigate("/admin/Inpatientlist")}
           >
             In-patient list
           </h6>
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/Outpatientlist")}
+            onClick={() => navigate("/admin/Outpatientlist")}
           >
             Out-patient list
           </h6>
@@ -121,7 +121,7 @@ export default function Sidebar1() {
         {admin?.docAppointment === true ? (
           <h6
             className="sidebarItem"
-            onClick={() => window.location.assign("/admin/DoctorsAppointment")}
+            onClick={() => navigate("/admin/DoctorsAppointment")}
           >
             Appointment
           </h6>
@@ -141,33 +141,33 @@ export default function Sidebar1() {
         >
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+            onClick={() => navigate("/admin/HospitalLabPanel")}
           >
             Hospital lab
           </h6>
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/ClinicalLabPanel")}
+            onClick={() => navigate("/admin/ClinicalLabPanel")}
           >
             Clinical lab
           </h6>
 
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/LabVendor")}
+            onClick={() => navigate("/admin/LabVendor")}
           >
             Create Vendor
           </h6>
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/Labvendorproducts")}
+            onClick={() => navigate("/admin/Labvendorproducts")}
           >
             Vendor Products
           </h6>
           <Link to="/admin/LaborderHistory">
             <h6
               className="sidebarItem1"
-              // onClick={() => window.location.assign("/admin/LaborderHistory")}
+              // onClick={() => navigate("/admin/LaborderHistory")}
             >
               Purchase Order History
             </h6>
@@ -182,7 +182,7 @@ export default function Sidebar1() {
           <Link to="/admin/HospitalLabRecepPanel">
             <h6
               className="sidebarItem"
-              // onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+              // onClick={() => navigate("/admin/HospitalLabPanel")}
             >
               Lab Receptionist
             </h6>
@@ -193,7 +193,7 @@ export default function Sidebar1() {
           <Link to="/admin/HospitalLabSampleCollector">
             <h6
               className="sidebarItem"
-              // onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+              // onClick={() => navigate("/admin/HospitalLabPanel")}
             >
               Lab Sample Collector
             </h6>
@@ -204,7 +204,7 @@ export default function Sidebar1() {
           <Link to="/admin/HospitalLabtechnician">
             <h6
               className="sidebarItem"
-              // onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+              // onClick={() => navigate("/admin/HospitalLabPanel")}
             >
               Lab Technician
             </h6>
@@ -223,6 +223,7 @@ export default function Sidebar1() {
           }}
         >
           <Link to={"/admin/AddProductCategory"}>
+<<<<<<< HEAD
             <h6 className="sidebarItem1">Add Product Category</h6>
           </Link>
 
@@ -232,6 +233,80 @@ export default function Sidebar1() {
 
           <Link to={"/admin/addinventory"}>
             <h6 className="sidebarItem1">Inventory</h6>
+=======
+            <h6
+              className="sidebarItem1"
+              // onClick={() =>
+              // navigate("/admin/AddProductCategory")
+              // }
+            >
+              Add Product Category
+            </h6>
+          </Link>
+
+          <Link to={"/admin/ProductBrands"}>
+            <h6
+              className="sidebarItem1"
+              // onClick={() => navigate("/admin/ProductBrands")}
+            >
+              Add Brands
+            </h6>
+          </Link>
+          <Link to="/admin/ProductCustomerOrders">
+            <h6
+              className="sidebarItem1"
+              // onClick={() =>
+              //   navigate("/admin/ProductCustomerOrders")
+              // }
+            >
+              Customer Orders
+            </h6>
+          </Link>
+          <Link to="/admin/AddVendor">
+            <h6
+              className="sidebarItem1"
+              // onClick={() => navigate("/admin/AddVendor")}
+            >
+              Create Vendor
+            </h6>
+          </Link>
+          {/* v6 */}
+          <Link to="/admin/VendorAddedProduct">
+            <h6
+              className="sidebarItem1"
+              // onClick={() => navigate("/admin/VendorAddedProduct")}
+            >
+              Vendor Added Products
+            </h6>
+          </Link>
+
+          {/* v6 */}
+          <Link to={"/admin/VendorAddedProductsStatus"}>
+            <h6
+              className="sidebarItem1"
+              // onClick={() =>
+              //   navigate("/admin/VendorAddedProductsStatus")
+              // }
+            >
+              Create Purchase Order
+            </h6>
+          </Link>
+
+          {/* <h6
+              className="sidebarItem1"
+              onClick={() => navigate("/admin/ProductOrders")}
+            >
+              Order History
+            </h6> */}
+
+          <Link to={"/admin/addinventory"}>
+            <h6
+              className="sidebarItem1"
+              // onClick={() => navigate("/admin/addinventory")}
+            >
+              Inventory
+            </h6>
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
           </Link>
         </div>
         <h6 className="sidebarItem" onClick={() => setEcom(!Ecom)}>
@@ -281,11 +356,37 @@ export default function Sidebar1() {
           <Link to={"/admin/Adminorder"}>
             <h6 className="sidebarItem1">Order History</h6>
           </Link>
+<<<<<<< HEAD
+=======
+
+          {/* <h6
+          className="sidebarItem1"
+          onClick={() => navigate("/admin/AddWastageReturn")}
+        >
+          Add Wastage Return
+        </h6>
+
+        <h6
+          className="sidebarItem1"
+          onClick={() => navigate("/admin/AddManufacturerReturn")}
+        >
+          Add Manufacturer Return
+        </h6> */}
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
         </div>
 
         {admin?.websiteManagement === true ? (
           <Link to={"/admin/Websitemanagement"}>
+<<<<<<< HEAD
             <h6 className="sidebarItem">Website management</h6>
+=======
+            <h6
+              className="sidebarItem"
+              // onClick={() => navigate("/admin/Websitemanagement")}
+            >
+              Website management
+            </h6>
+>>>>>>> f232eba0eaa38cbf480115a19d513f07f09b664f
           </Link>
         ) : null}
 
@@ -302,20 +403,20 @@ export default function Sidebar1() {
         >
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/AddServiceCategory")}
+            onClick={() => navigate("/admin/AddServiceCategory")}
           >
             Add Service Category
           </h6>
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/AddService")}
+            onClick={() => navigate("/admin/AddService")}
           >
             Add Service
           </h6>
 
           {/* <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/RequestedService")}
+              onClick={() => navigate("/admin/RequestedService")}
             >
               Requested Service
             </h6> */}
@@ -334,39 +435,39 @@ export default function Sidebar1() {
         >
           <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/AddHospitalServices")}
+            onClick={() => navigate("/admin/AddHospitalServices")}
           >
             Add hospital Services
           </h6>
           {/* <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/AddHouseKeeping")}
+              onClick={() => navigate("/admin/AddHouseKeeping")}
             >
               Add hospital house keeping
             </h6> */}
           {/* <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/AddAccesories")}
+            onClick={() => navigate("/admin/AddAccesories")}
           >
             Add Accessories
           </h6> */}
 
-          <h6
+          {/* <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/AddHospitalRooms")}
+            onClick={() => navigate("/admin/AddHospitalRooms")}
           >
             Add Rooms
-          </h6>
+          </h6> */}
 
           {/* <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/Adddepartment")}
+            onClick={() => navigate("/admin/Adddepartment")}
           >
             Add Department
           </h6> */}
           {/* <h6
             className="sidebarItem1"
-            onClick={() => window.location.assign("/admin/Notifications")}
+            onClick={() => navigate("/admin/Notifications")}
           >
             Notification
           </h6> */}
@@ -375,7 +476,7 @@ export default function Sidebar1() {
         {admin?.bedManagement === true ? (
           <h6
             className="sidebarItem"
-            onClick={() => window.location.assign("/admin/Bedmanagement")}
+            onClick={() => navigate("/admin/Bedmanagement")}
           >
             Bed management
           </h6>
@@ -384,7 +485,7 @@ export default function Sidebar1() {
         {admin?.accounts === true ? (
           <h6
             className="sidebarItem"
-            onClick={() => window.location.assign("/admin/Accounts")}
+            onClick={() => navigate("/admin/Accounts")}
           >
             Accounts
           </h6>
@@ -393,7 +494,7 @@ export default function Sidebar1() {
         {admin?.billing === true ? (
           <h6
             className="sidebarItem"
-            onClick={() => window.location.assign("/admin/Billinglist")}
+            onClick={() => navigate("/admin/Billinglist")}
           >
             Billing
           </h6>
@@ -407,7 +508,7 @@ export default function Sidebar1() {
         {admin?.enqAndComplaints === true ? (
           <h6
             className="sidebarItem"
-            onClick={() => window.location.assign("/admin/Enquiry")}
+            onClick={() => navigate("/admin/Enquiry")}
           >
             Enquiries & Complaints
           </h6>
@@ -432,14 +533,14 @@ export default function Sidebar1() {
           <h6
             className="sidebarItem"
             // style={{ backgroundColor: SelectedItem == 1 ? "#20958c" : "white" }}
-            onClick={() => window.location.assign("/admin/dashboard")}
+            onClick={() => navigate("/admin/dashboard")}
           >
             Dashboard
           </h6>
           {/* {Subadmin?.subadmin === true ? (
             <h6
               className="sidebarItem"
-              onClick={() => window.location.assign("/admin/subadmin")}
+              onClick={() => navigate("/admin/subadmin")}
             >
               {" "}
               Subadmin
@@ -460,13 +561,13 @@ export default function Sidebar1() {
           >
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/Hospitaldoctors")}
+              onClick={() => navigate("/admin/Hospitaldoctors")}
             >
               Hospital doctors
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/Clinicaldoctors")}
+              onClick={() => navigate("/admin/Clinicaldoctors")}
             >
               Clinical doctors
             </h6>
@@ -476,7 +577,7 @@ export default function Sidebar1() {
             <h6
               className="sidebarItem"
               onClick={() =>
-                window.location.assign("/admin/Staffmanagementdashboard")
+                navigate("/admin/Staffmanagementdashboard")
               }
             >
               Staff management
@@ -496,19 +597,19 @@ export default function Sidebar1() {
           >
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/opdtoipd")}
+              onClick={() => navigate("/admin/opdtoipd")}
             >
               OPD TO IPD
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/Inpatientlist")}
+              onClick={() => navigate("/admin/Inpatientlist")}
             >
               In-patient list
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/Outpatientlist")}
+              onClick={() => navigate("/admin/Outpatientlist")}
             >
               Out-patient list
             </h6>
@@ -517,7 +618,7 @@ export default function Sidebar1() {
             <h6
               className="sidebarItem"
               onClick={() =>
-                window.location.assign("/admin/DoctorsAppointment")
+                navigate("/admin/DoctorsAppointment")
               }
             >
               Doctors appointment
@@ -537,38 +638,38 @@ export default function Sidebar1() {
           >
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+              onClick={() => navigate("/admin/HospitalLabPanel")}
             >
               Hospital lab
             </h6>
 
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/ClinicalLabPanel")}
+              onClick={() => navigate("/admin/ClinicalLabPanel")}
             >
               Clinical lab
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/Packages")}
+              onClick={() => navigate("/admin/Packages")}
             >
               Add Lab Packages
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+              onClick={() => navigate("/admin/HospitalLabPanel")}
             >
               Vendor's
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+              onClick={() => navigate("/admin/HospitalLabPanel")}
             >
               Vendor Product's
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/HospitalLabPanel")}
+              onClick={() => navigate("/admin/HospitalLabPanel")}
             >
               Purchase Order History
             </h6>
@@ -589,69 +690,69 @@ export default function Sidebar1() {
             <h6
               className="sidebarItem1"
               onClick={() =>
-                window.location.assign("/admin/AddProductCategory")
+                navigate("/admin/AddProductCategory")
               }
             >
               IPD Patients
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/OPDPharmacy")}
+              onClick={() => navigate("/admin/OPDPharmacy")}
             >
               OPD Patients
             </h6>
             <h6
               className="sidebarItem1"
               onClick={() =>
-                window.location.assign("/admin/AddProductCategory")
+                navigate("/admin/AddProductCategory")
               }
             >
               Add Product Category
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/ProductBrands")}
+              onClick={() => navigate("/admin/ProductBrands")}
             >
               Add Brands
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/AddVendor")}
+              onClick={() => navigate("/admin/AddVendor")}
             >
               Create Vendor
             </h6>
 
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/ProductOrders")}
+              onClick={() => navigate("/admin/ProductOrders")}
             >
               Order History
             </h6>
             <h6
               className="sidebarItem1"
               onClick={() =>
-                window.location.assign("/admin/ProductCustomerOrders")
+                navigate("/admin/ProductCustomerOrders")
               }
             >
               Customer Orders
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/AddProduct")}
+              onClick={() => navigate("/admin/AddProduct")}
             >
               Inventory
             </h6>
 
             {/* <h6
           className="sidebarItem1"
-          onClick={() => window.location.assign("/admin/AddWastageReturn")}
+          onClick={() => navigate("/admin/AddWastageReturn")}
         >
           Add Wastage Return
         </h6>
 
         <h6
           className="sidebarItem1"
-          onClick={() => window.location.assign("/admin/AddManufacturerReturn")}
+          onClick={() => navigate("/admin/AddManufacturerReturn")}
         >
           Add Manufacturer Return
         </h6> 
@@ -660,7 +761,7 @@ export default function Sidebar1() {
           {Subadmin?.websiteManagement === true ? (
             <h6
               className="sidebarItem"
-              onClick={() => window.location.assign("/admin/Websitemanagement")}
+              onClick={() => navigate("/admin/Websitemanagement")}
             >
               Website management
             </h6>
@@ -680,21 +781,21 @@ export default function Sidebar1() {
             <h6
               className="sidebarItem1"
               onClick={() =>
-                window.location.assign("/admin/AddServiceCategory")
+                navigate("/admin/AddServiceCategory")
               }
             >
               Add Service Category
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/AddService")}
+              onClick={() => navigate("/admin/AddService")}
             >
               Add Service
             </h6>
 
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/RequestedService")}
+              onClick={() => navigate("/admin/RequestedService")}
             >
               Requested Service
             </h6>
@@ -715,40 +816,40 @@ export default function Sidebar1() {
             <h6
               className="sidebarItem1"
               onClick={() =>
-                window.location.assign("/admin/AddHospitalServices")
+                navigate("/admin/AddHospitalServices")
               }
             >
               Add hospital Services
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/AddHouseKeeping")}
+              onClick={() => navigate("/admin/AddHouseKeeping")}
             >
               Add hospital house keeping
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/AddAccesories")}
+              onClick={() => navigate("/admin/AddAccesories")}
             >
               Add Accessories
             </h6>
 
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/AddHospitalRooms")}
+              onClick={() => navigate("/admin/AddHospitalRooms")}
             >
               Add Rooms
             </h6>
 
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/Adddepartment")}
+              onClick={() => navigate("/admin/Adddepartment")}
             >
               Add Department
             </h6>
             <h6
               className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/Notifications")}
+              onClick={() => navigate("/admin/Notifications")}
             >
               Notification
             </h6>
@@ -757,7 +858,7 @@ export default function Sidebar1() {
           {Subadmin?.bedManagement === true ? (
             <h6
               className="sidebarItem"
-              onClick={() => window.location.assign("/admin/Bedmanagement")}
+              onClick={() => navigate("/admin/Bedmanagement")}
             >
               Bed management
             </h6>
@@ -766,7 +867,7 @@ export default function Sidebar1() {
           {Subadmin?.accounts === true ? (
             <h6
               className="sidebarItem"
-              onClick={() => window.location.assign("/admin/Accounts")}
+              onClick={() => navigate("/admin/Accounts")}
             >
               Accounts
             </h6>
@@ -774,7 +875,7 @@ export default function Sidebar1() {
           {Subadmin?.billing === true ? (
             <h6
               className="sidebarItem"
-              onClick={() => window.location.assign("/admin/Billinglist")}
+              onClick={() => navigate("/admin/Billinglist")}
             >
               Billing
             </h6>
@@ -782,7 +883,7 @@ export default function Sidebar1() {
           {Subadmin?.enqAndComplaints === true ? (
             <h6
               className="sidebarItem"
-              onClick={() => window.location.assign("/admin/Enquiry")}
+              onClick={() => navigate("/admin/Enquiry")}
             >
               Enquiries & Complaints
             </h6>

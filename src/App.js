@@ -272,6 +272,7 @@ import ReferLabNotification from "./ReferLab/ReferLabNotification";
 import PrescriptionReport from "./PatientsPortal/PrescriptionReport";
 import HospitalLabSampleCollector from "./Admin/HospitalLabSampleCollector";
 import HospitalLabTechnician from "./Admin/HospitalLabTechnician";
+import OPDtoIPDBedAssign from "./Admin/OPDtoIPDBedAssign";
 
 function App() {
   return (
@@ -2316,6 +2317,15 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<OPDtoIPD />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/opdtoipdconfirmation"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<OPDtoIPDBedAssign />} />{" "}
                 </>
               }
             ></Route>
