@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Table } from "react-bootstrap";
-import { AiFillDelete, AiFillFileExcel } from "react-icons/ai";
 import { BsFillEyeFill } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { FaUserMd } from "react-icons/fa";
 import { ImLab } from "react-icons/im";
 import axios from "axios";
-import { Pagination, Stack } from "@mui/material";
 import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
+
 export default function AddVials() {
   const [show, setShow] = useState(false);
 
@@ -69,8 +74,7 @@ export default function AddVials() {
     }
   };
 
-  const [vialList, setvialList] = useState([]);
-  const [vialListImmutable, setvialListImmutable] = useState([]);
+  const [data, setdata] = useState([]);
   const getHospitalVials = () => {
     axios
       .get("http://localhost:8521/api/admin/vialList")
@@ -78,16 +82,12 @@ export default function AddVials() {
         // handle success
         if (response.status === 200) {
           const data = response.data.viallist;
-          setvialList(data);
-          setvialListImmutable(data);
-          setPagination(data);
-          setFilteredCatList(data);
+          setdata(data);
         }
       })
       .catch(function (error) {
         // handle error
         console.log(error);
-        setvialList([]);
       });
   };
 
@@ -154,43 +154,35 @@ export default function AddVials() {
       });
   };
 
-  // search
-  const [search, setSearch] = useState("");
-  const [FilteredCatList, setFilteredCatList] = useState([]);
-  function handleFilter() {
-    if (search != "") {
-      // setSearch(search);
-      const filterTable = vialList.filter((o) =>
-        Object.keys(o).some((k) =>
-          String(o[k]).toLowerCase().includes(search.toLowerCase())
-        )
-      );
-      setFilteredCatList([...filterTable]);
-    } else {
-      // setSearch(search);
-      // vialList();
-      setFilteredCatList([...vialList]);
-    }
-  }
-
-  useEffect(() => {
-    handleFilter();
-  }, [search]);
-
   useEffect(() => {
     getHospitalVials();
   }, []);
 
   // ==========================
-
-  // Pagination
-  const [pagination, setPagination] = useState([]);
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
-  const usersPerPage = 2;
+
+  const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(pagination?.length / usersPerPage);
-  const changePage = (selected) => {
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
     setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
   };
 
   const exportType = "xls";
@@ -199,12 +191,8 @@ export default function AddVials() {
 
   const ExportToExcel = () => {
     if (fileName) {
-      if (vialList.length != 0) {
-        exportFromJSON({
-          data: JSON.parse(JSON.stringify(vialList)),
-          fileName,
-          exportType,
-        });
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
         // setfileName("");
       } else {
         alert("There is no data to export");
@@ -214,6 +202,8 @@ export default function AddVials() {
       alert("Enter file name to export");
     }
   };
+
+  console.log("data", data);
 
   return (
     <div>
@@ -229,13 +219,13 @@ export default function AddVials() {
           }}
         >
           <input
-            placeholder="Search Vials"
+            placeholder="Search"
             style={{
               padding: "5px 10px",
               border: "1px solid #20958c",
               borderRadius: "0px",
             }}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleFilter}
           />
           <button
             style={{
@@ -569,86 +559,151 @@ export default function AddVials() {
             </div>
           </Modal.Footer>
         </Modal>
+        <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+          <Table responsive="md" style={{ marginTop: "1%" }}>
+            <thead>
+              <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                <th>S.no.</th>
+                <th>Vial</th>
+                <th>Vial Description</th>
+                <th>Image</th>
 
-        <Table responsive="md" style={{ marginTop: "1%" }}>
-          <thead>
-            <tr style={{ fontSize: "15px", textAlign: "center" }}>
-              <th>S.no.</th>
-              <th>Vial</th>
-              <th>Vial Description</th>
-              <th>Image</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              {search.length > 0
+                ? tableFilter
+                    .slice(pagesVisited, pagesVisited + usersPerPage)
+                    ?.map((val, index) => {
+                      return (
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                          <td>{index + 1}</td>
+                          <td>{val?.vial}</td>
+                          <td style={{ width: "50px" }}>
+                            <p
+                              style={{
+                                height: "141px",
+                                overflow: "hidden",
+                                overflowY: "scroll",
+                              }}
+                            >
+                              {val?.vialDescription}
+                            </p>
+                          </td>
+                          <td>
+                            <img
+                              src={`http://localhost:8521/Vials/${val?.vialImg}`}
+                              style={{ width: "100px" }}
+                              alt="no-img"
+                            />
+                          </td>
 
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody>
-            {FilteredCatList?.slice(
-              pagesVisited,
-              pagesVisited + usersPerPage
-            )?.map((val, index) => {
-              return (
-                <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                  <td>{index + 1}</td>
-                  <td>{val?.vial}</td>
-                  <td style={{ width: "50px" }}>
-                    <p
-                      style={{
-                        height: "141px",
-                        overflow: "hidden",
-                        overflowY: "scroll",
-                      }}
-                    >
-                      {val?.vialDescription}
-                    </p>
-                  </td>
-                  <td>
-                    <img
-                      src={`http://localhost:8521/Vials/${val?.vialImg}`}
-                      style={{ width: "100px" }}
-                      alt="no-img"
-                    />
-                  </td>
+                          <td>
+                            <div
+                              style={{
+                                display: "flex",
+                                textAlign: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <MdEdit
+                                style={{
+                                  color: "#20958c",
+                                  marginRight: "15px",
+                                }}
+                                onClick={() => {
+                                  setView(val);
+                                  handleShow4();
+                                }}
+                              />
+                              <AiFillDelete
+                                style={{ color: "red" }}
+                                onClick={() => {
+                                  setView(val);
+                                  handleShow1();
+                                }}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                : data
+                    ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                    ?.map((val, index) => {
+                      return (
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                          <td>{index + 1}</td>
+                          <td>{val?.vial}</td>
+                          <td style={{ width: "50px" }}>
+                            <p
+                              style={{
+                                height: "141px",
+                                overflow: "hidden",
+                                overflowY: "scroll",
+                              }}
+                            >
+                              {val?.vialDescription}
+                            </p>
+                          </td>
+                          <td>
+                            <img
+                              src={`http://localhost:8521/Vials/${val?.vialImg}`}
+                              style={{ width: "100px" }}
+                              alt="no-img"
+                            />
+                          </td>
 
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        textAlign: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <MdEdit
-                        style={{ color: "#20958c", marginRight: "15px" }}
-                        onClick={() => {
-                          setView(val);
-                          handleShow4();
-                        }}
-                      />
-                      <AiFillDelete
-                        style={{ color: "red" }}
-                        onClick={() => {
-                          setView(val);
-                          handleShow1();
-                        }}
-                      />
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
+                          <td>
+                            <div
+                              style={{
+                                display: "flex",
+                                textAlign: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <MdEdit
+                                style={{
+                                  color: "#20958c",
+                                  marginRight: "15px",
+                                }}
+                                onClick={() => {
+                                  setView(val);
+                                  handleShow4();
+                                }}
+                              />
+                              <AiFillDelete
+                                style={{ color: "red" }}
+                                onClick={() => {
+                                  setView(val);
+                                  handleShow1();
+                                }}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+            </tbody>
+          </Table>
+        </div>
 
-        <div style={{ float: "left" }} className="my-3 d-flex justify-end">
-          <Stack spacing={2}>
-            <Pagination
-              count={pageCount}
-              onChange={(event, value) => {
-                changePage(value - 1);
-              }}
-              color="primary"
-            />
-          </Stack>
+        <div style={{ display: "flex" }}>
+          <p style={{ width: "100%", marginTop: "20px" }}>
+            Total Count: {data?.length}
+          </p>
+          <ReactPaginate
+            previousLabel={"Back"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
         </div>
       </div>
     </div>

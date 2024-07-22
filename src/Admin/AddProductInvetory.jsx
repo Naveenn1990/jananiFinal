@@ -18,6 +18,8 @@ import {
 import axios from "axios";
 import Carousel from "react-multi-carousel";
 import moment from "moment/moment";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
 
 export default function AddProductInvetory() {
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
@@ -45,11 +47,6 @@ export default function AddProductInvetory() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const [show1, setShow1] = useState(false);
-
-  const handleClose1 = () => setShow1(false);
-  const handleShow1 = () => setShow1(true);
-
   const [show2, setShow2] = useState(false);
 
   const handleClose2 = () => setShow2(false);
@@ -57,6 +54,7 @@ export default function AddProductInvetory() {
 
   const [show3, setShow3] = useState(false);
 
+  const [EditData, setEditData] = useState({});
   const handleClose3 = () => setShow3(false);
   const handleShow3 = () => setShow3(true);
 
@@ -90,7 +88,6 @@ export default function AddProductInvetory() {
   // Edit product information:
   const [editProdName, seteditProdName] = useState("");
   const [editProdPrice, seteditProdPrice] = useState();
-  const [editDiscount, seteditDiscount] = useState();
   const [editcatid, seteditcatid] = useState("");
   const [editsubcatid, seteditsubcatid] = useState("");
   const [editstock, seteditstock] = useState();
@@ -110,9 +107,12 @@ export default function AddProductInvetory() {
   const [editManufactureraddress, seteditManufactureraddress] = useState("");
   const [editproductImgs, seteditproductImgs] = useState([]);
   const [editshowproductImgs, seteditshowproductImgs] = useState([]);
+  const [editdescription, seteditdescription] = useState("");
+
+  const [editDiscount, seteditDiscount] = useState();
   const [editMinAlertStock, seteditMinAlertStock] = useState("");
   const [editmaxOrderlimit, seteditmaxOrderlimit] = useState("");
-  const [editdescription, seteditdescription] = useState("");
+
   const getAllCategory = async () => {
     try {
       const res = await axios.get(
@@ -284,17 +284,17 @@ export default function AddProductInvetory() {
     }
   }
 
-  const [inventoryList, setinventoryList] = useState([]);
+  const [data, setdata] = useState([]);
   async function getInventoryList() {
     try {
       const res = await axios.get(
         "http://localhost:8521/api/admin/inventoryList"
       );
       if (res.status === 200) {
-        setinventoryList(res.data.inventoryList);
+        setdata(res.data.inventoryList?.filter((val) => val?.stock > 0));
       }
     } catch (error) {
-      setinventoryList([]);
+      setdata([]);
     }
   }
 
@@ -364,12 +364,52 @@ export default function AddProductInvetory() {
     }
   }
 
-  // console.log("orderedProductsList555555: ", orderedProductsList);
-  // console.log("newarray", newarray);
-  // console.log("InvoiceDoc", InvoiceDoc);
-  // console.log("ChosenProd", ChosenProd);
-  // console.log("inventoryList", inventoryList);
-  // console.log("productInfo", productInfo);
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 10;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Inventory Products");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
+  console.log("data", data);
+
   console.log("newarray434", newarray);
   console.log("catid", catid, subcatid);
   return (
@@ -386,12 +426,13 @@ export default function AddProductInvetory() {
           }}
         >
           <input
-            placeholder="Search Product"
+            placeholder="Search"
             style={{
               padding: "5px 10px",
               border: "1px solid #20958c",
               borderRadius: "0px",
             }}
+            onChange={handleFilter}
           />
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <AiOutlinePlusCircle
@@ -408,6 +449,7 @@ export default function AddProductInvetory() {
               fontSize: "12px",
               borderRadius: "4px",
             }}
+            onClick={ExportToExcel}
           >
             EXPORT <AiFillFileExcel />
           </button>
@@ -974,148 +1016,6 @@ export default function AddProductInvetory() {
           </Modal.Footer>
         </Modal>
 
-        <Modal size="md" show={show1} onHide={handleClose1}>
-          <Modal.Header>
-            <Modal.Title>Edit Product </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="row">
-              <div className="col-lg-12">
-                <select
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                >
-                  <option>Select Category</option>
-                  <option>Category-1</option>
-                  <option>Category-2</option>
-                </select>
-              </div>
-
-              <div className="col-lg-12">
-                <select
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                >
-                  <option>Select Vendor</option>
-                  <option>Vendor-1</option>
-                  <option>Vendor-2</option>
-                </select>
-              </div>
-              <div className="col-lg-12">
-                <input
-                  placeholder="Product Name"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                ></input>
-              </div>
-
-              <div className="col-lg-12">
-                <input
-                  placeholder="Product Price"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                ></input>
-              </div>
-
-              <div className="col-lg-12">
-                <input
-                  placeholder="Product Details"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                    marginTop: "4%",
-                  }}
-                ></input>
-              </div>
-
-              <div className="col-lg-12">
-                <label
-                  style={{
-                    marginTop: "3%",
-                    marginLeft: "4%",
-                  }}
-                >
-                  Product Image
-                </label>
-                <input
-                  type="file"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                ></input>
-              </div>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <div style={{ display: "flex" }}>
-              <button
-                style={{
-                  backgroundColor: "grey",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontWeight: "600",
-                  marginRight: "20px",
-                  padding: "4px 10px",
-                  border: "1px solid white",
-                }}
-                onClick={() => setShow1(false)}
-              >
-                CANCEL
-              </button>
-
-              <button
-                style={{
-                  backgroundColor: "orange",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontWeight: "600",
-                  padding: "4px 10px",
-                  border: "1px solid white",
-                }}
-                onClick={() => {
-                  setShow1(false);
-                  alert("Product updated");
-                }}
-              >
-                SUBMIT
-              </button>
-            </div>
-          </Modal.Footer>
-        </Modal>
-
         {/* information of specific product */}
         <Modal size="lg" show={show2} onHide={handleClose2}>
           <Modal.Header>
@@ -1539,770 +1439,215 @@ export default function AddProductInvetory() {
           </Modal.Header>
           <Modal.Body>
             <div className="row">
-              {/* <div className="col-lg-6 col-sm-12 mt-2">
-                <label
+              <div className="col-lg-4 col-sm-12 mt-2">
+                <select
                   style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  Vendor:
-                </label>
-                <span
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  #{productInfo?.vendorId?.vendorId}{" "}
-                  {productInfo?.vendorId?.fname} {productInfo?.vendorId?.lname}
-                </span>
-              </div> */}
-              {/* <div className="col-lg-6 col-sm-12 mt-2">
-                <label
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  Category:
-                </label>
-                <span
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  {productInfo?.categoryid?.categoryName}
-                </span>
-              </div>
-              <div className="col-lg-6 col-sm-12 mt-2">
-                <label
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  Subcategory:
-                </label>
-                <span
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  {productInfo?.subcategoryid?.subcategoryName}
-                </span>
-              </div> */}
-              {/* <div className="col-lg-6 col-sm-12 mt-2">
-                <label
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  Total Amount:
-                </label>
-                <span
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  {productInfo?.totalPaidPrice}
-                </span>
-              </div> */}
-              {/* <div className="col-lg-6 col-sm-12 mt-2">
-                <label
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  Payment Option:
-                </label>
-                <span
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  {productInfo?.paymentOption}
-                </span>
-              </div> */}
-              {/* <div className="col-lg-6 col-sm-12 mt-2">
-                <label
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  Order Status:
-                </label>
-                <span
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  {productInfo?.orderStatus}
-                </span>
-              </div>
-              <div className="col-lg-6 col-sm-12 mt-2">
-                <label
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                  }}
-                >
-                  Order Payment:
-                </label>
-                <span
-                  style={{
-                    fontWeight: "600",
-                    color: "aliceblue",
-                    fontSize: "20px",
-                    marginRight: "5px",
-                    color:
-                      productInfo.orderPayment === "PENDING" ? "red" : "green",
-                  }}
-                >
-                  {productInfo?.orderPayment}
-                </span>
-              </div> */}
-              <div style={{ padding: "13px 13px" }}>
-                <div
-                  className="col-lg-12 col-sm-12 mt-2 "
-                  style={{
-                    border: "1px solid #ebebeb",
+                    width: "100%",
+                    backgroundColor: "#EBEBEB",
                     padding: "8px 20px",
+                    border: "1px solid #EBEBEB",
+                  }}
+                >
+                  <option>Choose Category</option>
+                </select>
+              </div>
+              <div className="col-lg-4 col-sm-12 mt-2">
+                <select
+                  style={{
+                    width: "100%",
+                    backgroundColor: "#EBEBEB",
+                    padding: "8px 20px",
+                    border: "1px solid #EBEBEB",
+                  }}
+                >
+                  <option>Choose Subategory</option>
+                </select>
+              </div>
+              <div className="col-lg-4 col-sm-12 mt-2">
+                <select
+                  style={{
+                    width: "100%",
+                    backgroundColor: "#EBEBEB",
+                    padding: "8px 20px",
+                    border: "1px solid #EBEBEB",
+                  }}
+                >
+                  <option>Choose Products</option>
+                </select>
+              </div>
+
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "500",
+                    color: "#ebebeb",
+                  }}
+                >
+                  Selling Price
+                </label>
+                <input
+                  placeholder="Price"
+                  value={
+                    newarray?.find((item) => item?._id === prodid)?.productId
+                      ?.MRP
+                  }
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                ></input>
+              </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "500",
+                    color: "#ebebeb",
+                  }}
+                >
+                  Discount (%)
+                </label>
+                <input
+                  placeholder="Discount"
+                  value={discount}
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                  onChange={(event) => seteditDiscount(event.target.value)}
+                ></input>
+              </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "500",
+                    color: "#ebebeb",
+                  }}
+                >
+                  Price After Discount
+                </label>
+                <div
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
                     backgroundColor: "#ebebeb",
                   }}
                 >
-                  <div className="row">
-                    <div className="col-md-6">
-                      <label>
-                        <b>Product Name: </b>
-                      </label>
-                      <input
-                        type="text"
-                        value={editProdName}
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid black",
-                          backgroundColor: "#ebebeb",
-                        }}
-                        placeholder={productInfo?.productName}
-                        onChange={(e) => seteditProdName(e.target.value)}
-                      ></input>
-                    </div>
-                    <div className="col-md-6">
-                      <label>
-                        <b>Product Price: </b>
-                      </label>
-                      <input
-                        type="Number"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid black",
-                          backgroundColor: "#ebebeb",
-                        }}
-                        placeholder={productInfo?.productPrice}
-                        value={editProdPrice}
-                        onChange={(e) => seteditProdPrice(e.target.value)}
-                      ></input>
-                    </div>
-                    <div className="col-md-6">
-                      <label>
-                        <b>Discount %: </b>
-                      </label>
-                      <input
-                        type="Number"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid black",
-                          backgroundColor: "#ebebeb",
-                        }}
-                        placeholder={productInfo?.discount}
-                        value={editDiscount}
-                        onChange={(e) => seteditDiscount(e.target.value)}
-                      ></input>
-                    </div>
-                    <div className="col-md-6">
-                      <label>
-                        <b>Discounted Price: </b>
-                      </label>
-                      <input
-                        disabled
-                        type="Number"
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid black",
-                          backgroundColor: "#ebebeb",
-                        }}
-                        placeholder={(
-                          productInfo?.productPrice -
-                          (productInfo?.productPrice * productInfo?.discount) /
-                            100
-                        ).toFixed(1)}
-                      ></input>
-                    </div>
-                  </div>
-
-                  {/* <div
-                    style={{
-                      color: "#4A4A4D",
-                      fontWeight: "600",
-                    }}
-                  >
-                    ₹
-                    {(
-                      productInfo?.productPrice -
-                      (productInfo?.productPrice * productInfo?.discount) / 100
-                    ).toFixed(1)}{" "}
-                    <span
-                      style={{
-                        color: "#4A4A4D",
-                        fontWeight: "600",
-                        textDecoration: "line-through",
-                      }}
-                    >
-                      ₹{productInfo?.productPrice}
-                    </span>{" "}
-                    <span>{productInfo?.discount}% off</span>
-                    <FontAwesomeIcon
-                      icon={faTag}
-                      shake
-                      style={{ color: "#f24318", paddingLeft: "6px" }}
-                    />
-                  </div> */}
-                  <div className="row">
-                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                      <label>
-                        <b>Category: {productInfo?.categoryid?.categoryName}</b>
-                      </label>
-
-                      <select
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#EBEBEB",
-                          padding: "8px 20px",
-                          border: "1px solid #EBEBEB",
-                        }}
-                        onChange={(e) => seteditcatid(e.target.value)}
-                      >
-                        <option>Choose Category</option>
-                        {categoryList?.map((item) => {
-                          return (
-                            <option value={item._id}>
-                              {item?.categoryName}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
-                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                      <label>
-                        <b>
-                          Subcategory:{" "}
-                          {productInfo?.subcategoryid?.subcategoryName}
-                        </b>
-                      </label>
-
-                      <select
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#EBEBEB",
-                          padding: "8px 20px",
-                          border: "1px solid #EBEBEB",
-                        }}
-                        onChange={(e) => seteditsubcatid(e.target.value)}
-                      >
-                        <option>Choose Subategory</option>
-                        {subcategoryList
-                          .filter((val) => val.categoryid._id === editcatid)
-                          ?.map((item) => {
-                            return (
-                              <option value={item._id}>
-                                {item?.subcategoryName}
-                              </option>
-                            );
-                          })}
-                      </select>
-                    </div>
-                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                      <label>
-                        <b>Stock: </b>
-                      </label>
-                      <input
-                        type="Number"
-                        value={productInfo?.stock}
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid black",
-                          backgroundColor: "#ebebeb",
-                        }}
-                        placeholder={productInfo?.stock}
-                        // onChange={(e) => seteditstock(e.target.value)}
-                      ></input>
-                    </div>
-                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                      <label>
-                        <b>Minimum alert stock: </b>
-                      </label>
-                      <input
-                        type="Number"
-                        value={editMinAlertStock}
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid black",
-                          backgroundColor: "#ebebeb",
-                        }}
-                        placeholder={productInfo?.minstock}
-                        onChange={(e) => seteditMinAlertStock(e.target.value)}
-                      ></input>
-                    </div>
-                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                      <label>
-                        <b>Maximum Order limit: </b>
-                      </label>
-                      <input
-                        type="Number"
-                        value={editmaxOrderlimit}
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid black",
-                          backgroundColor: "#ebebeb",
-                        }}
-                        placeholder={productInfo?.maxOrderlimit}
-                        onChange={(e) => seteditmaxOrderlimit(e.target.value)}
-                      ></input>
-                    </div>
-                    {productInfo?.productType ? (
-                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                        <label>
-                          <b>Product Type: </b>
-                        </label>
-                        <input
-                          type="text"
-                          value={editproductType}
-                          style={{
-                            width: "100%",
-                            padding: "8px 20px",
-                            borderRadius: "0px",
-                            border: "1px solid black",
-                            backgroundColor: "#ebebeb",
-                          }}
-                          placeholder={productInfo?.productType}
-                          onChange={(e) => seteditproductType(e.target.value)}
-                        ></input>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                    {productInfo?.productSize ? (
-                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                        <label>
-                          <b> Product Size: </b>
-                        </label>
-                        <input
-                          type="text"
-                          value={editproductSize}
-                          style={{
-                            width: "100%",
-                            padding: "8px 20px",
-                            borderRadius: "0px",
-                            border: "1px solid black",
-                            backgroundColor: "#ebebeb",
-                          }}
-                          placeholder={productInfo?.productSize}
-                          onChange={(e) => seteditproductSize(e.target.value)}
-                        ></input>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                    {productInfo?.packSize ? (
-                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                        <label>
-                          <b> Pack Size: </b>
-                        </label>
-                        <input
-                          type="text"
-                          value={editpackSize}
-                          style={{
-                            width: "100%",
-                            padding: "8px 20px",
-                            borderRadius: "0px",
-                            border: "1px solid black",
-                            backgroundColor: "#ebebeb",
-                          }}
-                          placeholder={productInfo?.packSize}
-                          onChange={(e) => seteditpackSize(e.target.value)}
-                        ></input>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                      <label>
-                        <b>
-                          Manufacturing Date:
-                          {moment(productInfo?.manufacturingDate).format(
-                            "DD-MM-YYYY"
-                          )}
-                        </b>
-                      </label>
-                      <input
-                        type="date"
-                        value={editmanufacturingDate}
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid black",
-                          backgroundColor: "#ebebeb",
-                        }}
-                        onChange={(e) =>
-                          seteditmanufacturingDate(e.target.value)
-                        }
-                      ></input>
-                    </div>
-                    <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                      <label>
-                        <b>
-                          Expiry Date:{" "}
-                          {moment(productInfo?.expiryDate).format("DD-MM-YYYY")}
-                        </b>
-                      </label>
-                      <input
-                        type="date"
-                        value={editExpiryDate}
-                        style={{
-                          width: "100%",
-                          padding: "8px 20px",
-                          borderRadius: "0px",
-                          border: "1px solid black",
-                          backgroundColor: "#ebebeb",
-                        }}
-                        onChange={(e) => seteditExpiryDate(e.target.value)}
-                      ></input>
-                    </div>
-                    {productInfo?.colour ? (
-                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                        <label>
-                          <b> Colour:</b>
-                        </label>
-                        <input
-                          type="text"
-                          value={editcolour}
-                          style={{
-                            width: "100%",
-                            padding: "8px 20px",
-                            borderRadius: "0px",
-                            border: "1px solid black",
-                            backgroundColor: "#ebebeb",
-                          }}
-                          placeholder={productInfo?.colour}
-                          onChange={(e) => seteditcolour(e.target.value)}
-                        ></input>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                    {productInfo?.flavour ? (
-                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                        <label>
-                          <b> Flavour: </b>
-                        </label>
-                        <input
-                          type="text"
-                          value={editflavour}
-                          style={{
-                            width: "100%",
-                            padding: "8px 20px",
-                            borderRadius: "0px",
-                            border: "1px solid black",
-                            backgroundColor: "#ebebeb",
-                          }}
-                          placeholder={productInfo?.flavour}
-                          onChange={(e) => seteditflavour(e.target.value)}
-                        ></input>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                    {productInfo?.fragrance ? (
-                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                        <label>
-                          <b> Fragrance:</b>
-                        </label>
-                        <input
-                          type="text"
-                          value={editfragrance}
-                          style={{
-                            width: "100%",
-                            padding: "8px 20px",
-                            borderRadius: "0px",
-                            border: "1px solid black",
-                            backgroundColor: "#ebebeb",
-                          }}
-                          placeholder={productInfo?.fragrance}
-                          onChange={(e) => seteditfragrance(e.target.value)}
-                        ></input>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                    {productInfo?.variant ? (
-                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                        <label>
-                          <b> Variant:</b>
-                        </label>
-                        <input
-                          type="text"
-                          value={editvariant}
-                          style={{
-                            width: "100%",
-                            padding: "8px 20px",
-                            borderRadius: "0px",
-                            border: "1px solid black",
-                            backgroundColor: "#ebebeb",
-                          }}
-                          placeholder={productInfo?.variant}
-                          onChange={(e) => seteditvariant(e.target.value)}
-                        ></input>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                    {productInfo?.brand ? (
-                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                        <label>
-                          <b> Brand:</b>
-                        </label>
-                        <input
-                          type="text"
-                          value={editbrand}
-                          style={{
-                            width: "100%",
-                            padding: "8px 20px",
-                            borderRadius: "0px",
-                            border: "1px solid black",
-                            backgroundColor: "#ebebeb",
-                          }}
-                          placeholder={productInfo?.brand}
-                          onChange={(e) => seteditbrand(e.target.value)}
-                        ></input>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                    {productInfo?.countryOfOrigin ? (
-                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                        <label>
-                          <b> Country Of Origin:</b>
-                        </label>
-                        <input
-                          type="text"
-                          value={editcountryOfOrigin}
-                          style={{
-                            width: "100%",
-                            padding: "8px 20px",
-                            borderRadius: "0px",
-                            border: "1px solid black",
-                            backgroundColor: "#ebebeb",
-                          }}
-                          placeholder={productInfo?.countryOfOrigin}
-                          onChange={(e) =>
-                            seteditcountryOfOrigin(e.target.value)
-                          }
-                        ></input>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                    {productInfo?.manufacturercompanyname ? (
-                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                        <label>
-                          <b> Manufacturer Company:</b>
-                        </label>
-                        <input
-                          type="text"
-                          value={editManufacturercompanyname}
-                          style={{
-                            width: "100%",
-                            padding: "8px 20px",
-                            borderRadius: "0px",
-                            border: "1px solid black",
-                            backgroundColor: "#ebebeb",
-                          }}
-                          placeholder={productInfo?.manufacturercompanyname}
-                          onChange={(e) =>
-                            seteditManufacturercompanyname(e.target.value)
-                          }
-                        ></input>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                    {productInfo?.manufactureraddress ? (
-                      <div className="col-lg-6 col-sm-12 mt-2 CZ">
-                        <label>
-                          <b> Manufacturer Address:</b>
-                        </label>
-                        <input
-                          type="text"
-                          value={editManufactureraddress}
-                          style={{
-                            width: "100%",
-                            padding: "8px 20px",
-                            borderRadius: "0px",
-                            border: "1px solid black",
-                            backgroundColor: "#ebebeb",
-                          }}
-                          placeholder={productInfo?.manufactureraddress}
-                          onChange={(e) =>
-                            seteditManufactureraddress(e.target.value)
-                          }
-                        ></input>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                  <div className="col-lg-12 col-sm-12 mt-2 CZ">
-                    <label>
-                      <b>Description: </b>
-                    </label>
-                    <input
-                      type="text"
-                      value={editdescription}
-                      style={{
-                        width: "100%",
-                        padding: "8px 20px",
-                        borderRadius: "0px",
-                        border: "1px solid black",
-                        backgroundColor: "#ebebeb",
-                      }}
-                      placeholder={productInfo?.description}
-                      onChange={(e) => seteditdescription(e.target.value)}
-                    ></input>
-                  </div>
-                  {/* <div className="mt-3">
-                    <Carousel responsive={responsive}>
-                      {productInfo?.productImgs?.map((imgName) => {
-                        return (
-                          <div>
-                            <img
-                              src={`http://localhost:8521/AdminInventory/${imgName}`}
-                              alt=""
-                              style={{
-                                width: "200px",
-                                height: "200px",
-                              }}
-                            />
-                          </div>
-                        );
-                      })}
-                    </Carousel>
-                  </div> */}
-                  {/* <div className="mt-3">
-                    <span
-                      style={{
-                        fontWeight: "500",
-                        color: "#20958c",
-                      }}
-                    >
-                      Upload Images:{" "}
-                    </span>
-                    <input
-                      type="file"
-                      id="editfileInput"
-                      accept="image/*"
-                      hidden
-                      multiple
-                      onChange={(e) => {
-                        seteditshowproductImgs([...e.target.files]);
-                        seteditproductImgs(e.target.files);
-                      }}
-                    />
-                    <label for="editfileInput">
-                      <FontAwesomeIcon
-                        icon={faUpload}
-                        type="file"
-                        style={{
-                          color: "#20958c",
-                          fontSize: "25px",
-                          border: "0px solid #20958c",
-                          // borderRadius: "15px",
-                        }}
-                      />
-                    </label>
-                  </div> */}
-                  {/* {editshowproductImgs.length ? (
-                    <div className="mt-3">
-                      <Carousel responsive={responsive}>
-                        {editshowproductImgs?.map((obj) => {
-                          return (
-                            <div>
-                              <img
-                                src={URL.createObjectURL(obj)}
-                                alt=""
-                                style={{
-                                  width: "200px",
-                                  height: "200px",
-                                }}
-                              />
-                            </div>
-                          );
-                        })}
-                      </Carousel>
-                    </div>
-                  ) : (
-                    <></>
-                  )} */}
+                  ₹{afterDiscountPrice}
                 </div>
+              </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "500",
+                    color: "#ebebeb",
+                  }}
+                >
+                  Minimum alert stock
+                </label>
+                <input
+                  placeholder="Minimum count"
+                  value={editMinAlertStock}
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                  onChange={(event) => seteditMinAlertStock(event.target.value)}
+                ></input>
+              </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "500",
+                    color: "#ebebeb",
+                  }}
+                >
+                  Maximum Order limit
+                </label>
+                <input
+                  placeholder="Maximum order limit"
+                  value={editmaxOrderlimit}
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                  onChange={(event) => seteditmaxOrderlimit(event.target.value)}
+                ></input>
+              </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "500",
+                    color: "#ebebeb",
+                  }}
+                >
+                  Stocks Available
+                </label>
+                <input
+                  placeholder="Stocks Available"
+                  value={stock}
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                ></input>
+              </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "500",
+                    color: "#ebebeb",
+                  }}
+                >
+                  Invoice Number
+                </label>
+                <input
+                  placeholder="Invoice Number"
+                  value={InvoiceNumber}
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                ></input>
+              </div>
+              <div className="col-lg-6 col-sm-12 mt-2">
+                <label
+                  style={{
+                    fontWeight: "500",
+                    color: "#ebebeb",
+                  }}
+                >
+                  Invoice Date
+                </label>
+                <input
+                  type="date"
+                  style={{
+                    width: "100%",
+                    padding: "8px 20px",
+                    borderRadius: "0px",
+                    border: "1px solid #ebebeb",
+                    backgroundColor: "#ebebeb",
+                  }}
+                ></input>
               </div>
             </div>
           </Modal.Body>
@@ -2367,75 +1712,83 @@ export default function AddProductInvetory() {
           </Modal.Footer>
         </Modal>
 
-        <Table responsive="md" style={{ marginTop: "1%" }}>
-          <thead>
-            <tr style={{ fontSize: "15px", textAlign: "center" }}>
-              <th>Inventory Id</th>
-              <th>Product Name</th>
-              <th>Category</th>
-              <th>Subcategory</th>
-              <th>Amount</th>
-              <th>Discount (%)</th>
-              <th>Offer Amount</th>
-              <th>Stock Availability</th>
+        <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+          <Table responsive="md" style={{ marginTop: "1%" }}>
+            <thead>
+              <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                <th>Sl No.</th>
+                <th>Inventory Id</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Subcategory</th>
+                <th>Amount</th>
+                <th>Discount (%)</th>
+                <th>Offer Amount</th>
+                <th>Stock Availability</th>
 
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody>
-            {inventoryList
-              ?.filter((val) => val?.stock > 0)
-              ?.map((details) => {
-                return (
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td>#{details?.inventoryid}</td>
-                    <td>{details?.productName}</td>
-                    <td>{details?.categoryid?.categoryName}</td>
-                    <td>{details?.subcategoryid?.subcategoryName}</td>
-                    <td style={{ textAlign: "center" }}>
-                      {details?.currencyFormat}
-                      {details?.productPrice}
-                    </td>
-                    <td style={{ textAlign: "center" }}>{details?.discount}</td>
-                    <td>
-                      {(
-                        details?.productPrice -
-                        (details?.productPrice * details?.discount) / 100
-                      ).toFixed(1)}
-                    </td>
-                    <td style={{ textAlign: "center" }}>{details?.stock}</td>
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          textAlign: "center",
-                          justifyContent: "space-evenly",
-                        }}
-                      >
-                        <FontAwesomeIcon
-                          icon={faCircleInfo}
-                          style={{ color: "#20958c", fontSize: "25px" }}
-                          onClick={() => {
-                            setproductInfo(details);
-                            handleShow2();
-                          }}
-                        />
-                        <MdEdit
-                          style={{
-                            color: "#20958c",
-                            fontSize: "25px",
-                            marginRight: "1%",
-                          }}
-                          onClick={() => {
-                            setproductInfo(details);
-                            handleShow3();
-                          }}
-                        />
-                        <AiFillDelete
-                          style={{ color: "red", fontSize: "25px" }}
-                          onClick={() => deleteInventory(details?._id)}
-                        />
-                        {/* <button
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              {search.length > 0
+                ? tableFilter
+                    .slice(pagesVisited, pagesVisited + usersPerPage)
+                    ?.map((details, i) => {
+                      return (
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                          <td>{i + 1}</td>
+                          <td>#{details?.inventoryid}</td>
+                          <td>{details?.productName}</td>
+                          <td>{details?.categoryid?.categoryName}</td>
+                          <td>{details?.subcategoryid?.subcategoryName}</td>
+                          <td style={{ textAlign: "center" }}>
+                            {details?.currencyFormat}
+                            {details?.productPrice}
+                          </td>
+                          <td style={{ textAlign: "center" }}>
+                            {details?.discount}
+                          </td>
+                          <td>
+                            {(
+                              details?.productPrice -
+                              (details?.productPrice * details?.discount) / 100
+                            ).toFixed(1)}
+                          </td>
+                          <td style={{ textAlign: "center" }}>
+                            {details?.stock}
+                          </td>
+                          <td>
+                            <div
+                              style={{
+                                display: "flex",
+                                textAlign: "center",
+                                justifyContent: "space-evenly",
+                              }}
+                            >
+                              <FontAwesomeIcon
+                                icon={faCircleInfo}
+                                style={{ color: "#20958c", fontSize: "25px" }}
+                                onClick={() => {
+                                  setproductInfo(details);
+                                  handleShow2();
+                                }}
+                              />
+                              <MdEdit
+                                style={{
+                                  color: "#20958c",
+                                  fontSize: "25px",
+                                  marginRight: "1%",
+                                }}
+                                onClick={() => {
+                                  setEditData(details);
+                                  handleShow3();
+                                }}
+                              />
+                              <AiFillDelete
+                                style={{ color: "red", fontSize: "25px" }}
+                                onClick={() => deleteInventory(details?._id)}
+                              />
+                              {/* <button
                           style={{
                             fontSize: "12px",
                             border: "none",
@@ -2447,13 +1800,104 @@ export default function AddProductInvetory() {
                         >
                           BLOCK
                         </button> */}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </Table>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                : data
+                    ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                    ?.map((details, i) => {
+                      return (
+                        <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                          <td>{i + 1}</td>
+                          <td>#{details?.inventoryid}</td>
+                          <td>{details?.productName}</td>
+                          <td>{details?.categoryid?.categoryName}</td>
+                          <td>{details?.subcategoryid?.subcategoryName}</td>
+                          <td style={{ textAlign: "center" }}>
+                            {details?.currencyFormat}
+                            {details?.productPrice}
+                          </td>
+                          <td style={{ textAlign: "center" }}>
+                            {details?.discount}
+                          </td>
+                          <td>
+                            {(
+                              details?.productPrice -
+                              (details?.productPrice * details?.discount) / 100
+                            ).toFixed(1)}
+                          </td>
+                          <td style={{ textAlign: "center" }}>
+                            {details?.stock}
+                          </td>
+                          <td>
+                            <div
+                              style={{
+                                display: "flex",
+                                textAlign: "center",
+                                justifyContent: "space-evenly",
+                              }}
+                            >
+                              <FontAwesomeIcon
+                                icon={faCircleInfo}
+                                style={{ color: "#20958c", fontSize: "25px" }}
+                                onClick={() => {
+                                  setproductInfo(details);
+                                  handleShow2();
+                                }}
+                              />
+                              <MdEdit
+                                style={{
+                                  color: "#20958c",
+                                  fontSize: "25px",
+                                  marginRight: "1%",
+                                }}
+                                onClick={() => {
+                                  setEditData(details);
+                                  handleShow3();
+                                }}
+                              />
+                              <AiFillDelete
+                                style={{ color: "red", fontSize: "25px" }}
+                                onClick={() => deleteInventory(details?._id)}
+                              />
+                              {/* <button
+                          style={{
+                            fontSize: "12px",
+                            border: "none",
+                            backgroundColor: "#20958c",
+                            color: "white",
+                            fontWeight: "600",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          BLOCK
+                        </button> */}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+            </tbody>
+          </Table>
+        </div>
+        <div style={{ display: "flex" }}>
+          <p style={{ width: "100%", marginTop: "20px" }}>
+            Total Count: {data?.length}
+          </p>
+          <ReactPaginate
+            previousLabel={"Back"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
+        </div>
       </div>
     </div>
   );

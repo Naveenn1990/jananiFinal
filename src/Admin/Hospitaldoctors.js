@@ -770,10 +770,11 @@ export default function Hospitaldoctors() {
             display: "flex",
             justifyContent: "space-between",
             marginTop: "2%",
+            marginBottom: "2%",
           }}
         >
           <input
-            placeholder="Search Hospital doctors"
+            placeholder="Search"
             style={{
               padding: "5px 10px",
               border: "1px solid #20958c",
@@ -3491,22 +3492,22 @@ export default function Hospitaldoctors() {
                     })}
             </tbody>
           </Table>
-          <div style={{ display: "flex" }}>
-            <p style={{ width: "100%", marginTop: "20px" }}>
-              Total Count: {data?.length}
-            </p>
-            <ReactPaginate
-              previousLabel={"Back"}
-              nextLabel={"Next"}
-              pageCount={pageCount}
-              onPageChange={changePage}
-              containerClassName={"paginationBttns"}
-              previousLinkClassName={"previousBttn"}
-              nextLinkClassName={"nextBttn"}
-              disabledClassName={"paginationDisabled"}
-              activeClassName={"paginationActive"}
-            />
-          </div>
+        </div>
+        <div style={{ display: "flex" }}>
+          <p style={{ width: "100%", marginTop: "20px" }}>
+            Total Count: {data?.length}
+          </p>
+          <ReactPaginate
+            previousLabel={"Back"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
         </div>
       </div>
     </div>

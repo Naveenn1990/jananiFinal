@@ -12,6 +12,9 @@ export default function Sidebar1() {
   const [LabM, setLabM] = useState(false);
   const [SerM, setSerM] = useState(false);
   const [PharM, setPharM] = useState(false);
+  const [Ecom, setEcom] = useState(false);
+  const [Vendor, setVendor] = useState(false);
+  const [Pharmacy, setPharmacy] = useState(false);
   const [HosM, setHosM] = useState(false);
 
   function logoutAdmin() {
@@ -219,117 +222,70 @@ export default function Sidebar1() {
             backgroundColor: "#d0f7f4",
           }}
         >
-          {/* <Link to={"/admin/AddProductCategory"}>
-            <h6 className="sidebarItem1">IPD Patients</h6>
-          </Link> */}
-          {/* <Link to={"/admin/OPDPharmacy"}>
-            <h6 className="sidebarItem1">OPD Patients</h6>
-          </Link> */}
           <Link to={"/admin/AddProductCategory"}>
-            <h6
-              className="sidebarItem1"
-              // onClick={() =>
-              // window.location.assign("/admin/AddProductCategory")
-              // }
-            >
-              Add Product Category
-            </h6>
+            <h6 className="sidebarItem1">Add Product Category</h6>
           </Link>
 
           <Link to={"/admin/ProductBrands"}>
-            <h6
-              className="sidebarItem1"
-              // onClick={() => window.location.assign("/admin/ProductBrands")}
-            >
-              Add Brands
-            </h6>
+            <h6 className="sidebarItem1">Add Brands</h6>
           </Link>
-          <Link to="/admin/ProductCustomerOrders">
-            <h6
-              className="sidebarItem1"
-              // onClick={() =>
-              //   window.location.assign("/admin/ProductCustomerOrders")
-              // }
-            >
-              Customer Orders
-            </h6>
-          </Link>
-          <Link to="/admin/AddVendor">
-            <h6
-              className="sidebarItem1"
-              // onClick={() => window.location.assign("/admin/AddVendor")}
-            >
-              Create Vendor
-            </h6>
-          </Link>
-          {/* v6 */}
-          <Link to="/admin/VendorAddedProduct">
-            <h6
-              className="sidebarItem1"
-              // onClick={() => window.location.assign("/admin/VendorAddedProduct")}
-            >
-              Vendor Added Products
-            </h6>
-          </Link>
-
-          {/* v6 */}
-          <Link to={"/admin/VendorAddedProductsStatus"}>
-            <h6
-              className="sidebarItem1"
-              // onClick={() =>
-              //   window.location.assign("/admin/VendorAddedProductsStatus")
-              // }
-            >
-              Create Purchase Order
-            </h6>
-          </Link>
-
-          {/* <h6
-              className="sidebarItem1"
-              onClick={() => window.location.assign("/admin/ProductOrders")}
-            >
-              Order History
-            </h6> */}
 
           <Link to={"/admin/addinventory"}>
-            <h6
-              className="sidebarItem1"
-              // onClick={() => window.location.assign("/admin/addinventory")}
-            >
-              Inventory
-            </h6>
+            <h6 className="sidebarItem1">Inventory</h6>
           </Link>
+        </div>
+        <h6 className="sidebarItem" onClick={() => setEcom(!Ecom)}>
+          E-Commerce Pharmacy {Ecom ? <IoIosArrowUp /> : <IoIosArrowDown />}
+        </h6>
+        <div
+          style={{
+            display: Ecom ? "block" : "none",
+            backgroundColor: "#d0f7f4",
+          }}
+        >
+          <Link to="/admin/ProductCustomerOrders">
+            <h6 className="sidebarItem1">Customer Orders</h6>
+          </Link>
+        </div>
+        <h6 className="sidebarItem" onClick={() => setVendor(!Vendor)}>
+          Pharmacy Vendor{Vendor ? <IoIosArrowUp /> : <IoIosArrowDown />}
+        </h6>
+        <div
+          style={{
+            display: Vendor ? "block" : "none",
+            backgroundColor: "#d0f7f4",
+          }}
+        >
+          <Link to="/admin/AddVendor">
+            <h6 className="sidebarItem1">Create Vendor</h6>
+          </Link>
+          <Link to="/admin/VendorAddedProduct">
+            <h6 className="sidebarItem1">Vendor Added Products</h6>
+          </Link>
+          <Link to={"/admin/VendorAddedProductsStatus"}>
+            <h6 className="sidebarItem1">Purchase Order History</h6>
+          </Link>
+        </div>
+        <h6 className="sidebarItem" onClick={() => setPharmacy(!Pharmacy)}>
+          Hospital Pharmacy {Pharmacy ? <IoIosArrowUp /> : <IoIosArrowDown />}
+        </h6>
+        <div
+          style={{
+            display: Pharmacy ? "block" : "none",
+            backgroundColor: "#d0f7f4",
+          }}
+        >
           <Link to={"/admin/AdminBookProduct"}>
-            <h6 className="sidebarItem1">Admin Book Product</h6>
+            <h6 className="sidebarItem1">Book Product</h6>
           </Link>
           <Link to={"/admin/Adminorder"}>
-            <h6 className="sidebarItem1">Admin Order</h6>
+            <h6 className="sidebarItem1">Order History</h6>
           </Link>
-
-          {/* <h6
-          className="sidebarItem1"
-          onClick={() => window.location.assign("/admin/AddWastageReturn")}
-        >
-          Add Wastage Return
-        </h6>
-
-        <h6
-          className="sidebarItem1"
-          onClick={() => window.location.assign("/admin/AddManufacturerReturn")}
-        >
-          Add Manufacturer Return
-        </h6> */}
         </div>
-        {/* <h6 className="sidebarItem">Vendor management</h6> */}
 
         {admin?.websiteManagement === true ? (
           <Link to={"/admin/Websitemanagement"}>
-            <h6
-              className="sidebarItem"
-              // onClick={() => window.location.assign("/admin/Websitemanagement")}
-            >
-              Website management
-            </h6>
+            <h6 className="sidebarItem">Website management</h6>
           </Link>
         ) : null}
 
