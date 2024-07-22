@@ -4,7 +4,6 @@ import { Button, Table } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
 
 const GeneralConsent = ({viewGeneralConsentform}) => {
-console.log("viewGeneralConsentform",viewGeneralConsentform);
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">

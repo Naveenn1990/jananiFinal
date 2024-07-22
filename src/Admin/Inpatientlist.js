@@ -125,8 +125,8 @@ export default function Inpatientlist() {
   const [patientAllergies, setpatientAllergies] = useState([]);
 
   //Regex
-  const namePattern = /^[A-Za-z]{2,30}(?:[-'][A-Za-z]{2,30})?$/;
-  const relativepattern = /^[A-Za-z]{2,30}$/;
+  const namePattern = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
+  const relativepattern = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
   const mobilePattern = /^[0-9]{10}$/;
   const pincodePattern = /^[0-9]{6}$/;
   const aadharnoPattern = /^[0-9]{12}$/;
@@ -140,14 +140,14 @@ export default function Inpatientlist() {
       return alert("Enter your first name");
     } else if (!namePattern.test(patientfirstname)) {
       return alert(
-        "Enter a valid first name (2-30 characters, letters only, optional hyphen or apostrophe)"
+        "Enter a valid first name (letters only)"
       );
     }
     if (!patientlastname) {
       return alert("Enter your last name");
     } else if (!namePattern.test(patientlastname)) {
       return alert(
-        "Enter a valid last name (2-30 characters, letters only, optional hyphen or apostrophe)"
+        "Enter a valid last name  letters only)"
       );
     }
     if (!gender) {

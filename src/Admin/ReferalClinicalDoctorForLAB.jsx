@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Pagination, Stack } from '@mui/material';
 import axios from 'axios';
 import exportFromJSON from 'export-from-json';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Modal, Table } from 'react-bootstrap';
 import { AiFillFileExcel } from 'react-icons/ai';
 
@@ -39,7 +39,7 @@ console.log("RefLabHospitalPatientList",RefLabHospitalPatientList);
         testDate: PatientDetails?.appointmentdate,
         patientType: "DOCTOR-REFERRAL-LAB",
         Labtests: PatientDetails?.Labtests,
-        ReferLabId: PatientDetails?.ClinicId?._id,
+        ClinicId: PatientDetails?.ClinicId?._id,
         ReferLabName: PatientDetails?.ClinicId?.ClinicName,
       };
   
@@ -67,9 +67,9 @@ console.log("RefLabHospitalPatientList",RefLabHospitalPatientList);
     const LabTestApprove = async () => {
       try {
         const config = {
-          url: "/labtestapproved/" + PatientDetails?._id,
+          url: "/adminlabtestapproved/" + PatientDetails?._id,
           method: "put",
-          baseURL: "http://localhost:8521/api/ClinicLab",
+          baseURL: "http://localhost:8521/api/Clinic",
           headers: { "content-type": "application/json" },
         };
         const res = await axios(config);
@@ -103,10 +103,8 @@ console.log("RefLabHospitalPatientList",RefLabHospitalPatientList);
             fileName,
             exportType,
           });
-          // setfileName("");
         } else {
           alert("There is no data to export");
-          // setfileName("");
         }
       } else {
         alert("Enter file name to export");
@@ -153,7 +151,7 @@ console.log("RefLabHospitalPatientList",RefLabHospitalPatientList);
           <thead>
             <tr>
               <th>Sl.No</th>
-              <th>Lab Name</th>
+              <th>Clinic Name</th>
               <th>Test Name</th>
               <th>Patient Name</th>
               <th>Gender</th>
@@ -263,7 +261,9 @@ console.log("RefLabHospitalPatientList",RefLabHospitalPatientList);
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
-        <Button variant="success">
+        <Button variant="success"
+        onClick={bookLabTest}
+        >
           <FontAwesomeIcon icon={faCheck} className="fs-5 me-2" />
           Approve
         </Button>

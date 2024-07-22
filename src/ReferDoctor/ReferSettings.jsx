@@ -9,8 +9,6 @@ import Form from "react-bootstrap/Form";
 
 export const ReferSettings = () => {
   const ReferralDocDetails = JSON?.parse(sessionStorage?.getItem("RDoctorDetails"));
-  console.log("ReferralDocDetails", ReferralDocDetails);
-
 
   const [doctorfirstname, setdoctorfirstname] = useState("");
   const [doctorlastname, setdoctorlastname] = useState("");
@@ -23,22 +21,44 @@ export const ReferSettings = () => {
   const formdata = new FormData();
 
   useEffect(() => {
-    setdoctorfirstname(ReferralDocDetails?.Firstname || "");
-    setdoctorlastname(ReferralDocDetails?.Lastname || "");
-    setemail(ReferralDocDetails?.Email || "");
-    setAddress1(ReferralDocDetails?.Address1 || "");
-    setProfileImg(ReferralDocDetails?.ProfileImg || "");
+   
+      setdoctorfirstname(ReferralDocDetails?.Firstname || "");
+      setdoctorlastname(ReferralDocDetails?.Lastname || "");
+      setemail(ReferralDocDetails?.Email || "");
+      setAddress1(ReferralDocDetails?.Address1 || "");
+      setProfileImg(ReferralDocDetails?.ProfileImg || "");
+   
+  
   }, []);
-
+  const nameRegex = /^[A-Za-z]+$/;
   const EditDocClinic = async () => {
-    formdata.set("Firstname", doctorfirstname);
-    formdata.set("Lastname", doctorlastname);
-    formdata.set("Email", email);
-    formdata.set("Address1", Address1);
-    formdata.set("Password", password);
-    formdata.set("ConfirmPassword", conpassword);
-    formdata.set("ProfileImg", ProfileImg);
+    // if (!nameRegex.test(doctorfirstname)) {
+    //   return alert("Name can only contain alphabetic characters.");
+    // }
+    // if (!nameRegex.test(doctorlastname)) {
+    //   return alert("Name can only contain alphabetic characters.");
+    // }
+    // if (!nameRegex.test(email)) {
+    //   return alert("Name can only contain alphabetic characters.");
+    // }
+    // if (!nameRegex.test(Address1)) {
+    //   return alert("Name can only contain alphabetic characters.");
+    // }
+    // if (!password) {
+    //   return alert("Enter Password.....");
+    // }
+    // if (!nameRegex.test(conpassword)) {
+    //   return alert("Name can only contain alphabetic characters.");
+    // }
+
     try {
+      formdata.set("Firstname", doctorfirstname);
+      formdata.set("Lastname", doctorlastname);
+      formdata.set("Email", email);
+      formdata.set("Address1", Address1);
+      formdata.set("Password", password);
+      formdata.set("ConfirmPassword", conpassword);
+      formdata.set("ProfileImg", ProfileImg);
       const config = {
         url: "/Clinic/editClinicDetails/" + ReferralDocDetails?._id,
         method: "put",
@@ -71,15 +91,6 @@ export const ReferSettings = () => {
         <Form style={{ marginLeft: "100px", marginTop: "50px" }}>
           <h4 className=" fw-bold mb-4">Password Update</h4>
 
-          {/* <FloatingLabel
-            className="mb-4"
-            style={{ width: "600px" }}
-            controlId="floatingEmail"
-            label="Username"
-          >
-            <Form.Control type="text" placeholder="Username" />
-          </FloatingLabel> */}
-
           <FloatingLabel
             className="mb-4"
             style={{ width: "600px" }}
@@ -93,7 +104,7 @@ export const ReferSettings = () => {
               onChange={(e) => setpassword(e.target.value)}
             />
             <FontAwesomeIcon
-              icon={showPassword ? faEyeSlash : faEye}
+              icon={showPassword ? faEye : faEyeSlash}
               onClick={togglePasswordVisibility}
               className="password-eye-1"
             />
@@ -112,28 +123,13 @@ export const ReferSettings = () => {
               onChange={(e) => setconpassword(e.target.value)}
             />
             <FontAwesomeIcon
-              icon={showPassword ? faEyeSlash : faEye}
+              icon={showPassword ?  faEye : faEyeSlash}
               onClick={togglePasswordVisibility}
               className="password-eye-2"
             />
           </FloatingLabel>
 
-          <div>
-
-            <Button
-              className=" mb-4"
-              style={{
-                width: "20%",
-                height: "40px",
-                fontSize: "16px",
-                backgroundColor: "rgb(32 139 140)",
-              }}
-              onClick={() => {
-                EditDocClinic();
-              }}
-            >
-              Update
-            </Button>
+          <div>          
 
             {(password || conpassword) && (
         <Button
