@@ -11,10 +11,7 @@ import Form from "react-bootstrap/Form";
 import moment from "moment";
 import exportFromJSON from "export-from-json";
 import ReactPaginate from "react-paginate";
-import {
-  AiFillFileExcel,
-  AiOutlinePlusCircle,
-} from "react-icons/ai";
+import { AiFillFileExcel, AiOutlinePlusCircle } from "react-icons/ai";
 
 export default function Outpatientlist() {
   const [View, setView] = useState({});
@@ -1968,6 +1965,7 @@ export default function Outpatientlist() {
                       backgroundColor: "#ebebeb",
                       marginTop: "4%",
                     }}
+                    max={new Date().toISOString().split("T")[0]}
                     onChange={(e) => setDOB(e.target.value)}
                   ></input>
                 </div>
@@ -3998,7 +3996,7 @@ export default function Outpatientlist() {
                             />
                           ) : (
                             <img
-                            alt=""
+                              alt=""
                               src="/img/dummyprofile.png"
                               style={{
                                 width: "50px",
