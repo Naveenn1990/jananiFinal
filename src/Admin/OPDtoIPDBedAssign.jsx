@@ -2,13 +2,13 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
 import { FaBed, FaBuilding, FaEye } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 
 export default function OPDtoIPDBedAssign() {
+  const navigate = useNavigate();
   const loggedInSubAdmin = JSON.parse(sessionStorage.getItem("adminDetails"));
-  console.log(loggedInSubAdmin, "fdsafdlafdas");
   const { state } = useLocation();
   const [BuildingList, setBuildingList] = useState([]);
   const [ViewFloors, setViewFloors] = useState(false);
@@ -72,14 +72,6 @@ export default function OPDtoIPDBedAssign() {
             (val) => val?.registrationType === "IPD"
           )
         );
-        // const newArr = [
-        //   ...response.data.UsersInfo?.filter(
-        //     (val) => val?.registrationType === "IPD"
-        //   )?.map((val) => {
-        //     return { ...val, label: `${val.PatientId} ${val.Firstname}` };
-        //   }),
-        // ];
-        // setupdatedIPDPatients(newArr);
       })
       .catch(function (error) {
         // handle error
@@ -150,7 +142,7 @@ export default function OPDtoIPDBedAssign() {
         handleClose99();
         handleCloseCheckAvailability();
         alert("Patient assigned");
-        getBuildingList();
+        opdtoipdFn();
       }
     } catch (error) {
       console.log(error.response);
@@ -196,6 +188,31 @@ export default function OPDtoIPDBedAssign() {
     }
   };
 
+  async function opdtoipdFn() {
+    try {
+      const config = {
+        url: `/user/makeOPDtoIPD`,
+        method: "put",
+        baseURL: "http://localhost:8521/api",
+        headers: { "content-type": "application/json" },
+        data: {
+          patientid: state.PatientDetailsView?._id,
+          causeid: JSON.parse(IpdCause)?._id,
+        },
+      };
+      let response = await axios(config);
+      if (response.status === 200) {
+        alert(response.data.success);
+        navigate("/admin/opdtoipd");
+        // getcategory();
+        // handleClose1();
+      }
+    } catch (error) {
+      console.log(error);
+      return alert("Something went wrong!");
+    }
+  }
+
   return (
     <div style={{ padding: "20px" }}>
       <div>
@@ -213,6 +230,20 @@ export default function OPDtoIPDBedAssign() {
           }}
         >
           <b>Choose Cause</b>
+        </div>
+        <div>
+          (Please add the cause if not available:{" "}
+          <span
+            style={{
+              color: "blue",
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+            onClick={() => navigate("/admin/opdtoipd")}
+          >
+            here
+          </span>
+          )
         </div>
         <div style={{ marginLeft: "20px" }}>
           {state?.PatientDetailsView?.cause?.map((item, i) => {

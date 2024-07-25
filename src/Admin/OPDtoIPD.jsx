@@ -6,6 +6,9 @@ import { FaPlus } from "react-icons/fa";
 import { GrView } from "react-icons/gr";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { AiFillFileExcel } from "react-icons/ai";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
 
 export default function OPDtoIPD() {
   const navigate = useNavigate();
@@ -48,6 +51,7 @@ export default function OPDtoIPD() {
       .then(function (response) {
         // handle success
         setcategory(response.data.UsersInfo);
+        settableFilter(response.data.UsersInfo);
       })
       .catch(function (error) {
         // handle error
@@ -133,10 +137,106 @@ export default function OPDtoIPD() {
     getcategory();
   }, []);
 
-  console.log("PatientDetailsView: ", PatientDetailsView);
+  //==============================================================
+
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = category.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setcategory([...category]);
+      settableFilter([...category]);
+    }
+  };
+
+  console.log("tableFilter", tableFilter);
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("OPD-TO-IPD Suggestions");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (category.length != 0) {
+        exportFromJSON({ data: category, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(
+    tableFilter?.filter(
+      (val) => val?.registrationType === "OPD" && val?.docReqToIPD
+    ).length / usersPerPage
+  );
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
   return (
     <div>
-      <Table responsive="md" style={{ marginTop: "1%" }}>
+      <h6
+        style={{
+          fontSize: "22px",
+          fontWeight: "600",
+          color: "grey",
+          marginTop: "20px",
+        }}
+      >
+        OPD To IPD Suggestion
+      </h6>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "2%",
+        }}
+      >
+        <input
+          placeholder="Search"
+          style={{
+            padding: "5px 10px",
+            border: "1px solid #20958c",
+            borderRadius: "0px",
+          }}
+          onChange={handleFilter}
+        />
+        <button
+          style={{
+            backgroundColor: "#20958c",
+            color: "white",
+            border: "none",
+            fontSize: "12px",
+            borderRadius: "4px",
+          }}
+          onClick={ExportToExcel}
+        >
+          EXPORT <AiFillFileExcel />
+        </button>
+      </div>
+      <Table
+        responsive="md"
+        style={{
+          marginTop: "1%",
+        }}
+      >
         <thead>
           <tr style={{ fontSize: "15px", textAlign: "center" }}>
             <th>Profile</th>
@@ -154,20 +254,21 @@ export default function OPDtoIPD() {
             <th>Read More</th> */}
           </tr>
         </thead>
-        <tbody>
-          {category
+        <tbody
+          style={{
+            fontSize: "15px",
+            textAlign: "center",
+            color: "red",
+          }}
+        >
+          {tableFilter
             ?.filter(
               (val) => val?.registrationType === "OPD" && val?.docReqToIPD
             )
+            .slice(pagesVisited, pagesVisited + usersPerPage)
             ?.map((item) => {
               return (
-                <tr
-                  style={{
-                    fontSize: "15px",
-                    textAlign: "center",
-                    color: "red",
-                  }}
-                >
+                <tr>
                   {/* D:\hospital_final_27-2-24\j-f-final\jananiFinal\public\img\unknown-img.png */}
                   <td>
                     <img
@@ -279,6 +380,27 @@ export default function OPDtoIPD() {
             })}
         </tbody>
       </Table>
+      <div style={{ display: "flex" }}>
+        <p style={{ width: "100%", marginTop: "20px" }}>
+          Total Count:{" "}
+          {
+            tableFilter?.filter(
+              (val) => val?.registrationType === "OPD" && val?.docReqToIPD
+            )?.length
+          }
+        </p>
+        <ReactPaginate
+          previousLabel={"Back"}
+          nextLabel={"Next"}
+          pageCount={pageCount}
+          onPageChange={changePage}
+          containerClassName={"paginationBttns"}
+          previousLinkClassName={"previousBttn"}
+          nextLinkClassName={"nextBttn"}
+          disabledClassName={"paginationDisabled"}
+          activeClassName={"paginationActive"}
+        />
+      </div>
 
       <Modal show={show1} size="lg" onHide={handleClose1}>
         <Modal.Header closeButton>
