@@ -47,6 +47,8 @@ export const AppointmentList = () => {
       });
   };
 
+  console.log("data: fdsaf", data);
+
   useEffect(() => {
     getAppointmentList();
   }, []);
@@ -101,7 +103,7 @@ export const AppointmentList = () => {
       alert("Enter file name to export");
     }
   };
-  console.log("data", data);
+
   return (
     <div>
       <Navbar expand="lg" style={{ backgroundColor: "#dae1f3" }}>
@@ -179,7 +181,7 @@ export const AppointmentList = () => {
                   ?.map((item, index) => {
                     return (
                       <tr className="admin-table-row">
-                        <td>{index + 1}</td>
+                        <td>{usersPerPage * pageNumber + index + 1}</td>
                         <td>
                           {item?.Firstname}&nbsp;{item?.Lastname}
                         </td>
@@ -243,7 +245,7 @@ export const AppointmentList = () => {
                   ?.map((item, index) => {
                     return (
                       <tr className="admin-table-row">
-                        <td>{index + 1}</td>
+                        <td>{usersPerPage * pageNumber + index + 1}</td>
                         <td>
                           {item?.Firstname}&nbsp;{item?.Lastname}
                         </td>
@@ -306,7 +308,7 @@ export const AppointmentList = () => {
                   ?.map((item, index) => {
                     return (
                       <tr className="admin-table-row">
-                        <td>{index + 1}</td>
+                        <td>{usersPerPage * pageNumber + index + 1}</td>
                         <td>
                           {item?.Firstname}&nbsp;{item?.Lastname}
                         </td>

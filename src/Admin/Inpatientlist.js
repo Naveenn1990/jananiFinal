@@ -5,7 +5,7 @@ import Barcode from "react-barcode";
 import { Table, Modal, Button, Form } from "react-bootstrap";
 import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CiBarcode } from "react-icons/ci";
 import { useReactToPrint } from "react-to-print";
 import { GrView } from "react-icons/gr";
@@ -19,6 +19,8 @@ export default function Inpatientlist() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const [ShowReferDetails, setShowReferDetails] = useState(false);
 
   const [ViewBarcode, setViewBarcode] = useState({});
   const [show10, setShow10] = useState(false);
@@ -629,6 +631,11 @@ export default function Inpatientlist() {
     }
   };
 
+  const [LengthOfCauseArr, setLengthOfCauseArr] = useState("");
+  useEffect(() => {
+    setLengthOfCauseArr(PatientDetailsView?.cause?.length);
+  }, [PatientDetailsView]);
+
   return (
     <div>
       <div
@@ -656,6 +663,111 @@ export default function Inpatientlist() {
           />
         </div>
       </div>
+
+      <Modal
+        size="lg"
+        show={ShowReferDetails}
+        onHide={() => setShowReferDetails(false)}
+      >
+        <Modal.Header>
+          <Modal.Title>Referred By</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <Table>
+              <tbody style={{ color: "white", fontWeight: "bold" }}>
+                <tr>
+                  <td>
+                    <b>Referred By(doctorID): </b>
+                  </td>
+                  <td>
+                    {LengthOfCauseArr ? (
+                      <>
+                        {
+                          PatientDetailsView?.cause[LengthOfCauseArr - 1]
+                            ?.requestedDocCause?.DoctorId
+                        }
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <b>Referred By(doctor): </b>
+                  </td>
+                  <td>
+                    {LengthOfCauseArr ? (
+                      <>
+                        DR.{" "}
+                        {
+                          PatientDetailsView?.cause[LengthOfCauseArr - 1]
+                            ?.requestedDocCause?.Firstname
+                        }{" "}
+                        {
+                          PatientDetailsView?.cause[LengthOfCauseArr - 1]
+                            ?.requestedDocCause?.Lastname
+                        }
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <b>Referred Date: </b>
+                  </td>
+                  <td>
+                    {LengthOfCauseArr ? (
+                      `${new Date(
+                        PatientDetailsView?.cause[
+                          LengthOfCauseArr - 1
+                        ]?.requestedDocDateCause
+                      )?.getDate()}-${
+                        new Date(
+                          PatientDetailsView?.cause[
+                            LengthOfCauseArr - 1
+                          ]?.requestedDocDateCause
+                        )?.getMonth() + 1
+                      }-${new Date(
+                        PatientDetailsView?.cause[
+                          LengthOfCauseArr - 1
+                        ]?.requestedDocDateCause
+                      )?.getFullYear()}`
+                    ) : (
+                      <></>
+                    )}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <b>Reason of Recommendation(By Doctor): </b>
+                  </td>
+                  <td>
+                    {LengthOfCauseArr ? (
+                      PatientDetailsView?.cause[LengthOfCauseArr - 1]
+                        ?.reasonForRecommendationOfIPDCause
+                    ) : (
+                      <></>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowReferDetails(false)}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <Modal size="lg" show={show} onHide={handleClose}>
         <Modal.Header>
@@ -2528,6 +2640,24 @@ export default function Inpatientlist() {
                       }}
                     />
                     {item?.PatientId}
+                    {item?.cause[item?.cause?.length - 1]?.docReqToIPDCause ? (
+                      <Link
+                        style={{
+                          color: "red",
+                        }}
+                      >
+                        <div
+                          onClick={() => {
+                            setPatientDetailsView(item);
+                            setShowReferDetails(true);
+                          }}
+                        >
+                          Referred
+                        </div>
+                      </Link>
+                    ) : (
+                      <></>
+                    )}
                   </td>
                   <td>{`${item?.Firstname} ${item?.Lastname}`}</td>
                   <td>{item?.PhoneNumber}</td>

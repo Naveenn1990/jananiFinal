@@ -77,7 +77,7 @@ export const PatientsList = () => {
 
   const [patientlist, setpatientlist] = useState([]);
   const [selectedPatient, setselectedPatient] = useState({});
-  const [FilterPatientType, setFilterPatientType] = useState("OPD");
+  const [FilterPatientType, setFilterPatientType] = useState("IPD");
 
   const getpatientlist = () => {
     axios
@@ -186,7 +186,7 @@ export const PatientsList = () => {
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
-        Patients
+        IPD Patients
       </h4>
       <Button
         style={{ backgroundColor: "#20958C", margin: "10px" }}
@@ -350,7 +350,7 @@ export const PatientsList = () => {
                           <span>
                             <Button
                               onClick={() => {
-                                setselectedPatient(item);
+                                setselectedPatient(item?._id);
                                 medHistoryShow2();
                               }}
                             >
