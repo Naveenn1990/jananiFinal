@@ -101,7 +101,6 @@ export default function Inpatientlist() {
   const [Zipcode, setZipcode] = useState();
   const [password, setpassword] = useState("");
   const [conpassword, setconpassword] = useState("");
-
   const [MaritalStatus, setMaritalStatus] = useState("");
   const [PatientAge18, setPatientAge18] = useState("");
   const [relativeName, setrelativeName] = useState("");
@@ -1242,7 +1241,7 @@ export default function Inpatientlist() {
                   cursor: "pointer",
                 }}
               >
-                {showPassword ? "=A" : "=H"}
+                {showPassword ? "🙈" : "🙉"}
               </span>
             </div>
 
@@ -1271,7 +1270,7 @@ export default function Inpatientlist() {
                   cursor: "pointer",
                 }}
               >
-                {showPassword ? "=A" : "=H"}
+               {showPassword ? "🙈" : "🙉"}
               </span>
             </div>
 
@@ -1476,6 +1475,7 @@ export default function Inpatientlist() {
                           marginTop: "2%",
                         }}
                         onChange={(e) => setAdmitDate(e.target.value)}
+                        min={new Date().toISOString().split('T')[0]} 
                       />
                     </div>
                   </div>
@@ -1581,7 +1581,7 @@ export default function Inpatientlist() {
                         </div>
                         <div className="col-lg-9">
                           <input
-                            type="test"
+                            type="text"
                             style={{
                               width: "100%",
                               padding: "8px 20px",
