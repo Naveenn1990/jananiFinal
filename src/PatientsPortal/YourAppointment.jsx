@@ -30,11 +30,12 @@ export const YourAppointment = () => {
       .get("http://localhost:8521/api/user/getlist")
       .then(function (response) {
         // handle success
+
         setAppointmentList(
           response.data.Info?.filter(
             (item) =>
-              moment(item?.Dateofappointment).format("DD-MM-YYYY") >=
-              moment(new Date()).format("DD-MM-YYYY")
+              new Date(item?.Dateofappointment).getTime() >=
+              new Date().getTime()
           )
         );
       })
@@ -44,7 +45,7 @@ export const YourAppointment = () => {
       });
   };
 
-  console.log("AppointmentList",AppointmentList);
+  console.log("AppointmentList", AppointmentList);
 
   const [AppointmentId, setAppointmentId] = useState({});
   const [DateofApp, setDateofApp] = useState("");
@@ -67,12 +68,11 @@ export const YourAppointment = () => {
           AppointmentId: AppointmentId?._id,
           starttime: SelectedTime?.startTime,
           endtime: SelectedTime?.endTime,
-          rescheduleId:SelectedTime?._id,
+          rescheduleId: SelectedTime?._id,
 
           doctorId: AppointmentId?.ConsultantDoctor?._id,
           bookedscheduleId: AppointmentId?.ScheduleId,
           Dateofappointment: DateofApp,
-         
         },
       };
 
@@ -81,7 +81,7 @@ export const YourAppointment = () => {
         alert(res.data.success);
         getAppointmentList();
         handleClose();
-       window.location.assign("")
+        window.location.assign("");
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -119,69 +119,66 @@ export const YourAppointment = () => {
 
       <Container>
         <div className="row">
-          {AppointmentList?.filter((ele) => ele?.patientDBId?._id === user?._id)?.map(
-            (item) => {
-              return (
-                <div className="col-lg-6 mt-3">
-                  <div
-                    className="d-flex your-appointment-respns"
-                    style={{
-                      width: "400px",
-                      borderRadius: "15px",
-                      boxShadow: "0px 8px 32px 0px rgba(19, 19, 20, 0.37)",
-                    }}
-                  >
-                    <div className="d-flex gap-2 pt-2 ">
-                      <img
-                        style={{ width: "70px", height: "70px" }}
-                        src="./img/patientdashboard-img-1.png"
-                        alt=""
-                      />
-                      <div>
-                        <p className="mb-2">
-                         <span style={{fontWeight:"bold"}}>Patient Name :</span> 
-                         {`${item?.Firstname} ${item?.Lastname}`}
-                        </p>
-                        <p className="mb-2">
-                         <span style={{fontWeight:"bold"}}>Appointment Date :</span> 
-                          {item?.Dateofappointment}
-                        </p>
-                        <p className="mb-2 ">
-                          <span style={{fontWeight:"bold"}}>Time :</span> 
-                          {item?.starttime} to {item?.endtime}
-                        </p>
-                        <p className="mb-2 ">
-                          <span style={{fontWeight:"bold"}}>Token No : </span> 
-                          {item?.token}
-                        </p>
-                        <p className="mb-2 ">
-                          <span style={{fontWeight:"bold"}}>Reason/Disease : </span> 
-                          {item?.medicalReason}
-                        </p>
-                        <p className="mb-2 ">
-                          <span style={{fontWeight:"bold"}}>Injury/Condition : </span> 
-                          {item?.Condition}
-                        </p>
-                        <p className="mb-2 ">
-                          <span style={{fontWeight:"bold"}}>Doctor : </span> 
-                          {`${item?.ConsultantDoctor?.Firstname} ${item?.ConsultantDoctor?.Lastname}` }
-                        </p>                         
-                      </div>
-                      <p
-                        style={{
-                          color: "green",
-                          fontSize: "20px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <FaEdit onClick={() => handleShow(item)} />
+          {AppointmentList?.filter(
+            (ele) => ele?.PatientId === user?.PatientId
+          )?.map((item) => {
+            return (
+              <div className="col-lg-6 mt-3">
+                <div
+                  className="d-flex your-appointment-respns"
+                  style={{
+                    width: "400px",
+                    borderRadius: "15px",
+                    boxShadow: "0px 8px 32px 0px rgba(19, 19, 20, 0.37)",
+                  }}
+                >
+                  <div className="d-flex gap-2 pt-2 ">
+                    <img
+                      style={{ width: "70px", height: "70px" }}
+                      src="./img/patientdashboard-img-1.png"
+                      alt=""
+                    />
+                    <div>
+                      <p className="mb-2">
+                        <span style={{ fontWeight: "bold" }}>
+                          Patient Name :
+                        </span>
+                        {`${item?.Firstname} ${item?.Lastname}`}
+                      </p>
+                      <p className="mb-2">
+                        <span style={{ fontWeight: "bold" }}>
+                          Appointment Date :
+                        </span>
+                        {item?.Dateofappointment}
+                      </p>
+                      <p className="mb-2 ">
+                        <span style={{ fontWeight: "bold" }}>Time :</span>
+                        {item?.starttime} to {item?.endtime}
+                      </p>
+                      <p className="mb-2 ">
+                        <span style={{ fontWeight: "bold" }}>Token No : </span>
+                        {item?.token}
+                      </p>
+
+                      <p className="mb-2 ">
+                        <span style={{ fontWeight: "bold" }}>Doctor : </span>
+                        {`${item?.ConsultantDoctor?.Firstname} ${item?.ConsultantDoctor?.Lastname}`}
                       </p>
                     </div>
+                    <p
+                      style={{
+                        color: "green",
+                        fontSize: "20px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <FaEdit onClick={() => handleShow(item)} />
+                    </p>
                   </div>
                 </div>
-              );
-            }
-          )}
+              </div>
+            );
+          })}
         </div>
       </Container>
 
