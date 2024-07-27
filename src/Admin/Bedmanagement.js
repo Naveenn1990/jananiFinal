@@ -160,6 +160,22 @@ export default function Bedmanagement() {
     setSelectedBuildingId(item?._id);
   };
 
+  const [wards, setwards] = useState([]);
+  async function WardsList() {
+    try {
+      let res = await axios.get(`http://localhost:8521/api/admin/Wardlist`);
+      if (res.status === 200) {
+        setwards(res.data.wardlist);
+      }
+    } catch (error) {
+      console.log(error.response);
+    }
+  }
+
+  useEffect(() => {
+    WardsList();
+  }, []);
+
   const [buildingName, setbuildingName] = useState();
   const [FloorName, setFloorName] = useState();
 
@@ -1019,10 +1035,15 @@ export default function Bedmanagement() {
                 }}
                 onChange={(e) => setSelectedRoomType(e.target.value)}
               >
-                <option> Select Ward</option>
-                <option value="GENERAL"> General</option>
-                <option value="SPECIAL"> Special</option>
-                <option value="ICU"> ICU</option>
+                <option value=""> Select Ward</option>
+                {wards?.map((data) => {
+                  return (
+                    <option key={data?._id} value={`${data?.wardName}`}>
+                      {" "}
+                      {data?.wardName}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
@@ -1840,9 +1861,14 @@ export default function Bedmanagement() {
                     onChange={(e) => setupdatedWard(e.target.value)}
                   >
                     <option value={allBedList99?.roomType}>Choose Ward</option>
-                    <option value="GENERAL">General</option>
-                    <option value="SPECIAL">Special</option>
-                    <option value="ICU">ICU</option>
+                    {wards?.map((data) => {
+                      return (
+                        <option key={data?._id} value={`${data?.wardName}`}>
+                          {" "}
+                          {data?.wardName}
+                        </option>
+                      );
+                    })}
                   </select>
                 </td>
               </tr>

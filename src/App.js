@@ -273,6 +273,7 @@ import PrescriptionReport from "./PatientsPortal/PrescriptionReport";
 import HospitalLabSampleCollector from "./Admin/HospitalLabSampleCollector";
 import HospitalLabTechnician from "./Admin/HospitalLabTechnician";
 import OPDtoIPDBedAssign from "./Admin/OPDtoIPDBedAssign";
+import Ward from "./Admin/Ward";
 
 function App() {
   return (
@@ -2687,6 +2688,16 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<Bedmanagement />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/wards"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Ward />} />{" "}
                 </>
               }
             ></Route>

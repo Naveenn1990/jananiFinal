@@ -1270,7 +1270,7 @@ export default function Inpatientlist() {
                   cursor: "pointer",
                 }}
               >
-               {showPassword ? "🙈" : "🙉"}
+                {showPassword ? "🙈" : "🙉"}
               </span>
             </div>
 
@@ -1475,7 +1475,7 @@ export default function Inpatientlist() {
                           marginTop: "2%",
                         }}
                         onChange={(e) => setAdmitDate(e.target.value)}
-                        min={new Date().toISOString().split('T')[0]} 
+                        min={new Date().toISOString().split("T")[0]}
                       />
                     </div>
                   </div>
@@ -2614,6 +2614,7 @@ export default function Inpatientlist() {
               <th>D.O.B</th>
               <th>Bar-Code</th>
               <th>Add-Cause</th>
+              <th>Assign Bed</th>
               <th>Admission Form</th>
               <th>Visitors</th>
               <th>Consent Forms</th>
@@ -2711,7 +2712,7 @@ export default function Inpatientlist() {
                         setAdmissionForm(item);
                       }}
                     >
-                      Admission From
+                      Admission Form
                     </Button>
                   </td>
 
