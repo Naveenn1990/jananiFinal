@@ -59,6 +59,8 @@ export default function Subadmin() {
 
   const [accounts, setaccounts] = useState(false);
   const [enqAndComplaints, setenqAndComplaints] = useState(false);
+  const [PatientReceptionist, setPatientReceptionist] = useState(false);
+  const [PatientReceptionistChange, setPatientReceptionistChange] = useState("");
   const [subadminlist, setsubadminlist] = useState([]);
   const [subadminlistImmutable, setsubadminlistImmutable] = useState([]);
   const [View, setView] = useState({});
@@ -114,6 +116,7 @@ export default function Subadmin() {
           billing: billing,
           accounts: accounts,
           enqAndComplaints: enqAndComplaints,
+          PatientReceptionist: PatientReceptionist,
         },
       };
       let res = await axios(config);
@@ -140,6 +143,7 @@ export default function Subadmin() {
         setbilling(false);
         setaccounts(false);
         setenqAndComplaints(false);
+        setPatientReceptionist(false);
         setsubadminChanged("");
         setdoctorManagementChanged("");
         setstaffManagementChanged("");
@@ -158,6 +162,7 @@ export default function Subadmin() {
         sethospitalManagementChanged("");
         setaccountsChanged("");
         setenqAndComplaintsChanged("");
+        setPatientReceptionistChange("");
         setShow(false);
         alert(res.data.Success);
       }
@@ -241,6 +246,8 @@ export default function Subadmin() {
           accountsChanged: accountsChanged,
           enqAndComplaints: enqAndComplaintsChanged ? enqAndComplaints : "",
           enqAndComplaintsChanged: enqAndComplaintsChanged,
+          PatientReceptionist : PatientReceptionist,
+          PatientReceptionistChange : PatientReceptionistChange ? PatientReceptionist : "",
         },
       };
       axios(config)
@@ -836,7 +843,7 @@ export default function Subadmin() {
                     type="checkbox"
                     checked={enqAndComplaints}
                     onChange={(e) => setenqAndComplaints(e.target.checked)}
-                  ></input>
+                  />
                   <label
                     style={{
                       fontWeight: "500",
@@ -845,6 +852,25 @@ export default function Subadmin() {
                     }}
                   >
                     Enquiries & Complaints
+                  </label>
+                </div>
+              </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={PatientReceptionist}
+                    onChange={(e) => setPatientReceptionist(e.target.checked)}
+                  />
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Patient Receptionist
                   </label>
                 </div>
               </div>
@@ -865,7 +891,6 @@ export default function Subadmin() {
               style={{
                 backgroundColor: "grey",
                 color: "white",
-                border: "none",
                 borderRadius: "4px",
                 fontWeight: "600",
                 padding: "6px 12px",
@@ -880,7 +905,6 @@ export default function Subadmin() {
               style={{
                 backgroundColor: "orange",
                 color: "white",
-                border: "none",
                 borderRadius: "4px",
                 fontWeight: "600",
                 padding: "6px 12px",
@@ -1458,6 +1482,32 @@ export default function Subadmin() {
                   </label>
                 </div>
               </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={
+                      PatientReceptionistChange
+                        ? PatientReceptionist
+                        : View?.PatientReceptionist
+                    }
+                    onChange={(e) => {
+                      setPatientReceptionistChange("changed");
+                      setPatientReceptionist(e.target.checked);
+                    }}
+                  ></input>
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Patient Receptionist
+                  </label>
+                </div>
+              </div> 
             </div>
           </div>
         </Modal.Body>
@@ -1475,7 +1525,6 @@ export default function Subadmin() {
             style={{
               backgroundColor: "orange",
               color: "white",
-              border: "none",
               borderRadius: "4px",
               fontWeight: "600",
               border: "1px solid white",
@@ -1490,7 +1539,6 @@ export default function Subadmin() {
             style={{
               backgroundColor: "#20958c",
               color: "white",
-              border: "none",
               borderRadius: "4px",
               fontWeight: "600",
               border: "1px solid white",
@@ -1826,6 +1874,25 @@ export default function Subadmin() {
                   </label>
                 </div>
               </div>
+
+              <div className="col-lg-6">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={View?.PatientReceptionist}
+                  ></input>
+                  <label
+                    style={{
+                      fontWeight: "500",
+                      marginTop: "2%",
+                      marginLeft: "2%",
+                    }}
+                  >
+                    Patient Receptionist
+                  </label>
+                </div>
+              </div>
+
             </div>
           </div>
         </Modal.Body>
