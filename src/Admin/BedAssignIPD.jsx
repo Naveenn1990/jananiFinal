@@ -1,15 +1,16 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
-import { FaBed, FaBuilding, FaEye } from "react-icons/fa";
+import "./BedAssignIPD.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
+import axios from "axios";
+import { FaBed, FaBuilding, FaEye } from "react-icons/fa";
 
-export default function OPDtoIPDBedAssign() {
+export default function BedAssignIPD() {
   const navigate = useNavigate();
-  const loggedInSubAdmin = JSON.parse(sessionStorage.getItem("adminDetails"));
   const { state } = useLocation();
+  const [IpdCause, setIpdCause] = useState("");
+  const loggedInSubAdmin = JSON.parse(sessionStorage.getItem("adminDetails"));
+
   const [BuildingList, setBuildingList] = useState([]);
   const [ViewFloors, setViewFloors] = useState(false);
   const [ViewRooms, setViewRooms] = useState(false);
@@ -18,7 +19,6 @@ export default function OPDtoIPDBedAssign() {
   const [SelectedFloorId, setSelectedFloorId] = useState();
   const [allBedList99, setallBedList99] = useState([]);
   const [BedDetails98, setBedDetails98] = useState({});
-  const [IpdCause, setIpdCause] = useState({});
   const [FloorNameData, setFloorNameData] = useState({});
 
   const [show99, setShow99] = useState(false);
@@ -61,12 +61,10 @@ export default function OPDtoIPDBedAssign() {
   }
 
   const [IPDPatients, setIPDPatients] = useState([]);
-  // const [updatedIPDPatients, setupdatedIPDPatients] = useState([]);
   const getPatients = () => {
     axios
       .get("http://localhost:8521/api/user/getPatientList")
       .then(function (response) {
-        // handle success
         setIPDPatients(
           response.data.UsersInfo?.filter(
             (val) => val?.registrationType === "IPD"
@@ -74,7 +72,6 @@ export default function OPDtoIPDBedAssign() {
         );
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       });
   };
@@ -83,11 +80,9 @@ export default function OPDtoIPDBedAssign() {
     axios
       .get("http://localhost:8521/api/admin/getBuildingList")
       .then(function (response) {
-        // handle success
         setBuildingList(response.data.buildinglist);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       });
   };
@@ -104,11 +99,9 @@ export default function OPDtoIPDBedAssign() {
         "http://localhost:8521/api/admin/getFloorsList/" + SelectedBuildingId
       )
       .then(function (response) {
-        // handle success
         setFloorList(response.data.buildinglist);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       });
   };
@@ -213,138 +206,71 @@ export default function OPDtoIPDBedAssign() {
     }
   }
 
-  console.log("same: ", JSON.parse(IpdCause));
+  //   console.log(
+  //     "same: ",
+  //     IpdCause &&
+  //       JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]?.length,
+  //     IpdCause && JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]
+  //   );
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="main-container">
       <div>
-        <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-          OPD TO IPD Transfer
-        </h6>
-      </div>
-      <div>
-        <div
-          style={{
-            marginTop: "10px",
-            backgroundColor: "#20958c",
-            padding: "10px",
-            color: "white",
-          }}
-        >
+        <div>
+          <h6 className="main-heading">Assign Bed</h6>
+        </div>
+        <div className="container">
           <b>Choose Cause</b>
         </div>
         <div>
-          (Please add the cause if not available:{" "}
-          <span
-            style={{
-              color: "blue",
-              textDecoration: "underline",
-              cursor: "pointer",
-            }}
-            onClick={() => navigate("/admin/opdtoipd")}
-          >
-            here
-          </span>
-          )
-        </div>
-        <div style={{ marginLeft: "20px" }}>
-          {state?.PatientDetailsView?.cause?.map((item, i) => {
-            return (
-              <div className="d-flex mt-2">
-                <div>
-                  <input
-                    type="radio"
-                    name="fav_language"
-                    id={`cause${i}`}
-                    value="HTML"
-                    onClick={() => setIpdCause(JSON.stringify(item))}
-                  />
-                </div>
-                <div style={{ marginLeft: "10px", fontWeight: "bold" }}>
-                  {item?.CauseName}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div style={{ marginTop: "10px" }}>
-        <div
-          style={{
-            marginTop: "10px",
-            backgroundColor: "#20958c",
-            padding: "10px",
-            color: "white",
-          }}
-        >
-          <b>Recommendation By: </b>
-        </div>
-        <Table bordered style={{ marginTop: "1%" }}>
-          <thead>
-            <tr
+          <div>
+            (Please add the cause if not available:{" "}
+            <span
               style={{
-                fontSize: "15px",
-                textAlign: "center",
-                fontWeight: "bold",
+                color: "blue",
+                textDecoration: "underline",
+                cursor: "pointer",
               }}
+              onClick={() => navigate("/admin/Inpatientlist")}
             >
-              <th>Doctor ID</th>
-              <th>Doctor Name</th>
-              <th>Designation</th>
-              <th>Recommendation Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              style={{
-                fontSize: "15px",
-                textAlign: "center",
-              }}
-            >
-              <td>{state?.PatientDetailsView?.requestedDoc?.DoctorId}</td>
-              <td>
-                {state?.PatientDetailsView?.requestedDoc?.Firstname}{" "}
-                {state?.PatientDetailsView?.requestedDoc?.Lastname}
-              </td>
-              <td>{state?.PatientDetailsView?.requestedDoc?.Designation}</td>
-              <td>{`${new Date(
-                state?.PatientDetailsView?.requestedDocDate
-              ).getDate()}-${
-                new Date(
-                  state?.PatientDetailsView?.requestedDocDate
-                ).getMonth() + 1
-              }-${new Date(
-                state?.PatientDetailsView?.requestedDocDate
-              ).getFullYear()}`}</td>
-            </tr>
-          </tbody>
-        </Table>
-      </div>
-
-      <div style={{ marginTop: "10px" }}>
-        <div
-          style={{
-            marginTop: "10px",
-            backgroundColor: "#20958c",
-            padding: "10px",
-            color: "white",
-          }}
-        >
-          <b>Assign Bed: </b>
+              here
+            </span>
+            )
+          </div>
+          <div className="cause-input">
+            {state?.PatientDetailsView?.cause?.map((item, i) => {
+              return (
+                <div className="d-flex mt-2">
+                  <div>
+                    <input
+                      type="radio"
+                      name="ipd_cause"
+                      id={`cause${i}`}
+                      value="HTML"
+                      onClick={() => setIpdCause(JSON.stringify(item))}
+                    />
+                  </div>
+                  <div className="cause-name">{item?.CauseName}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="container">
+          {/* {IpdCause &&
+          JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]
+            ?.length ? (
+            <b>Transfer Bed</b>
+          ) : ( */}
+          <b>Assign Bed</b>
+          {/* )} */}
         </div>
         <div>
           <div className="row">
             {BuildingList?.map((item) => {
               return (
                 <div className="col-lg-6">
-                  <div
-                    className="websiteMcards"
-                    // onClick={() => {
-                    //   setViewModal(<Subadmin />);
-                    //   setView(true);
-                    // }}
-                  >
+                  <div className="websiteMcards">
                     <FaBuilding className="WebMI" />
                     {item?.buildingName}
                     <div className="row" style={{ marginTop: "2%" }}>
@@ -791,6 +717,29 @@ export default function OPDtoIPDBedAssign() {
                             <div>{BedDetails98?.bedCostNonInsurance}</div>
                           </div>
                         </td>
+                        {/* {BedDetails98?.bedOccupied === "available" ? (
+                          <td>
+                            <div>
+                              <label>
+                                <b>Assign Patient</b>
+                              </label>
+                              <div>
+                                <Autocomplete
+                                  disablePortal
+                                  id="combo-box-demo"
+                                  options={updatedIPDPatients}
+                                  value={selectedIPDObj}
+                                  onChange={handleselectedIPDChange}
+                                  renderInput={(params) => (
+                                    <TextField {...params} label="patient" />
+                                  )}
+                                />
+                              </div>
+                            </div>
+                          </td>
+                        ) : (
+                          <></>
+                        )} */}
                       </tr>
                     </tbody>
                   </Table>

@@ -274,6 +274,7 @@ import HospitalLabSampleCollector from "./Admin/HospitalLabSampleCollector";
 import HospitalLabTechnician from "./Admin/HospitalLabTechnician";
 import OPDtoIPDBedAssign from "./Admin/OPDtoIPDBedAssign";
 import Ward from "./Admin/Ward";
+import BedAssignIPD from "./Admin/BedAssignIPD";
 
 function App() {
   return (
@@ -2153,6 +2154,16 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<Inpatientlist />} />{" "}
+                </>
+              }
+            />
+
+            <Route
+              path="/admin/BedAssignIPD"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<BedAssignIPD />} />{" "}
                 </>
               }
             />

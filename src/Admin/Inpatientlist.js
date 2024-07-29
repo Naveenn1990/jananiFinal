@@ -2707,6 +2707,17 @@ export default function Inpatientlist() {
                   </td>
                   <td>
                     <Button
+                      onClick={() =>
+                        navigate("/admin/BedAssignIPD", {
+                          state: { PatientDetailsView: item },
+                        })
+                      }
+                    >
+                      Assign Bed
+                    </Button>
+                  </td>
+                  <td>
+                    <Button
                       onClick={() => {
                         handleShow9();
                         setAdmissionForm(item);
