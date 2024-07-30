@@ -1,15 +1,16 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
-import { FaBed, FaBuilding, FaEye } from "react-icons/fa";
+import "./BedAssignIPD.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
+import axios from "axios";
+import { FaBed, FaBuilding, FaEye } from "react-icons/fa";
 
-export default function OPDtoIPDBedAssign() {
+export default function BedAssignIPD() {
   const navigate = useNavigate();
-  const loggedInSubAdmin = JSON.parse(sessionStorage.getItem("adminDetails"));
   const { state } = useLocation();
+  const [IpdCause, setIpdCause] = useState("");
+  const loggedInSubAdmin = JSON.parse(sessionStorage.getItem("adminDetails"));
+
   const [BuildingList, setBuildingList] = useState([]);
   const [ViewFloors, setViewFloors] = useState(false);
   const [ViewRooms, setViewRooms] = useState(false);
@@ -18,7 +19,6 @@ export default function OPDtoIPDBedAssign() {
   const [SelectedFloorId, setSelectedFloorId] = useState();
   const [allBedList99, setallBedList99] = useState([]);
   const [BedDetails98, setBedDetails98] = useState({});
-  const [IpdCause, setIpdCause] = useState({});
   const [FloorNameData, setFloorNameData] = useState({});
 
   const [show99, setShow99] = useState(false);
@@ -61,12 +61,10 @@ export default function OPDtoIPDBedAssign() {
   }
 
   const [IPDPatients, setIPDPatients] = useState([]);
-  // const [updatedIPDPatients, setupdatedIPDPatients] = useState([]);
   const getPatients = () => {
     axios
       .get("http://localhost:8521/api/user/getPatientList")
       .then(function (response) {
-        // handle success
         setIPDPatients(
           response.data.UsersInfo?.filter(
             (val) => val?.registrationType === "IPD"
@@ -74,7 +72,6 @@ export default function OPDtoIPDBedAssign() {
         );
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       });
   };
@@ -83,11 +80,9 @@ export default function OPDtoIPDBedAssign() {
     axios
       .get("http://localhost:8521/api/admin/getBuildingList")
       .then(function (response) {
-        // handle success
         setBuildingList(response.data.buildinglist);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       });
   };
@@ -104,11 +99,9 @@ export default function OPDtoIPDBedAssign() {
         "http://localhost:8521/api/admin/getFloorsList/" + SelectedBuildingId
       )
       .then(function (response) {
-        // handle success
         setFloorList(response.data.buildinglist);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       });
   };
@@ -142,7 +135,7 @@ export default function OPDtoIPDBedAssign() {
         handleClose99();
         handleCloseCheckAvailability();
         alert("Patient assigned");
-        opdtoipdFn();
+        navigate("/admin/Inpatientlist");
       }
     } catch (error) {
       console.log(error.response);
@@ -159,6 +152,20 @@ export default function OPDtoIPDBedAssign() {
       handleCloseCheckAvailability();
       return alert("Please choose the cause first");
     }
+    if (
+      IpdCause &&
+      JSON.parse(IpdCause)?.causeBillDetails?.length &&
+      JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]
+    ) {
+      if (
+        !assignedBedInfo?.floor ||
+        !assignedBedInfo?.wardName ||
+        !assignedBedInfo?.bedName
+      ) {
+        return alert("Please try again!");
+      }
+    }
+
     try {
       const config = {
         url: `/admin/editBed`,
@@ -171,6 +178,12 @@ export default function OPDtoIPDBedAssign() {
           roomid: allBedList99?._id,
           bedid: BedDetails98?._id,
           patientId: state.PatientDetailsView?._id,
+
+          // for transfering patient
+          buildingName: assignedBedInfo?.buildingName,
+          floorname: assignedBedInfo?.floor,
+          wardname: assignedBedInfo?.wardName,
+          bedname: assignedBedInfo?.bedName,
         },
       };
       axios(config)
@@ -188,163 +201,127 @@ export default function OPDtoIPDBedAssign() {
     }
   };
 
-  async function opdtoipdFn() {
-    try {
-      const config = {
-        url: `/user/makeOPDtoIPD`,
-        method: "put",
-        baseURL: "http://localhost:8521/api",
-        headers: { "content-type": "application/json" },
-        data: {
-          patientid: state.PatientDetailsView?._id,
-          causeid: JSON.parse(IpdCause)?._id,
-        },
-      };
-      let response = await axios(config);
-      if (response.status === 200) {
-        alert(response.data.success);
-        navigate("/admin/opdtoipd");
-        // getcategory();
-        // handleClose1();
-      }
-    } catch (error) {
-      console.log(error);
-      return alert("Something went wrong!");
+  const [assignedBedInfo, setAssignedBedInfo] = useState({});
+  useEffect(() => {
+    if (
+      IpdCause &&
+      JSON.parse(IpdCause)?.causeBillDetails?.length &&
+      JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]
+    ) {
+      let arr = [
+        ...JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"],
+      ];
+      setAssignedBedInfo({ ...arr[arr.length - 1] });
     }
-  }
-
-  // console.log("same: ", JSON.parse(IpdCause));
+  }, [IpdCause]);
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="main-container-bed-assign">
       <div>
-        <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-          OPD TO IPD Transfer
-        </h6>
-      </div>
-      <div>
-        <div
-          style={{
-            marginTop: "10px",
-            backgroundColor: "#20958c",
-            padding: "10px",
-            color: "white",
-          }}
-        >
+        <div>
+          <h6 className="main-heading-bed-assign">Assign Bed</h6>
+        </div>
+        <div className="container-bed-assign">
           <b>Choose Cause</b>
         </div>
         <div>
-          (Please add the cause if not available:{" "}
-          <span
-            style={{
-              color: "blue",
-              textDecoration: "underline",
-              cursor: "pointer",
-            }}
-            onClick={() => navigate("/admin/opdtoipd")}
-          >
-            here
-          </span>
-          )
+          <div>
+            (Please add the cause if not available:{" "}
+            <span
+              style={{
+                color: "blue",
+                textDecoration: "underline",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate("/admin/Inpatientlist")}
+            >
+              here
+            </span>
+            )
+          </div>
+          <div className="cause-input-bed-assign">
+            {state?.PatientDetailsView?.cause?.map((item, i) => {
+              return (
+                <div className="d-flex mt-2">
+                  <div>
+                    <input
+                      type="radio"
+                      name="ipd_cause"
+                      id={`cause${i}`}
+                      value="HTML"
+                      onClick={() => setIpdCause(JSON.stringify(item))}
+                    />
+                  </div>
+                  <div className="cause-name-bed-assign">{item?.CauseName}</div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-        <div style={{ marginLeft: "20px" }}>
-          {state?.PatientDetailsView?.cause?.map((item, i) => {
-            return (
-              <div className="d-flex mt-2">
-                <div>
-                  <input
-                    type="radio"
-                    name="fav_language"
-                    id={`cause${i}`}
-                    value="HTML"
-                    onClick={() => setIpdCause(JSON.stringify(item))}
-                  />
-                </div>
-                <div style={{ marginLeft: "10px", fontWeight: "bold" }}>
-                  {item?.CauseName}
-                </div>
+        <div className="container-bed-assign">
+          {IpdCause &&
+          JSON.parse(IpdCause)?.causeBillDetails?.length &&
+          JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]
+            ?.length ? (
+            <b>Transfer Bed</b>
+          ) : (
+            <b>Assign Bed</b>
+          )}
+        </div>
+
+        {/* for Current Bed Information */}
+        {IpdCause &&
+        JSON.parse(IpdCause)?.causeBillDetails?.length &&
+        JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]?.length ? (
+          <div className="current-bed-info-bed-assign">
+            <b>Assigned Bed Information</b>
+            <div className="d-flex">
+              <div>
+                <Table>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <b>Building</b>
+                      </td>
+                      <td>{assignedBedInfo?.buildingName}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Floor</b>
+                      </td>
+                      <td>{assignedBedInfo?.floor}</td>
+                    </tr>
+                  </tbody>
+                </Table>
               </div>
-            );
-          })}
-        </div>
-      </div>
+              <div>
+                <Table>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <b>Ward</b>
+                      </td>
+                      <td>{assignedBedInfo?.wardName}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Bed</b>
+                      </td>
+                      <td>{assignedBedInfo?.bedName}</td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </div>
+            </div>
+          </div>
+        ) : null}
 
-      <div style={{ marginTop: "10px" }}>
-        <div
-          style={{
-            marginTop: "10px",
-            backgroundColor: "#20958c",
-            padding: "10px",
-            color: "white",
-          }}
-        >
-          <b>Recommendation By: </b>
-        </div>
-        <Table bordered style={{ marginTop: "1%" }}>
-          <thead>
-            <tr
-              style={{
-                fontSize: "15px",
-                textAlign: "center",
-                fontWeight: "bold",
-              }}
-            >
-              <th>Doctor ID</th>
-              <th>Doctor Name</th>
-              <th>Designation</th>
-              <th>Recommendation Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              style={{
-                fontSize: "15px",
-                textAlign: "center",
-              }}
-            >
-              <td>{state?.PatientDetailsView?.requestedDoc?.DoctorId}</td>
-              <td>
-                {state?.PatientDetailsView?.requestedDoc?.Firstname}{" "}
-                {state?.PatientDetailsView?.requestedDoc?.Lastname}
-              </td>
-              <td>{state?.PatientDetailsView?.requestedDoc?.Designation}</td>
-              <td>{`${new Date(
-                state?.PatientDetailsView?.requestedDocDate
-              ).getDate()}-${
-                new Date(
-                  state?.PatientDetailsView?.requestedDocDate
-                ).getMonth() + 1
-              }-${new Date(
-                state?.PatientDetailsView?.requestedDocDate
-              ).getFullYear()}`}</td>
-            </tr>
-          </tbody>
-        </Table>
-      </div>
-
-      <div style={{ marginTop: "10px" }}>
-        <div
-          style={{
-            marginTop: "10px",
-            backgroundColor: "#20958c",
-            padding: "10px",
-            color: "white",
-          }}
-        >
-          <b>Assign Bed: </b>
-        </div>
         <div>
           <div className="row">
             {BuildingList?.map((item) => {
               return (
                 <div className="col-lg-6">
-                  <div
-                    className="websiteMcards"
-                    // onClick={() => {
-                    //   setViewModal(<Subadmin />);
-                    //   setView(true);
-                    // }}
-                  >
+                  <div className="websiteMcards">
                     <FaBuilding className="WebMI" />
                     {item?.buildingName}
                     <div className="row" style={{ marginTop: "2%" }}>

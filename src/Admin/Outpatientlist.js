@@ -3742,7 +3742,7 @@ export default function Outpatientlist() {
           <div ref={componentRef} className="d-flex justify-content-center">
             <Barcode
               // value={`${ViewBarcode?.Firstname} ${ViewBarcode?.Lastname}`}
-              value={ViewBarcode?._id}
+              value={ViewBarcode?.PatientId}
               width={1}
               height={50}
             />
