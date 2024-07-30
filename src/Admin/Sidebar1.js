@@ -100,11 +100,11 @@ export default function Sidebar1() {
                 backgroundColor: "#d0f7f4",
               }}
             >
-              <h6
-                className="sidebarItem1"
-              >
+            <Link to="/admin/ipdpatientlist">
+            <h6 className="sidebarItem1">
                 IPD Patient List
               </h6>
+            </Link>             
             </div>
           </>
         ) : null}
