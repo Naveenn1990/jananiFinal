@@ -13,7 +13,6 @@ export default function Adminpanel({ children }) {
           style={{
             backgroundColor: darkmode ? "black" : "white",
             color: darkmode ? "white" : "black",
-
             padding: "0px 0% 0% 0%",
             width: "18%",
             boxShadow: "10px 3px 12px -7px rgba(32,149,140,0.28)",

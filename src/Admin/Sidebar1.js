@@ -9,6 +9,7 @@ export default function Sidebar1() {
 
   const [DoctorM, setDoctorM] = useState(false);
   const [PatientM, setPatientM] = useState(false);
+  const [PatientR, setPatientR] = useState(false);
   const [LabM, setLabM] = useState(false);
   const [SerM, setSerM] = useState(false);
   const [PharM, setPharM] = useState(false);
@@ -28,11 +29,9 @@ export default function Sidebar1() {
       className="sidebar"
       style={{ overflowY: "scroll", maxHeight: "550px" }}
     >
-      {/* {admin ? ( */}
       <>
         <h6
           className="sidebarItem"
-          // style={{ backgroundColor: SelectedItem == 1 ? "#20958c" : "white" }}
           onClick={() => navigate("/admin/dashboard")}
         >
           Dashboard
@@ -49,32 +48,35 @@ export default function Sidebar1() {
         ) : null}
 
         {admin?.doctorManagement === true ? (
-          <h6 className="sidebarItem" onClick={() => setDoctorM(!DoctorM)}>
-            Doctor management {DoctorM ? <IoIosArrowUp /> : <IoIosArrowDown />}
-          </h6>
+          <>
+            <h6 className="sidebarItem" onClick={() => setDoctorM(!DoctorM)}>
+              Doctor management{" "}
+              {DoctorM ? <IoIosArrowUp /> : <IoIosArrowDown />}
+            </h6>
+            <div
+              style={{
+                display: DoctorM ? "block" : "none",
+                backgroundColor: "#d0f7f4",
+              }}
+            >
+              <h6
+                className="sidebarItem1"
+                onClick={() => navigate("/admin/Hospitaldoctors")}
+              >
+                Hospital doctors
+              </h6>
+              <h6
+                className="sidebarItem1"
+                onClick={() => navigate("/admin/Clinicaldoctors")}
+              >
+                Clinical doctors
+              </h6>
+              <Link to={"/admin/referfromclinicpatientlist"}>
+                <h6 className="sidebarItem1">Refer Patient List</h6>
+              </Link>
+            </div>
+          </>
         ) : null}
-        <div
-          style={{
-            display: DoctorM ? "block" : "none",
-            backgroundColor: "#d0f7f4",
-          }}
-        >
-          <h6
-            className="sidebarItem1"
-            onClick={() => navigate("/admin/Hospitaldoctors")}
-          >
-            Hospital doctors
-          </h6>
-          <h6
-            className="sidebarItem1"
-            onClick={() => navigate("/admin/Clinicaldoctors")}
-          >
-            Clinical doctors
-          </h6>
-          <Link to={"/admin/referfromclinicpatientlist"}>
-            <h6 className="sidebarItem1">Refer Patient List</h6>
-          </Link>
-        </div>
 
         {/* {admin?.staffManagement === true ? (
           <h6
@@ -88,36 +90,59 @@ export default function Sidebar1() {
         ) : null} */}
 
         {admin?.patientManagement === true ? (
-          <h6 className="sidebarItem" onClick={() => setPatientM(!PatientM)}>
-            Patient management{" "}
-            {PatientM ? <IoIosArrowUp /> : <IoIosArrowDown />}
-          </h6>
+          <>
+            <h6 className="sidebarItem" onClick={() => setPatientM(!PatientM)}>
+              Patient management{" "}
+              {PatientM ? <IoIosArrowUp /> : <IoIosArrowDown />}
+            </h6>
+            <div
+              style={{
+                display: PatientM ? "block" : "none",
+                backgroundColor: "#d0f7f4",
+              }}
+            >
+              <h6
+                className="sidebarItem1"
+              >
+                IPD Patient List
+              </h6>
+            </div>
+          </>
         ) : null}
-        <div
-          style={{
-            display: PatientM ? "block" : "none",
-            backgroundColor: "#d0f7f4",
-          }}
-        >
-          <h6
-            className="sidebarItem1"
-            onClick={() => navigate("/admin/opdtoipd")}
-          >
-            OPD TO IPD
-          </h6>
-          <h6
-            className="sidebarItem1"
-            onClick={() => navigate("/admin/Inpatientlist")}
-          >
-            In-patient list
-          </h6>
-          <h6
-            className="sidebarItem1"
-            onClick={() => navigate("/admin/Outpatientlist")}
-          >
-            Out-patient list
-          </h6>
-        </div>
+
+        {admin?.PatientReceptionist === true ? (
+          <>
+            <h6 className="sidebarItem" onClick={() => setPatientR(!PatientR)}>
+              Patient Receptionist{" "}
+              {PatientR ? <IoIosArrowUp /> : <IoIosArrowDown />}
+            </h6>
+            <div
+              style={{
+                display: PatientR ? "block" : "none",
+                backgroundColor: "#d0f7f4",
+              }}
+            >
+              <h6
+                className="sidebarItem1"
+                onClick={() => navigate("/admin/opdtoipd")}
+              >
+                OPD TO IPD
+              </h6>
+              <h6
+                className="sidebarItem1"
+                onClick={() => navigate("/admin/Inpatientlist")}
+              >
+                In-patient list
+              </h6>
+              <h6
+                className="sidebarItem1"
+                onClick={() => navigate("/admin/Outpatientlist")}
+              >
+                Out-patient list
+              </h6>
+            </div>
+          </>
+        ) : null}
 
         {admin?.docAppointment === true ? (
           <h6
@@ -181,34 +206,19 @@ export default function Sidebar1() {
 
         {admin?.labReceptionist ? (
           <Link to="/admin/HospitalLabRecepPanel">
-            <h6
-              className="sidebarItem"
-              // onClick={() => navigate("/admin/HospitalLabPanel")}
-            >
-              Lab Receptionist
-            </h6>
+            <h6 className="sidebarItem">Lab Receptionist</h6>
           </Link>
         ) : null}
 
         {admin?.labSampleCollector ? (
           <Link to="/admin/HospitalLabSampleCollector">
-            <h6
-              className="sidebarItem"
-              // onClick={() => navigate("/admin/HospitalLabPanel")}
-            >
-              Lab Sample Collector
-            </h6>
+            <h6 className="sidebarItem">Lab Sample Collector</h6>
           </Link>
         ) : null}
 
         {admin?.labTechnician === true ? (
           <Link to="/admin/HospitalLabtechnician">
-            <h6
-              className="sidebarItem"
-              // onClick={() => navigate("/admin/HospitalLabPanel")}
-            >
-              Lab Technician
-            </h6>
+            <h6 className="sidebarItem">Lab Technician</h6>
           </Link>
         ) : null}
 
@@ -217,6 +227,7 @@ export default function Sidebar1() {
             Pharmacy management {PharM ? <IoIosArrowUp /> : <IoIosArrowDown />}
           </h6>
         ) : null}
+
         <div
           style={{
             display: PharM ? "block" : "none",
@@ -431,381 +442,6 @@ export default function Sidebar1() {
           Logout
         </h6>
       </>
-      {/* ) : ( */}
-
-      {/* )} */}
     </div>
   );
-}
-
-{
-  /*
-  
-
-   <>
-          <h6
-            className="sidebarItem"
-            // style={{ backgroundColor: SelectedItem == 1 ? "#20958c" : "white" }}
-            onClick={() => navigate("/admin/dashboard")}
-          >
-            Dashboard
-          </h6>
-          {/* {Subadmin?.subadmin === true ? (
-            <h6
-              className="sidebarItem"
-              onClick={() => navigate("/admin/subadmin")}
-            >
-              {" "}
-              Subadmin
-            </h6>
-          ) : null} 
-
-          {Subadmin?.doctorManagement === true ? (
-            <h6 className="sidebarItem" onClick={() => setDoctorM(!DoctorM)}>
-              Doctor management{" "}
-              {DoctorM ? <IoIosArrowUp /> : <IoIosArrowDown />}
-            </h6>
-          ) : null}
-          <div
-            style={{
-              display: DoctorM ? "block" : "none",
-              backgroundColor: "#d0f7f4",
-            }}
-          >
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/Hospitaldoctors")}
-            >
-              Hospital doctors
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/Clinicaldoctors")}
-            >
-              Clinical doctors
-            </h6>
-          </div>
-
-          {Subadmin?.staffManagement === true ? (
-            <h6
-              className="sidebarItem"
-              onClick={() =>
-                navigate("/admin/Staffmanagementdashboard")
-              }
-            >
-              Staff management
-            </h6>
-          ) : null}
-          {Subadmin?.patientManagement === true ? (
-            <h6 className="sidebarItem" onClick={() => setPatientM(!PatientM)}>
-              Patient management{" "}
-              {PatientM ? <IoIosArrowUp /> : <IoIosArrowDown />}
-            </h6>
-          ) : null}
-          <div
-            style={{
-              display: PatientM ? "block" : "none",
-              backgroundColor: "#d0f7f4",
-            }}
-          >
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/opdtoipd")}
-            >
-              OPD TO IPD
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/Inpatientlist")}
-            >
-              In-patient list
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/Outpatientlist")}
-            >
-              Out-patient list
-            </h6>
-          </div>
-          {Subadmin?.docAppointment === true ? (
-            <h6
-              className="sidebarItem"
-              onClick={() =>
-                navigate("/admin/DoctorsAppointment")
-              }
-            >
-              Doctors appointment
-            </h6>
-          ) : null}
-          {Subadmin?.labManagement === true ? (
-            <h6 className="sidebarItem" onClick={() => setLabM(!LabM)}>
-              Lab management {LabM ? <IoIosArrowUp /> : <IoIosArrowDown />}
-            </h6>
-          ) : null}
-
-          <div
-            style={{
-              display: LabM ? "block" : "none",
-              backgroundColor: "#d0f7f4",
-            }}
-          >
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/HospitalLabPanel")}
-            >
-              Hospital lab
-            </h6>
-
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/ClinicalLabPanel")}
-            >
-              Clinical lab
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/Packages")}
-            >
-              Add Lab Packages
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/HospitalLabPanel")}
-            >
-              Vendor's
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/HospitalLabPanel")}
-            >
-              Vendor Product's
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/HospitalLabPanel")}
-            >
-              Purchase Order History
-            </h6>
-          </div>
-          {Subadmin?.pharmacyManagement === true ? (
-            <h6 className="sidebarItem" onClick={() => setPharM(!PharM)}>
-              Pharmacy management{" "}
-              {PharM ? <IoIosArrowUp /> : <IoIosArrowDown />}
-            </h6>
-          ) : null}
-
-          <div
-            style={{
-              display: PharM ? "block" : "none",
-              backgroundColor: "#d0f7f4",
-            }}
-          >
-            <h6
-              className="sidebarItem1"
-              onClick={() =>
-                navigate("/admin/AddProductCategory")
-              }
-            >
-              IPD Patients
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/OPDPharmacy")}
-            >
-              OPD Patients
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() =>
-                navigate("/admin/AddProductCategory")
-              }
-            >
-              Add Product Category
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/ProductBrands")}
-            >
-              Add Brands
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/AddVendor")}
-            >
-              Create Vendor
-            </h6>
-
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/ProductOrders")}
-            >
-              Order History
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() =>
-                navigate("/admin/ProductCustomerOrders")
-              }
-            >
-              Customer Orders
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/AddProduct")}
-            >
-              Inventory
-            </h6>
-
-            {/* <h6
-          className="sidebarItem1"
-          onClick={() => navigate("/admin/AddWastageReturn")}
-        >
-          Add Wastage Return
-        </h6>
-
-        <h6
-          className="sidebarItem1"
-          onClick={() => navigate("/admin/AddManufacturerReturn")}
-        >
-          Add Manufacturer Return
-        </h6> 
-          </div>
-          {/* <h6 className="sidebarItem">Vendor management</h6> 
-          {Subadmin?.websiteManagement === true ? (
-            <h6
-              className="sidebarItem"
-              onClick={() => navigate("/admin/Websitemanagement")}
-            >
-              Website management
-            </h6>
-          ) : null}
-          {Subadmin?.serviceManagement === true ? (
-            <h6 className="sidebarItem" onClick={() => setSerM(!SerM)}>
-              Service management {SerM ? <IoIosArrowUp /> : <IoIosArrowDown />}
-            </h6>
-          ) : null}
-
-          <div
-            style={{
-              display: SerM ? "block" : "none",
-              backgroundColor: "#d0f7f4",
-            }}
-          >
-            <h6
-              className="sidebarItem1"
-              onClick={() =>
-                navigate("/admin/AddServiceCategory")
-              }
-            >
-              Add Service Category
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/AddService")}
-            >
-              Add Service
-            </h6>
-
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/RequestedService")}
-            >
-              Requested Service
-            </h6>
-          </div>
-
-          {Subadmin?.hospitalManagement === true ? (
-            <h6 className="sidebarItem" onClick={() => setHosM(!HosM)}>
-              Hospital management{HosM ? <IoIosArrowUp /> : <IoIosArrowDown />}
-            </h6>
-          ) : null}
-
-          <div
-            style={{
-              display: HosM ? "block" : "none",
-              backgroundColor: "#d0f7f4",
-            }}
-          >
-            <h6
-              className="sidebarItem1"
-              onClick={() =>
-                navigate("/admin/AddHospitalServices")
-              }
-            >
-              Add hospital Services
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/AddHouseKeeping")}
-            >
-              Add hospital house keeping
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/AddAccesories")}
-            >
-              Add Accessories
-            </h6>
-
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/AddHospitalRooms")}
-            >
-              Add Rooms
-            </h6>
-
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/Adddepartment")}
-            >
-              Add Department
-            </h6>
-            <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/Notifications")}
-            >
-              Notification
-            </h6>
-          </div>
-
-          {Subadmin?.bedManagement === true ? (
-            <h6
-              className="sidebarItem"
-              onClick={() => navigate("/admin/Bedmanagement")}
-            >
-              Bed management
-            </h6>
-          ) : null}
-
-          {Subadmin?.accounts === true ? (
-            <h6
-              className="sidebarItem"
-              onClick={() => navigate("/admin/Accounts")}
-            >
-              Accounts
-            </h6>
-          ) : null}
-          {Subadmin?.billing === true ? (
-            <h6
-              className="sidebarItem"
-              onClick={() => navigate("/admin/Billinglist")}
-            >
-              Billing
-            </h6>
-          ) : null}
-          {Subadmin?.enqAndComplaints === true ? (
-            <h6
-              className="sidebarItem"
-              onClick={() => navigate("/admin/Enquiry")}
-            >
-              Enquiries & Complaints
-            </h6>
-          ) : null}
-          <h6 className="sidebarItem" onClick={logoutFn}>
-            Logout
-          </h6>
-        </>
-  
-  
-  */
 }

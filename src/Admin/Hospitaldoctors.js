@@ -26,6 +26,56 @@ export default function Hospitaldoctors() {
     display: "none",
   });
 
+  const allTimes = [
+    { settime: "12:00 AM", gettime: "12:30 AM" },
+    { settime: "12:30 AM", gettime: "1:00 AM" },
+    { settime: "1:00 AM", gettime: "1:30 AM" },
+    { settime: "1:30 AM", gettime: "2:00 AM" },
+    { settime: "2:00 AM", gettime: "2:30 AM" },
+    { settime: "2:30 AM", gettime: "3:00 AM" },
+    { settime: "3:00 AM", gettime: "3:30 AM" },
+    { settime: "3:30 AM", gettime: "4:00 AM" },
+    { settime: "4:00 AM", gettime: "4:30 AM" },
+    { settime: "4:30 AM", gettime: "5:00 AM" },
+    { settime: "5:00 AM", gettime: "5:30 AM" },
+    { settime: "5:30 AM", gettime: "6:00 AM" },
+    { settime: "6:00 AM", gettime: "6:30 AM" },
+    { settime: "6:30 AM", gettime: "7:00 AM" },
+    { settime: "7:00 AM", gettime: "7:30 AM" },
+    { settime: "7:30 AM", gettime: "8:00 AM" },
+    { settime: "8:00 AM", gettime: "8:30 AM" },
+    { settime: "8:30 AM", gettime: "9:00 AM" },
+    { settime: "9:00 AM", gettime: "9:30 AM" },
+    { settime: "9:30 AM", gettime: "10:00 AM" },
+    { settime: "10:00 AM", gettime: "10:30 AM" },
+    { settime: "10:30 AM", gettime: "11:00 AM" },
+    { settime: "11:00 AM", gettime: "11:30 AM" },
+    { settime: "11:30 AM", gettime: "12:00 PM" },
+    { settime: "12:00 PM", gettime: "12:30 PM" },
+    { settime: "12:30 PM", gettime: "1:00 PM" },
+    { settime: "1:00 PM", gettime: "1:30 PM" },
+    { settime: "1:30 PM", gettime: "2:00 PM" },
+    { settime: "2:00 PM", gettime: "2:30 PM" },
+    { settime: "2:30 PM", gettime: "3:00 PM" },
+    { settime: "3:00 PM", gettime: "3:30 PM" },
+    { settime: "3:30 PM", gettime: "4:00 PM" },
+    { settime: "4:00 PM", gettime: "4:30 PM" },
+    { settime: "4:30 PM", gettime: "5:00 PM" },
+    { settime: "5:00 PM", gettime: "5:30 PM" },
+    { settime: "5:30 PM", gettime: "6:00 PM" },
+    { settime: "6:00 PM", gettime: "6:30 PM" },
+    { settime: "6:30 PM", gettime: "7:00 PM" },
+    { settime: "7:00 PM", gettime: "7:30 PM" },
+    { settime: "7:30 PM", gettime: "8:00 PM" },
+    { settime: "8:00 PM", gettime: "8:30 PM" },
+    { settime: "8:30 PM", gettime: "9:00 PM" },
+    { settime: "9:00 PM", gettime: "9:30 PM" },
+    { settime: "9:30 PM", gettime: "10:00 PM" },
+    { settime: "10:00 PM", gettime: "10:30 PM" },
+    { settime: "10:30 PM", gettime: "11:00 PM" },
+    { settime: "11:00 PM", gettime: "11:30 PM" },
+    { settime: "11:30 PM", gettime: "12:00 AM" }
+  ];
   const [View, setView] = useState({});
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -678,9 +728,10 @@ export default function Hospitaldoctors() {
   }, []);
 
   const [scheduleDate, setScheduleDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-
+  const [timeInterval , settimeInterval ] = useState("")
+  // const [startTime, setStartTime] = useState("");
+  // const [endTime, setEndTime] = useState("");
+  const [endTime, startTime] = timeInterval.split(" - ");
   const handleTimeChange = (e, setTime) => {
     const [hours, minutes] = e.target.value.split(":");
     const period = hours >= 12 ? "PM" : "AM";
@@ -694,16 +745,27 @@ export default function Hospitaldoctors() {
   };
   const [scheduleList, setScheduleList] = useState([]);
   const AddSchedule = () => {
+    if(!scheduleDate){
+      return alert("Select date..!")
+    }
+    if(!timeInterval){
+      return alert("Select time..!")
+    }
     const newSchedule = {
       scheduleDate,
       startTime,
       endTime,
       bookingstatus: "Vacant",
     };
-    setScheduleList([...scheduleList, newSchedule]);
-    // setScheduleDate('');
-    // setStartTime('');
-    // setEndTime('');
+   // Temporarily add to the list, then update state and alert
+   const updatedList = [...scheduleList, newSchedule];
+   setScheduleList(updatedList);
+   alert("Added successfully..!");
+ 
+   // Clear the input fields after state update
+   setScheduleDate('');
+   settimeInterval('');
+    
   };
   // console.log("SeheduleList", scheduleList);
   const deleteSchedule = (indexToDelete) => {
@@ -1759,362 +1821,16 @@ export default function Hospitaldoctors() {
           <Modal.Header>
             <Modal.Title>Add Doctor Schedule</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            {/* <Table responsive="md" style={{ marginTop: "1%" }}>
-              <thead>
-                <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                  <th>WeekOff</th>
-                  <th>Day</th>
-                  <th>Starting time</th>
-                  <th>Ending time</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  style={{
-                    textAlign: "center",
-                    fontWeight: "600",
-                    color: "#20958c",
-                  }}
-                >
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={
-                        mondayweekstatus ? mondayweekoff : View?.mondayweekoff
-                      }
-                      onChange={(event) => {
-                        setmondayweekstatus("changed");
-                        setmondayweekoff(event.target.checked);
-                      }}
-                    ></input>
-                  </td>
-                  <td>Monday</td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        mondaystartingtime
-                          ? mondaystartingtime
-                          : View?.mondaystartingtime
-                      }
-                      onChange={(event) =>
-                        setmondaystartingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        mondayendingtime
-                          ? mondayendingtime
-                          : View?.mondayendingtime
-                      }
-                      onChange={(event) =>
-                        setmondayendingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                </tr>
-                <tr
-                  style={{
-                    textAlign: "center",
-                    fontWeight: "600",
-                    color: "#20958c",
-                  }}
-                >
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={
-                        tuesdayweekstatus
-                          ? tuesdayweekoff
-                          : View?.tuesdayweekoff
-                      }
-                      onChange={(event) => {
-                        settuesdayweekstatus("changed");
-                        settuesdayweekoff(event.target.checked);
-                      }}
-                    ></input>
-                  </td>
-                  <td>Tuesday</td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        tuesdaystartingtime
-                          ? tuesdaystartingtime
-                          : View?.tuesdaystartingtime
-                      }
-                      onChange={(event) =>
-                        settuesdaystartingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        tuesdayendingtime
-                          ? tuesdayendingtime
-                          : View?.tuesdayendingtime
-                      }
-                      onChange={(event) =>
-                        settuesdayendingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                </tr>
-                <tr
-                  style={{
-                    textAlign: "center",
-                    fontWeight: "600",
-                    color: "#20958c",
-                  }}
-                >
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={
-                        wednesdayweekstatus
-                          ? wednesdayweekoff
-                          : View?.wednesdayweekoff
-                      }
-                      onChange={(event) => {
-                        setwednesdayweekstatus("changed");
-                        setwednesdayweekoff(event.target.checked);
-                      }}
-                    ></input>
-                  </td>
-                  <td>Wednesday</td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        wednesdaystartingtime
-                          ? wednesdaystartingtime
-                          : View?.wednesdaystartingtime
-                      }
-                      onChange={(event) =>
-                        setwednesdaystartingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        wednesdayendingtime
-                          ? wednesdayendingtime
-                          : View?.wednesdayendingtime
-                      }
-                      onChange={(event) =>
-                        setwednesdayendingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                </tr>
-                <tr
-                  style={{
-                    textAlign: "center",
-                    fontWeight: "600",
-                    color: "#20958c",
-                  }}
-                >
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={
-                        thrusdayweekstatus
-                          ? thrusdayweekoff
-                          : View?.thrusdayweekoff
-                      }
-                      onChange={(event) => {
-                        setthrusdayweekstatus("changed");
-                        setthrusdayweekoff(event.target.checked);
-                      }}
-                    ></input>
-                  </td>
-                  <td>Thursday</td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        thrusdaystartingtime
-                          ? thrusdaystartingtime
-                          : View?.thrusdaystartingtime
-                      }
-                      onChange={(event) =>
-                        setthrusdaystartingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        thrusdayendingtime
-                          ? thrusdayendingtime
-                          : View?.thrusdayendingtime
-                      }
-                      onChange={(event) =>
-                        setthrusdayendingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                </tr>
-                <tr
-                  style={{
-                    textAlign: "center",
-                    fontWeight: "600",
-                    color: "#20958c",
-                  }}
-                >
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={
-                        fridayweekstatus ? fridayweekoff : View?.fridayweekoff
-                      }
-                      onChange={(event) => {
-                        setfridayweekstatus("changed");
-                        setfridayweekoff(event.target.checked);
-                      }}
-                    ></input>
-                  </td>
-                  <td>Friday</td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        fridaystartingtime
-                          ? fridaystartingtime
-                          : View?.fridaystartingtime
-                      }
-                      onChange={(event) =>
-                        setfridaystartingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        fridayendingtime
-                          ? fridayendingtime
-                          : View?.fridayendingtime
-                      }
-                      onChange={(event) =>
-                        setfridayendingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                </tr>
-                <tr
-                  style={{
-                    textAlign: "center",
-                    fontWeight: "600",
-                    color: "#20958c",
-                  }}
-                >
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={
-                        saturdayweekstatus
-                          ? saturdayweekoff
-                          : View?.saturdayweekoff
-                      }
-                      onChange={(event) => {
-                        setsaturdayweekstatus("changed");
-                        setsaturdayweekoff(event.target.checked);
-                      }}
-                    ></input>
-                  </td>
-                  <td>Saturday</td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        saturdaystartingtime
-                          ? saturdaystartingtime
-                          : View?.saturdaystartingtime
-                      }
-                      onChange={(event) =>
-                        setsaturdaystartingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        saturdayendingtime
-                          ? saturdayendingtime
-                          : View?.saturdayendingtime
-                      }
-                      onChange={(event) =>
-                        setsaturdayendingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                </tr>
-                <tr
-                  style={{
-                    textAlign: "center",
-                    fontWeight: "600",
-                    color: "#20958c",
-                  }}
-                >
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={
-                        sundayweekstatus ? sundayweekoff : View?.sundayweekoff
-                      }
-                      onChange={(event) => {
-                        setsundayweekstatus("changed");
-                        setsundayweekoff(event.target.checked);
-                      }}
-                    ></input>
-                  </td>
-                  <td>Sunday</td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        sundaystartingtime
-                          ? sundaystartingtime
-                          : View?.sundaystartingtime
-                      }
-                      onChange={(event) =>
-                        setsundaystartingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="time"
-                      value={
-                        sundayendingtime
-                          ? sundayendingtime
-                          : View?.sundayendingtime
-                      }
-                      onChange={(event) =>
-                        setsundayendingtime(event.target.value)
-                      }
-                    ></input>
-                  </td>
-                </tr>
-              </tbody>
-            </Table> */}
+          <Modal.Body>  
+            <div style={{padding:"10px", backgroundColor:"white"}}>
             <Table bordered>
               <thead>
+                <tr>
                 <th> Date </th>
                 <th> Start Time </th>
                 <th> End Time </th>
                 <th> Action </th>
+                </tr>               
               </thead>
               <tbody>
                 <tr>
@@ -2124,25 +1840,43 @@ export default function Hospitaldoctors() {
                         onChange={(e) => setScheduleDate(e.target.value)}
                         className="vi_0"
                         type="date"
+                        value={scheduleDate}
                         min={new Date().toISOString().split("T")[0]}
                       />
                     </Form.Group>
                   </td>
                   <td>
                     <Form.Group className="mb-3">
-                      <Form.Control
+                      {/* <Form.Control
                         className="vi_0"
                         type="time"
                         onChange={(e) => handleTimeChange(e, setStartTime)}
-                      />
+                      /> */}
+                      <Form.Select
+                      value={timeInterval}
+                       className="vi_0"
+                      onChange={(e)=>settimeInterval(e.target.value)}
+                      >
+                        <option value="">Select Time</option>
+                        {allTimes?.map((item)=>{
+                          return(
+                              <option value={`${item?.gettime} - ${item?.settime}`}>{item?.settime}</option>
+                          )
+                        })}
+                        
+                      </Form.Select>
                     </Form.Group>
                   </td>
                   <td>
                     <Form.Group className="mb-3">
-                      <Form.Control
+                      {/* <Form.Control
                         className="vi_0"
                         type="time"
                         onChange={(e) => handleTimeChange(e, setEndTime)}
+                      /> */}
+                      <Form.Control
+                      className="vi_0"
+                      value={endTime}
                       />
                     </Form.Group>
                   </td>
@@ -2167,6 +1901,8 @@ export default function Hospitaldoctors() {
                 })}
               </tbody>
             </Table>
+            </div>          
+          
           </Modal.Body>
           <Modal.Footer>
             <div style={{ display: "flex" }}>
@@ -2210,549 +1946,7 @@ export default function Hospitaldoctors() {
           <Modal.Header>
             <Modal.Title>Doctor Schedule</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            {/* <Table responsive="md" style={{ marginTop: "1%" }}>
-              <thead>
-                <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                  <th>WeekOff</th>
-                  <th>Day</th>
-                  <th>Starting time</th>
-                  <th>Ending time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Doctors?.filter((val) => val._id === View?._id)?.map(
-                  (item) => {
-                    return (
-                      <>
-                        <tr
-                          style={{
-                            textAlign: "center",
-                            fontWeight: "600",
-                            color: "#20958c",
-                          }}
-                        >
-                          <td>
-                            {item?.mondayweekoff ? (
-                              <MdOutlineCancel
-                                style={{
-                                  color: "orange",
-                                  fontSize: "24px",
-                                }}
-                              />
-                            ) : (
-                              <AiOutlineCheckCircle
-                                style={{ color: "#20958c", fontSize: "22px" }}
-                              />
-                            )}
-                          </td>
-                          <td>
-                            {item?.mondayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                Monday
-                              </span>
-                            ) : (
-                              <>Monday</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.mondayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.mondaystartingtime ? (
-                              <>
-                                {moment(
-                                  item?.mondaystartingtime,
-                                  "HH:mm"
-                                ).format("h:mm A")}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.mondayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.mondayendingtime ? (
-                              <>
-                                {moment(item?.mondayendingtime, "HH:mm").format(
-                                  "h:mm A"
-                                )}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                        </tr>
-                        <tr
-                          style={{
-                            textAlign: "center",
-                            fontWeight: "600",
-                            color: "#20958c",
-                          }}
-                        >
-                          <td>
-                            {item?.tuesdayweekoff ? (
-                              <MdOutlineCancel
-                                style={{
-                                  color: "orange",
-                                  fontSize: "24px",
-                                }}
-                              />
-                            ) : (
-                              <AiOutlineCheckCircle
-                                style={{ color: "#20958c", fontSize: "22px" }}
-                              />
-                            )}
-                          </td>
-                          <td>
-                            {item?.tuesdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                Tuesday
-                              </span>
-                            ) : (
-                              <>Tuesday</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.tuesdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.tuesdaystartingtime ? (
-                              <>
-                                {moment(
-                                  item?.tuesdaystartingtime,
-                                  "HH:mm"
-                                ).format("h:mm A")}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.tuesdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.tuesdayendingtime ? (
-                              <>
-                                {moment(
-                                  item?.tuesdayendingtime,
-                                  "HH:mm"
-                                ).format("h:mm A")}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                        </tr>
-                        <tr
-                          style={{
-                            textAlign: "center",
-                            fontWeight: "600",
-                            color: "#20958c",
-                          }}
-                        >
-                          <td>
-                            {item?.wednesdayweekoff ? (
-                              <MdOutlineCancel
-                                style={{
-                                  color: "orange",
-                                  fontSize: "24px",
-                                }}
-                              />
-                            ) : (
-                              <AiOutlineCheckCircle
-                                style={{ color: "#20958c", fontSize: "22px" }}
-                              />
-                            )}
-                          </td>
-                          <td>
-                            {item?.wednesdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                Wednesday
-                              </span>
-                            ) : (
-                              <>Wednesday</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.wednesdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.wednesdaystartingtime ? (
-                              <>
-                                {moment(
-                                  item?.wednesdaystartingtime,
-                                  "HH:mm"
-                                ).format("h:mm A")}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.wednesdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.wednesdayendingtime ? (
-                              <>
-                                {moment(
-                                  item?.wednesdayendingtime,
-                                  "HH:mm"
-                                ).format("h:mm A")}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                        </tr>
-                        <tr
-                          style={{
-                            textAlign: "center",
-                            fontWeight: "600",
-                            color: "#20958c",
-                          }}
-                        >
-                          <td>
-                            {item?.thrusdayweekoff ? (
-                              <MdOutlineCancel
-                                style={{
-                                  color: "orange",
-                                  fontSize: "24px",
-                                }}
-                              />
-                            ) : (
-                              <AiOutlineCheckCircle
-                                style={{ color: "#20958c", fontSize: "22px" }}
-                              />
-                            )}
-                          </td>
-                          <td>
-                            {item?.thrusdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                Thrusday
-                              </span>
-                            ) : (
-                              <>Thrusday</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.thrusdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.thrusdaystartingtime ? (
-                              <>
-                                {moment(
-                                  item?.thrusdaystartingtime,
-                                  "HH:mm"
-                                ).format("h:mm A")}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.thrusdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.thrusdayendingtime ? (
-                              <>
-                                {moment(
-                                  item?.thrusdayendingtime,
-                                  "HH:mm"
-                                ).format("h:mm A")}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                        </tr>
-                        <tr
-                          style={{
-                            textAlign: "center",
-                            fontWeight: "600",
-                            color: "#20958c",
-                          }}
-                        >
-                          <td>
-                            {item?.fridayweekoff ? (
-                              <MdOutlineCancel
-                                style={{
-                                  color: "orange",
-                                  fontSize: "24px",
-                                }}
-                              />
-                            ) : (
-                              <AiOutlineCheckCircle
-                                style={{ color: "#20958c", fontSize: "22px" }}
-                              />
-                            )}
-                          </td>
-                          <td>
-                            {item?.fridayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                Friday
-                              </span>
-                            ) : (
-                              <>Friday</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.fridayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.fridaystartingtime ? (
-                              <>
-                                {moment(
-                                  item?.fridaystartingtime,
-                                  "HH:mm"
-                                ).format("h:mm A")}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.fridayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.fridayendingtime ? (
-                              <>
-                                {moment(item?.fridayendingtime, "HH:mm").format(
-                                  "h:mm A"
-                                )}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                        </tr>
-                        <tr
-                          style={{
-                            textAlign: "center",
-                            fontWeight: "600",
-                            color: "#20958c",
-                          }}
-                        >
-                          <td>
-                            {item?.saturdayweekoff ? (
-                              <MdOutlineCancel
-                                style={{
-                                  color: "orange",
-                                  fontSize: "24px",
-                                }}
-                              />
-                            ) : (
-                              <AiOutlineCheckCircle
-                                style={{ color: "#20958c", fontSize: "22px" }}
-                              />
-                            )}
-                          </td>
-                          <td>
-                            {item?.saturdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                Saturday
-                              </span>
-                            ) : (
-                              <>Saturday</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.saturdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.saturdaystartingtime ? (
-                              <>
-                                {moment(
-                                  item?.saturdaystartingtime,
-                                  "HH:mm"
-                                ).format("h:mm A")}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.saturdayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.saturdayendingtime ? (
-                              <>
-                                {moment(
-                                  item?.saturdayendingtime,
-                                  "HH:mm"
-                                ).format("h:mm A")}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                        </tr>
-                        <tr
-                          style={{
-                            textAlign: "center",
-                            fontWeight: "600",
-                            color: "#20958c",
-                          }}
-                        >
-                          <td>
-                            {item?.sundayweekoff ? (
-                              <MdOutlineCancel
-                                style={{
-                                  color: "orange",
-                                  fontSize: "24px",
-                                }}
-                              />
-                            ) : (
-                              <AiOutlineCheckCircle
-                                style={{ color: "#20958c", fontSize: "22px" }}
-                              />
-                            )}
-                          </td>
-                          <td>
-                            {item?.sundayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                Sunday
-                              </span>
-                            ) : (
-                              <>Sunday</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.sundayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.sundaystartingtime ? (
-                              <>
-                                {moment(
-                                  item?.sundaystartingtime,
-                                  "HH:mm"
-                                ).format("h:mm A")}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                          <td>
-                            {item?.sundayweekoff ? (
-                              <span
-                                style={{
-                                  color: "orange",
-                                }}
-                              >
-                                WeekOff
-                              </span>
-                            ) : item?.sundayendingtime ? (
-                              <>
-                                {moment(item?.sundayendingtime, "HH:mm").format(
-                                  "h:mm A"
-                                )}
-                              </>
-                            ) : (
-                              <>--:--</>
-                            )}
-                          </td>
-                        </tr>
-                      </>
-                    );
-                  }
-                )}
-              </tbody>
-            </Table> */}
+          <Modal.Body>           
             <Table style={{ backgroundColor: "white" }} bordered>
               <thead>
                 <tr>
@@ -2841,7 +2035,6 @@ export default function Hospitaldoctors() {
                   borderRadius: "4px",
                   fontWeight: "600",
                   marginRight: "20px",
-                  border: "1px solid white",
                   padding: "4px 10px",
                 }}
                 onClick={handleClosedelete}
@@ -2856,7 +2049,6 @@ export default function Hospitaldoctors() {
                   border: "none",
                   borderRadius: "4px",
                   fontWeight: "600",
-                  border: "1px solid white",
                   padding: "4px 10px",
                 }}
                 onClick={deleteDoctor}
@@ -2884,7 +2076,6 @@ export default function Hospitaldoctors() {
                   borderRadius: "4px",
                   fontWeight: "600",
                   marginRight: "20px",
-                  border: "1px solid white",
                   padding: "4px 10px",
                 }}
                 onClick={handleCloseBlock}
@@ -2899,7 +2090,6 @@ export default function Hospitaldoctors() {
                   border: "none",
                   borderRadius: "4px",
                   fontWeight: "600",
-                  border: "1px solid white",
                   padding: "4px 10px",
                 }}
                 onClick={blockDoctor}
@@ -2927,7 +2117,6 @@ export default function Hospitaldoctors() {
                   borderRadius: "4px",
                   fontWeight: "600",
                   marginRight: "20px",
-                  border: "1px solid white",
                   padding: "4px 10px",
                 }}
                 onClick={handleCloseUnblock}
@@ -2942,7 +2131,6 @@ export default function Hospitaldoctors() {
                   border: "none",
                   borderRadius: "4px",
                   fontWeight: "600",
-                  border: "1px solid white",
                   padding: "4px 10px",
                 }}
                 onClick={UnblockDoctor}
@@ -2961,7 +2149,6 @@ export default function Hospitaldoctors() {
                 <th>Profile</th>
                 <th> Name</th>
                 <th>Email-Id</th>
-                {/* <th>Designation</th> */}
                 <th>Department</th>
                 <th>Contact</th>
                 <th>DOB</th>

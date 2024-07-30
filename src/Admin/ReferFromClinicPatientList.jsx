@@ -12,7 +12,6 @@ import {
   AiFillFileExcel,
   AiOutlinePlusCircle,
 } from "react-icons/ai";
-import { Label } from "@material-ui/icons";
 
 function ReferFromClinicPatientList() {
   const [show, setShow] = useState(false);
@@ -35,6 +34,7 @@ function ReferFromClinicPatientList() {
 
   const [PatientType, setPatientType] = useState("");
   const [PatientDetails, setPatientDetails] = useState("");
+
   const [medicinesTaking, setmedicinesTaking] = useState();
   const [medications, setmedications] = useState(false);
   const [patientfirstname, setpatientfirstname] = useState("");
@@ -88,20 +88,37 @@ function ReferFromClinicPatientList() {
     }
   }, [PatientDetails]);
 
-  console.log("PatientDetails",PatientDetails);
+  console.log("PatientDetails", PatientDetails);
 
-    //Regex
-    const namePattern = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
-    const relativepattern = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
-    const mobilePattern = /^[0-9]{10}$/;
-    const pincodePattern = /^[0-9]{6}$/;
-    const aadharnoPattern = /^[0-9]{12}$/;
-    const emailPattern = /^[^\s@]+@gmail\.com$/;
-    const passwordPattern =
+  //Regex
+  const namePattern = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
+  const relativepattern = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
+  const mobilePattern = /^[0-9]{10}$/;
+  const pincodePattern = /^[0-9]{6}$/;
+  const aadharnoPattern = /^[0-9]{12}$/;
+  const emailPattern = /^[^\s@]+@gmail\.com$/;
+  const passwordPattern =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const ReferpatientOPDregister = async (e) => {
     e.preventDefault();
+    if (!PatientType) {
+      return alert("Select the Patient Type");
+    }
+    if (PatientType === "OPD") {
+      if (!Department) {
+        return alert("Please Select Department");
+      }
+      if (!Doctor) {
+        return alert("Please Select Doctor");
+      }
+      if (!DOA) {
+        return alert("Please Select Date of Appointment..!");
+      }
+      if (!TOA) {
+        return alert("Please Select Appointment Time..!");
+      }
+    }
     if (!patientfirstname) {
       return alert("Enter your first name");
     } else if (!namePattern.test(patientfirstname)) {
@@ -132,6 +149,9 @@ function ReferFromClinicPatientList() {
     }
     if (!DOB) {
       return alert("Select Birth date and Year.!");
+    }
+    if (!ProfilePic) {
+      return alert("Select Prifile Pic....!");
     }
     if (!Address) {
       return alert("Enter Street Address..!");
@@ -225,7 +245,8 @@ function ReferFromClinicPatientList() {
       }
     }
     try {
-      const formdata =new FormData()
+      const formdata = new FormData();
+
       formdata.set("Firstname", patientfirstname);
       formdata.set("Lastname", patientlastname);
       formdata.set("Gender", gender);
@@ -259,12 +280,22 @@ function ReferFromClinicPatientList() {
       formdata.set("medicinesTaking", medicinesTaking);
       formdata.set("Aadharcard", Aadharcard);
       formdata.set("Aadharno", Aadharno);
-      formdata.set("ReferClinicId", Aadharno);
+      formdata.set("ReferClinicId", PatientDetails?.ClinicId);
+      if (PatientType === "OPD") {
+        formdata.append("token", prefix + randomNumber);
+        formdata.set("ConsultationFee", Doctorschedule?.appointmentcharge);
+        formdata.append("ConsultantDoctor", Doctor);
+        formdata.append("Dateofappointment", DOA);
+        formdata.append("starttime", srt[0]);
+        formdata.append("endtime", srt[1]);
+        formdata.append("ScheduleId", srt[2]);
+      }
+
       const config = {
         url: "/user/addPatient",
         method: "post",
         baseURL: "http://localhost:8521/api",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "multipart/form-data" },
         data: formdata,
       };
       let res = await axios(config);
@@ -328,10 +359,8 @@ function ReferFromClinicPatientList() {
     if (fileName) {
       if (data.length != 0) {
         exportFromJSON({ data, fileName, exportType });
-        // setfileName("");
       } else {
         alert("There is no data to export");
-        // setfileName("");
       }
     } else {
       alert("Enter file name to export");
@@ -343,7 +372,7 @@ function ReferFromClinicPatientList() {
   const [Doctor, setDoctor] = useState("");
   const [DOA, setDOA] = useState("");
   const [TOA, setTOA] = useState("");
-
+  const srt = TOA?.split("-");
   // Get Hospital Department
   const [GetDepartmentData, setGetDepartmentData] = useState([]);
   const GetDepartment = async () => {
@@ -377,6 +406,8 @@ function ReferFromClinicPatientList() {
       });
   };
 
+  console.log("Doctors",Doctors);
+
   const [selectedDoctorList1, setselectedDoctorList1] = useState([]);
   useEffect(() => {
     if (Department && Doctors?.length > 0) {
@@ -386,12 +417,16 @@ function ReferFromClinicPatientList() {
     }
   }, [Department]);
 
+  
+
   const [Doctorschedule, setDoctorschedule] = useState();
   useEffect(() => {
     setDoctorschedule(Doctors?.find((doc) => doc._id === Doctor));
     setTOA("");
   }, [Doctor, Department]);
 
+  console.log("Doctorschedule",Doctorschedule);
+  
   const [selecteTimearray, setselecteTimearray] = useState([]);
   useEffect(() => {
     if (DOA) {
@@ -402,12 +437,19 @@ function ReferFromClinicPatientList() {
     }
   }, [DOA]);
 
-
   useEffect(() => {
     setpatientAllergies(patientAllergies);
     setclickedAddAllergyBtn("");
     setallergy("");
   }, [clickedAddAllergyBtn]);
+
+  const generateRandomNumber = () => {
+    // Generate a random number between 1000 and 9999
+    const randomNumber = Math.floor(Math.random() * 9000) + 1000;
+    return randomNumber;
+  };
+  const prefix = "JAN";
+  const randomNumber = generateRandomNumber();
 
   useEffect(() => {
     getRefPatientList();
@@ -567,12 +609,12 @@ function ReferFromClinicPatientList() {
           />
         </div>
       </div>
-      <Modal 
-      show={show} 
-      onHide={handleClose} 
-      size="lg"
-      backdrop="static"
-      keyboard={false}
+      <Modal
+        show={show}
+        onHide={handleClose}
+        size="lg"
+        backdrop="static"
+        keyboard={false}
       >
         <Modal.Header closeButton>
           <Modal.Title>Approve Referal Patient</Modal.Title>
@@ -594,420 +636,444 @@ function ReferFromClinicPatientList() {
                 </Form.Select>
               </div>
             </div>
+            <br />
+
             {PatientType === "OPD" && (
               <>
-                <div className="row">
-                  <div className="col-md-6">
-                    <Form>
-                      <br />
-                      <label className="mb-1">Department</label>
-                      <br />
-                      <Form.Select
-                        aria-label="Default select example"
-                        onChange={(e) => setDepartment(e.target.value)}
-                      >
-                        <option>select department</option>
-                        {GetDepartmentData?.map((dep) => (
-                          <option value={dep?.DepartmentName}>
-                            {dep?.DepartmentName}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form>
+                <div className="p-2" style={{ border: "2px solid #20958c" }}>
+                  <div style={{ width: "fit-content" }}>
+                    <h3 style={{ borderBottom: "2px solid red" }}>
+                      Appointment Details :
+                    </h3>
                   </div>
-                  <div className="col-md-6">
-                    <Form>
-                      <br />
-                      <label className="mb-1">Doctor</label>
-                      <br />
-                      <Form.Select onChange={(e) => setDoctor(e.target.value)}>
-                        <option>Select</option>
-                        {selectedDoctorList1?.map((doc) => (
-                          <option value={doc?._id}>
-                            {doc?.Firstname}&nbsp;{doc?.Lastname}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form>
+                  <div className="row">
+                    <div className="col-md-6">
+                      <Form>
+                        <br />
+                        <label className="mb-1">Department</label>
+                        <br />
+                        <Form.Select
+                          aria-label="Default select example"
+                          onChange={(e) => setDepartment(e.target.value)}
+                        >
+                          <option>select department</option>
+                          {GetDepartmentData?.map((dep) => (
+                            <option value={dep?.DepartmentName}>
+                              {dep?.DepartmentName}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form>
+                    </div>
+                    <div className="col-md-6">
+                      <Form>
+                        <br />
+                        <label className="mb-1">Doctor</label>
+                        <br />
+                        <Form.Select
+                          onChange={(e) => setDoctor(e.target.value)}
+                        >
+                          <option>Select</option>
+                          {selectedDoctorList1?.map((doc) => (
+                            <option value={doc?._id}>
+                              {doc?.Firstname}&nbsp;{doc?.Lastname}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form>
+                    </div>
                   </div>
-                </div>
 
-                <div className="row">
-                  <div className="col-md-6">
-                    <Form>
-                      <br />
-                      <label className="mb-1">Date of Appointment</label>
-                      <br />
-                      <Form.Select
-                        aria-label="Default select example"
-                        onChange={(e) => setDOA(e.target.value)}
-                      >
-                        <option>select appointment</option>
-                        {Doctorschedule?.scheduleList
-                          ?.filter(
-                            (schedd) =>
-                              moment(schedd?.scheduleDate).isSameOrAfter(
-                                moment(),
-                                "day"
-                              ) && schedd?.bookingstatus === "Vacant"
-                          )
-                          ?.map((shedul) => {
-                            const formattedDate = moment(
-                              shedul?.scheduleDate
-                            ).format("DD-MM-YYYY");
-                            if (!uniqueDates.has(formattedDate)) {
-                              uniqueDates.add(formattedDate);
-                              return (
-                                <option
-                                  value={shedul?.scheduleDate}
-                                  key={shedul?.scheduleDate}
-                                >
-                                  {formattedDate}
-                                </option>
-                              );
-                            }
-                            return null; // Return null for duplicates, so they are not rendered
-                          })}
-                      </Form.Select>
-                    </Form>
-                  </div>
-                  <div className="col-md-6">
-                    <Form>
-                      <br />
-                      <label className="mb-1">Time of Appointment</label>
-                      <br />
-                      <Form.Select onChange={(e) => setTOA(e.target.value)}>
-                        <option>Select</option>
-                        {selecteTimearray?.map((shedul) => (
-                          <option
-                            value={`${shedul?.startTime}-${shedul?.endTime}-${shedul?._id}`}
-                          >
-                            {shedul?.startTime}-{shedul?.endTime}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form>
+                  <div className="row">
+                    <div className="col-md-6">
+                      <Form>
+                        <br />
+                        <label className="mb-1">Date of Appointment</label>
+                        <br />
+                        <Form.Select
+                          aria-label="Default select example"
+                          onChange={(e) => setDOA(e.target.value)}
+                        >
+                          <option>select appointment</option>
+                          {Doctorschedule?.scheduleList
+                            ?.filter(
+                              (schedd) =>
+                                moment(schedd?.scheduleDate).isSameOrAfter(
+                                  moment(),
+                                  "day"
+                                ) && schedd?.bookingstatus === "Vacant"
+                            )
+                            ?.map((shedul) => {
+                              const formattedDate = moment(
+                                shedul?.scheduleDate
+                              ).format("DD-MM-YYYY");
+                              if (!uniqueDates.has(formattedDate)) {
+                                uniqueDates.add(formattedDate);
+                                return (
+                                  <option
+                                    value={shedul?.scheduleDate}
+                                    key={shedul?.scheduleDate}
+                                  >
+                                    {formattedDate}
+                                  </option>
+                                );
+                              }
+                              return null; // Return null for duplicates, so they are not rendered
+                            })}
+                        </Form.Select>
+                      </Form>
+                    </div>
+                    <div className="col-md-6">
+                      <Form>
+                        <br />
+                        <label className="mb-1">Time of Appointment</label>
+                        <br />
+                        <Form.Select onChange={(e) => setTOA(e.target.value)}>
+                          <option>Select</option>
+                          {selecteTimearray?.map((shedul) => (
+                            <option
+                              value={`${shedul?.startTime}-${shedul?.endTime}-${shedul?._id}`}
+                            >
+                              {shedul?.startTime}-{shedul?.endTime}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form>
+                    </div>
                   </div>
                 </div>
               </>
             )}
-
-            <div className="row">
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">First Name :</label>
-                  <br />
-                  <Form.Control
-                  placeholder="first name"
-                    type="text"
-                    value={patientfirstname}
-                    onChange={(e) => setpatientfirstname(e.target.value)}
-                  />
-                </Form>
+            <br/>
+            <div className="p-2" style={{ border: "2px solid #20958c" }}>
+              <div style={{ width: "fit-content" }}>
+                <h3 style={{ borderBottom: "2px solid red" }}>
+                  Personal Information :
+                </h3>
               </div>
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">Last Name :</label>
-                  <br />
-                  <Form.Control
-                  placeholder="last name"
-                    type="text"
-                    value={patientlastname}
-                    onChange={(e) => setpatientlastname(e.target.value)}
-                  />
-                </Form>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">Gender :</label>
-                  <br />
-                  <Form.Select
-                    type="text"
-                    value={gender}
-                    onChange={(e) => setgender(e.target.value)}
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </Form.Select>
-                </Form>
-              </div>
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">Mobile No :</label>
-                  <br />
-                  <Form.Control
-                  placeholder="mobile no"
-                    type="text"
-                    value={mobileno}
-                    maxLength={10}
-                    onChange={(e) => setmobileno(e.target.value)}
-                  />
-                </Form>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">Alternative Mobile No :</label>
-                  <br />
-                  <Form.Control
-                    placeholder="Alternative number..!"
-                    maxLength={10}
-                    type="text"
-                    value={alternatePhoneNumber}
-                    onChange={(e) => setalternatePhoneNumber(e.target.value)}
-                  />
-                </Form>
-              </div>
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">Email Id :</label>
-                  <br />
-                  <Form.Control
-                  placeholder="Enter Email Id...!"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setemail(e.target.value)}
-                  />
-                </Form>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1"> Date of Birth :</label>
-                  <br />
-                  <Form.Control
-                    type="date"
-                    max={new Date().toISOString().split("T")[0]}
-                    value={DOB}
-                    onChange={(e) => setDOB(e.target.value)}
-                  />
-                </Form>
-              </div>
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">Profile Pic :</label>
-                  <br />
-                  <Form.Control
-                    type="file"
-                    value={email}
-                    accept="image/*"
-                    onChange={(e) => setProfilePic(e.target.files[0])}
-                  />
-                </Form>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1"> Address :</label>
-                  <br />
-                  <Form.Control
-                    placeholder="Street Address"
-                    type="text"
-                    value={Address}
-                    onChange={(e) => setAddress(e.target.value)}
-                  />
-                </Form>
-              </div>
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">Street Address Line 2 :</label>
-                  <br />
-                  <Form.Control
-                    type="text"
-                    placeholder="Street Address Line 2"
-                    value={Address1}
-                    onChange={(e) => setAddress1(e.target.value)}
-                  />
-                </Form>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1"> City :</label>
-                  <br />
-                  <Form.Control
-                    placeholder="City"
-                    type="text"
-                    value={City}
-                    onChange={(e) => setCity(e.target.value)}
-                  />
-                </Form>
-              </div>
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">State :</label>
-                  <br />
-                  <Form.Control
-                    placeholder=" State / Province"
-                    value={State}
-                    onChange={(e) => setState(e.target.value)}
-                  />
-                </Form>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1"> Zip Code :</label>
-                  <br />
-                  <Form.Control
-                    placeholder="Postal / Zip Code"
-                    maxLength={6}
-                    type="text"
-                    value={Zipcode}
-                    onChange={(e) => setZipcode(e.target.value)}
-                  />
-                </Form>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1"> Password :</label>
-                  <br />
-                  <div style={{ position: "relative" }}>
+              <div className="row">
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">First Name :</label>
+                    <br />
                     <Form.Control
-                      placeholder="Password"
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setpassword(e.target.value)}
-                      style={{ paddingRight: "30px" }} // Add padding to the right to make space for the icon
+                      placeholder="first name"
+                      type="text"
+                      value={patientfirstname}
+                      onChange={(e) => setpatientfirstname(e.target.value)}
                     />
-                    <span
-                      onClick={togglePasswordVisibility}
-                      style={{
-                        position: "absolute",
-                        right: "10px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {showPassword ? "🙈" : "🙉"}
-                    </span>
-                  </div>
-                </Form>
-              </div>
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">Confirm Password :</label>
-                  <br />
-                  <div style={{ position: "relative" }}>
+                  </Form>
+                </div>
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">Last Name :</label>
+                    <br />
                     <Form.Control
-                      placeholder="Confirm Password"
-                      type={showPassword ? "text" : "password"}
-                      value={conpassword}
-                      onChange={(e) => setconpassword(e.target.value)}
-                      style={{ paddingRight: "30px" }} // Add padding to the right to make space for the icon
+                      placeholder="last name"
+                      type="text"
+                      value={patientlastname}
+                      onChange={(e) => setpatientlastname(e.target.value)}
                     />
-                    <span
-                      onClick={togglePasswordVisibility}
-                      style={{
-                        position: "absolute",
-                        right: "10px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {showPassword ? "🙈" : "🙉"}
-                    </span>
-                  </div>
-                </Form>
+                  </Form>
+                </div>
               </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1"> Marrital Status :</label>
-                  <br />
-                  <div style={{ position: "relative" }}>
+              <div className="row">
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">Gender :</label>
+                    <br />
                     <Form.Select
-                      value={MaritalStatus}
-                      onChange={(e) => setMaritalStatus(e.target.value)}
+                      type="text"
+                      value={gender}
+                      onChange={(e) => setgender(e.target.value)}
                     >
-                      <option value="">Select Option</option>
-                      <option value="Single">Single</option>
-                      <option value="Married">Married</option>
-                      <option value="Divorce">Divorce</option>
-                      <option value="Complicated">Complicated</option>
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
                     </Form.Select>
-                  </div>
-                </Form>
+                  </Form>
+                </div>
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">Mobile No :</label>
+                    <br />
+                    <Form.Control
+                      placeholder="mobile no"
+                      type="text"
+                      value={mobileno}
+                      maxLength={10}
+                      onChange={(e) => setmobileno(e.target.value)}
+                    />
+                  </Form>
+                </div>
               </div>
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">Age is 18+ :</label>
-                  <br />
-                  <div style={{ position: "relative" }}>
-                    <Form.Select
-                      value={PatientAge18}
-                      onChange={(e) => setPatientAge18(e.target.value)}
-                    >
-                      <option value="">Select Option</option>
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
-                    </Form.Select>
-                  </div>
-                </Form>
+              <div className="row">
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">Alternative Mobile No :</label>
+                    <br />
+                    <Form.Control
+                      placeholder="Alternative number..!"
+                      maxLength={10}
+                      type="text"
+                      value={alternatePhoneNumber}
+                      onChange={(e) => setalternatePhoneNumber(e.target.value)}
+                    />
+                  </Form>
+                </div>
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">Email Id :</label>
+                    <br />
+                    <Form.Control
+                      placeholder="Enter Email Id...!"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setemail(e.target.value)}
+                    />
+                  </Form>
+                </div>
               </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1"> Aadhar Card :</label>
-                  <br />
-                  <div style={{ position: "relative" }}>
+              <div className="row">
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1"> Date of Birth :</label>
+                    <br />
+                    <Form.Control
+                      type="date"
+                      max={new Date().toISOString().split("T")[0]}
+                      value={DOB}
+                      onChange={(e) => setDOB(e.target.value)}
+                    />
+                  </Form>
+                </div>
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">Profile Pic :</label>
+                    <br />
                     <Form.Control
                       type="file"
                       accept="image/*"
-                      onChange={(e) => setAadharcard(e.target.files[0])}
+                      onChange={(e) => setProfilePic(e.target.files[0])}
                     />
-                  </div>
-                </Form>
+                  </Form>
+                </div>
               </div>
-              <div className="col-md-6">
-                <Form>
-                  <br />
-                  <label className="mb-1">Aadhar No :</label>
-                  <br />
-                  <div style={{ position: "relative" }}>
-                    <Form.Select
-                      placeholder="Enter Aadhar Card No"
-                      maxLength={12}
-                      value={Aadharno}
-                      onChange={(e) => setAadharno(e.target.value)}
+              <div className="row">
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1"> Address :</label>
+                    <br />
+                    <Form.Control
+                      placeholder="Street Address"
+                      type="text"
+                      value={Address}
+                      onChange={(e) => setAddress(e.target.value)}
                     />
-                  </div>
-                </Form>
+                  </Form>
+                </div>
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">Street Address Line 2 :</label>
+                    <br />
+                    <Form.Control
+                      type="text"
+                      placeholder="Street Address Line 2"
+                      value={Address1}
+                      onChange={(e) => setAddress1(e.target.value)}
+                    />
+                  </Form>
+                </div>
               </div>
-            </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1"> City :</label>
+                    <br />
+                    <Form.Control
+                      placeholder="City"
+                      type="text"
+                      value={City}
+                      onChange={(e) => setCity(e.target.value)}
+                    />
+                  </Form>
+                </div>
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">State :</label>
+                    <br />
+                    <Form.Control
+                      placeholder=" State / Province"
+                      value={State}
+                      onChange={(e) => setState(e.target.value)}
+                    />
+                  </Form>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1"> Zip Code :</label>
+                    <br />
+                    <Form.Control
+                      placeholder="Postal / Zip Code"
+                      maxLength={6}
+                      type="text"
+                      value={Zipcode}
+                      onChange={(e) => setZipcode(e.target.value)}
+                    />
+                  </Form>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1"> Password :</label>
+                    <br />
+                    <div style={{ position: "relative" }}>
+                      <Form.Control
+                        placeholder="Password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setpassword(e.target.value)}
+                        style={{ paddingRight: "30px" }} // Add padding to the right to make space for the icon
+                      />
+                      <span
+                        onClick={togglePasswordVisibility}
+                        style={{
+                          position: "absolute",
+                          right: "10px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {showPassword ? "🙈" : "🙉"}
+                      </span>
+                    </div>
+                  </Form>
+                </div>
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">Confirm Password :</label>
+                    <br />
+                    <div style={{ position: "relative" }}>
+                      <Form.Control
+                        placeholder="Confirm Password"
+                        type={showPassword ? "text" : "password"}
+                        value={conpassword}
+                        onChange={(e) => setconpassword(e.target.value)}
+                        style={{ paddingRight: "30px" }} // Add padding to the right to make space for the icon
+                      />
+                      <span
+                        onClick={togglePasswordVisibility}
+                        style={{
+                          position: "absolute",
+                          right: "10px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {showPassword ? "🙈" : "🙉"}
+                      </span>
+                    </div>
+                  </Form>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1"> Marrital Status :</label>
+                    <br />
+                    <div style={{ position: "relative" }}>
+                      <Form.Select
+                        value={MaritalStatus}
+                        onChange={(e) => setMaritalStatus(e.target.value)}
+                      >
+                        <option value="">Select Option</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorce">Divorce</option>
+                        <option value="Complicated">Complicated</option>
+                      </Form.Select>
+                    </div>
+                  </Form>
+                </div>
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">Age is 18+ :</label>
+                    <br />
+                    <div style={{ position: "relative" }}>
+                      <Form.Select
+                        value={PatientAge18}
+                        onChange={(e) => setPatientAge18(e.target.value)}
+                      >
+                        <option value="">Select Option</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </Form.Select>
+                    </div>
+                  </Form>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1"> Aadhar Card :</label>
+                    <br />
+                    <div style={{ position: "relative" }}>
+                      <Form.Control
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setAadharcard(e.target.files[0])}
+                      />
+                    </div>
+                  </Form>
+                </div>
+                <div className="col-md-6">
+                  <Form>
+                    <br />
+                    <label className="mb-1">Aadhar No :</label>
+                    <br />
+                    <div style={{ position: "relative" }}>
+                      <Form.Control
+                        placeholder="Enter Aadhar Card No"
+                        maxLength={12}
+                        value={Aadharno}
+                        onChange={(e) => setAadharno(e.target.value)}
+                      />
+                    </div>
+                  </Form>
+                </div>
+              </div>
+            </div><br/>
+
+            <div className="p-2" style={{ border: "2px solid #20958c" }}>
+            <div style={{ width: "fit-content" }}>
+                <h3 style={{ borderBottom: "2px solid red" }}>
+                  Relative Information :
+                </h3>
+              </div>
             <div className="row">
               <div className="col-md-6">
                 <Form>
@@ -1030,7 +1096,7 @@ function ReferFromClinicPatientList() {
                   <label className="mb-1">Relative Name :</label>
                   <br />
                   <div style={{ position: "relative" }}>
-                    <Form.Select
+                    <Form.Control
                       placeholder="Relative Name"
                       value={relativeName}
                       onChange={(e) => setrelativeName(e.target.value)}
@@ -1043,7 +1109,7 @@ function ReferFromClinicPatientList() {
               <div className="col-md-6">
                 <Form>
                   <br />
-                  <label className="mb-1">Relation with patient :</label>
+                  <label className="mb-1">Relative No :</label>
                   <br />
                   <div style={{ position: "relative" }}>
                     <Form.Control
@@ -1057,7 +1123,15 @@ function ReferFromClinicPatientList() {
                 </Form>
               </div>
             </div>
-            <div className="row">
+            </div>
+            <br/>
+          <div className="p-2" style={{ border: "2px solid #20958c" }}>
+          <div style={{ width: "fit-content" }}>
+                <h3 style={{ borderBottom: "2px solid red" }}>
+                  Admission Information :
+                </h3>
+              </div>
+          <div className="row">
               <div className="col-md-6">
                 <Form>
                   <br />
@@ -1130,7 +1204,7 @@ function ReferFromClinicPatientList() {
                     <Form>
                       <br />
                       <label className="mb-1">
-                      Health Insurance Provider :
+                        Health Insurance Provider :
                       </label>
                       <br />
                       <div style={{ position: "relative" }}>
@@ -1147,9 +1221,7 @@ function ReferFromClinicPatientList() {
                   <div className="col-md-6">
                     <Form>
                       <br />
-                      <label className="mb-1">
-                      Health Insurance Amount :
-                      </label>
+                      <label className="mb-1">Health Insurance Amount :</label>
                       <br />
                       <div style={{ position: "relative" }}>
                         <Form.Control
@@ -1163,122 +1235,118 @@ function ReferFromClinicPatientList() {
                 </>
               )}
             </div>
-            <br/>
+          </div>
+          
+            <br />
             <div className="row">
-             
-            <div className="col-lg-6">
-              Taking any medications, currently?
-            </div>
-            <div className="col-lg-6" style={{ color: "white" }}>
-              <div className="row">
-                <div className="col-lg-3">
-                  <input
-                    type="checkbox"
-                    checked={medications === true}
-                    onChange={() => setmedications(true)}
-                  />
-                  Yes
-                </div>
+              <div className="col-lg-6">Taking any medications, currently?</div>
+              <div className="col-lg-6" style={{ color: "white" }}>
+                <div className="row">
+                  <div className="col-lg-3">
+                    <input
+                      type="checkbox"
+                      checked={medications === true}
+                      onChange={() => setmedications(true)}
+                    />
+                    Yes
+                  </div>
 
-                <div className="col-lg-3">
-                  <input
-                    type="checkbox"
-                    checked={medications === false}
-                    onChange={() => setmedications(false)}
-                  />
-                  No
+                  <div className="col-lg-3">
+                    <input
+                      type="checkbox"
+                      checked={medications === false}
+                      onChange={() => setmedications(false)}
+                    />
+                    No
+                  </div>
                 </div>
               </div>
-            
-            </div>
-            {medications ? (
-              <>
-                <label style={{ marginTop: "4%" }}>
-                  If yes, please list it here
-                </label>
-                <div
-                  className="col-lg-12"
-                  style={{ color: "white", textAlign: "center" }}
-                >
-                  <textarea
-                    cols={6}
-                    placeholder="Please list all medications"
-                    value={medicinesTaking}
-                    onChange={(e) => setmedicinesTaking(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "8px 20px",
-                      borderRadius: "0px",
-                    }}
-                  />
-                </div>
-              </>
-            ) : null}
+              {medications ? (
+                <>
+                  <label style={{ marginTop: "4%" }}>
+                    If yes, please list it here
+                  </label>
+                  <div
+                    className="col-lg-12"
+                    style={{ color: "white", textAlign: "center" }}
+                  >
+                    <textarea
+                      cols={6}
+                      placeholder="Please list all medications"
+                      value={medicinesTaking}
+                      onChange={(e) => setmedicinesTaking(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: "8px 20px",
+                        borderRadius: "0px",
+                      }}
+                    />
+                  </div>
+                </>
+              ) : null}
             </div>
             <div className="row">
-            <div className="col-lg-6">
-              <div
-                className="row"
-                style={{
-                  display: "flex",
-                  alignItems: "baseline",
-                }}
-              >
-                <div className="col-lg-3">
-                  <h6 style={{ marginTop: "6%" }}>
-                    Allergies:
-                  </h6>
-                </div>
-                <div className="col-lg-6">
-                  <input
-                    type="text"
-                    value={allergy}
-                    style={{
-                      width: "100%",
-                      padding: "8px 20px",
-                      border: "1px solid #ebebeb",
-                      backgroundColor: "#ebebeb",
-                      marginTop: "6%",
-                    }}
-                    onChange={(e) => setallergy(e.target.value)}
-                    placeholder="write allergy "
-                  />
-                </div>
-                <div className="col-lg-3">
-                  <Button
-                    variant="warning"
-                    onClick={() => {
-                      patientAllergies.push(allergy);
-                      setclickedAddAllergyBtn("clicked");
-                    }}
-                  >
-                    Add
-                  </Button>
+              <div className="col-lg-6">
+                <div
+                  className="row"
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                  }}
+                >
+                  <div className="col-lg-3">
+                    <h6 style={{ marginTop: "6%" }}>Allergies:</h6>
+                  </div>
+                  <div className="col-lg-6">
+                    <input
+                      type="text"
+                      value={allergy}
+                      style={{
+                        width: "100%",
+                        padding: "8px 20px",
+                        border: "1px solid #ebebeb",
+                        backgroundColor: "#ebebeb",
+                        marginTop: "6%",
+                      }}
+                      onChange={(e) => setallergy(e.target.value)}
+                      placeholder="write allergy "
+                    />
+                  </div>
+                  <div className="col-lg-3">
+                    <Button
+                      variant="warning"
+                      onClick={() => {
+                        patientAllergies.push(allergy);
+                        setclickedAddAllergyBtn("clicked");
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-lg-6 mt-3">
-              <div style={{ padding: "5px", backgroundColor: "white" }}>
-                <Table responsive bordered>
-                  <thead>
-                    <tr>
-                      <th>S.N.</th>
-                      <th>Allergies</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {patientAllergies?.map((item, i) => {
-                      return (
-                        <tr>
-                          <td>{++i}</td>
-                          <td>{item}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
+              <div className="col-lg-6 mt-3">
+                <div style={{ padding: "5px", backgroundColor: "white" }}>
+                  <Table responsive bordered>
+                    <thead>
+                      <tr>
+                        <th>S.N.</th>
+                        <th>Allergies</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {patientAllergies?.map((item, i) => {
+                        return (
+                          <tr>
+                            <td>{++i}</td>
+                            <td>{item}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </Table>
+                </div>
               </div>
-            </div>
             </div>
           </div>
         </Modal.Body>
@@ -1286,10 +1354,7 @@ function ReferFromClinicPatientList() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button
-            variant="success"
-            // onClick={(e) => ReferpatientOPDregister(e)}
-          >
+          <Button variant="success" onClick={(e) => ReferpatientOPDregister(e)}>
             <FontAwesomeIcon icon={faCheck} className="fs-5 me-2" />
             Approve
           </Button>
