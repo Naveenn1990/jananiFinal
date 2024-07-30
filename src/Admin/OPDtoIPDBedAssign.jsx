@@ -213,7 +213,7 @@ export default function OPDtoIPDBedAssign() {
     }
   }
 
-  console.log("same: ", JSON.parse(IpdCause));
+  // console.log("same: ", JSON.parse(IpdCause));
 
   return (
     <div style={{ padding: "20px" }}>

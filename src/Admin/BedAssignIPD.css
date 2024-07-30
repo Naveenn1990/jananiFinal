@@ -1,26 +1,32 @@
-.main-container{
+.main-container-bed-assign{
     padding: 10px;
     margin: 10px;
 }
 
-.main-heading{
+.main-heading-bed-assign{
     font-size: 22px;
     font-weight: 600;
     color: grey;
 }
 
-.container{
+.container-bed-assign{
     margin-top: 10px;
     background-color: #20958c;
     padding: 10px;
     color: white;
 }
 
-.cause-name{
+.cause-name-bed-assign{
     margin-left: 10px;
     font-weight: bold;
 }
 
-.cause-input{
+.cause-input-bed-assign{
     margin-left: 20px;
+}
+
+.current-bed-info-bed-assign{
+    margin: 10px;
+    padding: 10px;
+    border: 2px solid #20958c;
 }

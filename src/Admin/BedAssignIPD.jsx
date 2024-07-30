@@ -135,7 +135,7 @@ export default function BedAssignIPD() {
         handleClose99();
         handleCloseCheckAvailability();
         alert("Patient assigned");
-        opdtoipdFn();
+        navigate("/admin/Inpatientlist");
       }
     } catch (error) {
       console.log(error.response);
@@ -152,6 +152,20 @@ export default function BedAssignIPD() {
       handleCloseCheckAvailability();
       return alert("Please choose the cause first");
     }
+    if (
+      IpdCause &&
+      JSON.parse(IpdCause)?.causeBillDetails?.length &&
+      JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]
+    ) {
+      if (
+        !assignedBedInfo?.floor ||
+        !assignedBedInfo?.wardName ||
+        !assignedBedInfo?.bedName
+      ) {
+        return alert("Please try again!");
+      }
+    }
+
     try {
       const config = {
         url: `/admin/editBed`,
@@ -164,6 +178,12 @@ export default function BedAssignIPD() {
           roomid: allBedList99?._id,
           bedid: BedDetails98?._id,
           patientId: state.PatientDetailsView?._id,
+
+          // for transfering patient
+          buildingName: assignedBedInfo?.buildingName,
+          floorname: assignedBedInfo?.floor,
+          wardname: assignedBedInfo?.wardName,
+          bedname: assignedBedInfo?.bedName,
         },
       };
       axios(config)
@@ -181,45 +201,27 @@ export default function BedAssignIPD() {
     }
   };
 
-  async function opdtoipdFn() {
-    try {
-      const config = {
-        url: `/user/makeOPDtoIPD`,
-        method: "put",
-        baseURL: "http://localhost:8521/api",
-        headers: { "content-type": "application/json" },
-        data: {
-          patientid: state.PatientDetailsView?._id,
-          causeid: JSON.parse(IpdCause)?._id,
-        },
-      };
-      let response = await axios(config);
-      if (response.status === 200) {
-        alert(response.data.success);
-        navigate("/admin/opdtoipd");
-        // getcategory();
-        // handleClose1();
-      }
-    } catch (error) {
-      console.log(error);
-      return alert("Something went wrong!");
+  const [assignedBedInfo, setAssignedBedInfo] = useState({});
+  useEffect(() => {
+    if (
+      IpdCause &&
+      JSON.parse(IpdCause)?.causeBillDetails?.length &&
+      JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]
+    ) {
+      let arr = [
+        ...JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"],
+      ];
+      setAssignedBedInfo({ ...arr[arr.length - 1] });
     }
-  }
-
-  //   console.log(
-  //     "same: ",
-  //     IpdCause &&
-  //       JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]?.length,
-  //     IpdCause && JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]
-  //   );
+  }, [IpdCause]);
 
   return (
-    <div className="main-container">
+    <div className="main-container-bed-assign">
       <div>
         <div>
-          <h6 className="main-heading">Assign Bed</h6>
+          <h6 className="main-heading-bed-assign">Assign Bed</h6>
         </div>
-        <div className="container">
+        <div className="container-bed-assign">
           <b>Choose Cause</b>
         </div>
         <div>
@@ -237,7 +239,7 @@ export default function BedAssignIPD() {
             </span>
             )
           </div>
-          <div className="cause-input">
+          <div className="cause-input-bed-assign">
             {state?.PatientDetailsView?.cause?.map((item, i) => {
               return (
                 <div className="d-flex mt-2">
@@ -250,21 +252,70 @@ export default function BedAssignIPD() {
                       onClick={() => setIpdCause(JSON.stringify(item))}
                     />
                   </div>
-                  <div className="cause-name">{item?.CauseName}</div>
+                  <div className="cause-name-bed-assign">{item?.CauseName}</div>
                 </div>
               );
             })}
           </div>
         </div>
-        <div className="container">
-          {/* {IpdCause &&
+        <div className="container-bed-assign">
+          {IpdCause &&
+          JSON.parse(IpdCause)?.causeBillDetails?.length &&
           JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]
             ?.length ? (
             <b>Transfer Bed</b>
-          ) : ( */}
-          <b>Assign Bed</b>
-          {/* )} */}
+          ) : (
+            <b>Assign Bed</b>
+          )}
         </div>
+
+        {/* for Current Bed Information */}
+        {IpdCause &&
+        JSON.parse(IpdCause)?.causeBillDetails?.length &&
+        JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]?.length ? (
+          <div className="current-bed-info-bed-assign">
+            <b>Assigned Bed Information</b>
+            <div className="d-flex">
+              <div>
+                <Table>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <b>Building</b>
+                      </td>
+                      <td>{assignedBedInfo?.buildingName}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Floor</b>
+                      </td>
+                      <td>{assignedBedInfo?.floor}</td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </div>
+              <div>
+                <Table>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <b>Ward</b>
+                      </td>
+                      <td>{assignedBedInfo?.wardName}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>Bed</b>
+                      </td>
+                      <td>{assignedBedInfo?.bedName}</td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         <div>
           <div className="row">
             {BuildingList?.map((item) => {
@@ -717,29 +768,6 @@ export default function BedAssignIPD() {
                             <div>{BedDetails98?.bedCostNonInsurance}</div>
                           </div>
                         </td>
-                        {/* {BedDetails98?.bedOccupied === "available" ? (
-                          <td>
-                            <div>
-                              <label>
-                                <b>Assign Patient</b>
-                              </label>
-                              <div>
-                                <Autocomplete
-                                  disablePortal
-                                  id="combo-box-demo"
-                                  options={updatedIPDPatients}
-                                  value={selectedIPDObj}
-                                  onChange={handleselectedIPDChange}
-                                  renderInput={(params) => (
-                                    <TextField {...params} label="patient" />
-                                  )}
-                                />
-                              </div>
-                            </div>
-                          </td>
-                        ) : (
-                          <></>
-                        )} */}
                       </tr>
                     </tbody>
                   </Table>
