@@ -590,8 +590,6 @@ export default function Inpatientlist() {
     }
   }, [EditPatientDetails]);
 
-  console.log("relativePhone :", relativePhone);
-
   const EditPatient = async () => {
     try {
       formdata.set("IPDpatientId", EditPatientDetails?._id);
@@ -3567,7 +3565,7 @@ export default function Inpatientlist() {
       <Modal show={show12} onHide={handleClose12}>
         <Modal.Header closeButton>
           <Modal.Title>
-            Edit{" "}
+            View {" "}
             <span style={{ color: "red" }}>
               "
               {`${PatientDetailsView?.Firstname} ${PatientDetailsView?.Lastname}`}
@@ -3619,6 +3617,7 @@ export default function Inpatientlist() {
           </Button>
         </Modal.Footer>
       </Modal>
+
       <Modal
         show={show13}
         onHide={handleClose13}
@@ -3647,7 +3646,7 @@ export default function Inpatientlist() {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="success" onClick={handleClose13}>
-            Cancle
+            Cancel
           </Button>
           <Button variant="danger" onClick={DeletePatient}>
             <FontAwesomeIcon icon={faCancel} className=" me-2" />
