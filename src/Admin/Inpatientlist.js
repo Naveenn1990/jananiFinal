@@ -10,7 +10,7 @@ import { CiBarcode } from "react-icons/ci";
 import { useReactToPrint } from "react-to-print";
 import { GrView } from "react-icons/gr";
 import moment from "moment";
-import { FaPlus } from "react-icons/fa";
+import { FaBed, FaPlus } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCancel } from "@fortawesome/free-solid-svg-icons";
 import { LuView } from "react-icons/lu";
@@ -20,6 +20,7 @@ export default function Inpatientlist() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const [IpdCause, setIpdCause] = useState("");
   const [ShowReferDetails, setShowReferDetails] = useState(false);
 
   const [ViewBarcode, setViewBarcode] = useState({});
@@ -81,6 +82,8 @@ export default function Inpatientlist() {
   const [show14, setShow14] = useState(false);
   const handleClose14 = () => setShow14(false);
   const handleShow14 = () => setShow14(true);
+
+  const [show15, setShow15] = useState(false);
 
   const [medications, setmedications] = useState(false);
   const [medicinesTaking, setmedicinesTaking] = useState();
@@ -587,8 +590,6 @@ export default function Inpatientlist() {
     }
   }, [EditPatientDetails]);
 
-  console.log("relativePhone :", relativePhone);
-
   const EditPatient = async () => {
     try {
       formdata.set("IPDpatientId", EditPatientDetails?._id);
@@ -634,6 +635,19 @@ export default function Inpatientlist() {
   useEffect(() => {
     setLengthOfCauseArr(PatientDetailsView?.cause?.length);
   }, [PatientDetailsView]);
+
+  const [assignedBedInfo, setAssignedBedInfo] = useState([]);
+  useEffect(() => {
+    if (
+      IpdCause &&
+      JSON.parse(IpdCause)?.causeBillDetails?.length &&
+      JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]
+    ) {
+      setAssignedBedInfo([
+        ...JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"],
+      ]);
+    }
+  }, [IpdCause]);
 
   return (
     <div>
@@ -2614,6 +2628,7 @@ export default function Inpatientlist() {
               <th>D.O.B</th>
               <th>Bar-Code</th>
               <th>Add-Cause</th>
+              <th>Assign Bed</th>
               <th>Admission Form</th>
               <th>Visitors</th>
               <th>Consent Forms</th>
@@ -2705,13 +2720,36 @@ export default function Inpatientlist() {
                     </div>
                   </td>
                   <td>
+                    <div>
+                      <Button
+                        onClick={() =>
+                          navigate("/admin/BedAssignIPD", {
+                            state: { PatientDetailsView: item },
+                          })
+                        }
+                      >
+                        Assign Bed
+                      </Button>
+                    </div>
+                    <div style={{ marginTop: "10px" }}>
+                      <Button
+                        onClick={() => {
+                          setPatientDetailsView(item);
+                          setShow15(true);
+                        }}
+                      >
+                        Beds-list
+                      </Button>
+                    </div>
+                  </td>
+                  <td>
                     <Button
                       onClick={() => {
                         handleShow9();
                         setAdmissionForm(item);
                       }}
                     >
-                      Admission From
+                      Admission Form
                     </Button>
                   </td>
 
@@ -3527,7 +3565,7 @@ export default function Inpatientlist() {
       <Modal show={show12} onHide={handleClose12}>
         <Modal.Header closeButton>
           <Modal.Title>
-            Edit{" "}
+            View {" "}
             <span style={{ color: "red" }}>
               "
               {`${PatientDetailsView?.Firstname} ${PatientDetailsView?.Lastname}`}
@@ -3579,6 +3617,7 @@ export default function Inpatientlist() {
           </Button>
         </Modal.Footer>
       </Modal>
+
       <Modal
         show={show13}
         onHide={handleClose13}
@@ -3607,11 +3646,127 @@ export default function Inpatientlist() {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="success" onClick={handleClose13}>
-            Cancle
+            Cancel
           </Button>
           <Button variant="danger" onClick={DeletePatient}>
             <FontAwesomeIcon icon={faCancel} className=" me-2" />
             Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={show15}
+        size="md"
+        onHide={() => {
+          setAssignedBedInfo([]);
+          setShow15(false);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Assigned Bed History</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <b style={{ color: "white" }}>Choose Cause</b>
+          </div>
+          <div>
+            {PatientDetailsView?.cause?.map((item, i) => {
+              return (
+                <div className="d-flex align-items-center mt-2">
+                  <input
+                    type="radio"
+                    name="ipd_cause"
+                    id={`cause${i}`}
+                    value="HTML"
+                    onClick={() => setIpdCause(JSON.stringify(item))}
+                    style={{ height: "20px", width: "16px" }}
+                  />
+
+                  <div style={{ color: "white", marginLeft: "5px" }}>
+                    {item?.CauseName}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {IpdCause &&
+          JSON.parse(IpdCause)?.causeBillDetails?.length &&
+          JSON.parse(IpdCause)?.causeBillDetails[0]["BedBillDetails"]
+            ?.length ? (
+            <div style={{ marginTop: "10px", color: "white" }}>
+              <b>Assigned Bed Information</b>
+              <div style={{ height: "250px", overflow: "hidden scroll" }}>
+                {assignedBedInfo?.map((val, i) => {
+                  return (
+                    <div
+                      className="d-flex align-items-center justify-content-around"
+                      style={{
+                        border: "2px solid white",
+                        margin: "10px",
+                        padding: "10px",
+                        color: "white",
+                      }}
+                    >
+                      <div>
+                        <Table bordered>
+                          <tbody>
+                            <tr>
+                              <td>
+                                <b>Building</b>
+                              </td>
+                              <td>{val?.buildingName}</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <b>Floor</b>
+                              </td>
+                              <td>{val?.floor}</td>
+                            </tr>
+
+                            <tr>
+                              <td>
+                                <b>Ward</b>
+                              </td>
+                              <td>{val?.wardName}</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <b>Bed</b>
+                              </td>
+                              <td>{val?.bedName}</td>
+                            </tr>
+                          </tbody>
+                        </Table>
+                      </div>
+
+                      <div>
+                        <FaBed
+                          style={{
+                            fontSize: "124px",
+                            color:
+                              i === assignedBedInfo?.length - 1
+                                ? "red"
+                                : "white",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setAssignedBedInfo([]);
+              setShow15(false);
+            }}
+          >
+            Close
           </Button>
         </Modal.Footer>
       </Modal>

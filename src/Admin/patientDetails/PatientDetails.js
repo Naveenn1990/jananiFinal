@@ -208,7 +208,7 @@ const PatientDetails = () => {
               })}
             </select>
           </div>
-          <ConsentView SelectCause={SelectCause} />
+          <ConsentView SelectCause={SelectCause} patientdetail={patientdetail}/>
         </>
       ) : patientform ? (
         <>

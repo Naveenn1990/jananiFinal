@@ -6,7 +6,7 @@ import InformedConsent from "./InformedConsent";
 import AnesthesiaConsent from "./AnesthesiaConsent";
 import Badge from "react-badges";
 
-const ConsentView = ({ SelectCause }) => {
+const ConsentView = ({ SelectCause ,patientdetail }) => {
   let generalcform = "GeneralConsentForms";
   let Hospitalizedcform = "HospitalizedConsentForms";
   let Highriskcform = "HighriskConsentForms";
@@ -156,13 +156,13 @@ const ConsentView = ({ SelectCause }) => {
         )}
       </div>
       {generalConsent ? (
-        <GeneralConsent viewGeneralConsentform={GeneralCForm} />
+        <GeneralConsent viewGeneralConsentform={GeneralCForm} patientdetail={patientdetail}/>
       ) : hospitalizedConsent ? (
-        <EstimatedCharge HospitalizedCForm={HospitalizedCForm} />
+        <EstimatedCharge HospitalizedCForm={HospitalizedCForm} patientdetail={patientdetail} />
       ) : informedConsent ? (
-        <InformedConsent HighRiskCForm={HighRiskCForm} />
+        <InformedConsent HighRiskCForm={HighRiskCForm} patientdetail={patientdetail}/>
       ) : anesthesiaConsent ? (
-        <AnesthesiaConsent AnesthesiaCForm={AnesthesiaCForm} />
+        <AnesthesiaConsent AnesthesiaCForm={AnesthesiaCForm} patientdetail={patientdetail} />
       ) : (
         <></>
       )}

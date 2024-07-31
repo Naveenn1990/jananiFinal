@@ -17,6 +17,7 @@ export default function Sidebar1() {
   const [Vendor, setVendor] = useState(false);
   const [Pharmacy, setPharmacy] = useState(false);
   const [HosM, setHosM] = useState(false);
+  const [BedM, setBedM] = useState(false);
 
   function logoutAdmin() {
     sessionStorage.removeItem("adminDetails");
@@ -101,6 +102,9 @@ export default function Sidebar1() {
               }}
             >
               <h6 className="sidebarItem1">IPD Patient List</h6>
+              <Link to="/admin/ipdpatientlist">
+                <h6 className="sidebarItem1">IPD Patient List</h6>
+              </Link>
             </div>
           </>
         ) : null}
@@ -383,13 +387,26 @@ export default function Sidebar1() {
         </div>
 
         {admin?.bedManagement === true ? (
-          <h6
-            className="sidebarItem"
-            onClick={() => navigate("/admin/Bedmanagement")}
-          >
-            Bed management
+          <h6 className="sidebarItem" onClick={() => setBedM(!BedM)}>
+            Bed management{BedM ? <IoIosArrowUp /> : <IoIosArrowDown />}
           </h6>
         ) : null}
+        <div
+          style={{
+            display: BedM ? "block" : "none",
+            backgroundColor: "#d0f7f4",
+          }}
+        >
+          <h6 className="sidebarItem1" onClick={() => navigate("/admin/wards")}>
+            Wards
+          </h6>
+          <h6
+            className="sidebarItem1"
+            onClick={() => navigate("/admin/Bedmanagement")}
+          >
+            Bed
+          </h6>
+        </div>
 
         {admin?.accounts === true ? (
           <h6
