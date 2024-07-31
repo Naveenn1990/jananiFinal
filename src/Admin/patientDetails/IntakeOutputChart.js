@@ -5,7 +5,7 @@ import { Button, Table } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
 import { useReactToPrint } from "react-to-print";
 
-const IntakeOutputChart = ({Intakeoutlist,patientdetail}) => {
+const IntakeOutputChart = ({Intakeoutlist,patientdetail,cause}) => {
   
   const [Doctor, setDoctor] = useState([])
   useEffect(() => {
@@ -51,7 +51,7 @@ const IntakeOutputChart = ({Intakeoutlist,patientdetail}) => {
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">
-        <Button
+        {/* <Button
           style={{
             padding: "6px",
             border: "none",
@@ -63,7 +63,7 @@ const IntakeOutputChart = ({Intakeoutlist,patientdetail}) => {
           onClick={handleprint}
         >
           Print <FiDownload />
-        </Button>
+        </Button> */}
       </div>
       <div className="text-center mt-1">
         {" "}
@@ -156,7 +156,13 @@ const IntakeOutputChart = ({Intakeoutlist,patientdetail}) => {
                     IP ID:{" "}{patientdetail?.PatientId}
                   </td>
                   <td style={{ width: "15%", border: "2px  solid #20958C" }}>
-                    Ward:
+                    Ward :
+                    {
+                      cause?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.bedName}</span>
+                        )
+                      })}
                   </td>
                 </tr>
                 <tr>
@@ -164,13 +170,23 @@ const IntakeOutputChart = ({Intakeoutlist,patientdetail}) => {
                     colSpan={5}
                     style={{ width: "", border: "2px  solid #20958C" }}
                   >
-                    Dept:{" "}
+                    Dept:{" "}{
+                      cause?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.wardtype}</span>
+                        )
+                      })}
                   </td>
                   <td
                     colSpan={5}
                     style={{ width: "50%", border: "2px  solid #20958C" }}
                   >
-                    Doctor:{" "}{`${Doctor?.[0]?.doctorsId?.Firstname} ${Doctor?.[0]?.doctorsId?.Lastname}`}
+                    Doctor:  <br/>
+                    {patientdetail?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                   </td>
                 </tr>
               </tbody>

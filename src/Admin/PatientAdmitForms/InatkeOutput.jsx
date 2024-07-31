@@ -74,9 +74,7 @@ const InatkeOutput = () => {
   }, [SelectDoctor, patientdetails]);
 
   const submitIntakeOut = async () => {
-    if(!SelectDoctor){
-      return alert("Please Select Doctor")
-    }
+   
     if(!IODate){
       return alert("Please Select date")
     }
@@ -137,6 +135,33 @@ const InatkeOutput = () => {
       alert(error.response.data.error);
     }
   };
+
+  const [userdetail, setuserdetail] = useState({});
+  const getpatientbyid = async () => {
+    try {
+      let res = await axios.get(
+        `http://localhost:8521/api/user/getPatientDetailByid/${patientdetails?._id}`
+      );
+      if (res.status === 200) {
+        setuserdetail(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getpatientbyid();
+  }, []);
+  const [SelectedCause, setSelectedCause] = useState([]);
+  useEffect(() => {
+    if (cause) {
+      const findcause = userdetail?.cause?.filter(
+        (ele) => ele._id === cause?._id
+      );
+      setSelectedCause(findcause);
+    }
+  }, [cause, userdetail]);
   return (
     <div>
       <div>
@@ -285,7 +310,14 @@ const InatkeOutput = () => {
                       fontSize: "17px",
                     }}
                   >
-                    Ward: <span>General</span>
+                    Ward: <span>
+                    {
+                      SelectedCause?.[0]?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.bedName}</span>
+                        )
+                      })}
+                    </span>
                   </div>
                 </div>
                 <div className="row" style={{ border: "1px solid #20958C" }}>
@@ -298,7 +330,14 @@ const InatkeOutput = () => {
                       fontSize: "17px",
                     }}
                   >
-                    Dept: <span>AC</span>
+                    Dept: <span>
+                    {
+                      SelectedCause?.[0]?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.wardtype}</span>
+                        )
+                      })}
+                    </span>
                   </div>
                   <div
                     className="col-md-6"
@@ -309,21 +348,12 @@ const InatkeOutput = () => {
                       fontSize: "17px",
                     }}
                   >
-                    Doctor: <span>
-                    <Form.Select
-                        className="vi_0"
-                        onChange={(e) => setSelectDoctor(e.target.value)}
-                      >
-                        <option value="">Select Doctor</option>
-                        {patientdetails?.assigndocts?.map((item) => {
-                          return (
-                            <option
-                              value={item?.doctorsId?._id}
-                            >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
-                          );
-                        })}
-                      </Form.Select>
-                    </span>
+                    Doctor: <br/>
+                    {patientdetails?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                   </div>
                 </div>
 

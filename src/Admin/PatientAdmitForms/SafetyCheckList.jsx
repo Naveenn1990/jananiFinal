@@ -1,24 +1,49 @@
-import React from "react";
-import { Button, Table } from "react-bootstrap";
-import { FiDownload } from "react-icons/fi";
+import { Checkbox } from '@mui/material';
+import moment from 'moment';
+import React from 'react'
+import { Button, Table } from 'react-bootstrap'
+import { FaBackward } from 'react-icons/fa'
+import { FiDownload } from 'react-icons/fi'
+import { useLocation } from 'react-router-dom';
 
-const SafetyCheckList = () => {
+function SafetyCheckList() {
+    const location = useLocation();
+    const { patientdetails, cause } = location.state || {};
+  
+    console.log("patientdetails", patientdetails);
+    console.log("cause", cause);
+
+    const dobString = patientdetails?.DOB;
+    const dob = new Date(dobString);
+    const currentDate = new Date();
+    const differenceMs = currentDate - dob;
+    const ageYears = Math.floor(differenceMs / (1000 * 60 * 60 * 24 * 365.25));
+  
+    let ageOutput;
+    if (ageYears < 1) {
+      const ageMonths = Math.floor(ageYears * 12);
+      ageOutput = `${ageMonths} months`;
+    } else {
+      ageOutput = `${ageYears} years`;
+    }
   return (
-    <>
-      {/* <div className="mt-2 d-dlex text-end gap-2">
-        <Button
+  <>
+          <div>
+        <button
+          className="mt-2"
           style={{
-            padding: "6px",
-            border: "none",
+            border: "#20958c",
+            padding: "8px",
             backgroundColor: "#20958c",
             color: "white",
-            borderRadius: "0px",
-            marginRight: "20px",
+            borderRadius: "6px",
+            boxShadow: " 8px 8px 16px #20958c,-8px -8px 16px #20958c",
           }}
+          onClick={() => window.history.go(-1)}
         >
-          Print <FiDownload />
-        </Button>
-      </div> */}
+          <FaBackward /> &nbsp; Back
+        </button>
+      </div>
       <div className="text-center mt-1">
         {" "}
         <h6
@@ -39,10 +64,8 @@ const SafetyCheckList = () => {
           style={{
             padding: "5px",
             border: "2px solid #20958C",
-            // width: "1073px",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1700px",
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -63,14 +86,6 @@ const SafetyCheckList = () => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
             {" "}
             <h6
@@ -97,11 +112,11 @@ const SafetyCheckList = () => {
                   padding: "5px",
                 }}
               >
-                <p>Patient Name : </p>
-                <p>IP No. :</p>
-                <p>Date :</p>
-                <p>Age : </p>
-                <p>Sex: Male</p>
+                <p>Patient Name :  {`${patientdetails?.Firstname} ${patientdetails?.Lastname} `}</p>
+                <p>IP No. : {patientdetails?.PatientId}</p>
+                <p>Date :  {moment(patientdetails?.createdAt).format("DD-MM-YYYY")}</p>
+                <p>Age : {ageOutput}</p>
+                <p>Sex: {patientdetails?.Gender}</p>
               </div>
 
               <div
@@ -124,7 +139,8 @@ const SafetyCheckList = () => {
                   <Table>
                     <thead>
                       <tr style={{ textAlign: "center" }}>
-                        <th colSpan={2}>SIGN IN</th>
+                        {/* <th >SIGN IN</th>
+                        <th ></th> */}
                       </tr>
                     </thead>
                     <tbody>
@@ -142,7 +158,9 @@ const SafetyCheckList = () => {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        >
+                            <Checkbox/>
+                        </td>
                       </tr>
                       <tr>
                         <td
@@ -158,7 +176,7 @@ const SafetyCheckList = () => {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        > <Checkbox/></td>
                       </tr>
                       <tr>
                         <td
@@ -175,7 +193,7 @@ const SafetyCheckList = () => {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        > <Checkbox/></td>
                       </tr>
                       <tr>
                         <td
@@ -191,17 +209,17 @@ const SafetyCheckList = () => {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        > <Checkbox/></td>
                       </tr>
                       <tr>
                         <td
                           style={{
                             width: "90%",
                             border: "0.5px  solid #20958C",
+                            fontWeight:"bold"
                           }}
                         >
-                          Whether there are any equipment problems to be
-                          addressed
+                          Whether there are any 
                         </td>
                         <td
                           style={{
@@ -210,23 +228,36 @@ const SafetyCheckList = () => {
                           }}
                         ></td>
                       </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "90%",
-                            border: "0.5px  solid #20958C",
-                          }}
-                        >
-                          Surgeon, anaesthesia professional and nurse review the
-                          key concerns for Recovery and management of the
-                          patient
-                        </td>
-                        <td
-                          style={{
-                            width: "10%",
-                            border: "0.5px  solid #20958C",
-                          }}
-                        ></td>
+                      <tr
+                       style={{
+                        // width: "90%",
+                        border: "0.5px  solid #20958C",
+                      }}
+                      >
+                        Surgeon, anaesthesia professional..?
+                         Yes <Checkbox/>
+                         No <Checkbox/>
+                      </tr>
+                      <tr
+                       style={{
+                        // width: "90%",
+                        border: "0.5px  solid #20958C",
+                      }}
+                      >
+                        Surgeon, anaesthesia professional..?
+                         Yes <Checkbox/>
+                         No <Checkbox/>
+                      </tr>
+                      <tr
+                       style={{
+                        border: "0.5px  solid #20958C",
+                      }}
+                      >
+                        <ul>
+                            <li>Surgeon, anaesthesia professional..? <Checkbox/></li>
+                            <li>Surgeon, anaesthesia professional..? <Checkbox/></li>
+                            <li>Surgeon, anaesthesia professional..? <Checkbox/></li>
+                        </ul>
                       </tr>
                     </tbody>
                   </Table>
@@ -608,8 +639,8 @@ const SafetyCheckList = () => {
           </div>
         </div>
       </div>
-    </>
-  );
-};
+  </>
+  )
+}
 
-export default SafetyCheckList;
+export default SafetyCheckList

@@ -5,8 +5,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Table } from "react-bootstrap";
 import { useReactToPrint } from "react-to-print";
 
-const NurseNotes = ({ NursingNote, patientdetail }) => {
-  console.log("NursingNote,patientdetail", NursingNote, patientdetail);
+const NurseNotes = ({ NursingNote, patientdetail,cause }) => {
+  console.log("NursingNote,patientdetail",cause, NursingNote, patientdetail);
   const dobString = patientdetail?.DOB;
   const dob = new Date(dobString);
   const currentDate = new Date();
@@ -150,14 +150,32 @@ const NurseNotes = ({ NursingNote, patientdetail }) => {
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
                     Ward:
+
+                    {
+                      cause?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.bedName}</span>
+                        )
+                      })}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Dept:{" "}
+                    Dept:{
+                      cause?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.wardtype}</span>
+                        )
+                      })}
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Doctor:{" "}{`${Doctor?.[0]?.doctorsId?.Firstname} ${Doctor?.[0]?.doctorsId?.Lastname}`}
+                    Doctor:
+                    <br/>
+                    {patientdetail?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                   </td>
                 </tr>
                 <tr>
@@ -173,7 +191,7 @@ const NurseNotes = ({ NursingNote, patientdetail }) => {
                     colSpan={2}
                     style={{ width: "100%", border: "2px  solid #20958C" }}
                   >
-                    Diagnosis : {NursingNote?.[0]?.Diagnosis}
+                    Diagnosis : {cause?.CauseName}
                   </td>
                 </tr>
               </tbody>

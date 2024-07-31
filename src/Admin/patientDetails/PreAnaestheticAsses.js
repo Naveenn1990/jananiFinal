@@ -5,9 +5,7 @@ import { Button, Table } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
 import { useReactToPrint } from "react-to-print";
 
-const PreAnaestheticAsses = ({ preanesthetica, patientdetail }) => {
-  console.log("preanesthetica", preanesthetica);
-  console.log("patientdetail", patientdetail);
+const PreAnaestheticAsses = ({cause,preanesthetica, patientdetail }) => {
 
   const dobString = patientdetail?.DOB;
   const dob = new Date(dobString);
@@ -41,7 +39,7 @@ const PreAnaestheticAsses = ({ preanesthetica, patientdetail }) => {
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">
-        <Button
+        {/* <Button
           style={{
             padding: "6px",
             border: "none",
@@ -53,7 +51,7 @@ const PreAnaestheticAsses = ({ preanesthetica, patientdetail }) => {
           onClick={handleprint}
         >
           Print <FiDownload />
-        </Button>
+        </Button> */}
         <hr
           style={{
             color: "black",
@@ -147,12 +145,24 @@ const PreAnaestheticAsses = ({ preanesthetica, patientdetail }) => {
                         <td
                           style={{ width: "50%", border: "2px  solid #20958C" }}
                         >
-                          PAC Done by Dr{" "}
+                          PAC Done by Dr :{" "}
+                          <br/>
+                    {patientdetail?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                         </td>
                         <td
                           style={{ width: "50%", border: "2px  solid #20958C" }}
                         >
-                          Consultant Surgeon
+                          Consultant Surgeon :
+                          <br/>
+                    {patientdetail?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                         </td>
                       </tr>
                       <tr style={{ alignContent: "center" }}>
@@ -212,7 +222,7 @@ const PreAnaestheticAsses = ({ preanesthetica, patientdetail }) => {
                                     border: "2px  solid #20958C",
                                   }}
                                 >
-                                  Diagnosis : {item?.Diagnosis}
+                                  Diagnosis : {cause?.CauseName}
                                 </td>
                                 <td
                                   style={{

@@ -102,10 +102,6 @@ const PreAnestheticAssessment = () => {
   const [PAnesDate, setPAnesDate] = useState("");
   const [PAnesTime, setPAnesTime] = useState("");
   const submitpreAnesthica = async () => {
-
-    if(!Diagnosis){
-      return alert("Enter Diagnosis..! ")
-    }
     if(!Problem){
       return alert("Enter Problems..! ")
     }
@@ -546,10 +542,20 @@ const PreAnestheticAssessment = () => {
                 
                 <tr>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    PAC Done by Dr{" "}
+                    PAC Done by Dr : {" "}<br/>
+                    {patientdetails?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Consultant Surgeon
+                    Consultant Surgeon : <br/>
+                    {patientdetails?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                   </td>
                 </tr>
                 <tr style={{ alignContent: "center" }}>
@@ -607,14 +613,14 @@ const PreAnestheticAssessment = () => {
                             }}
                           >
                             <div className="d-flex gap-1 text-aligns-center">
-                              Diagnosis:
-                              <input
+                              Diagnosis : {cause?.CauseName}
+                              {/* <input
                                 type="text"
                                 className="vi_0"
                                 value={Diagnosis}
                                 onChange={(e) => setDiagnosis(e.target.value)}
                                 placeholder="Diagnosis.."
-                              />
+                              /> */}
                             </div>
                           </td>
                           <td

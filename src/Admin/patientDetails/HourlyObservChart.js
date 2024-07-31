@@ -59,7 +59,7 @@ const HourlyObservChart = ({hourlynote,patientdetail}) => {
       style={{ color: "black", height: "3px", width: "100%", backgroundColor: "black", border: "none" }}
     />
       <div className="mt-2 d-dlex text-end gap-2">
-        <Button
+        {/* <Button
           style={{
             padding: "6px",
             border: "none",
@@ -71,7 +71,7 @@ const HourlyObservChart = ({hourlynote,patientdetail}) => {
           onClick={handleprint}
         >
           Print <FiDownload />
-        </Button>
+        </Button> */}
       </div>
       <div className="text-center mt-1">
         {" "}
@@ -125,7 +125,7 @@ ref={componentRef}
                 fontSize: "30px",
               }}
             >
-              HOUSLY OBSERVATION CHART
+              HOURLY OBSERVATION CHART
             </h6>
           </div>
           <div
@@ -174,7 +174,13 @@ ref={componentRef}
                     colSpan={2}
                     style={{ width: "25%", border: "2px  solid #20958C" }}
                   >
-                    Unit Dr. : {`${Doctor?.[0]?.doctorsId?.Firstname} ${Doctor?.[0]?.doctorsId?.Lastname}`}
+                    Unit Dr. :
+
+                    {patientdetail?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                   </td>
                 </tr>
                 <tr style={{ textAlign: "center" }}>
