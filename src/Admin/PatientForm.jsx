@@ -1,14 +1,5 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { useEffect } from "react";
-import { Table, Modal, ProgressBar, Button } from "react-bootstrap";
-import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
-import { MdEdit } from "react-icons/md";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiDownload } from "react-icons/fi";
-import { useParams } from "react-router-dom";
-import { BsEmojiSmile } from "react-icons/bs";
-import { RiBillFill } from "react-icons/ri";
 
 function PatientForm() {
   const navigate = useNavigate();
@@ -294,7 +285,7 @@ function PatientForm() {
             </button>
             <button
               style={{
-                padding: "6px",
+                padding: "12px",
                 border: "1px solid white",
                 backgroundColor: "#20958c",
                 color: "white",
@@ -302,7 +293,7 @@ function PatientForm() {
                 width: "210px",
               }}
               onClick={() =>
-                navigate("", {
+                navigate("/admin/safetychecklist", {
                   state: {
                     patientdetails: item,
                     cause: selectCause,

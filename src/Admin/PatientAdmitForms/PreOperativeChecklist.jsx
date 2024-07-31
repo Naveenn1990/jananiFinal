@@ -1,6 +1,6 @@
 import { Checkbox } from "@mui/material";
 import axios from "axios";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Form, Table } from "react-bootstrap";
 import { FaBackward } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
@@ -90,12 +90,7 @@ const PreOperativeChecklist = () => {
   const [Procedure, setProcedure] = useState("");
 
   const submitpreOperativelist = async () => {
-    if (!SelectDoctor) {
-      return alert("Please Select Doctor");
-    }
-    if (!Diagnosis) {
-      return alert("Enter Diagnosis");
-    }
+  
     if (!Fasting) {
       return alert("Enter Fasting From");
     }
@@ -232,6 +227,33 @@ const PreOperativeChecklist = () => {
       alert(error.response.data.error);
     }
   };
+  const [SelectedCause, setSelectedCause] = useState([]);
+  const [userdetail, setuserdetail] = useState({});
+  const getpatientbyid = async () => {
+    try {
+      let res = await axios.get(
+        `http://localhost:8521/api/user/getPatientDetailByid/${patientdetails?._id}`
+      );
+      if (res.status === 200) {
+        setuserdetail(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getpatientbyid();
+  }, []);
+
+  useEffect(() => {
+    if (cause) {
+      const findcause = userdetail?.cause?.filter(
+        (ele) => ele._id === cause?._id
+      );
+      setSelectedCause(findcause);
+    }
+  }, [cause, userdetail]);
   return (
     <div>
       <div>
@@ -344,7 +366,16 @@ const PreOperativeChecklist = () => {
                     IP ID:{patientdetails?.PatientId}
                   </td>
                   <td style={{ width: "15%", border: "2px  solid #20958C" }}>
-                    Ward: OPD
+                    Ward: 
+                     <span>
+                      {
+                      SelectedCause?.[0]?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.bedName}</span>
+                        )
+                      })}
+
+                    </span>
                   </td>
                 </tr>
                 <tr>
@@ -352,26 +383,26 @@ const PreOperativeChecklist = () => {
                     colSpan={1}
                     style={{ width: "40%", border: "2px  solid #20958C" }}
                   >
-                    Dept:
+                    Dept: <span>
+                    {
+                      SelectedCause?.[0]?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.wardtype}</span>
+                        )
+                      })}
+                    </span>
                   </td>
                   <td
                     colSpan={4}
                     style={{ width: "60%", border: "2px  solid #20958C" }}
                   >
-                    Doctor:{" "}
-                    <Form.Select
-                      className="vi_0"
-                      onChange={(e) => setSelectDoctor(e.target.value)}
-                    >
-                      <option value="">Select Doctor</option>
-                      {patientdetails?.assigndocts?.map((item) => {
-                        return (
-                          <option
-                            value={item?.doctorsId?._id}
-                          >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
-                        );
-                      })}
-                    </Form.Select>
+                    Doctor:
+                    <br/>
+                    {patientdetails?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                   </td>
                 </tr>
                 <tr>
@@ -379,14 +410,14 @@ const PreOperativeChecklist = () => {
                     colSpan={1}
                     style={{ width: "40%", border: "2px  solid #20958C" }}
                   >
-                    Diagnosis:
-                    <input
+                    Diagnosis : {cause?.CauseName}
+                    {/* <input
                       type="text"
                       className="vi_0"
                       placeholder="Diagnosis"
                       onChange={(e) => setDiagnosis(e.target.value)}
                       value={Diagnosis}
-                    />
+                    /> */}
                   </td>
                   <td
                     colSpan={4}

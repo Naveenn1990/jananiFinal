@@ -277,6 +277,7 @@ import PharmacyWebUser from "./Admin/PharmacyWebUser";
 import IPD_PatientList from "./Admin/IPD_PatientList";
 import Ward from "./Admin/Ward";
 import BedAssignIPD from "./Admin/BedAssignIPD";
+import SafetyCheckList from "./Admin/PatientAdmitForms/SafetyCheckList";
 
 function App() {
   return (
@@ -2889,6 +2890,15 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<PostSurgical />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/safetychecklist"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<SafetyCheckList />} />{" "}
                 </>
               }
             ></Route>

@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Button, Table } from "react-bootstrap";
+import { FaBackward } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const PostSurgical = () => {
@@ -59,6 +60,33 @@ const PostSurgical = () => {
   };
 
   const submitpostsurgical = async () => {
+    if(!MonitoringTime){
+      return alert ("select monitoring time")
+    }
+    if(!MonitoringHR){
+      return alert ("Write monitoring HR")
+    }
+    if(!MonitoringBP){
+      return alert ("Write monitoring BP")
+    }
+    if(!MSPo2){
+      return alert ("Write MSPo2")
+    }
+    if(!MRR){
+      return alert ("Write RR")
+    }
+    if(!MTemp){
+      return   alert ("Write Temp")
+    }
+    if(!MUterine){
+      return alert ("Write Uterine Height")
+    }
+    if(!MBleeding){
+      return alert ("Write Bleeding p/v")
+    }
+    if(!MLegMessage){
+     return alert ("Write Leg Massage")
+    }
     try {
       const config = {
         url: "/addpostmonitoring",
@@ -68,7 +96,15 @@ const PostSurgical = () => {
         data: {
           patientId: patientdetails?._id,
           causeId: cause?._id,
-          PostSurgicalMonitoring: PostSurgicalMonitoring,
+          MonitoringTime:MonitoringTime,
+          MonitoringHR:MonitoringHR,
+          MonitoringBP:MonitoringBP,
+          MSPo2:MSPo2,
+          MRR:MRR,
+          MTemp:MTemp,
+          MUterine:MUterine,
+          MBleeding:MBleeding,
+          MLegMessage:MLegMessage,
         },
       };
       let res = await axios(config);
@@ -81,19 +117,20 @@ const PostSurgical = () => {
   };
   return (
     <div>
-      <div>
+     <div>
         <button
           className="mt-2"
           style={{
-            padding: "6px",
-            border: "1px solid white",
+            border: "#20958c",
+            padding: "8px",
             backgroundColor: "#20958c",
             color: "white",
-            borderRadius: "0px",
+            borderRadius: "6px",
+            boxShadow: " 8px 8px 16px #20958c,-8px -8px 16px #20958c",
           }}
-          onClick={() => navigate(-1)}
+          onClick={() => window.history.go(-1)}
         >
-          Back
+          <FaBackward /> &nbsp; Back
         </button>
       </div>
 
@@ -139,21 +176,13 @@ const PostSurgical = () => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
             {" "}
             <h6
               className="fw-bold mt-2"
               style={{ color: "#20958C", fontSize: "30px" }}
             >
-              POST SURGICAL MONITORING CHART <span style={{color:"red"}}>({cause?.CauseName})</span>
+              POST SURGICAL MONITORING CHART <span style={{color:"red"}}></span>
             </h6>
           </div>
           <div
@@ -175,7 +204,6 @@ const PostSurgical = () => {
                   <th>Uterine Height</th>
                   <th>Bleeding p/v</th>
                   <th>Leg Massage</th>
-                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -252,33 +280,11 @@ const PostSurgical = () => {
                       onChange={(e) => setMLegMessage(e.target.value)}
                     />
                   </td>
-                  <td>
+                  {/* <td>
                     <Button onClick={AddPostSurgicalMont}>Add</Button>
-                  </td>
+                  </td> */}
                 </tr>
-                {PostSurgicalMonitoring?.map((item, i) => {
-                  return (
-                    <tr>
-                      <td>{item?.MonitoringTime}</td>
-                      <td>{item?.MonitoringHR}</td>
-                      <td>{item?.MonitoringBP}</td>
-                      <td>{item?.MSPo2}</td>
-                      <td>{item?.MRR}</td>
-                      <td>{item?.MTemp}</td>
-                      <td>{item?.MUterine}</td>
-                      <td>{item?.MBleeding}</td>
-                      <td>{item?.MLegMessage}</td>
-                      <td>
-                        <Button
-                          variant="danger"
-                          onClick={() => deleteMonitorChat(i)}
-                        >
-                          delete
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
+              
               </tbody>
             </Table>
           </div>

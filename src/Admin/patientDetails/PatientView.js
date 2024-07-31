@@ -33,6 +33,7 @@ const PatientView = ({ SelectCause, patientdetail }) => {
   const [safetyCheck, setSafetyCheck] = useState(false);
 
   console.log("patientdetail", patientdetail);
+  console.log("SelectCause", SelectCause);
 
   return (
     <div className="patient">
@@ -241,7 +242,7 @@ const PatientView = ({ SelectCause, patientdetail }) => {
                     setSafetyCheck(false);
                   }}
                 >
-                  Hously Observation Chart ({SelectCause?.hourlynote?.length})
+                  Hourly Observation Chart ({SelectCause?.hourlynote?.length})
                 </button>
               ) : (
                 ""
@@ -483,6 +484,7 @@ const PatientView = ({ SelectCause, patientdetail }) => {
           <MedicationChart />
         ) : NursesNotes ? (
           <NurseNotes
+            cause ={SelectCause}
             NursingNote={SelectCause?.nursenote}
             patientdetail={patientdetail}
           />
@@ -500,21 +502,27 @@ const PatientView = ({ SelectCause, patientdetail }) => {
           <SurgeryReport />
         ) : IntakeOutput ? (
           <IntakeOutputChart
+          cause ={SelectCause}
             Intakeoutlist={SelectCause?.intakeout}
             patientdetail={patientdetail}
           />
         ) : preOperative ? (
           <PreOperative
+          cause ={SelectCause}
             CHECKLIST={SelectCause?.preoperativelist}
             patientdetail={patientdetail}
           />
         ) : surgicalCount ? (
           <SurgicalCount />
         ) : postSurgeryChary ? (
-          <PostSurgeryChart />
+          <PostSurgeryChart
+          postsurgicalmonitor={SelectCause?.postsurgicalmonitor}
+          patientdetail={patientdetail}
+          />
         ) : preAnaestheticAsses ? (
           <>
             <PreAnaestheticAsses
+            cause ={SelectCause}
               preanesthetica={SelectCause?.preanesthetica}
               patientdetail={patientdetail}
             />

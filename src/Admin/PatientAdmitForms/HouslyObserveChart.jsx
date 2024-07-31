@@ -109,9 +109,7 @@ const HouslyObserveChart = () => {
   }, [cause,userdetail])
 
   const submitNurseNote = async () => {
-    if(!SelectDoctor){
-      return alert("Please Select Doctor")
-    }
+  
     if(!OTime){
       return alert("Please Select Time")
     }
@@ -193,7 +191,7 @@ const HouslyObserveChart = () => {
           className="fw-bold mt-2"
           style={{ color: "#20958C", fontSize: "30px" }}
         >
-          HOUSLY OBSERVATION CHART
+          HOURLY OBSERVATION CHART
         </h6>
       </div>
       <div
@@ -238,7 +236,7 @@ const HouslyObserveChart = () => {
                 fontSize: "30px",
               }}
             >
-              HOUSLY OBSERVATION CHART
+              HOURLY OBSERVATION CHART
             </h6>
           </div>
           <div
@@ -334,33 +332,19 @@ const HouslyObserveChart = () => {
                       paddingLeft: "unset",
                       paddingRight: "unset",
                       fontSize: "17px",
-                      display: "flex",
                       alignItems: "center",
                     }}
                   >
-                    Unit Dr :
+                    Unit Dr : <br/>
                     <span>
-                      <Form.Select
-                        className="vi_0"
-                        onChange={(e) => setSelectDoctor(e.target.value)}
-                      >
-                        <option value="">Select Doctor</option>
-                        {patientdetails?.assigndocts?.map((item) => {
-                          return (
-                            <option
-                              value={item?.doctorsId?._id}
-                            >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
-                          );
-                        })}
-                      </Form.Select>
+                   
+                    {patientdetails?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                     </span>
                   </div>
-                </div>
-
-                <div className="mt-2 text-center">
-                  <span style={{ color: "red", fontFamily: "bold" }}>
-                    {cause?.CauseName}
-                  </span>
                 </div>
                 <div className="row mt-2">
                   <Table className="text-center" bordered>
