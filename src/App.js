@@ -273,6 +273,7 @@ import PrescriptionReport from "./PatientsPortal/PrescriptionReport";
 import HospitalLabSampleCollector from "./Admin/HospitalLabSampleCollector";
 import HospitalLabTechnician from "./Admin/HospitalLabTechnician";
 import OPDtoIPDBedAssign from "./Admin/OPDtoIPDBedAssign";
+import PharmacyWebUser from "./Admin/PharmacyWebUser";
 
 function App() {
   return (
@@ -2436,6 +2437,17 @@ function App() {
                 </>
               }
             ></Route>
+
+            <Route
+              path="/admin/PharmacyWebUser"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<PharmacyWebUser />} />{" "}
+                </>
+              }
+            ></Route>
+
             <Route
               path="/admin/ProductBrands"
               element={

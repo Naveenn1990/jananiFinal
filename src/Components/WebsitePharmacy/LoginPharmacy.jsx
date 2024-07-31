@@ -42,7 +42,7 @@ export const LoginPharmacy = () => {
     } else {
       try {
         const config = {
-          url: "/user/PatientLogin",
+          url: "/pharmacy/LoginPharmacyUser",
           method: "post",
           baseURL: "http://localhost:8521/api",
           headers: { "content-type": "application/json" },
@@ -54,13 +54,17 @@ export const LoginPharmacy = () => {
         let res = await axios(config);
         if (res.status === 200) {
           console.log(res.data);
-          console.log(res.data.success);
-          sessionStorage.setItem(
-            "pharmacyUser",
-            JSON.stringify(res.data.admin)
-          );
-          alert("Login Success");
-          window.location.assign("/pharmacy");
+          if (res.data.admin?.Blokingstatus === true) {
+            alert("Sorry...!, You are blocked from website owner");
+          } else {
+            console.log(res.data.success);
+            sessionStorage.setItem(
+              "pharmacyUser",
+              JSON.stringify(res.data.admin)
+            );
+            alert("Login Success");
+            window.location.assign("/pharmacy");
+          }
         }
       } catch (error) {
         console.log(error.response);
@@ -94,7 +98,7 @@ export const LoginPharmacy = () => {
     } else {
       try {
         const config = {
-          url: "/email/PharmacysendOtp",
+          url: "/email/PharmacyCustomersendOtp",
           method: "post",
           baseURL: "http://localhost:8521/api",
           headers: { "content-type": "application/json" },
@@ -124,7 +128,7 @@ export const LoginPharmacy = () => {
     } else {
       try {
         const config = {
-          url: "/email/PharmacyVerifyOtp",
+          url: "/email/PharmacyCustomerVerifyOtp",
           method: "post",
           baseURL: "http://localhost:8521/api",
           headers: { "content-type": "application/json" },
@@ -157,7 +161,7 @@ export const LoginPharmacy = () => {
     } else {
       try {
         const config = {
-          url: "/email/ChangePharmacyPassword",
+          url: "/email/ChangePharmacyCustomerPassword",
           method: "post",
           baseURL: "http://localhost:8521/api",
           headers: { "content-type": "application/json" },

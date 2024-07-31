@@ -1,11 +1,19 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { Container, Table, Button, Modal } from "react-bootstrap";
+import { Container, Table, Button, Modal, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo, faTag } from "@fortawesome/free-solid-svg-icons";
 import Carousel from "react-multi-carousel";
 import moment from "moment/moment";
 import { useReactToPrint } from "react-to-print";
+import { toWords } from "number-to-words";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
 
 export default function ProductCustomerOrder() {
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
@@ -98,8 +106,89 @@ export default function ProductCustomerOrder() {
       orderList();
     }
   }, []);
+
+  const [ViewNewOrder, setViewNewOrder] = useState(true);
+  const [ViewOutForDelivery, setViewOutForDelivery] = useState(false);
+  const [ViewDelivered, setViewDelivered] = useState(false);
+  const [Selecteddata, setSelecteddata] = useState({});
+
+  const [data, setdata] = useState([]);
+
+  useEffect(() => {
+    if (currStatus && orders?.length > 0) {
+      const xyz = orders?.filter((data) => data.orderStatus == currStatus);
+      setdata(xyz);
+    }
+  }, [currStatus]);
+
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Customer-Order");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
   const [Invoice, setInvoice] = useState({});
+  const totalamount = Invoice?.orderedItems?.reduce(
+    (a, item) =>
+      a +
+      (item?.productid?.vendorIdProductId?.MRP -
+        (item?.productid?.vendorIdProductId?.MRP *
+          item?.productid?.vendorIdProductId?.discount) /
+          100) *
+        item?.quantity,
+    0
+  );
+
+  const textword = totalamount ? toWords(totalamount) : "";
+
+  const capitalizeWords = textword?.replace(/\b\w/g, (char) =>
+    char.toUpperCase()
+  );
+
+  const roundedTotalAmount = Math.round(totalamount);
+  const roundOffAmount = (totalamount - roundedTotalAmount).toFixed(2);
+
   console.log("Invoice", Invoice);
+  console.log("totalamount", totalamount);
+
   return (
     <div>
       <Container className="p-3">
@@ -174,11 +263,40 @@ export default function ProductCustomerOrder() {
             </Button>
           </div>
         </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            margin: "2%",
+          }}
+        >
+          <input
+            placeholder="Search as per order id"
+            style={{
+              padding: "5px 10px",
+              border: "1px solid #20958c",
+              borderRadius: "0px",
+            }}
+            onChange={handleFilter}
+          />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
+        </div>
         <div>
           <Table responsive bordered>
             <thead>
               <th>OrderId</th>
-              <th>Customer</th>
+              <th>Customer Name</th>
               <th>Address</th>
               <th>Total Items</th>
               <th>Payment Option</th>
@@ -513,7 +631,7 @@ export default function ProductCustomerOrder() {
               </div>
             </Modal.Footer>
           </Modal>
-          <Modal show={show2} onHide={handleClose2} size="lg">
+          {/* <Modal show={show2} onHide={handleClose2} size="lg">
             <Modal.Header closeButton>
               <Modal.Title>Modal heading</Modal.Title>
             </Modal.Header>
@@ -629,26 +747,7 @@ export default function ProductCustomerOrder() {
                               &#8377;{Invoice?.totalOrderedPrice}
                             </td>
                           </tr>
-                          {/* <tr>
-                            <td className="fw-bold p-0 text-start">
-                              Discount :
-                            </td>
-                            <td className="p-0 text-end">&#8377;20</td>
-                          </tr> */}
-                          {/* <tr>
-                            <td className="fw-bold p-0 text-start">Gst :</td>
-                            <td className="p-0 text-end">&#8377;20</td>
-                          </tr> */}
-                          {/* <tr>
-                            <td className="fw-bold p-0 text-start">
-                              Grand Total:
-                            </td>
-                            <td className="p-0 text-end">&#8377;2020</td>
-                          </tr> */}
-                          {/* <tr>
-                            <td className="fw-bold p-0 text-start">Status :</td>
-                            <td className="p-0 text-end">Paid</td>
-                          </tr> */}
+                        
                         </tbody>
                       </table>
                     </div>
@@ -660,6 +759,240 @@ export default function ProductCustomerOrder() {
                         JananiHospital@gamil.com{" "}
                       </p>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose2}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={handleprint}>
+                Print
+              </Button>
+            </Modal.Footer>
+          </Modal> */}
+          <Modal
+            show={show2}
+            onHide={handleClose2}
+            size="lg"
+            className="custom-modal"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Invoice</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div ref={componentRef}>
+                <div style={{ padding: "10px", backgroundColor: "white" }}>
+                  <div
+                    style={{
+                      padding: "5px",
+                      border: "2px solid black",
+                    }}
+                  >
+                    <Row>
+                      <Col md={6}>
+                        <div style={{ display: "flex" }}>
+                          <img
+                            style={{ width: "30px", height: "30px" }}
+                            className="logo me-2 "
+                            src="/img/logo.jpg"
+                            alt="Logo"
+                          />
+                          <p style={{ fontWeight: "bold" }}>JANANI PHARMA</p>
+                        </div>
+                        <p>SY NO 98/A PLOT NO 71, GROUND FLOOR, SHOP NO</p>
+                        <p>SYNDICATE BANK RIGHT SIDE, KK NAGAR, VIJAYAPU</p>
+                      </Col>
+                      <Col md={6}>
+                        <p style={{ fontWeight: "bold" }}>
+                          Patient Name: {Invoice?.patientid?.Firstname}&nbsp;
+                          {Invoice?.patientid?.Lastname}
+                        </p>
+                        <p>
+                          Patient Address:{Invoice?.patientid?.Address1},
+                          {Invoice?.patientid?.Address2},
+                          {Invoice?.patientid?.City} -{" "}
+                          {Invoice?.patientid?.Zipcode}
+                        </p>
+                        <p>Dr Name:</p>
+                        <p>Dr Reg No.:</p>
+                      </Col>
+                    </Row>
+                    <div style={{ overflow: "hidden", marginTop: "3%" }}>
+                      <Table striped bordered>
+                        <thead>
+                          <tr>
+                            <td colSpan={3}>GSTN : 29DKAPP9547L1ZB</td>
+                            <td style={{ fontWeight: "bold" }} colSpan={4}>
+                              GST INVOICE
+                            </td>
+                            <td colSpan={5}>
+                              Invoice No:{" "}
+                              {Invoice?._id?.slice(-9)?.toUpperCase()}
+                              &nbsp;Date:
+                              {moment(Invoice?.createdAt).format("DD-MM-YYYY")}
+                            </td>
+                          </tr>
+                          <tr style={{ backgroundColor: "#f2f2f2" }}>
+                            <td style={{ fontWeight: "bold" }}>SN.</td>
+                            <td style={{ fontWeight: "bold" }}>PRODUCT NAME</td>
+                            <td style={{ fontWeight: "bold" }}>PACK</td>
+                            <td style={{ fontWeight: "bold" }}>HSN</td>
+                            <td style={{ fontWeight: "bold" }}>BATCH</td>
+                            <td style={{ fontWeight: "bold" }}>EXP.</td>
+                            <td style={{ fontWeight: "bold" }}>QTY</td>
+                            <td style={{ fontWeight: "bold" }}>MRP</td>
+                            <td style={{ fontWeight: "bold" }}>Discount</td>
+                            <td style={{ fontWeight: "bold" }}>SGST</td>
+                            <td style={{ fontWeight: "bold" }}>CGST</td>
+                            <td style={{ fontWeight: "bold" }}>AMOUNT</td>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Invoice?.orderedItems?.map((item, index) => {
+                            return (
+                              <tr style={{ backgroundColor: "white" }}>
+                                <td>{index + 1}</td>
+                                <td>{item?.productid?.productName}</td>
+                                <td>
+                                  {item?.productid?.vendorIdProductId?.packSize}
+                                </td>
+                                <td>
+                                  {item?.productid?.vendorIdProductId?.HSN}
+                                </td>
+                                <td>
+                                  {item?.productid?.vendorIdProductId?.Batch}
+                                </td>
+                                <td>
+                                  {moment(
+                                    item?.productid?.vendorIdProductId
+                                      ?.expiryDate
+                                  ).format("DD/MM/YY")}
+                                </td>
+                                <td>{item?.quantity}</td>
+                                <td>
+                                  {item?.productid?.vendorIdProductId?.MRP}
+                                </td>
+                                <td>
+                                  {item?.productid?.vendorIdProductId?.discount}
+                                </td>
+                                <td>
+                                  {item?.productid?.vendorIdProductId?.SGST}
+                                </td>
+                                <td>
+                                  {item?.productid?.vendorIdProductId?.CGST}
+                                </td>
+                                <td>
+                                  {(item?.productid?.vendorIdProductId?.MRP -
+                                    (item?.productid?.vendorIdProductId?.MRP *
+                                      item?.productid?.vendorIdProductId
+                                        ?.discount) /
+                                      100) *
+                                    item?.quantity}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </Table>
+                    </div>
+                    <Row
+                      style={{
+                        borderTop: "2px solid black",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                      }}
+                    >
+                      <Col md={8}>
+                        <div style={{ borderRight: "1px solid #e0e0e0" }}>
+                          <div style={{ borderBottom: "1px solid #e0e0e0" }}>
+                            <p>GST 28223.7*0%=0SGST, **GET WELL SOON**</p>
+                          </div>
+                          <div>
+                            <Row>
+                              <Col md={8}>
+                                <p
+                                  style={{
+                                    fontWeight: "bold",
+                                    textDecorationLine: "underline",
+                                  }}
+                                >
+                                  Terms & Conditions
+                                </p>
+                                <p>
+                                  Goods once sold will not be taken back or
+                                  exchanged.
+                                </p>
+                                <p>
+                                  Bills not paid due date will attract 24%
+                                  interest.
+                                </p>
+                                <p>
+                                  All disputes subject to jurisdication only.
+                                </p>
+                                <p>
+                                  Prescribed Sales Tax declaration will be
+                                  given.
+                                </p>
+                                <p style={{ height: "60px" }}>Remark :</p>
+                                <p>
+                                  Rs.{" "}
+                                  {capitalizeWords
+                                    ? capitalizeWords + " " + "Only"
+                                    : ""}
+                                </p>
+                              </Col>
+                              <Col md={4}>
+                                <p style={{ marginTop: "30%" }}>
+                                  For JANANI PHARMA
+                                </p>
+                                <p style={{ marginTop: "30%" }}>
+                                  Authorised Signatory
+                                </p>
+                              </Col>
+                            </Row>
+                          </div>
+                        </div>
+                      </Col>
+                      <Col md={4}>
+                        <div>
+                          <Row>
+                            <Col md={6}>
+                              <p style={{ fontWeight: "bold" }}>SUB TOTAL</p>
+                            </Col>
+                            <Col md={6}>
+                              <p style={{ fontWeight: "bold" }}>
+                                {totalamount?.toFixed(2)}
+                              </p>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col md={6}>
+                              <p>Roundoff</p>
+                            </Col>
+                            <Col md={6}>
+                              {roundOffAmount ? roundOffAmount : 0}
+                            </Col>
+                          </Row>
+                          <Row
+                            style={{
+                              marginTop: "40%",
+                              borderTop: "1px solid #e0e0e0",
+                            }}
+                          >
+                            <Col md={6}>
+                              <p style={{ fontWeight: "bold" }}>GRAND TOTAL</p>
+                            </Col>
+                            <Col md={6}>
+                              <p style={{ fontWeight: "bold" }}>
+                                {roundedTotalAmount?.toFixed(2)}
+                              </p>
+                            </Col>
+                          </Row>
+                        </div>
+                      </Col>
+                    </Row>
                   </div>
                 </div>
               </div>

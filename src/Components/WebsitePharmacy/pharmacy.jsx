@@ -265,7 +265,7 @@ export const Pharmacy = () => {
   // Count occurrences of each vendorIdProductId and store the associated data
   Orders.forEach((order) => {
     order.orderedItems.forEach((item) => {
-      const id = item.productid.vendorIdProductId;
+      const id = item?.productid?.vendorIdProductId;
       if (productCount[id]) {
         productCount[id].count++;
       } else {

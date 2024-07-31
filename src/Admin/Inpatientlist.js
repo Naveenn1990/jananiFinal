@@ -1270,7 +1270,7 @@ export default function Inpatientlist() {
                   cursor: "pointer",
                 }}
               >
-               {showPassword ? "🙈" : "🙉"}
+                {showPassword ? "🙈" : "🙉"}
               </span>
             </div>
 
@@ -1475,7 +1475,7 @@ export default function Inpatientlist() {
                           marginTop: "2%",
                         }}
                         onChange={(e) => setAdmitDate(e.target.value)}
-                        min={new Date().toISOString().split('T')[0]} 
+                        min={new Date().toISOString().split("T")[0]}
                       />
                     </div>
                   </div>
@@ -1795,6 +1795,312 @@ export default function Inpatientlist() {
               SUBMIT
             </button>
           </div>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={show3} onHide={handleClose3}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Visitors </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Visitor Name</Form.Label>
+              <Form.Control
+                onChange={(e) => setVisitorName(e.target.value)}
+                type="text"
+                placeholder="enter visitor name"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Relation With Patient</Form.Label>
+              <Form.Control
+                onChange={(e) => setRelationWithPatient(e.target.value)}
+                type="text"
+                placeholder="enter Relation With Patient"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Mobile Number</Form.Label>
+              <Form.Control
+                onChange={(e) => setMobileNumber(e.target.value)}
+                type="text"
+                placeholder="enter Mobile Number"
+                value={MobileNumber}
+                maxLength={10}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                onChange={(e) => setVisiterAddress(e.target.value)}
+                type="text"
+                placeholder="enter Address"
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose3}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={addVisitor}>
+            Add
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={show4} onHide={handleClose4} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Visitors List
+            <span style={{ color: "red" }}>
+              ({PatientVisitId?.Firstname} {PatientVisitId?.Lastname})
+            </span>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ padding: "5px", backgroundColor: "white" }}>
+            <Table className="text-center" bordered>
+              <thead>
+                <tr>
+                  <th>SN.</th>
+                  <th>Visitor Name</th>
+                  <th>RelationWithPatient</th>
+                  <th>Address</th>
+                  <th>Phone Number</th>
+                  <th>Card</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {PatientVisitId?.visitor?.map((item, i) => {
+                  return (
+                    <tr>
+                      <td>{i + 1}</td>
+                      <td>{item?.VisitorName}</td>
+                      <td>{item?.RelationWithPatient}</td>
+                      <td>{item?.VisiterAddress}</td>
+                      <td>{item?.MobileNumber}</td>
+                      <td>
+                        <GrView
+                          onClick={() => {
+                            handleShow5();
+                            setVisitingCard(item);
+                          }}
+                          style={{
+                            color: "green",
+                            cursor: "pointer",
+                          }}
+                        />
+                      </td>
+                      <td>
+                        <MdDelete
+                          style={{
+                            cursor: "pointer",
+                            color: "red",
+                          }}
+                          onClick={() => DeleteVisitor(item?._id)}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose4}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={show5} onHide={handleClose5}>
+        <Modal.Header closeButton>
+          <Modal.Title>Visiting card</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div ref={componentRef1} style={{ backgroundColor: "white" }}>
+            <div className="container">
+              <div className="row" style={{ border: "1px solid white" }}>
+                <div
+                  className="col-md-5"
+                  style={{
+                    border: "1px solid white",
+                    backgroundColor: "white",
+                  }}
+                >
+                  <img
+                    src="/Images/logo.png"
+                    alt=""
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+                <div
+                  className="col-md-7 p-2 text-center"
+                  style={{
+                    backgroundColor: "#20958C",
+                    borderTopLeftRadius: "50px",
+                    borderBottomLeftRadius: "50px",
+                  }}
+                >
+                  <p
+                    style={{
+                      color: "red",
+                      fontSize: "28px",
+                      fontWeight: "700",
+                    }}
+                  >
+                    Visitor Card
+                  </p>
+                  <p style={{ color: "white" }}>
+                    <span
+                      style={{
+                        color: "white",
+                        fontSize: "18px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      {" "}
+                      Patient name :{" "}
+                    </span>
+                    {PatientVisitId?.Firstname} {PatientVisitId?.Lastname}
+                  </p>
+                  <p style={{ color: "white" }}>
+                    <span
+                      style={{
+                        color: "white",
+                        fontSize: "18px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      Relation with Patient :{" "}
+                    </span>
+                    {VisitingCard?.RelationWithPatient}
+                  </p>
+                  <p style={{ color: "white" }}>
+                    <span
+                      style={{
+                        color: "white",
+                        fontSize: "18px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      Visitor Name :{" "}
+                    </span>
+                    {VisitingCard?.VisitorName}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose5}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handlePrint1}>
+            print
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={show7} onHide={handleClose7}>
+        <Modal.Header closeButton>
+          <Modal.Title>ASSIGN DOCTORS</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Label
+            style={{ color: "white", fontWeight: "bold", fontSize: "20px" }}
+          >
+            Select Cause
+            <span style={{ color: "red" }}>*</span>
+          </Form.Label>
+          <Form.Select
+            value={selCause}
+            onChange={(e) => setselCause(e.target.value)}
+          >
+            <option>select cause</option>
+            {ViewCause?.cause?.map((item) => {
+              return (
+                <option value={`${item?._id} ${item?.CauseName}`}>
+                  {item?.CauseName}
+                </option>
+              );
+            })}
+          </Form.Select>
+          <br />
+          <Form.Label
+            style={{ color: "white", fontWeight: "bold", fontSize: "20px" }}
+          >
+            Select Doctor
+            <span style={{ color: "red" }}>*</span>
+          </Form.Label>
+          <Form.Select
+            value={selDoc}
+            onChange={(e) => setselDoc(e.target.value)}
+          >
+            <option>select Doctor</option>
+            {Doctors?.map((item, i) => {
+              return (
+                <option
+                  value={item?._id}
+                >{`${item?.Firstname} ${item?.Lastname}`}</option>
+              );
+            })}
+          </Form.Select>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose7}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={AssignDoctor}>
+            Assign
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={show8} onHide={handleClose8} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>ASSIGN DOCTORS LIST</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ padding: "8px", backgroundColor: "white" }}>
+            <Table bordered>
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Cause Name</th>
+                  <th>Doctor Name</th>
+                  <th>Doctor ID</th>
+                  <th>Department</th>
+                  <th>Assign Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ViewCause?.assigndocts?.map((item, i) => {
+                  return (
+                    <tr>
+                      <td>{i + 1}</td>
+                      <td>{item?.causename}</td>
+                      <td>{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</td>
+                      <td>{item?.doctorsId?.DoctorId}</td>
+                      <td>{item?.doctorsId?.Department}</td>
+                      <td>{moment(item?.createdAt).format("DD-MM-YYYY")}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose8}>
+            Close
+          </Button>
         </Modal.Footer>
       </Modal>
 
@@ -2292,312 +2598,6 @@ export default function Inpatientlist() {
 
           <Button variant="primary" onClick={handlePrint}>
             print
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={show3} onHide={handleClose3}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add Visitors </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Visitor Name</Form.Label>
-              <Form.Control
-                onChange={(e) => setVisitorName(e.target.value)}
-                type="text"
-                placeholder="enter visitor name"
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Relation With Patient</Form.Label>
-              <Form.Control
-                onChange={(e) => setRelationWithPatient(e.target.value)}
-                type="text"
-                placeholder="enter Relation With Patient"
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Mobile Number</Form.Label>
-              <Form.Control
-                onChange={(e) => setMobileNumber(e.target.value)}
-                type="text"
-                placeholder="enter Mobile Number"
-                value={MobileNumber}
-                maxLength={10}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                onChange={(e) => setVisiterAddress(e.target.value)}
-                type="text"
-                placeholder="enter Address"
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose3}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={addVisitor}>
-            Add
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={show4} onHide={handleClose4} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>
-            Visitors List
-            <span style={{ color: "red" }}>
-              ({PatientVisitId?.Firstname} {PatientVisitId?.Lastname})
-            </span>
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div style={{ padding: "5px", backgroundColor: "white" }}>
-            <Table className="text-center" bordered>
-              <thead>
-                <tr>
-                  <th>SN.</th>
-                  <th>Visitor Name</th>
-                  <th>RelationWithPatient</th>
-                  <th>Address</th>
-                  <th>Phone Number</th>
-                  <th>Card</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {PatientVisitId?.visitor?.map((item, i) => {
-                  return (
-                    <tr>
-                      <td>{i + 1}</td>
-                      <td>{item?.VisitorName}</td>
-                      <td>{item?.RelationWithPatient}</td>
-                      <td>{item?.VisiterAddress}</td>
-                      <td>{item?.MobileNumber}</td>
-                      <td>
-                        <GrView
-                          onClick={() => {
-                            handleShow5();
-                            setVisitingCard(item);
-                          }}
-                          style={{
-                            color: "green",
-                            cursor: "pointer",
-                          }}
-                        />
-                      </td>
-                      <td>
-                        <MdDelete
-                          style={{
-                            cursor: "pointer",
-                            color: "red",
-                          }}
-                          onClick={() => DeleteVisitor(item?._id)}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose4}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={show5} onHide={handleClose5}>
-        <Modal.Header closeButton>
-          <Modal.Title>Visiting card</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div ref={componentRef1} style={{ backgroundColor: "white" }}>
-            <div className="container">
-              <div className="row" style={{ border: "1px solid white" }}>
-                <div
-                  className="col-md-5"
-                  style={{
-                    border: "1px solid white",
-                    backgroundColor: "white",
-                  }}
-                >
-                  <img
-                    src="/Images/logo.png"
-                    alt=""
-                    width="100%"
-                    height="100%"
-                  />
-                </div>
-                <div
-                  className="col-md-7 p-2 text-center"
-                  style={{
-                    backgroundColor: "#20958C",
-                    borderTopLeftRadius: "50px",
-                    borderBottomLeftRadius: "50px",
-                  }}
-                >
-                  <p
-                    style={{
-                      color: "red",
-                      fontSize: "28px",
-                      fontWeight: "700",
-                    }}
-                  >
-                    Visitor Card
-                  </p>
-                  <p style={{ color: "white" }}>
-                    <span
-                      style={{
-                        color: "white",
-                        fontSize: "18px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      {" "}
-                      Patient name :{" "}
-                    </span>
-                    {PatientVisitId?.Firstname} {PatientVisitId?.Lastname}
-                  </p>
-                  <p style={{ color: "white" }}>
-                    <span
-                      style={{
-                        color: "white",
-                        fontSize: "18px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Relation with Patient :{" "}
-                    </span>
-                    {VisitingCard?.RelationWithPatient}
-                  </p>
-                  <p style={{ color: "white" }}>
-                    <span
-                      style={{
-                        color: "white",
-                        fontSize: "18px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Visitor Name :{" "}
-                    </span>
-                    {VisitingCard?.VisitorName}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose5}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handlePrint1}>
-            print
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={show7} onHide={handleClose7}>
-        <Modal.Header closeButton>
-          <Modal.Title>ASSIGN DOCTORS</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Label
-            style={{ color: "white", fontWeight: "bold", fontSize: "20px" }}
-          >
-            Select Cause
-            <span style={{ color: "red" }}>*</span>
-          </Form.Label>
-          <Form.Select
-            value={selCause}
-            onChange={(e) => setselCause(e.target.value)}
-          >
-            <option>select cause</option>
-            {ViewCause?.cause?.map((item) => {
-              return (
-                <option value={`${item?._id} ${item?.CauseName}`}>
-                  {item?.CauseName}
-                </option>
-              );
-            })}
-          </Form.Select>
-          <br />
-          <Form.Label
-            style={{ color: "white", fontWeight: "bold", fontSize: "20px" }}
-          >
-            Select Doctor
-            <span style={{ color: "red" }}>*</span>
-          </Form.Label>
-          <Form.Select
-            value={selDoc}
-            onChange={(e) => setselDoc(e.target.value)}
-          >
-            <option>select Doctor</option>
-            {Doctors?.map((item, i) => {
-              return (
-                <option
-                  value={item?._id}
-                >{`${item?.Firstname} ${item?.Lastname}`}</option>
-              );
-            })}
-          </Form.Select>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose7}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={AssignDoctor}>
-            Assign
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={show8} onHide={handleClose8} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>ASSIGN DOCTORS LIST</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div style={{ padding: "8px", backgroundColor: "white" }}>
-            <Table bordered>
-              <thead>
-                <tr>
-                  <th>No.</th>
-                  <th>Cause Name</th>
-                  <th>Doctor Name</th>
-                  <th>Doctor ID</th>
-                  <th>Department</th>
-                  <th>Assign Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ViewCause?.assigndocts?.map((item, i) => {
-                  return (
-                    <tr>
-                      <td>{i + 1}</td>
-                      <td>{item?.causename}</td>
-                      <td>{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</td>
-                      <td>{item?.doctorsId?.DoctorId}</td>
-                      <td>{item?.doctorsId?.Department}</td>
-                      <td>{moment(item?.createdAt).format("DD-MM-YYYY")}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose8}>
-            Close
           </Button>
         </Modal.Footer>
       </Modal>

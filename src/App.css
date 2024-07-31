@@ -2814,6 +2814,10 @@ select {
   font-size: 50px;
 }
 
+.custom-modal .modal-dialog {
+  max-width: 1120px !important;
+}
+
 .bed-green-details {
   cursor: pointer;
   border: 2px solid #4ba74b;

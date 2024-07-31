@@ -86,6 +86,8 @@ export default function AddProductInvetory() {
   const [productInfo, setproductInfo] = useState({});
 
   // Edit product information:
+  console.log("EditData", EditData);
+  const [EditafterDiscountPrice, setEditafterDiscountPrice] = useState(0);
   const [editProdName, seteditProdName] = useState("");
   const [editProdPrice, seteditProdPrice] = useState();
   const [editcatid, seteditcatid] = useState("");
@@ -234,30 +236,12 @@ export default function AddProductInvetory() {
   async function EditInventory() {
     try {
       const obj = {
-        inventoryid: productInfo?._id,
-        productName: editProdName,
-        productPrice: editProdPrice,
-        discount: editDiscount,
-        categoryid: editcatid,
-        subcategoryid: editsubcatid,
-        // stock: editstock,
-        productType: editproductType,
-        productSize: editproductSize,
-        packSize: editpackSize,
-        manufacturingDate: editmanufacturingDate,
-        expiryDate: editExpiryDate,
-        colour: editcolour,
-        flavour: editflavour,
-        fragrance: editfragrance,
-        variant: editvariant,
-        brand: editbrand,
-        countryOfOrigin: editcountryOfOrigin,
-        manufacturercompanyname: editManufacturercompanyname,
-        manufactureraddress: editManufactureraddress,
-        productImgs: editproductImgs,
-        minstock: editMinAlertStock,
-        maxOrderlimit: editmaxOrderlimit,
-        description: editdescription,
+        inventoryid: EditData?._id,
+        discount: editDiscount ? editDiscount : EditData?.discount,
+        minstock: editMinAlertStock ? editMinAlertStock : EditData?.minstock,
+        maxOrderlimit: editmaxOrderlimit
+          ? editmaxOrderlimit
+          : EditData?.maxOrderlimit,
       };
       const config = {
         url: "/admin/editInventory",
@@ -316,6 +300,25 @@ export default function AddProductInvetory() {
     }
   };
 
+  const deleteInvoice = async (productInfo, datas) => {
+    try {
+      const config = {
+        url: "/admin/deleteInvoice/" + productInfo?._id + "/" + datas?._id,
+        baseURL: "http://localhost:8521/api",
+        method: "delete",
+        header: { "Content-Type": "application/json" },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        getInventoryList();
+        window.location.reload();
+      }
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
   useEffect(() => {
     adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
     if (!adminDetails) {
@@ -335,6 +338,15 @@ export default function AddProductInvetory() {
     const abc = xyz - xyz * (discount / 100);
     setafterDiscountPrice(abc);
   }, [discount]);
+
+  useEffect(() => {
+    if (editDiscount) {
+      const abc =
+        EditData?.vendorIdProductId?.MRP -
+        EditData?.vendorIdProductId?.MRP * (editDiscount / 100);
+      setEditafterDiscountPrice(abc);
+    }
+  }, [editDiscount]);
 
   {
     /*  
@@ -599,7 +611,7 @@ export default function AddProductInvetory() {
                     backgroundColor: "#ebebeb",
                   }}
                 >
-                  ₹{afterDiscountPrice}
+                  ₹{afterDiscountPrice ? afterDiscountPrice : 0}
                 </div>
               </div>
               <div className="col-lg-6 col-sm-12 mt-2">
@@ -1332,6 +1344,7 @@ export default function AddProductInvetory() {
                           <th>Invoice Number</th>
                           <th>Invoice Date</th>
                           <th>Invoice Document</th>
+                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1364,6 +1377,14 @@ export default function AddProductInvetory() {
                                     window.open(
                                       `http://localhost:8521/AdminInventory/${details?.InvoiceDoc}`
                                     )
+                                  }
+                                />
+                              </td>
+                              <td>
+                                <AiFillDelete
+                                  style={{ color: "red", fontSize: "25px" }}
+                                  onClick={() =>
+                                    deleteInvoice(productInfo, details)
                                   }
                                 />
                               </td>
@@ -1448,7 +1469,7 @@ export default function AddProductInvetory() {
                     border: "1px solid #EBEBEB",
                   }}
                 >
-                  <option>Choose Category</option>
+                  <option>{EditData?.categoryid?.categoryName}</option>
                 </select>
               </div>
               <div className="col-lg-4 col-sm-12 mt-2">
@@ -1460,7 +1481,7 @@ export default function AddProductInvetory() {
                     border: "1px solid #EBEBEB",
                   }}
                 >
-                  <option>Choose Subategory</option>
+                  <option>{EditData?.subcategoryid?.subcategoryName}</option>
                 </select>
               </div>
               <div className="col-lg-4 col-sm-12 mt-2">
@@ -1472,7 +1493,7 @@ export default function AddProductInvetory() {
                     border: "1px solid #EBEBEB",
                   }}
                 >
-                  <option>Choose Products</option>
+                  <option>{EditData?.productName}</option>
                 </select>
               </div>
 
@@ -1487,10 +1508,7 @@ export default function AddProductInvetory() {
                 </label>
                 <input
                   placeholder="Price"
-                  value={
-                    newarray?.find((item) => item?._id === prodid)?.productId
-                      ?.MRP
-                  }
+                  value={EditData?.vendorIdProductId?.MRP}
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -1510,8 +1528,8 @@ export default function AddProductInvetory() {
                   Discount (%)
                 </label>
                 <input
-                  placeholder="Discount"
-                  value={discount}
+                  placeholder={EditData?.discount}
+                  value={editDiscount}
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -1531,7 +1549,20 @@ export default function AddProductInvetory() {
                 >
                   Price After Discount
                 </label>
-                <div
+                <input
+                  placeholder={
+                    EditData?.vendorIdProductId?.MRP -
+                    (EditData?.vendorIdProductId?.MRP * EditData?.discount) /
+                      100
+                  }
+                  value={
+                    EditafterDiscountPrice
+                      ? EditafterDiscountPrice
+                      : EditData?.vendorIdProductId?.MRP -
+                        (EditData?.vendorIdProductId?.MRP *
+                          EditData?.discount) /
+                          100
+                  }
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -1539,9 +1570,7 @@ export default function AddProductInvetory() {
                     border: "1px solid #ebebeb",
                     backgroundColor: "#ebebeb",
                   }}
-                >
-                  ₹{afterDiscountPrice}
-                </div>
+                ></input>
               </div>
               <div className="col-lg-6 col-sm-12 mt-2">
                 <label
@@ -1553,7 +1582,7 @@ export default function AddProductInvetory() {
                   Minimum alert stock
                 </label>
                 <input
-                  placeholder="Minimum count"
+                  placeholder={EditData?.minstock}
                   value={editMinAlertStock}
                   style={{
                     width: "100%",
@@ -1575,7 +1604,7 @@ export default function AddProductInvetory() {
                   Maximum Order limit
                 </label>
                 <input
-                  placeholder="Maximum order limit"
+                  placeholder={EditData?.maxOrderlimit}
                   value={editmaxOrderlimit}
                   style={{
                     width: "100%",
@@ -1597,49 +1626,8 @@ export default function AddProductInvetory() {
                   Stocks Available
                 </label>
                 <input
-                  placeholder="Stocks Available"
-                  value={stock}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                ></input>
-              </div>
-              <div className="col-lg-6 col-sm-12 mt-2">
-                <label
-                  style={{
-                    fontWeight: "500",
-                    color: "#ebebeb",
-                  }}
-                >
-                  Invoice Number
-                </label>
-                <input
-                  placeholder="Invoice Number"
-                  value={InvoiceNumber}
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                ></input>
-              </div>
-              <div className="col-lg-6 col-sm-12 mt-2">
-                <label
-                  style={{
-                    fontWeight: "500",
-                    color: "#ebebeb",
-                  }}
-                >
-                  Invoice Date
-                </label>
-                <input
-                  type="date"
+                  placeholder={EditData?.stock}
+                  value={EditData?.stock}
                   style={{
                     width: "100%",
                     padding: "8px 20px",
@@ -1725,7 +1713,6 @@ export default function AddProductInvetory() {
                 <th>Discount (%)</th>
                 <th>Offer Amount</th>
                 <th>Stock Availability</th>
-
                 <th>ACTION</th>
               </tr>
             </thead>
