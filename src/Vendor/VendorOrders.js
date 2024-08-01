@@ -54,6 +54,15 @@ export const VendorOrders = () => {
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
 
+  const [InvoiceDoc, setInvoiceDoc] = useState();
+  const [InvoiceData, setInvoiceData] = useState({});
+  const [showInvoice, setShowInvoice] = useState(false);
+  const handleCloseInvoice = () => setShowInvoice(false);
+  const handleShowInvoice = (item) => {
+    setShowInvoice(true);
+    setInvoiceData(item);
+  };
+
   const [SelectedProduct, setSelectedProduct] = useState({});
 
   const deleteBtnClose = () => {
@@ -200,7 +209,7 @@ export const VendorOrders = () => {
         if (res.status === 200) {
           console.log(res.data);
           console.log(res.data.success);
-          alert("Order Accepted");
+          alert("Order Cancelled");
           getOrderList();
         }
       }
@@ -373,6 +382,70 @@ export const VendorOrders = () => {
       console.log(error.response);
       if (error.response) {
         alert(error.response.data.error);
+      }
+    }
+  };
+  const UploadInvoice = async () => {
+    if (!InvoiceDoc) {
+      alert("Please select Invoice document");
+    } else {
+      try {
+        {
+          const config = {
+            url: "/vendor/UploadInvoice",
+            method: "post",
+            baseURL: "http://localhost:8521/api",
+            headers: { "content-type": "multipart/form-data" },
+            data: {
+              OrderId: InvoiceData?._id,
+              Invoice: InvoiceDoc,
+            },
+          };
+          let res = await axios(config);
+          if (res.status === 200) {
+            console.log(res.data);
+            setInvoiceDoc();
+            alert("Invoice uploaded sucessfully");
+            getOrderList();
+          }
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
+      }
+    }
+  };
+
+  const UploadLabInvoice = async () => {
+    if (!InvoiceDoc) {
+      alert("Please select Invoice document");
+    } else {
+      try {
+        {
+          const config = {
+            url: "/admin/changeLabOrderValues",
+            method: "put",
+            baseURL: "http://localhost:8521/api",
+            headers: { "content-type": "application/json" },
+            data: {
+              orderid: InvoiceData?._id,
+              Invoice: InvoiceDoc,
+            },
+          };
+          let res = await axios(config);
+          if (res.status === 200) {
+            console.log(res.data);
+            alert("Invoice uploaded sucessfully");
+            getLabOrderList();
+          }
+        }
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
       }
     }
   };
@@ -886,16 +959,46 @@ export const VendorOrders = () => {
                         </td>
                         <td>
                           {item?.orderPayment == "DONE" ? (
-                            <button
-                              style={{
-                                backgroundColor: "green",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "20px",
-                              }}
-                            >
-                              DONE
-                            </button>
+                            item?.Invoice ? (
+                              <div>
+                                <img
+                                  src={
+                                    "https://cdn-icons-png.flaticon.com/128/202/202298.png"
+                                  }
+                                  alt="avathar"
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    borderRadius: "50px",
+                                  }}
+                                  onClick={() =>
+                                    window.open(
+                                      `http://localhost:8521/OrderAdmin/${item?.Invoice}`
+                                    )
+                                  }
+                                />
+                              </div>
+                            ) : (
+                              <button
+                                style={{
+                                  backgroundColor: "transparent",
+                                  color: "#20958c",
+                                  border: "none",
+                                  width: "100%",
+                                }}
+                                onClick={() => handleShowInvoice(item)}
+                              >
+                                <FontAwesomeIcon
+                                  icon={faUpload}
+                                  type="file"
+                                  style={{
+                                    color: "#20958c",
+                                    fontSize: "25px",
+                                  }}
+                                />{" "}
+                                Invoice
+                              </button>
+                            )
                           ) : (
                             <button
                               onClick={() => {
@@ -914,7 +1017,7 @@ export const VendorOrders = () => {
                                 borderRadius: "20px",
                               }}
                             >
-                              PENDING
+                              Make Payment
                             </button>
                           )}
                         </td>
@@ -944,16 +1047,46 @@ export const VendorOrders = () => {
                         </td>
                         <td>
                           {item?.orderPayment == "DONE" ? (
-                            <button
-                              style={{
-                                backgroundColor: "green",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "20px",
-                              }}
-                            >
-                              DONE
-                            </button>
+                            item?.Invoice ? (
+                              <div>
+                                <img
+                                  src={
+                                    "https://cdn-icons-png.flaticon.com/128/202/202298.png"
+                                  }
+                                  alt="avathar"
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    borderRadius: "50px",
+                                  }}
+                                  onClick={() =>
+                                    window.open(
+                                      `http://localhost:8521/OrderAdmin/${item?.Invoice}`
+                                    )
+                                  }
+                                />
+                              </div>
+                            ) : (
+                              <button
+                                style={{
+                                  backgroundColor: "transparent",
+                                  color: "#20958c",
+                                  border: "none",
+                                  width: "100%",
+                                }}
+                                onClick={() => handleShowInvoice(item)}
+                              >
+                                <FontAwesomeIcon
+                                  icon={faUpload}
+                                  type="file"
+                                  style={{
+                                    color: "#20958c",
+                                    fontSize: "25px",
+                                  }}
+                                />{" "}
+                                Invoice
+                              </button>
+                            )
                           ) : (
                             <button
                               onClick={() => {
@@ -972,7 +1105,7 @@ export const VendorOrders = () => {
                                 borderRadius: "20px",
                               }}
                             >
-                              PENDING
+                              Make Payment
                             </button>
                           )}
                         </td>
@@ -1145,6 +1278,103 @@ export const VendorOrders = () => {
             </div>
           </div>
         </Modal.Body>
+      </Modal>
+
+      <Modal size="lg" show={showInvoice} onHide={handleCloseInvoice}>
+        <Modal.Header className="all-bg-green text-light">
+          <Modal.Title>Upload Invoice</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="all-bg-green ">
+          <div className="mt-3">
+            <span
+              style={{
+                fontWeight: "500",
+                color: "#ebebeb",
+              }}
+            >
+              Upload Invoice:{" "}
+            </span>
+            {!InvoiceDoc ? (
+              <>
+                <input
+                  type="file"
+                  id="fileInput"
+                  accept="application/pdf"
+                  hidden
+                  multiple
+                  onChange={(e) => {
+                    setInvoiceDoc(e.target.files[0]);
+                  }}
+                />
+                <label for="fileInput">
+                  <FontAwesomeIcon
+                    icon={faUpload}
+                    type="file"
+                    style={{
+                      color: "white",
+                      fontSize: "25px",
+                    }}
+                  />
+                </label>
+              </>
+            ) : (
+              <div className="mt-3">
+                <img
+                  src={"https://cdn-icons-png.flaticon.com/128/202/202298.png"}
+                  alt="avathar"
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "50px",
+                  }}
+                  // onClick={() => handleShow4(InvoiceDoc)}
+                />
+              </div>
+            )}
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div style={{ display: "flex" }}>
+            <button
+              style={{
+                backgroundColor: "grey",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                marginRight: "20px",
+                padding: "4px 10px",
+                border: "1px solid white",
+              }}
+              onClick={handleCloseInvoice}
+            >
+              CANCEL
+            </button>
+
+            <button
+              style={{
+                backgroundColor: "orange",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontWeight: "600",
+                border: "1px solid white",
+                padding: "4px 10px",
+              }}
+              onClick={() => {
+                Vendor?.VendorType === "Lab" ? (
+                  UploadLabInvoice()
+                ) : Vendor?.VendorType === "Pharmacy" ? (
+                  UploadInvoice()
+                ) : (
+                  <></>
+                );
+              }}
+            >
+              UPLOAD
+            </button>
+          </div>
+        </Modal.Footer>
       </Modal>
     </div>
   );

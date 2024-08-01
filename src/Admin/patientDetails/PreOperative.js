@@ -6,10 +6,7 @@ import { Button, Table } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
 import { useReactToPrint } from "react-to-print";
 
-const PreOperative = ({CHECKLIST , patientdetail}) => {
-  console.log("DoctTreatmentChat",CHECKLIST);
-  console.log("patientdetail",patientdetail);
-
+const PreOperative = ({CHECKLIST , patientdetail,cause}) => {
   const dobString = patientdetail?.DOB;
   const dob = new Date(dobString);
   const currentDate = new Date();
@@ -52,7 +49,7 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">
-        <Button
+        {/* <Button
           style={{
             padding: "6px",
             border: "none",
@@ -64,7 +61,7 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
           onClick={()=>handleprint()}
         >
           Print <FiDownload />
-        </Button>
+        </Button> */}
       </div>
       {CHECKLIST?.map((item)=>{
         return(
@@ -167,7 +164,12 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                     IP ID:{patientdetail?.PatientId}
                   </td>
                   <td style={{ width: "15%", border: "2px  solid #20958C" }}>
-                    Ward:
+                    Ward:{
+                      cause?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.bedName}</span>
+                        )
+                      })}
                   </td>
                 </tr>
                 <tr>
@@ -175,13 +177,23 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                     colSpan={1}
                     style={{ width: "40%", border: "2px  solid #20958C" }}
                   >
-                    Dept:{" "}
+                    Dept:{" "}{
+                      cause?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.wardtype}</span>
+                        )
+                      })}
                   </td>
                   <td
                     colSpan={4}
                     style={{ width: "60%", border: "2px  solid #20958C" }}
                   >
-                    Doctor:{" "}{`${Doctor?.[0]?.doctorsId?.Firstname} ${Doctor?.[0]?.doctorsId?.Lastname}`}
+                    Doctor:{" "}
+                    {patientdetail?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                   </td>
                 </tr>
                 <tr>
@@ -189,7 +201,7 @@ const PreOperative = ({CHECKLIST , patientdetail}) => {
                     colSpan={1}
                     style={{ width: "40%", border: "2px  solid #20958C" }}
                   >
-                    Diagnosis:{" "}{item?.Diagnosis}
+                    Diagnosis:{" "}{cause?.CauseName}
                   </td>
                   <td
                     colSpan={4}

@@ -120,7 +120,7 @@ export const RegisterPharmacy = () => {
           CheckPassword(password)
         ) {
           const config = {
-            url: "/user/addPatient",
+            url: "/pharmacy/PharamacyUserRegisterInfo",
             method: "post",
             baseURL: "http://localhost:8521/api",
             headers: { "content-type": "application/json" },
@@ -139,7 +139,7 @@ export const RegisterPharmacy = () => {
               MaritalStatus: Marital,
               Password: password,
               ConfirmPassword: conpassword,
-              registeredFrom: "pharmacy",
+              // registeredFrom: "pharmacy",
             },
           };
           let res = await axios(config);

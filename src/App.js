@@ -273,9 +273,11 @@ import PrescriptionReport from "./PatientsPortal/PrescriptionReport";
 import HospitalLabSampleCollector from "./Admin/HospitalLabSampleCollector";
 import HospitalLabTechnician from "./Admin/HospitalLabTechnician";
 import OPDtoIPDBedAssign from "./Admin/OPDtoIPDBedAssign";
+import PharmacyWebUser from "./Admin/PharmacyWebUser";
 import IPD_PatientList from "./Admin/IPD_PatientList";
 import Ward from "./Admin/Ward";
 import BedAssignIPD from "./Admin/BedAssignIPD";
+import SafetyCheckList from "./Admin/PatientAdmitForms/SafetyCheckList";
 
 function App() {
   return (
@@ -2458,6 +2460,17 @@ function App() {
                 </>
               }
             ></Route>
+
+            <Route
+              path="/admin/PharmacyWebUser"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<PharmacyWebUser />} />{" "}
+                </>
+              }
+            ></Route>
+
             <Route
               path="/admin/ProductBrands"
               element={
@@ -2877,6 +2890,15 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<PostSurgical />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/safetychecklist"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<SafetyCheckList />} />{" "}
                 </>
               }
             ></Route>

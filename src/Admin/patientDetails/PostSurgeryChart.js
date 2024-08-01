@@ -2,11 +2,12 @@ import React from "react";
 import { Button, Table } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
 
-const PostSurgeryChart = () => {
+const PostSurgeryChart = ({ postsurgicalmonitor, patientdetail }) => {
+  console.log("postsurgicalmonitor", postsurgicalmonitor);
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">
-        <Button
+        {/* <Button
           style={{
             padding: "6px",
             border: "none",
@@ -17,7 +18,7 @@ const PostSurgeryChart = () => {
           }}
         >
           Print <FiDownload />
-        </Button>
+        </Button> */}
       </div>
       <div className="text-center mt-1">
         {" "}
@@ -41,7 +42,6 @@ const PostSurgeryChart = () => {
             border: "2px solid #20958C",
             margin: "auto",
             borderRadius: "20px",
-            // height: "1700px",
           }}
         >
           <div className="d-flex align-items-center mb-1 justify-content-around ps-5 pe-5 pt-4">
@@ -62,14 +62,7 @@ const PostSurgeryChart = () => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
+
           <div className="text-center mt-1">
             {" "}
             <h6
@@ -96,9 +89,6 @@ const PostSurgeryChart = () => {
             >
               <tbody>
                 <tr style={{ textAlign: "center" }}>
-                  <th
-                    style={{ width: "10%", border: "2px  solid #20958C" }}
-                  ></th>
                   <th style={{ width: "8%", border: "2px  solid #20958C" }}>
                     Time
                   </th>
@@ -130,44 +120,49 @@ const PostSurgeryChart = () => {
                     leg massage
                   </th>
                 </tr>
+                {postsurgicalmonitor?.map((item, i) => {
+                  return (
+                    <tr>
+                      <th
+                        style={{
+                          width: "10%",
+                          border: "2px  solid #20958C",
+                        }}
+                      >
+                        {item?.MonitoringTime}
+                      </th>
+                      <td
+                        style={{ width: "8%", border: "2px  solid #20958C" }}
+                      > {item?.MonitoringTime}</td>
+                      <td
+                        style={{ width: "8%", border: "2px  solid #20958C" }}
+                      > {item?.MonitoringTime}</td>
+                      <td
+                        style={{ width: "10%", border: "2px  solid #20958C" }}
+                      > {item?.MonitoringTime}</td>
+                      <td
+                        style={{ width: "7%", border: "2px  solid #20958C" }}
+                      > {item?.MonitoringTime}</td>
+                      <td
+                        style={{ width: "8%", border: "2px  solid #20958C" }}
+                      > {item?.MonitoringTime}</td>
+                      <td
+                        style={{ width: "10%", border: "2px  solid #20958C" }}
+                      > {item?.MonitoringTime}</td>
+                      <td
+                        style={{ width: "12%", border: "2px  solid #20958C" }}
+                      > {item?.MonitoringTime}</td>
+                      <td
+                        style={{ width: "12%", border: "2px  solid #20958C" }}
+                      > {item?.MonitoringTime}</td>
+                      <td
+                        style={{ width: "12%", border: "2px  solid #20958C" }}
+                      > {item?.MonitoringTime}</td>
+                    </tr>
+                  );
+                })}
 
-                <tr>
-                  <th style={{ width: "10%", border: "2px  solid #20958C" }}>
-                    0 hr
-                  </th>
-                  <td
-                    style={{ width: "8%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "8%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "8%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "10%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "7%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "8%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "10%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "12%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "12%", border: "2px  solid #20958C" }}
-                  ></td>
-                  <td
-                    style={{ width: "12%", border: "2px  solid #20958C" }}
-                  ></td>
-                </tr>
-
-                <tr>
+                {/* <tr>
                   <th style={{ width: "10%", border: "2px  solid #20958C" }}>
                     10 min
                   </th>
@@ -777,7 +772,7 @@ const PostSurgeryChart = () => {
                   <td
                     style={{ width: "12%", border: "2px  solid #20958C" }}
                   ></td>
-                </tr>
+                </tr> */}
               </tbody>
             </Table>
           </div>

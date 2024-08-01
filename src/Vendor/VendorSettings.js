@@ -79,7 +79,7 @@ export const VendorSettings = () => {
       try {
         const config = {
           url: "/vendor/UpdateVendor",
-          method: "post",
+          method: "put",
           baseURL: "http://localhost:8521/api",
           headers: { "content-type": "application/json" },
           data: {
@@ -94,6 +94,7 @@ export const VendorSettings = () => {
         };
         let res = await axios(config);
         if (res.status === 200) {
+          console.log("output", res.data.Vendor);
           sessionStorage.setItem(
             "VendorDetails",
             JSON.stringify(res.data.Vendor)

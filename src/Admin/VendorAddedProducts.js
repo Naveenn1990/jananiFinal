@@ -22,6 +22,9 @@ import InfoIcon from "@mui/icons-material/Info";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import moment from "moment";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import { AiFillDelete, AiFillFileExcel } from "react-icons/ai";
 
 const VendorAddedProducts = () => {
   const StyledBadge = withStyles((theme) => ({
@@ -41,12 +44,12 @@ const VendorAddedProducts = () => {
   };
   const handleClose = () => setShow(false);
 
-  const [ProductList, setProductList] = useState([]);
+  const [data, setdata] = useState([]);
   const getProductList = () => {
     axios
       .get("http://localhost:8521/api/vendor/productList")
       .then(function (response) {
-        setProductList(
+        setdata(
           response.data.allProducts?.filter(
             (item) => item?.vendorid?.vendorId === SelectedVendor
           )
@@ -159,7 +162,51 @@ const VendorAddedProducts = () => {
       });
   };
 
-  console.log("SelectedProduct", ProductList);
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 10;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data?.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data?.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Doctors");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data?.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
+  console.log("SelectedProduct", data);
   console.log("VendorList", VendorList);
   console.log("SelectedVendor", SelectedVendor);
   return (
@@ -171,43 +218,7 @@ const VendorAddedProducts = () => {
 
         <Container>
           <div className="row mb-3">
-            <div className="col-lg-8  d-flex gap-2">
-              <Form className="">
-                <Form.Control
-                  style={{ width: "400px" }}
-                  type="search"
-                  placeholder="Search"
-                  className="me-2"
-                  aria-label="Search"
-                />
-              </Form>
-
-              <Dropdown>
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
-                  <FontAwesomeIcon icon={faFilter} /> Filtered By
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item href="#">Tablet</Dropdown.Item>
-                  <Dropdown.Item href="#">Syrup</Dropdown.Item>
-                  <Dropdown.Item href="#">Other Drugs</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-
-              <Button className="all-bg-green">Search Product</Button>
-
-              <div className="cart-badge holder col-lg-2 d-flex gap-2  justify-content-end px-2">
-                <Link to="../admin/VendorAddedProductCart">
-                  <IconButton aria-label="cart">
-                    <StyledBadge
-                      badgeContent={getAddtocart?.length}
-                      color="secondary"
-                    >
-                      <ShoppingCartIcon />
-                    </StyledBadge>
-                  </IconButton>
-                </Link>
-              </div>
-            </div>
+            <div className="col-lg-8  d-flex gap-2"></div>
           </div>
           <div className="row">
             <p
@@ -233,104 +244,166 @@ const VendorAddedProducts = () => {
                 </option>
               ))}
             </select>
+            <div className="cart-badge holder col-lg-2 d-flex gap-2  justify-content-end px-2">
+              <Link to="../admin/VendorAddedProductCart">
+                <IconButton aria-label="cart">
+                  <StyledBadge
+                    badgeContent={getAddtocart?.length}
+                    color="secondary"
+                  >
+                    <ShoppingCartIcon />
+                  </StyledBadge>
+                </IconButton>
+              </Link>
+            </div>
           </div>
           {SelectedVendor ? (
-            <Table
-              className="table "
-              responsive
-              style={{ width: "1500px" }}
-              bordered
-            >
-              <thead>
-                <tr className="admin-table-head">
-                  <th className="fw-bold">HSN No.</th>
-                  <th className="fw-bold">Batch No.</th>
-                  <th className="fw-bold">
-                    <div style={{ width: "20%" }}>Product Name</div>
-                  </th>
-                  <th className="fw-bold">Manufacturing Date</th>
+            <>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "2%",
+                  marginBottom: "2%",
+                }}
+              >
+                <input
+                  placeholder="Search"
+                  style={{
+                    padding: "5px 10px",
+                    border: "1px solid #20958c",
+                    borderRadius: "0px",
+                  }}
+                  onChange={handleFilter}
+                />
+                <button
+                  style={{
+                    backgroundColor: "#20958c",
+                    color: "white",
+                    border: "none",
+                    fontSize: "12px",
+                    borderRadius: "4px",
+                  }}
+                  onClick={ExportToExcel}
+                >
+                  EXPORT <AiFillFileExcel />
+                </button>
+              </div>
 
-                  <th className="fw-bold">Expiry Date</th>
-                  <th className="fw-bold">Scheme</th>
-                  <th className="fw-bold">Product Price</th>
-                  <th className="fw-bold">Selling Price</th>
-                  {/* <th className="fw-bold">Admin Price </th>
+              <Table
+                className="table "
+                responsive
+                style={{ width: "1500px" }}
+                bordered
+              >
+                <thead>
+                  <tr className="admin-table-head">
+                    <th>Sl No.</th>
+                    <th className="fw-bold">HSN No.</th>
+                    <th className="fw-bold">Batch No.</th>
+                    <th className="fw-bold">
+                      <div style={{ width: "20%" }}>Product Name</div>
+                    </th>
+                    <th className="fw-bold">Manufacturing Date</th>
+
+                    <th className="fw-bold">Expiry Date</th>
+                    <th className="fw-bold">Scheme</th>
+                    <th className="fw-bold">Product Price</th>
+                    <th className="fw-bold">Selling Price</th>
+                    {/* <th className="fw-bold">Admin Price </th>
               <th className="fw-bold">Quantity </th>
               <th className="fw-bold">Admin Final Price </th> */}
-                  <th className="fw-bold">Add To Cart </th>
-                  <th className="fw-bold">Description </th>
-                </tr>
-              </thead>
+                    <th className="fw-bold">Add To Cart </th>
+                    <th className="fw-bold">Description </th>
+                  </tr>
+                </thead>
 
-              <tbody>
-                {ProductList?.map((item) => {
-                  return (
-                    <tr className="admin-table-row">
-                      <td>{item?.HSN}</td>
-                      <td>{item?.Batch}</td>
-                      <td>
-                        <div style={{ width: "" }}>{item?.productName}</div>
-                      </td>
-                      <td>
-                        {moment(item?.manufacturingDate).format("DD/MM/YYYY")}
-                      </td>
-                      <td>{moment(item?.expiryDate).format("DD/MM/YYYY")}</td>
-                      <td>{item?.Scheme ? item?.Scheme : "-"}</td>
-                      <td>
-                        <div style={{ width: "110px" }}>
-                          <p>
-                            A.Price = ₹
-                            {item?.productType?.toLowerCase() === "tablet"
-                              ? item?.productPrice * item?.No_of_Strips
-                              : item?.productPrice}
-                          </p>
-                          <p>CGST = {item?.CGST}% </p>
-                          <p>SGST = {item?.SGST}% </p>
-                          <p>Discount = {item?.discount}% </p>
-                        </div>
-                      </td>
+                <tbody>
+                  {search.length > 0
+                    ? tableFilter
+                        .slice(pagesVisited, pagesVisited + usersPerPage)
+                        ?.map((item, index) => {
+                          return (
+                            <tr className="admin-table-row">
+                              <td>{index + 1}</td>
+                              <td>{item?.HSN}</td>
+                              <td>{item?.Batch}</td>
+                              <td>
+                                <div style={{ width: "" }}>
+                                  {item?.productName}
+                                </div>
+                              </td>
+                              <td>
+                                {moment(item?.manufacturingDate).format(
+                                  "DD/MM/YYYY"
+                                )}
+                              </td>
+                              <td>
+                                {moment(item?.expiryDate).format("DD/MM/YYYY")}
+                              </td>
+                              <td>{item?.Scheme ? item?.Scheme : "-"}</td>
+                              <td>
+                                <div style={{ width: "110px" }}>
+                                  <p>
+                                    A.Price = ₹
+                                    {item?.productType?.toLowerCase() ===
+                                    "tablet"
+                                      ? item?.productPrice * item?.No_of_Strips
+                                      : item?.productPrice}
+                                  </p>
+                                  <p>CGST = {item?.CGST}% </p>
+                                  <p>SGST = {item?.SGST}% </p>
+                                  <p>Discount = {item?.discount}% </p>
+                                </div>
+                              </td>
 
-                      <td>
-                        <p>
-                          Selling Price = ₹{" "}
-                          {item?.productType?.toLowerCase() === "tablet" ? (
-                            <>
-                              {Number(item?.productPrice * item?.No_of_Strips) +
-                                (Number(
-                                  item?.productPrice * item?.No_of_Strips
-                                ) *
-                                  Number(item?.CGST)) /
-                                  100 +
-                                (Number(
-                                  item?.productPrice * item?.No_of_Strips
-                                ) *
-                                  Number(item?.SGST)) /
-                                  100 -
-                                (Number(
-                                  item?.productPrice * item?.No_of_Strips
-                                ) *
-                                  Number(item?.discount)) /
-                                  100}
-                            </>
-                          ) : (
-                            <>
-                              {Number(item?.productPrice) +
-                                (Number(item?.productPrice) *
-                                  Number(item?.CGST)) /
-                                  100 +
-                                (Number(item?.productPrice) *
-                                  Number(item?.SGST)) /
-                                  100 -
-                                (Number(item?.productPrice) *
-                                  Number(item?.discount)) /
-                                  100}
-                            </>
-                          )}
-                        </p>
-                        <p>MRP = {item?.MRP} </p>
-                      </td>
+                              <td>
+                                <p>
+                                  Selling Price = ₹{" "}
+                                  {item?.productType?.toLowerCase() ===
+                                  "tablet" ? (
+                                    <>
+                                      {Number(
+                                        item?.productPrice * item?.No_of_Strips
+                                      ) +
+                                        (Number(
+                                          item?.productPrice *
+                                            item?.No_of_Strips
+                                        ) *
+                                          Number(item?.CGST)) /
+                                          100 +
+                                        (Number(
+                                          item?.productPrice *
+                                            item?.No_of_Strips
+                                        ) *
+                                          Number(item?.SGST)) /
+                                          100 -
+                                        (Number(
+                                          item?.productPrice *
+                                            item?.No_of_Strips
+                                        ) *
+                                          Number(item?.discount)) /
+                                          100}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {Number(item?.productPrice) +
+                                        (Number(item?.productPrice) *
+                                          Number(item?.CGST)) /
+                                          100 +
+                                        (Number(item?.productPrice) *
+                                          Number(item?.SGST)) /
+                                          100 -
+                                        (Number(item?.productPrice) *
+                                          Number(item?.discount)) /
+                                          100}
+                                    </>
+                                  )}
+                                </p>
+                                <p>MRP = {item?.MRP} </p>
+                              </td>
 
-                      {/* <td>
+                              {/* <td>
                     <div style={{ width: "141px" }}>
                       <input
                         className="vi_0"
@@ -369,29 +442,183 @@ const VendorAddedProducts = () => {
                     </td>
                   </td>
                   <td>3000</td> */}
-                      <td>
-                        <div className="p-2">
-                          <Button
-                            variant="success"
-                            onClick={() => AddToCart(item)}
-                          >
-                            Add to Cart
-                          </Button>
-                        </div>
-                      </td>
-                      <td>
-                        <div
-                          className="p-2"
-                          onClick={() => ReadMoreClose(item)}
-                        >
-                          <InfoIcon />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
+                              <td>
+                                <div className="p-2">
+                                  <Button
+                                    variant="success"
+                                    onClick={() => AddToCart(item)}
+                                  >
+                                    Add to Cart
+                                  </Button>
+                                </div>
+                              </td>
+                              <td>
+                                <div
+                                  className="p-2"
+                                  onClick={() => ReadMoreClose(item)}
+                                >
+                                  <InfoIcon />
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                    : data?.map((item, index) => {
+                        return (
+                          <tr className="admin-table-row">
+                            <td>{index + 1}</td>
+                            <td>{item?.HSN}</td>
+                            <td>{item?.Batch}</td>
+                            <td>
+                              <div style={{ width: "" }}>
+                                {item?.productName}
+                              </div>
+                            </td>
+                            <td>
+                              {moment(item?.manufacturingDate).format(
+                                "DD/MM/YYYY"
+                              )}
+                            </td>
+                            <td>
+                              {moment(item?.expiryDate).format("DD/MM/YYYY")}
+                            </td>
+                            <td>{item?.Scheme ? item?.Scheme : "-"}</td>
+                            <td>
+                              <div style={{ width: "110px" }}>
+                                <p>
+                                  A.Price = ₹
+                                  {item?.productType?.toLowerCase() === "tablet"
+                                    ? item?.productPrice * item?.No_of_Strips
+                                    : item?.productPrice}
+                                </p>
+                                <p>CGST = {item?.CGST}% </p>
+                                <p>SGST = {item?.SGST}% </p>
+                                <p>Discount = {item?.discount}% </p>
+                              </div>
+                            </td>
+
+                            <td>
+                              <p>
+                                Selling Price = ₹{" "}
+                                {item?.productType?.toLowerCase() ===
+                                "tablet" ? (
+                                  <>
+                                    {Number(
+                                      item?.productPrice * item?.No_of_Strips
+                                    ) +
+                                      (Number(
+                                        item?.productPrice * item?.No_of_Strips
+                                      ) *
+                                        Number(item?.CGST)) /
+                                        100 +
+                                      (Number(
+                                        item?.productPrice * item?.No_of_Strips
+                                      ) *
+                                        Number(item?.SGST)) /
+                                        100 -
+                                      (Number(
+                                        item?.productPrice * item?.No_of_Strips
+                                      ) *
+                                        Number(item?.discount)) /
+                                        100}
+                                  </>
+                                ) : (
+                                  <>
+                                    {Number(item?.productPrice) +
+                                      (Number(item?.productPrice) *
+                                        Number(item?.CGST)) /
+                                        100 +
+                                      (Number(item?.productPrice) *
+                                        Number(item?.SGST)) /
+                                        100 -
+                                      (Number(item?.productPrice) *
+                                        Number(item?.discount)) /
+                                        100}
+                                  </>
+                                )}
+                              </p>
+                              <p>MRP = {item?.MRP} </p>
+                            </td>
+
+                            {/* <td>
+                    <div style={{ width: "141px" }}>
+                      <input
+                        className="vi_0"
+                        type="number"
+                        placeholder="Enter Your Price"
+                      />
+                    </div>
+                  </td>
+
+                  <td>
+                    <td className="d-flex rounded-pill border border-dark p-2 m-2">
+                      <button
+                        style={{
+                          backgroundColor: "transparent",
+                          border: "none",
+                        }}
+                        onClick={subqantity}
+                      >
+                        <RemoveIcon />
+                      </button>
+                      <Form.Group
+                        className="mb-1"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        {qnty}
+                      </Form.Group>
+                      <button
+                        style={{
+                          backgroundColor: "transparent",
+                          border: "none",
+                        }}
+                        onClick={addqantity}
+                      >
+                        <AddIcon />
+                      </button>
+                    </td>
+                  </td>
+                  <td>3000</td> */}
+                            <td>
+                              <div className="p-2">
+                                <Button
+                                  variant="success"
+                                  onClick={() => AddToCart(item)}
+                                >
+                                  Add to Cart
+                                </Button>
+                              </div>
+                            </td>
+                            <td>
+                              <div
+                                className="p-2"
+                                onClick={() => ReadMoreClose(item)}
+                              >
+                                <InfoIcon />
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                </tbody>
+              </Table>
+              <div style={{ display: "flex" }}>
+                <p style={{ width: "100%", marginTop: "20px" }}>
+                  Total Count: {data?.length}
+                </p>
+                <ReactPaginate
+                  previousLabel={"Back"}
+                  nextLabel={"Next"}
+                  pageCount={pageCount}
+                  onPageChange={changePage}
+                  containerClassName={"paginationBttns"}
+                  previousLinkClassName={"previousBttn"}
+                  nextLinkClassName={"nextBttn"}
+                  disabledClassName={"paginationDisabled"}
+                  activeClassName={"paginationActive"}
+                />
+              </div>
+            </>
           ) : (
             ""
           )}

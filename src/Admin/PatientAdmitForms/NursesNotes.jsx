@@ -26,6 +26,7 @@ const NursesNotes = () => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     getpatientbyid();
   }, []);
@@ -39,6 +40,8 @@ const NursesNotes = () => {
       setSelectedCause(findcause);
     }
   }, [cause, userdetail]);
+
+  console.log("SelectedCause",SelectedCause);
 
   const dobString = patientdetails?.DOB;
   const dob = new Date(dobString);
@@ -98,13 +101,7 @@ const NursesNotes = () => {
   };
 
   const [Diagnosis, setDiagnosis] = useState("");
-  const submitNurseNote = async () => {
-    if (!SelectDoctor) {
-      return alert("Please Select Doctor..!");
-    }
-    if (!Diagnosis) {
-      return alert("Enter Diagnosis..!");
-    }
+  const submitNurseNote = async () => {  
     if (!TimeandDate) {
       return alert("Select Date..!");
     }
@@ -245,7 +242,7 @@ const NursesNotes = () => {
                       fontSize: "17px",
                     }}
                   >
-                    Name:{" "}
+                    Name :{" "}
                     <span>
                       {`${patientdetails?.Firstname} ${patientdetails?.Lastname} `}
                     </span>
@@ -259,7 +256,7 @@ const NursesNotes = () => {
                       fontSize: "17px",
                     }}
                   >
-                    Age:
+                    Age :
                     <span>{ageOutput}</span>
                   </div>
                   <div
@@ -273,7 +270,7 @@ const NursesNotes = () => {
                       alignItems: "center",
                     }}
                   >
-                    Sex: <span>{patientdetails?.Gender}</span>
+                    Sex : <span>{patientdetails?.Gender}</span>
                   </div>
                 </div>
                 <div className="row" style={{ border: "1px solid #20958C" }}>
@@ -281,31 +278,36 @@ const NursesNotes = () => {
                     Pt ID : <span>{patientdetails?.PatientId}</span>
                   </div>
                   <div className="col-md-6 consentformhd">
-                    Ward: <span>23AC</span>
+                    Ward : 
+                    <span>
+                      {
+                      SelectedCause?.[0]?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.bedName}</span>
+                        )
+                      })}
+
+                    </span>
                   </div>
                 </div>
                 <div className="row" style={{ border: "1px solid #20958C" }}>
                   <div className="col-md-6 consentformhd">
-                    Dept: <span>{DoctorDept?.[0]?.doctorsId?.Department}</span>
-                  </div>
-                  <div className="col-md-6 d-flex align-items-center gap-2">
-                    Doctor:
-                    <span>
-                      <Form.Select
-                        className="vi_0"
-                        style={{ width: "270px" }}
-                        onChange={(e) => setSelectDoctor(e.target.value)}
-                      >
-                        <option value="">Select Doctor</option>
-                        {patientdetails?.assigndocts?.map((item) => {
-                          return (
-                            <option
-                              value={item?.doctorsId?._id}
-                            >{`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</option>
-                          );
-                        })}
-                      </Form.Select>
+                    Dept: <span>
+                    {
+                      SelectedCause?.[0]?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.wardtype}</span>
+                        )
+                      })}
                     </span>
+                  </div>
+                  <div className="col-md-6  align-items-center gap-2">
+                    Doctor :<br/>
+                    {patientdetails?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                   </div>
                 </div>
                 <div className="row" style={{ border: "1px solid #20958C" }}>
@@ -323,24 +325,10 @@ const NursesNotes = () => {
                 <div className="row" style={{ border: "1px solid #20958C" }}>
                   <div className="col-md-12 consentformhd d-flex gap-2 align-items-center">
                     <b>Diagnosis : </b>
-
-                    <span>
-                      <textarea
-                        type="text"
-                        className="vi_0"
-                        style={{ width: "550px" }}
-                        placeholder="Diagnosis"
-                        value={Diagnosis}
-                        onChange={(e) => setDiagnosis(e.target.value)}
-                      />
-                    </span>
+                    <span>{cause?.CauseName} </span>
                   </div>
                 </div>
-                <div className="mt-2 text-center">
-                  <span style={{ color: "red", fontFamily: "bold" }}>
-                    {cause?.CauseName}
-                  </span>
-                </div>
+
                 <div className="mt-2">
                   <Table className="text-center" bordered>
                     <thead>
