@@ -107,10 +107,7 @@ export default function Hospitallab() {
       testName,
       priceNonInsurance,
       priceInsurance,
-      unit,
-      // beforeFoodRefVal,
-      // afterFoodRefVal,
-      generalRefVal,
+
       testImg,
       vialsneeded: JSON.stringify(vialsneeded),
       tat,
@@ -134,11 +131,9 @@ export default function Hospitallab() {
         settestName("");
         setpriceNonInsurance(null);
         setpriceInsurance(null);
-        setunit("");
         settat("");
         // setbeforeFoodRefVal("");
         // setafterFoodRefVal("");
-        setgeneralRefVal("");
         settestImg({});
         setvialsneeded([]);
         setshowvialsneeded([]);
@@ -161,8 +156,7 @@ export default function Hospitallab() {
       testName,
       priceNonInsurance,
       priceInsurance,
-      unit,
-      generalRefVal,
+
       testImg,
       tat,
       testDescription,
@@ -185,9 +179,7 @@ export default function Hospitallab() {
         settestName("");
         setpriceNonInsurance(null);
         setpriceInsurance(null);
-        setunit("");
         settat("");
-        setgeneralRefVal("");
         settestImg({});
         setvialsneeded([]);
         setshowvialsneeded([]);
@@ -555,56 +547,6 @@ export default function Hospitallab() {
                   }}
                   value={priceInsurance}
                   onChange={(e) => setpriceInsurance(e.target.value)}
-                ></input>
-              </div>
-
-              <div className="col-lg-6" style={{ marginTop: "4%" }}>
-                <label
-                  style={{
-                    color: "white",
-                    fontWeight: "400",
-                    fontSize: "18px",
-                  }}
-                >
-                  Unit
-                </label>
-                <input
-                  placeholder="Unit"
-                  type="string"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                  value={unit}
-                  onChange={(e) => setunit(e.target.value)}
-                ></input>
-              </div>
-
-              <div className="col-lg-6" style={{ marginTop: "4%" }}>
-                <label
-                  style={{
-                    color: "white",
-                    fontWeight: "400",
-                    fontSize: "18px",
-                  }}
-                >
-                  General Reference Value
-                </label>
-                <input
-                  placeholder="General Reference Value"
-                  type="string"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                  value={generalRefVal}
-                  onChange={(e) => setgeneralRefVal(e.target.value)}
                 ></input>
               </div>
 
@@ -985,56 +927,6 @@ export default function Hospitallab() {
                     fontSize: "18px",
                   }}
                 >
-                  Unit
-                </label>
-                <input
-                  placeholder={View?.unit}
-                  type="string"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                  value={unit}
-                  onChange={(e) => setunit(e.target.value)}
-                ></input>
-              </div>
-
-              <div className="col-lg-6" style={{ marginTop: "4%" }}>
-                <label
-                  style={{
-                    color: "white",
-                    fontWeight: "400",
-                    fontSize: "18px",
-                  }}
-                >
-                  General Reference Value
-                </label>
-                <input
-                  placeholder={View?.generalRefVal}
-                  type="string"
-                  style={{
-                    width: "100%",
-                    padding: "8px 20px",
-                    borderRadius: "0px",
-                    border: "1px solid #ebebeb",
-                    backgroundColor: "#ebebeb",
-                  }}
-                  value={generalRefVal}
-                  onChange={(e) => setgeneralRefVal(e.target.value)}
-                ></input>
-              </div>
-
-              <div className="col-lg-6" style={{ marginTop: "4%" }}>
-                <label
-                  style={{
-                    color: "white",
-                    fontWeight: "400",
-                    fontSize: "18px",
-                  }}
-                >
                   Turn Around Time(TAT)
                 </label>
                 <input
@@ -1357,10 +1249,7 @@ export default function Hospitallab() {
                 <th>Lab Test Image</th>
                 <th>Non-Insurance Price</th>
                 <th>Insurance Price</th>
-                <th>Unit</th>
-                {/* <th>Before Food Reference value</th>
-              <th>After Food Reference value</th> */}
-                <th>General Reference value</th>
+
                 <th>Turn Around Time(TAT)</th>
                 <th>Description</th>
                 <th>Vial Availability</th>
@@ -1388,10 +1277,7 @@ export default function Hospitallab() {
                           </td>
                           <td>{valitem?.priceNonInsurance}</td>
                           <td>{valitem?.priceInsurance}</td>
-                          <td>{valitem?.unit}</td>
-                          {/* <td>{valitem?.beforeFoodRefVal}</td>
-                  <td>{valitem?.afterFoodRefVal}</td> */}
-                          <td>{valitem?.generalRefVal}</td>
+
                           <td>{valitem?.tat} Hr.</td>
                           <td>
                             {!valitem?.testDescription ? (
@@ -1480,10 +1366,7 @@ export default function Hospitallab() {
                           </td>
                           <td>{valitem?.priceNonInsurance}</td>
                           <td>{valitem?.priceInsurance}</td>
-                          <td>{valitem?.unit}</td>
-                          {/* <td>{valitem?.beforeFoodRefVal}</td>
-                  <td>{valitem?.afterFoodRefVal}</td> */}
-                          <td>{valitem?.generalRefVal}</td>
+
                           <td>{valitem?.tat} Hr.</td>
                           <td>
                             {!valitem?.testDescription ? (

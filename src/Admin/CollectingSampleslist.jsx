@@ -51,9 +51,9 @@ export default function CollectingSampleslist() {
       console.log(error);
     }
   };
-  const [labtestid, setlabtestid] = useState("");
-  const [sampleName, setsampleName] = useState("");
-  const AddSampleData = async () => {
+  // const [labtestid, setlabtestid] = useState("");
+  // const [sampleName, setsampleName] = useState("");
+  const AddSampleData = async (labtestid, sampleName) => {
     try {
       const config = {
         url: "/addlabSample",
@@ -71,8 +71,8 @@ export default function CollectingSampleslist() {
       const res = await axios(config);
       if (res.status === 200) {
         alert(res.data.success);
-        GetLabtestList();
         handleClose2();
+        GetLabtestList();
       }
     } catch (error) {
       console.log(error);
@@ -93,9 +93,12 @@ export default function CollectingSampleslist() {
         alert(res.data.success);
         GetLabtestList();
         handleClose3();
+      } else {
+        handleClose3();
       }
     } catch (error) {
       console.log(error);
+      handleClose3();
       return alert(error.response.data.error);
     }
   };
@@ -140,6 +143,39 @@ export default function CollectingSampleslist() {
         setHospitalLabList([]);
       });
   };
+
+  // ==========================================
+
+  const [InventoryOrderList, setInventoryOrderList] = useState([]);
+  const LabInventoryListFn = async () => {
+    try {
+      const res = await axios.get(
+        " http://localhost:8521/api/lab/getlabInventory "
+      );
+      if (res.status === 200) {
+        setInventoryOrderList(res.data.inventoryList);
+      }
+    } catch (error) {
+      console.log(error);
+      setInventoryOrderList([]);
+    }
+  };
+  useEffect(() => {
+    LabInventoryListFn();
+  }, []);
+
+  const [usedProducts, setUsedProducts] = useState([]);
+  const [chooseusedProducts, setchooseUsedProducts] = useState("");
+  const [chooseusedProductsQuantity, setchooseUsedProductsQuantity] =
+    useState("");
+  function addUsedProductsInSampleCollection() {
+    setUsedProducts((curr) => [
+      ...curr,
+      { productName: chooseusedProducts, Quantity: chooseusedProductsQuantity },
+    ]);
+  }
+
+  // ==============================================
 
   const [Labtests, setLabtests] = useState({});
 
@@ -277,7 +313,7 @@ export default function CollectingSampleslist() {
             <tbody>
               {FilteredCatList?.filter(
                 (x) =>
-                  (x.patientType === "IPD" || x.paymentStatus === "PAID") &&
+                  (x.paymentStatus === "PAID" || x.patientType === "IPD") &&
                   x.labTestBookingStatus === "BOOKED"
               )
                 ?.slice(pagesVisited, pagesVisited + usersPerPage)
@@ -368,46 +404,161 @@ export default function CollectingSampleslist() {
                 overflowX: "scroll",
               }}
             >
-              <Table bordered>
-                <thead className="">
-                  <tr>
-                    <th>Sl.</th>
-                    <th>Test Name</th>
-                    <th>Sample name</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Labtests?.Labtests?.map((item, i) => {
-                    return (
-                      <tr>
-                        <td>{i + 1}</td>
-                        <td>{item?.testName}</td>
+              {Labtests?.Labtests?.map((item) => {
+                let arrStr = [...item?._id?.split("")];
+                let randomStr = arrStr
+                  ?.slice(arrStr.length - 9, arrStr.length)
+                  ?.join("");
+                return (
+                  <div style={{ marginBottom: "20px" }}>
+                    <Table bordered>
+                      <tbody>
+                        <tr>
+                          <td>Test Name</td>
+                          <td>
+                            <b>{item?.testName}</b>
+                          </td>
+                        </tr>
 
-                        <td>
-                          <input
-                            type="text"
-                            placeholder={
-                              item?.sampleName
-                                ? item?.sampleName
-                                : "Enter Sample name"
-                            }
-                            onChange={(e) => {
-                              setlabtestid(item?._id);
-                              setsampleName(e.target.value);
-                            }}
-                          />
-                        </td>
-                        <td>
-                          <Button variant="primary" onClick={AddSampleData}>
-                            Save
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
+                        <tr>
+                          <td>Sample Name</td>
+                          <td>
+                            <input
+                              type="text"
+                              value={randomStr}
+                              style={{
+                                width: "100%",
+                                height: "45px",
+                                padding: "10px",
+                              }}
+                              placeholder={
+                                item?.sampleName ? item?.sampleName : randomStr
+                              }
+                              disabled
+                            />
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td>Sample Collection Date & Time</td>
+                          <td>
+                            <input
+                              type="text"
+                              value={`${new Date().getDate()}-${
+                                new Date().getMonth() + 1
+                              }-${new Date().getFullYear()}   ${new Date().getHours()}:${new Date().getMinutes()}`}
+                              style={{
+                                width: "100%",
+                                height: "45px",
+                                padding: "10px",
+                              }}
+                              disabled
+                            />
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td>Sample Collected By</td>
+                          <td>
+                            <input
+                              type="text"
+                              value={AdminDetails?.name}
+                              style={{
+                                width: "100%",
+                                height: "45px",
+                                padding: "10px",
+                              }}
+                              disabled
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Sample Collected Used Products</td>
+                          <td>
+                            <select
+                              style={{
+                                width: "100%",
+                                height: "45px",
+                                padding: "10px",
+                              }}
+                              onChange={(e) =>
+                                setchooseUsedProducts(e.target.value)
+                              }
+                            >
+                              <option>Choose Option</option>
+                              {InventoryOrderList?.map((valEle) => {
+                                return (
+                                  <option
+                                    value={valEle?.vendorProductId?.productName}
+                                  >
+                                    {valEle?.vendorProductId?.productName}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              placeholder="Quantity"
+                              value={chooseusedProductsQuantity}
+                              style={{
+                                width: "100%",
+                                height: "45px",
+                                padding: "10px",
+                              }}
+                              onChange={(e) =>
+                                setchooseUsedProductsQuantity(e.target.value)
+                              }
+                            />
+                          </td>
+                          <td>
+                            <Button onClick={addUsedProductsInSampleCollection}>
+                              Add
+                            </Button>
+                          </td>
+                        </tr>
+
+                        {item?.sampleCollectedBy ? (
+                          <></>
+                        ) : (
+                          <tr>
+                            <td></td>
+                            <td>
+                              <Button
+                                variant="primary"
+                                onClick={() => {
+                                  AddSampleData(item?._id, randomStr);
+                                }}
+                              >
+                                Save
+                              </Button>
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </Table>
+                    <div>
+                      <Table>
+                        <thead>
+                          <th>Product Name</th>
+                          <th>Quantity</th>
+                        </thead>
+                        <tbody>
+                          {usedProducts?.map((valdata) => {
+                            return (
+                              <tr>
+                                <td>{valdata?.productName}</td>
+                                <td>{valdata?.Quantity}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </Table>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </Modal.Body>
           <Modal.Footer>
