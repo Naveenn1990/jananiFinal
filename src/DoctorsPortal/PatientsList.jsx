@@ -245,6 +245,7 @@ export const PatientsList = () => {
       >
         IPD
       </Button>
+      <hr/>
       <Container className="p-4">
         {FilterPatientType === "OPD" ? (
           <h3>

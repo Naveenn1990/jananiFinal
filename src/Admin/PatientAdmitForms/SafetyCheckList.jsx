@@ -1,11 +1,12 @@
 import { Checkbox } from '@mui/material';
+import axios from 'axios';
 import moment from 'moment';
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import { FaBackward } from 'react-icons/fa'
 import { FiDownload } from 'react-icons/fi'
 import { useLocation } from 'react-router-dom';
-
+import SignatureCanvas from "react-signature-canvas";
 function SafetyCheckList() {
     const location = useLocation();
     const { patientdetails, cause } = location.state || {};
@@ -26,6 +27,109 @@ function SafetyCheckList() {
     } else {
       ageOutput = `${ageYears} years`;
     }
+
+    const [SurgeonSignature, setSurgeonSignature] = useState(null);
+    const sigCanvas = useRef({});
+    const clear = () => sigCanvas.current.clear();
+    const save = () => {
+      const SurgeonSignature = sigCanvas.current
+        .getTrimmedCanvas()
+        .toDataURL("image/png");
+      setSurgeonSignature(SurgeonSignature);
+    };
+
+    const [AnesthesiologistSignature, setAnesthesiologistSignature] = useState(null);
+    const sigCanvas1 = useRef({});
+    const clear1 = () => sigCanvas1.current.clear();
+    const save1 = () => {
+      const AnesthesiologistSignature = sigCanvas1.current
+        .getTrimmedCanvas()
+        .toDataURL("image/png");
+      setAnesthesiologistSignature(AnesthesiologistSignature);
+    };
+
+    const [NurseSignature, setNurseSignature] = useState(null);
+    const sigCanvas2 = useRef({});
+    const clear2 = () => sigCanvas2.current.clear();
+    const save2 = () => {
+      const NurseSignature = sigCanvas2.current
+        .getTrimmedCanvas()
+        .toDataURL("image/png");
+      setNurseSignature(NurseSignature);
+    };
+
+    const [Signin1, setSignin1] = useState("")
+    const [Signin2, setSignin2] = useState("")
+    const [Signin3, setSignin3] = useState("")
+    const [Signin4, setSignin4] = useState("")
+    const [Signin5, setSignin5] = useState("")
+    const [Signin6, setSignin6] = useState("")
+    const [Signin7, setSignin7] = useState("")
+    const [Signin8, setSignin8] = useState("")
+    const [Signin9, setSignin9] = useState("")
+
+    const [TimeOut1, setTimeOut1] = useState("")
+    const [TimeOut2, setTimeOut2] = useState("")
+    const [TimeOut3, setTimeOut3] = useState("")
+    const [TimeOut4, setTimeOut4] = useState("")
+    const [TimeOut5, setTimeOut5] = useState("")
+    const [TimeOut6, setTimeOut6] = useState("")
+    const [TimeOut7, setTimeOut7] = useState("")
+
+    const [Signout1, setSignout1] = useState("")
+    const [Signout2, setSignout2] = useState("")
+    const [Signout3, setSignout3] = useState("")
+    const [Signout4, setSignout4] = useState("")
+
+    const submitSafteyChecklist = async () => {  
+   
+      try {
+        const formdata = new FormData();
+        const Surgeonsign = await fetch(SurgeonSignature).then((res) => res.blob());
+        const Anesthesiologistsign = await fetch(AnesthesiologistSignature).then((res) => res.blob());
+        const Nursesign = await fetch(NurseSignature).then((res) => res.blob());
+        formdata.set("patientId", patientdetails?._id);
+        formdata.set("causeId", cause?._id);
+        formdata.set("Signin1", Signin1);
+        formdata.set("Signin2", Signin2);
+        formdata.set("Signin3", Signin3);
+        formdata.set("Signin4", Signin4);
+        formdata.set("Signin5", Signin5);
+        formdata.set("Signin6", Signin6);
+        formdata.set("Signin7", Signin7);
+        formdata.set("Signin8", Signin8);
+        formdata.set("Signin9", Signin9);
+        formdata.set("TimeOut1", TimeOut1);
+        formdata.set("TimeOut2", TimeOut2);
+        formdata.set("TimeOut3", TimeOut3);
+        formdata.set("TimeOut4", TimeOut4);
+        formdata.set("TimeOut5", TimeOut5);
+        formdata.set("TimeOut6", TimeOut6);
+        formdata.set("TimeOut7", TimeOut7);
+        formdata.set("Signout1", Signout1);
+        formdata.set("Signout2", Signout2);
+        formdata.set("Signout3", Signout3);
+        formdata.set("Signout4", Signout4);
+
+        formdata.set("SurgeonSignature", Surgeonsign, "surgeon-signature.png");
+        formdata.set("AnesthesiologistSignature", Anesthesiologistsign, "anesthesiologist-signature.png");
+        formdata.set("NurseSignature", Nursesign, "nurse-signature.png");
+        const config = {
+          url: "/addsurgicalsafety",
+          method: "put",
+          baseURL: "http://localhost:8521/api/staff",
+          headers: { "Content-Type": "multipart/form-data" },
+          data: formdata,
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          alert(res.data.success);
+  
+        }
+      } catch (error) {
+        alert(error.response.data.error);
+      }
+    };
   return (
   <>
           <div>
@@ -139,8 +243,8 @@ function SafetyCheckList() {
                   <Table>
                     <thead>
                       <tr style={{ textAlign: "center" }}>
-                        {/* <th >SIGN IN</th>
-                        <th ></th> */}
+                        <th >SIGN IN</th>
+                        <th ></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -159,7 +263,10 @@ function SafetyCheckList() {
                             border: "0.5px  solid #20958C",
                           }}
                         >
-                            <Checkbox/>
+                            <Checkbox
+                            onChange={(e)=>setSignin1(e.target.checked ? 'Yes' : '')}
+                            checked ={Signin1==="Yes"}
+                            />
                         </td>
                       </tr>
                       <tr>
@@ -176,7 +283,10 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        > <Checkbox/></td>
+                        > <Checkbox
+                        onChange={(e)=>setSignin2(e.target.checked ? 'Yes' : '')}
+                        checked ={Signin2==="Yes"}
+                        /></td>
                       </tr>
                       <tr>
                         <td
@@ -193,7 +303,11 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        > <Checkbox/></td>
+                        > 
+                        <Checkbox
+                        onChange={(e)=>setSignin3(e.target.checked ? 'Yes' : '')}
+                        checked ={Signin3==="Yes"}
+                        /></td>
                       </tr>
                       <tr>
                         <td
@@ -209,7 +323,10 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        > <Checkbox/></td>
+                        > <Checkbox
+                        onChange={(e)=>setSignin4(e.target.checked ? 'Yes' : '')}
+                        checked ={Signin4==="Yes"}
+                        /></td>
                       </tr>
                       <tr>
                         <td
@@ -235,8 +352,14 @@ function SafetyCheckList() {
                       }}
                       >
                         Surgeon, anaesthesia professional..?
-                         Yes <Checkbox/>
-                         No <Checkbox/>
+                         Yes <Checkbox
+                            onChange={(e)=>setSignin5(e.target.checked ? 'Yes' : '')}
+                            checked ={Signin5==="Yes"}
+                         />
+                         No <Checkbox
+                            onChange={(e)=>setSignin5(e.target.checked ? 'No' : '')}
+                            checked ={Signin5==="No"}
+                         />
                       </tr>
                       <tr
                        style={{
@@ -245,18 +368,37 @@ function SafetyCheckList() {
                       }}
                       >
                         Surgeon, anaesthesia professional..?
-                         Yes <Checkbox/>
-                         No <Checkbox/>
+                         Yes <Checkbox
+                            onChange={(e)=>setSignin6(e.target.checked ? 'Yes' : '')}
+                            checked ={Signin6==="Yes"}
+                         />
+                         No 
+                         <Checkbox
+                           onChange={(e)=>setSignin6(e.target.checked ? 'No' : '')}
+                           checked ={Signin6==="No"}
+                         />
                       </tr>
                       <tr
                        style={{
                         border: "0.5px  solid #20958C",
                       }}
-                      >
+                      >                        
                         <ul>
-                            <li>Surgeon, anaesthesia professional..? <Checkbox/></li>
-                            <li>Surgeon, anaesthesia professional..? <Checkbox/></li>
-                            <li>Surgeon, anaesthesia professional..? <Checkbox/></li>
+                            <li>Surgeon, anaesthesia professional..? 
+                              <Checkbox 
+                                onChange={(e)=>setSignin7(e.target.checked ? 'Yes' : '')}
+                                checked ={Signin7==="Yes"}
+                              /></li>
+                            <li>Surgeon, anaesthesia professional..? 
+                              <Checkbox
+                                onChange={(e)=>setSignin8(e.target.checked ? 'Yes' : '')}
+                                checked ={Signin8==="Yes"}
+                              /></li>
+                            <li>Surgeon, anaesthesia professional..? 
+                              <Checkbox
+                               onChange={(e)=>setSignin9(e.target.checked ? 'Yes' : '')}
+                               checked ={Signin9==="Yes"}
+                              /></li>
                         </ul>
                       </tr>
                     </tbody>
@@ -294,7 +436,12 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        >
+                          <Checkbox
+                          onChange={(e)=>setTimeOut1(e.target.checked ? 'Yes':'')}
+                          checked={TimeOut1==="Yes"}
+                          />
+                        </td>
                       </tr>
                       <tr>
                         <td
@@ -311,7 +458,10 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        ><Checkbox
+                        onChange={(e)=>setTimeOut2(e.target.checked ? 'Yes':'')}
+                        checked={TimeOut2==="Yes"}
+                        /></td>
                       </tr>
                       <tr>
                         <td
@@ -327,7 +477,10 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        ><Checkbox
+                        onChange={(e)=>setTimeOut3(e.target.checked ? 'Yes':'')}
+                        checked={TimeOut3==="Yes"}
+                        /></td>
                       </tr>
                       <tr>
                         <td
@@ -344,7 +497,10 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        ><Checkbox
+                        onChange={(e)=>setTimeOut4(e.target.checked ? 'Yes':'')}
+                        checked={TimeOut4==="Yes"}
+                        /></td>
                       </tr>
                       <tr>
                         <td
@@ -380,7 +536,10 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        ><Checkbox
+                        onChange={(e)=>setTimeOut5(e.target.checked ? 'Yes':'')}
+                        checked={TimeOut5==="Yes"}
+                        /></td>
                       </tr>
 
                       <tr>
@@ -405,7 +564,10 @@ function SafetyCheckList() {
                               style={{
                                 border: "0.5px  solid #20958C",
                               }}
-                            ></td>
+                            ><Checkbox
+                            onChange={(e)=>setTimeOut6(e.target.checked ? 'Yes':'')}
+                            checked={TimeOut6==="Yes"}
+                            /></td>
                           </tr>
                           <tr>
                             <td
@@ -419,7 +581,10 @@ function SafetyCheckList() {
                               style={{
                                 border: "0.5px  solid #20958C",
                               }}
-                            ></td>
+                            ><Checkbox
+                            onChange={(e)=>setTimeOut6(e.target.checked ? 'No':'')}
+                            checked={TimeOut6==="No"}
+                            /></td>
                           </tr>
                         </td>
                       </tr>
@@ -445,7 +610,10 @@ function SafetyCheckList() {
                               style={{
                                 border: "0.5px  solid #20958C",
                               }}
-                            ></td>
+                            ><Checkbox
+                            onChange={(e)=>setTimeOut7(e.target.checked ? 'Yes':'')}
+                            checked={TimeOut7==="Yes"}
+                            /></td>
                           </tr>
                           <tr>
                             <td
@@ -459,7 +627,10 @@ function SafetyCheckList() {
                               style={{
                                 border: "0.5px  solid #20958C",
                               }}
-                            ></td>
+                            ><Checkbox
+                            onChange={(e)=>setTimeOut7(e.target.checked ? 'No':'')}
+                            checked={TimeOut7==="No"}
+                            /></td>
                           </tr>
                         </td>
                       </tr>
@@ -490,7 +661,7 @@ function SafetyCheckList() {
                             border: "0.5px  solid #20958C",
                           }}
                         >
-                          Nurse Verbaly confirms with team
+                          Nurse Verbaly confirms with team :
                         </td>
                         <td
                           style={{
@@ -513,7 +684,10 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        ><Checkbox
+                        onChange={(e)=>setSignout1(e.target.checked ? 'Yes':'')}
+                        checked={Signout1==="Yes"}
+                        /></td>
                       </tr>
                       <tr>
                         <td
@@ -530,7 +704,10 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        ><Checkbox
+                        onChange={(e)=>setSignout2(e.target.checked ? 'Yes':'')}
+                        checked={Signout2==="Yes"}
+                        /></td>
                       </tr>
                       <tr>
                         <td
@@ -546,7 +723,10 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        ><Checkbox
+                        onChange={(e)=>setSignout3(e.target.checked ? 'Yes':'')}
+                        checked={Signout3==="Yes"}
+                        /></td>
                       </tr>
                       <tr>
                         <td
@@ -581,7 +761,10 @@ function SafetyCheckList() {
                             width: "10%",
                             border: "0.5px  solid #20958C",
                           }}
-                        ></td>
+                        ><Checkbox
+                        onChange={(e)=>setSignout4(e.target.checked ? 'Yes':'')}
+                        checked={Signout4==="Yes"}
+                        /></td>
                       </tr>
                     </tbody>
                   </Table>
@@ -606,7 +789,32 @@ function SafetyCheckList() {
                 >
                   <p style={{ textAlign: "center" }}>
                     <b>Signature of Surgeon </b>
-                  </p>
+                  </p><br/>
+                  {!SurgeonSignature ? (
+                            <div
+                              style={{
+                                border: "1px solid #dee2e6",
+                                margin: "10px",
+                              }}
+                            >
+                              <SignatureCanvas
+                                ref={sigCanvas}
+                                penColor="black"
+                                canvasProps={{
+                                  width: 300,
+                                  height: 100,
+                                  className: "sigCanvas",
+                                }}
+                              />
+                              <div className="d-flex gap-3">
+                                <button onClick={clear}>Clear</button>
+                                <button onClick={save}>Save</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <img style={{marginLeft:"69px"}} src={SurgeonSignature} alt="Signature" />
+                          )}
+
                 </div>
 
                 <div
@@ -619,7 +827,31 @@ function SafetyCheckList() {
                 >
                   <p style={{ textAlign: "center" }}>
                     <b>Signature of Anesthesiologist</b>
-                  </p>
+                  </p><br/>
+                  {!AnesthesiologistSignature ? (
+                            <div
+                              style={{
+                                border: "1px solid #dee2e6",
+                                margin: "10px",
+                              }}
+                            >
+                              <SignatureCanvas
+                                ref={sigCanvas1}
+                                penColor="black"
+                                canvasProps={{
+                                  width: 300,
+                                  height: 100,
+                                  className: "sigCanvas",
+                                }}
+                              />
+                              <div className="d-flex gap-3">
+                                <button onClick={clear1}>Clear</button>
+                                <button onClick={save1}>Save</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <img style={{marginLeft:"69px"}} src={AnesthesiologistSignature} alt="Signature" />
+                          )}
                 </div>
 
                 <div
@@ -632,8 +864,35 @@ function SafetyCheckList() {
                 >
                   <p style={{ textAlign: "center" }}>
                     <b>Signature of Nurse</b>
-                  </p>
+                  </p><br/>
+                  {!NurseSignature ? (
+                            <div
+                              style={{
+                                border: "1px solid #dee2e6",
+                                margin: "10px",
+                              }}
+                            >
+                              <SignatureCanvas
+                                ref={sigCanvas2}
+                                penColor="black"
+                                canvasProps={{
+                                  width: 300,
+                                  height: 100,
+                                  className: "sigCanvas",
+                                }}
+                              />
+                              <div className="d-flex gap-3">
+                                <button onClick={clear2}>Clear</button>
+                                <button onClick={save2}>Save</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <img style={{marginLeft:"69px"}} src={NurseSignature} alt="Signature" />
+                          )}
                 </div>
+              </div>
+              <div className='text-center'>
+                <Button onClick={submitSafteyChecklist}>Submit</Button>
               </div>
             </div>
           </div>

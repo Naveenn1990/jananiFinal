@@ -375,33 +375,38 @@ const PatientView = ({ SelectCause, patientdetail }) => {
               >
                 Checklist for surgical count/ swab/ needle count
               </button>
-              <button
-                style={{
-                  padding: "6px",
-                  border: "1px solid white",
-                  backgroundColor: "#20958c",
-                  color: "white",
-                  borderRadius: "0px",
-                }}
-                onClick={() => {
-                  setIPBilling(false);
-                  setDocTreatmentChart(false);
-                  setDocNotes(false);
-                  setMedicationChart(false);
-                  setNursesNotes(false);
-                  setHouslyObservChart(false);
-                  setNursingAssessmentOnAdmisssion(false);
-                  setSurgicalCount(false);
-                  setIntakeOutput(false);
-                  setPreOperative(false);
-                  setSurgery(false);
-                  setPostSurgeryChart(false);
-                  setPreAnaestheticAsses(false);
-                  setSafetyCheck(true);
-                }}
-              >
-                Surgical Safety
-              </button>
+              {SelectCause?.surgicalsafety?.length > 0 ? (
+ <button
+ style={{
+   padding: "6px",
+   border: "1px solid white",
+   backgroundColor: "#20958c",
+   color: "white",
+   borderRadius: "7px",
+ }}
+ onClick={() => {
+   setIPBilling(false);
+   setDocTreatmentChart(false);
+   setDocNotes(false);
+   setMedicationChart(false);
+   setNursesNotes(false);
+   setHouslyObservChart(false);
+   setNursingAssessmentOnAdmisssion(false);
+   setSurgicalCount(false);
+   setIntakeOutput(false);
+   setPreOperative(false);
+   setSurgery(false);
+   setPostSurgeryChart(false);
+   setPreAnaestheticAsses(false);
+   setSafetyCheck(true);
+ }}
+>
+ Surgical Safety(
+   {SelectCause?.surgicalsafety?.length})
+</button>
+
+              ):("")}
+             
             </div>
             <div
               className="d-flex gap-2"
@@ -409,11 +414,11 @@ const PatientView = ({ SelectCause, patientdetail }) => {
             >
               <button
                 style={{
-                  padding: "6px",
+                  padding: "20px",
                   border: "1px solid white",
                   backgroundColor: "#20958c",
                   color: "white",
-                  borderRadius: "0px",
+                  borderRadius: "7px",
                 }}
                 onClick={() => {
                   setIPBilling(false);
@@ -437,11 +442,11 @@ const PatientView = ({ SelectCause, patientdetail }) => {
               </button>
               <button
                 style={{
-                  padding: "6px",
+                  padding: "20px",
                   border: "1px solid white",
                   backgroundColor: "#20958c",
                   color: "white",
-                  borderRadius: "0px",
+                  borderRadius: "7px",
                 }}
                 onClick={() => {
                   setIPBilling(false);
@@ -529,7 +534,11 @@ const PatientView = ({ SelectCause, patientdetail }) => {
             {/* <AnaesthesiaRecord /> */}
           </>
         ) : safetyCheck ? (
-          <SafetyCheckList />
+          <SafetyCheckList 
+          cause ={SelectCause}
+          safetyChckList={SelectCause?.surgicalsafety}
+          patientdetail={patientdetail}
+          />
         ) : (
           <></>
         )}
