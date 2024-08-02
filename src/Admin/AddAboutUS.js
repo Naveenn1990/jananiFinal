@@ -16,27 +16,31 @@ export default function AddAboutUS() {
   const [AboutDescription, setAboutDescription] = useState("");
   // Post
   const AddAboutUS = async () => {
-    try {
-      const config = {
-        url: "/admin/addAboutUs",
-        baseURL: "http://localhost:8521/api",
-        method: "post",
-        headers: { "Content-Type": "multipart/form-data" },
-        data: {
-          AboutImg: AboutImg,
-          AboutDescription: AboutDescription,
-        },
-      };
-      const res = await axios(config);
-      if (res.status === 200) {
-        alert(res.data.success);
-        handleClose();
-        GetAboutUs();
-        setAboutDescription("");
-        setAboutImg("");
+    if (!AboutImg || !AboutDescription) {
+      alert("Please fill all the fields");
+    } else {
+      try {
+        const config = {
+          url: "/admin/addAboutUs",
+          baseURL: "http://localhost:8521/api",
+          method: "post",
+          headers: { "Content-Type": "multipart/form-data" },
+          data: {
+            AboutImg: AboutImg,
+            AboutDescription: AboutDescription,
+          },
+        };
+        const res = await axios(config);
+        if (res.status === 200) {
+          alert(res.data.success);
+          handleClose();
+          GetAboutUs();
+          setAboutDescription("");
+          setAboutImg("");
+        }
+      } catch (error) {
+        alert(error.response.data.error);
       }
-    } catch (error) {
-      alert(error.response.data.error);
     }
   };
 

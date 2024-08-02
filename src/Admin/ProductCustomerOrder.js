@@ -107,11 +107,6 @@ export default function ProductCustomerOrder() {
     }
   }, []);
 
-  const [ViewNewOrder, setViewNewOrder] = useState(true);
-  const [ViewOutForDelivery, setViewOutForDelivery] = useState(false);
-  const [ViewDelivered, setViewDelivered] = useState(false);
-  const [Selecteddata, setSelecteddata] = useState({});
-
   const [data, setdata] = useState([]);
 
   useEffect(() => {
