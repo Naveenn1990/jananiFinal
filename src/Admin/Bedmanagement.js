@@ -1989,30 +1989,6 @@ export default function Bedmanagement() {
                         <div>{BedDetails98?.bedCostNonInsurance}</div>
                       </div>
                     </td>
-                    {BedDetails98?.bedOccupied === "available" ? (
-                      <td>
-                        <div>
-                          <label>
-                            <b>Assign Patient</b>
-                          </label>
-                          <div>
-                            <Autocomplete
-                              disablePortal
-                              id="combo-box-demo"
-                              options={updatedIPDPatients}
-                              // sx={{ width: 300 }}
-                              value={selectedIPDObj}
-                              onChange={handleselectedIPDChange}
-                              renderInput={(params) => (
-                                <TextField {...params} label="patient" />
-                              )}
-                            />
-                          </div>
-                        </div>
-                      </td>
-                    ) : (
-                      <></>
-                    )}
                   </tr>
                 </tbody>
               </Table>
@@ -2022,41 +1998,6 @@ export default function Bedmanagement() {
               <Table bordered>
                 <tbody>
                   <tr>
-                    {BedDetails98?.bedOccupied === "available" ? (
-                      <td>
-                        <div>
-                          <label>
-                            <b>Reason</b>
-                          </label>
-                          <div>
-                            <select
-                              style={{ width: "220px", height: "42px" }}
-                              onChange={(e) => setIpdCause(e.target.value)}
-                            >
-                              <option>Choose</option>
-                              {selectedIPDObj?.cause?.map((item) => {
-                                return (
-                                  <option value={JSON.stringify(item)}>
-                                    {item?.CauseName}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                          </div>
-                        </div>
-                      </td>
-                    ) : (
-                      <></>
-                    )}
-                    {BedDetails98?.bedOccupied === "available" ? (
-                      <td>
-                        <Button variant="primary" onClick={assignBedToPatient}>
-                          Assign Patient
-                        </Button>
-                      </td>
-                    ) : (
-                      <></>
-                    )}
                     <td>
                       <Button
                         variant="danger"

@@ -904,7 +904,7 @@ function DoctorsViewForms() {
                           className="fw-bold mt-2"
                           style={{ color: "#20958C", fontSize: "30px" }}
                         >
-                          LAB TESTS
+                          RECOMMENDED LAB TESTS
                         </h6>
                       </div>
                       <div
@@ -944,8 +944,7 @@ function DoctorsViewForms() {
                                         <thead>
                                           <th>S.no.</th>
                                           <th>Test Name</th>
-                                          <th>General Ref value</th>
-                                          <th>Unit</th>
+                                          <th>Results</th>
                                         </thead>
                                         <tbody>
                                           {dataval?.labTestBookingId?.Labtests?.map(
@@ -954,10 +953,7 @@ function DoctorsViewForms() {
                                                 <tr>
                                                   <td>{i}.</td>
                                                   <td>{valitem?.testName}</td>
-                                                  <td>
-                                                    {valitem?.generalRefVal}
-                                                  </td>
-                                                  <td>{valitem?.unit}</td>
+                                                  <td>Not Generated Yet</td>
                                                 </tr>
                                               );
                                             }
