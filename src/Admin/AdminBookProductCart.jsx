@@ -196,10 +196,79 @@ export default function AdminBookProductCart() {
     }
   };
 
+  // Get Hospital Department
+  const [GetDepartmentData, setGetDepartmentData] = useState([]);
+  const GetDepartment = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/admin/getDepartment"
+      );
+      if (res.status === 200) {
+        setGetDepartmentData(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Get Doctors
+  const [Doctors, setDoctors] = useState([]);
+  const getDoctors = () => {
+    axios
+      .get("http://localhost:8521/api/Doctor/getDoctorsList")
+      .then(function (response) {
+        // handle success
+        setDoctors(
+          response.data.DoctorsInfo?.filter(
+            (data) => data.DoctorType === "hospital"
+          )
+        );
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+        setDoctors(error.response.data.DoctorsInfo);
+      });
+  };
+
+  useEffect(() => {
+    GetDepartment();
+    getDoctors();
+  }, []);
+
+  const [SelectedDepartment, setSelectedDepartment] = useState();
+  const [SelectedDepartmentDoctors, setSelectedDepartmentDoctors] = useState(
+    {}
+  );
+  const [SelectedDoctor, setSelectedDoctor] = useState();
+
+  useEffect(() => {
+    if (SelectedDoctor) {
+      const xyz = Doctors?.find((doc) => doc?._id == SelectedDoctor);
+      setSelectedDepartmentDoctors(xyz);
+    }
+  }, [SelectedDoctor]);
+
+  function phonenumber(inputtxt) {
+    var phoneno = /^[6-9]\d{9}$/; // var no = /^\d{10}$/;
+    if (inputtxt.match(phoneno)) {
+      return true;
+    } else {
+      alert("You have entered an invalid mobile number!");
+      return false;
+    }
+  }
+
   const addBooking = async () => {
     if (PatientType === "OPD" || PatientType === "IPD") {
       if (!PatientId) {
         alert("Please Enter Patient Id");
+      } else if (!SelectedDepartment) {
+        alert("Please select Department");
+      } else if (!SelectedDoctor) {
+        alert("Please select Doctor");
+      } else if (!PaymentMethod) {
+        alert("Please select payment method");
       } else {
         try {
           const config = {
@@ -221,6 +290,12 @@ export default function AdminBookProductCart() {
                 "," +
                 selectedPateint[0]?.Zipcode,
               Products: CartProducts,
+              Department: SelectedDepartment,
+              DoctorID: SelectedDepartmentDoctors?.DoctorId,
+              DoctorName:
+                SelectedDepartmentDoctors?.Firstname +
+                " " +
+                SelectedDepartmentDoctors?.Lastname,
             },
           };
           let res = await axios(config);
@@ -237,36 +312,43 @@ export default function AdminBookProductCart() {
         }
       }
     } else if (PatientType === "General") {
-      if (!PatientName || !PatientContactNumber || !PatientAddress) {
+      if (
+        !PatientName ||
+        !PatientContactNumber ||
+        !PatientAddress ||
+        !PaymentMethod
+      ) {
         alert("Please fill all the fields");
       } else {
-        try {
-          const config = {
-            url: "/admin/AdminOrder",
-            method: "post",
-            baseURL: "http://localhost:8521/api",
-            // headers: { "content-type": "multipart/form-data" },
-            data: {
-              PatientID: "",
-              PatientType: PatientType,
-              PaymentMethod: PaymentMethod,
-              PatientName: PatientName,
-              PatientContactNumber: PatientContactNumber,
-              PatientAddress: PatientAddress,
-              Products: CartProducts,
-            },
-          };
-          console.log("config", config);
-          let res = await axios(config);
-          if (res.status === 200) {
-            getAdmincartproduct();
-            setselectedPateint([]);
-            alert("Booking done successfully");
-            window.location.reload();
-          }
-        } catch (error) {
-          if (error.response) {
-            alert(error.response.data.error);
+        if (phonenumber(PatientContactNumber)) {
+          try {
+            const config = {
+              url: "/admin/AdminOrder",
+              method: "post",
+              baseURL: "http://localhost:8521/api",
+              // headers: { "content-type": "multipart/form-data" },
+              data: {
+                PatientID: "",
+                PatientType: PatientType,
+                PaymentMethod: PaymentMethod,
+                PatientName: PatientName,
+                PatientContactNumber: PatientContactNumber,
+                PatientAddress: PatientAddress,
+                Products: CartProducts,
+              },
+            };
+            console.log("config", config);
+            let res = await axios(config);
+            if (res.status === 200) {
+              getAdmincartproduct();
+              setselectedPateint([]);
+              alert("Booking done successfully");
+              window.location.reload();
+            }
+          } catch (error) {
+            if (error.response) {
+              alert(error.response.data.error);
+            }
           }
         }
       }
@@ -276,6 +358,14 @@ export default function AdminBookProductCart() {
   console.log("CartProducts", CartProducts);
   // console.log("PatientType", PatientType);
   console.log("selectedPateint", selectedPateint);
+  console.log(
+    "sdf",
+    SelectedDoctor,
+    SelectedDepartmentDoctors,
+    SelectedDepartmentDoctors?.Firstname +
+      " " +
+      SelectedDepartmentDoctors?.Lastname
+  );
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -663,6 +753,9 @@ export default function AdminBookProductCart() {
                   onChange={(e) => {
                     setPatientType(e.target.value);
                     setPatientId();
+                    setSelectedDoctor();
+                    setSelectedDepartment();
+                    setPaymentMethod();
                   }}
                 >
                   <option>Select</option>
@@ -796,6 +889,62 @@ export default function AdminBookProductCart() {
                   )}
                   <div className="col-lg-6 col-sm-12 mt-2">
                     <label style={{ color: "white" }}>
+                      Select Department :
+                    </label>
+                  </div>
+                  <div className="col-lg-6 col-sm-12 mt-2">
+                    <select
+                      style={{
+                        width: "97%",
+                        padding: "8px 20px",
+                        borderRadius: "0px",
+                        border: "1px solid #ebebeb",
+                        backgroundColor: "#ebebeb",
+                        marginLeft: "13px",
+                      }}
+                      value={SelectedDepartment}
+                      onChange={(e) => {
+                        setSelectedDepartment(e.target.value);
+                      }}
+                    >
+                      <option>Select</option>
+                      {GetDepartmentData?.map((Dep) => (
+                        <option value={Dep?.DepartmentName}>
+                          {Dep?.DepartmentName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-lg-6 col-sm-12 mt-2">
+                    <label style={{ color: "white" }}>Select Doctor</label>
+                  </div>
+                  <div className="col-lg-6 col-sm-12 mt-2">
+                    <select
+                      style={{
+                        width: "97%",
+                        padding: "8px 20px",
+                        borderRadius: "0px",
+                        border: "1px solid #ebebeb",
+                        backgroundColor: "#ebebeb",
+                        marginLeft: "13px",
+                      }}
+                      value={SelectedDoctor}
+                      onChange={(e) => {
+                        setSelectedDoctor(e.target.value);
+                      }}
+                    >
+                      <option>Select</option>
+                      {Doctors?.filter(
+                        (Doc) => Doc.Department === SelectedDepartment
+                      )?.map((Doctor) => (
+                        <option value={Doctor?._id}>
+                          {Doctor?.Firstname}&nbsp;{Doctor?.Lastname}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-lg-6 col-sm-12 mt-2">
+                    <label style={{ color: "white" }}>
                       Select payment method :
                     </label>
                   </div>
@@ -809,6 +958,7 @@ export default function AdminBookProductCart() {
                         backgroundColor: "#ebebeb",
                         marginLeft: "10px",
                       }}
+                      value={PaymentMethod}
                       onChange={(e) => setPaymentMethod(e.target.value)}
                     >
                       <option>Select</option>
@@ -942,6 +1092,62 @@ export default function AdminBookProductCart() {
                   )}
                   <div className="col-lg-6 col-sm-12 mt-2">
                     <label style={{ color: "white" }}>
+                      Select Department :
+                    </label>
+                  </div>
+                  <div className="col-lg-6 col-sm-12 mt-2">
+                    <select
+                      style={{
+                        width: "97%",
+                        padding: "8px 20px",
+                        borderRadius: "0px",
+                        border: "1px solid #ebebeb",
+                        backgroundColor: "#ebebeb",
+                        marginLeft: "13px",
+                      }}
+                      value={SelectedDepartment}
+                      onChange={(e) => {
+                        setSelectedDepartment(e.target.value);
+                      }}
+                    >
+                      <option>Select</option>
+                      {GetDepartmentData?.map((Dep) => (
+                        <option value={Dep?.DepartmentName}>
+                          {Dep?.DepartmentName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-lg-6 col-sm-12 mt-2">
+                    <label style={{ color: "white" }}>Select Doctor</label>
+                  </div>
+                  <div className="col-lg-6 col-sm-12 mt-2">
+                    <select
+                      style={{
+                        width: "97%",
+                        padding: "8px 20px",
+                        borderRadius: "0px",
+                        border: "1px solid #ebebeb",
+                        backgroundColor: "#ebebeb",
+                        marginLeft: "13px",
+                      }}
+                      value={SelectedDoctor}
+                      onChange={(e) => {
+                        setSelectedDoctor(e.target.value);
+                      }}
+                    >
+                      <option>Select</option>
+                      {Doctors?.filter(
+                        (Doc) => Doc.Department === SelectedDepartment
+                      )?.map((Doctor) => (
+                        <option value={Doctor?._id}>
+                          {Doctor?.Firstname}&nbsp;{Doctor?.Lastname}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-lg-6 col-sm-12 mt-2">
+                    <label style={{ color: "white" }}>
                       Select payment method :
                     </label>
                   </div>
@@ -955,6 +1161,7 @@ export default function AdminBookProductCart() {
                         backgroundColor: "#ebebeb",
                         marginLeft: "10px",
                       }}
+                      value={PaymentMethod}
                       onChange={(e) => setPaymentMethod(e.target.value)}
                     >
                       <option>Select</option>
@@ -991,6 +1198,13 @@ export default function AdminBookProductCart() {
                         borderRadius: "0px",
                         border: "1px solid #ebebeb",
                         backgroundColor: "#ebebeb",
+                      }}
+                      type="tele"
+                      maxLength={10}
+                      onKeyPress={(event) => {
+                        if (!/[0-9]/.test(event.key)) {
+                          event.preventDefault();
+                        }
                       }}
                       onChange={(event) =>
                         setPatientContactNumber(event.target.value)

@@ -34,25 +34,29 @@ export default function AddBanner() {
 
   // Post
   const AddBanner = async () => {
-    try {
-      const config = {
-        url: "/admin/addBanner",
-        baseURL: "http://localhost:8521/api",
-        method: "post",
-        headers: { "Content-Type": "multipart/form-data" },
-        data: {
-          bannerImg: bannerImg,
-          bannerLink: bannerLink,
-        },
-      };
-      const res = await axios(config);
-      if (res.status === 200) {
-        alert(res.data.success);
-        handleClose();
-        getBanner();
+    if (!bannerImg || !bannerLink) {
+      alert("Please fill all the fields");
+    } else {
+      try {
+        const config = {
+          url: "/admin/addBanner",
+          baseURL: "http://localhost:8521/api",
+          method: "post",
+          headers: { "Content-Type": "multipart/form-data" },
+          data: {
+            bannerImg: bannerImg,
+            bannerLink: bannerLink,
+          },
+        };
+        const res = await axios(config);
+        if (res.status === 200) {
+          alert(res.data.success);
+          handleClose();
+          getBanner();
+        }
+      } catch (error) {
+        alert(error.response.data.error);
       }
-    } catch (error) {
-      alert(error.response.data.error);
     }
   };
 
@@ -92,28 +96,38 @@ export default function AddBanner() {
 
   // Post
   const AddPharmacyBan = async () => {
-    try {
-      const config = {
-        url: "/admin/addpharmacyBan",
-        baseURL: "http://localhost:8521/api",
-        method: "post",
-        headers: { "Content-Type": "multipart/form-data" },
-        data: {
-          PharmacyBanImg: PharmacyBanImg,
-          pharmacyImage: pharmacyImage,
-          PharmacySubTitle: PharmacySubTitle,
-          PharmacyTitle: PharmacyTitle,
-          PharmacyBanLink: PharmacyBanLink,
-        },
-      };
-      const res = await axios(config);
-      if (res.status === 200) {
-        alert(res.data.success);
-        handleClose();
-        getPharmacyBan();
+    if (
+      !PharmacyBanImg ||
+      !pharmacyImage ||
+      !PharmacySubTitle ||
+      !PharmacyTitle ||
+      !PharmacyBanLink
+    ) {
+      alert("Please fill all the fields");
+    } else {
+      try {
+        const config = {
+          url: "/admin/addpharmacyBan",
+          baseURL: "http://localhost:8521/api",
+          method: "post",
+          headers: { "Content-Type": "multipart/form-data" },
+          data: {
+            PharmacyBanImg: PharmacyBanImg,
+            pharmacyImage: pharmacyImage,
+            PharmacySubTitle: PharmacySubTitle,
+            PharmacyTitle: PharmacyTitle,
+            PharmacyBanLink: PharmacyBanLink,
+          },
+        };
+        const res = await axios(config);
+        if (res.status === 200) {
+          alert(res.data.success);
+          handleClose();
+          getPharmacyBan();
+        }
+      } catch (error) {
+        alert(error.response.data.error);
       }
-    } catch (error) {
-      alert(error.response.data.error);
     }
   };
 
@@ -172,27 +186,31 @@ export default function AddBanner() {
 
   // Post
   const AddPharmacyCatBan = async () => {
-    try {
-      const config = {
-        url: "/admin/AddPharmacyCategoryBan",
-        baseURL: "http://localhost:8521/api",
-        method: "post",
-        headers: { "Content-Type": "multipart/form-data" },
-        data: {
-          // PharmacyCatbannerbgImg: PharmacyCatbannerbgImg,
-          pharmacyCatbannerImage: pharmacyCatbannerImage,
-          PharmacyCatName: PharmacyCatName,
-          PharmacyCatDiscount: PharmacyCatDiscount,
-        },
-      };
-      const res = await axios(config);
-      if (res.status === 200) {
-        alert(res.data.success);
-        handleClose();
-        getPharmacyCatBan();
+    if (!pharmacyCatbannerImage || !PharmacyCatName || !PharmacyCatDiscount) {
+      alert("Please fill all the fields");
+    } else {
+      try {
+        const config = {
+          url: "/admin/AddPharmacyCategoryBan",
+          baseURL: "http://localhost:8521/api",
+          method: "post",
+          headers: { "Content-Type": "multipart/form-data" },
+          data: {
+            // PharmacyCatbannerbgImg: PharmacyCatbannerbgImg,
+            pharmacyCatbannerImage: pharmacyCatbannerImage,
+            PharmacyCatName: PharmacyCatName,
+            PharmacyCatDiscount: PharmacyCatDiscount,
+          },
+        };
+        const res = await axios(config);
+        if (res.status === 200) {
+          alert(res.data.success);
+          handleClose();
+          getPharmacyCatBan();
+        }
+      } catch (error) {
+        alert(error.response.data.error);
       }
-    } catch (error) {
-      alert(error.response.data.error);
     }
   };
 

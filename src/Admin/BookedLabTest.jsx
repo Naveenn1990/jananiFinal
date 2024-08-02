@@ -19,6 +19,7 @@ import { useReactToPrint } from "react-to-print";
 import Select from "react-select";
 import exportFromJSON from "export-from-json";
 import { Pagination, Stack } from "@mui/material";
+import ReactPaginate from "react-paginate";
 
 function BookedLabTest() {
   // Select width
@@ -101,7 +102,6 @@ function BookedLabTest() {
       setAllTestList(res.data.list);
       setAllTestList1(res.data.list1);
       setFilteredCatList(res.data.list1);
-      setPagination(res.data.list1);
     } catch (error) {
       console.log(error);
     }
@@ -353,12 +353,10 @@ function BookedLabTest() {
           String(o[k]).toLowerCase().includes(search.toLowerCase())
         )
       );
-      setPagination([...filterTable]);
       setFilteredCatList([...filterTable]);
     } else {
       // setSearch(search);
       // vialList();
-      setPagination([...AllTestList1]);
       setFilteredCatList([...AllTestList1]);
     }
   }
@@ -370,12 +368,11 @@ function BookedLabTest() {
   //===================
 
   // Pagination
-  const [pagination, setPagination] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const usersPerPage = 5;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(pagination?.length / usersPerPage);
-  const changePage = (selected) => {
+  const pageCount = Math.ceil(FilteredCatList?.length / usersPerPage);
+  const changePage = ({ selected }) => {
     setPageNumber(selected);
   };
 
@@ -456,7 +453,7 @@ function BookedLabTest() {
                 <th>Payment</th>
                 <th>Reports</th>
                 <th>Status</th>
-                <th>Action</th>
+                {/* <th>Action</th> */}
               </tr>
             </thead>
             <tbody>
@@ -476,9 +473,9 @@ function BookedLabTest() {
                       )}
                     </td> */}
                     <td>
-                      {item?.patientid?._id ? (
+                      {item?.patientid?.PatientId ? (
                         <>
-                          {item?.patientid?._id}(
+                          {item?.patientid?.PatientId}(
                           {item?.patientid?.registrationType})
                         </>
                       ) : (
@@ -617,19 +614,13 @@ function BookedLabTest() {
                         </b>
                       )}
                     </td>
-                    <td>
+                    {/* <td>
                       {item?.paymentStatus === "PAID" ||
                       item?.labTestBookingStatus !== "BOOKED" ? (
                         <></>
                       ) : (
                         <div className="d-flex justify-content-center">
-                          {/* <MdEdit
-                            style={{ color: "#20958C", fontSize: "22px" }}
-                            onClick={(e) => {
-                              setView(item);
-                              handleShow8();
-                            }}
-                          /> */}
+                        
                           <MdDeleteOutline
                             style={{ color: "red", fontSize: "25px" }}
                             onClick={(e) => {
@@ -639,22 +630,24 @@ function BookedLabTest() {
                           />
                         </div>
                       )}
-                    </td>
+                    </td> */}
                   </tr>
                 );
               })}
             </tbody>
           </Table>
           <div style={{ float: "left" }} className="my-3 d-flex justify-end">
-            <Stack spacing={2}>
-              <Pagination
-                count={pageCount}
-                onChange={(event, value) => {
-                  changePage(value - 1);
-                }}
-                color="primary"
-              />
-            </Stack>
+            <ReactPaginate
+              previousLabel={"Back"}
+              nextLabel={"Next"}
+              pageCount={pageCount}
+              onPageChange={changePage}
+              containerClassName={"paginationBttns"}
+              previousLinkClassName={"previousBttn"}
+              nextLinkClassName={"nextBttn"}
+              disabledClassName={"paginationDisabled"}
+              activeClassName={"paginationActive"}
+            />
           </div>
         </div>
 

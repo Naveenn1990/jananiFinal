@@ -102,12 +102,26 @@ const DoctorForms = () => {
   const bookLabTest = async () => {
     let obj;
 
+    let patientObj1 = JSON.parse(
+      JSON.stringify(
+        patientlist?.find(
+          (itemdata) =>
+            itemdata?.registrationType === PatientType &&
+            item?._id?.toString() === itemdata?._id?.toString()
+        )
+      )
+    );
+
+    const causeid1 = patientObj1?.cause?.find(
+      (data) => data?._id?.toString() === CauseDetails?._id?.toString()
+    )?._id;
+
     obj = {
-      causeid: causeid,
-      patientid: patientObj?._id,
-      patientname: patientObj?.Firstname,
-      Phoneno: patientObj?.PhoneNumber,
-      email: patientObj?.Email,
+      causeid: causeid1,
+      patientid: patientObj1?._id,
+      patientname: patientObj1?.Firstname,
+      Phoneno: patientObj1?.PhoneNumber,
+      email: patientObj1?.Email,
       testDate: testDate,
       Labtests: selectedOptions,
       hospitallabRefferedBy: `${doctorDetails?.Firstname} ${doctorDetails?.Lastname}`,
@@ -124,7 +138,6 @@ const DoctorForms = () => {
       let res = await axios(config);
       if (res.status === 200 || res.status === 201) {
         alert(res.data.success);
-        console.log("res.data76ty67: ", res.data);
         const config = {
           url: "/addRecommendedLabReports",
           method: "put",
@@ -134,6 +147,8 @@ const DoctorForms = () => {
             patientId: item?._id,
             causeId: CauseDetails?._id,
             labTestBookingId: res.data?.bookingLabTest?._id,
+            referredByDocName: `${doctorDetails?.Firstname} ${doctorDetails?.Lastname}`,
+            referredByDocid: doctorDetails?._id,
           },
         };
         let res1 = await axios(config);
@@ -1376,14 +1391,14 @@ const DoctorForms = () => {
                           className="fw-bold mt-2"
                           style={{ color: "#20958C", fontSize: "30px" }}
                         >
-                          LAB TEST
+                          RECOMMENDED LAB TEST
                         </h6>
                       </div>
                       <div
                         id="pdf"
                         style={{
                           padding: "15px",
-                          overflow: "scroll",
+                          // overflow: "scroll",
                         }}
                       >
                         <div
@@ -1410,61 +1425,91 @@ const DoctorForms = () => {
                               </Form.Select>
                             </FloatingLabel> */}
 
-                            <FloatingLabel
+                            {/* <FloatingLabel
                               className="col-md-6 p-2"
                               controlId="floatingName"
                               label="Patient List"
                             >
-                              <Form.Select
-                                onChange={(e) =>
-                                  setpatientObj(JSON.parse(e.target.value))
-                                }
-                              >
-                                <option>Choose Options</option>
-                                {patientlist
-                                  ?.filter(
+                            
+
+                              <Form.Control
+                                type="text"
+                                value={`${
+                                  patientlist?.find(
                                     (itemdata) =>
                                       itemdata?.registrationType ===
                                         PatientType &&
                                       item?._id?.toString() ===
                                         itemdata?._id?.toString()
+                                  )?.Firstname
+                                } ${
+                                  patientlist?.find(
+                                    (itemdata) =>
+                                      itemdata?.registrationType ===
+                                        PatientType &&
+                                      item?._id?.toString() ===
+                                        itemdata?._id?.toString()
+                                  )?.Lastname
+                                }`}
+                                placeholder="Name"
+                                disabled
+                                onChange={(e) =>
+                                  setpatientObj(
+                                    JSON.parse(
+                                      JSON.stringify(
+                                        patientlist?.find(
+                                          (itemdata) =>
+                                            itemdata?.registrationType ===
+                                              PatientType &&
+                                            item?._id?.toString() ===
+                                              itemdata?._id?.toString()
+                                        )
+                                      )
+                                    )
                                   )
-                                  ?.map((val) => {
-                                    return (
-                                      <option value={JSON.stringify(val)}>
-                                        {val?.Firstname} {val?.Lastname}
-                                      </option>
-                                    );
-                                  })}
-                              </Form.Select>
-                            </FloatingLabel>
+                                }
+                              />
+                            </FloatingLabel> */}
 
-                            <FloatingLabel
+                            {/* <FloatingLabel
                               className="col-md-6 p-2"
                               controlId="floatingName"
                               label="Cause"
                             >
-                              <Form.Select
-                                onChange={(e) => setcauseid(e.target.value)}
-                              >
-                                <option>Choose Options</option>
-                                {patientObj?.cause
-                                  ?.filter(
-                                    (data) =>
-                                      data?._id?.toString() ===
-                                      CauseDetails?._id?.toString()
-                                  )
-                                  ?.map((val) => {
-                                    return (
-                                      <option value={val?._id}>
-                                        {val?.CauseName}
-                                      </option>
-                                    );
-                                  })}
-                              </Form.Select>
-                            </FloatingLabel>
+                         
 
-                            <FloatingLabel
+                              <Form.Control
+                                type="text"
+                                value={
+                                  patientlist
+                                    ?.find(
+                                      (itemdata) =>
+                                        itemdata?.registrationType ===
+                                          PatientType &&
+                                        item?._id?.toString() ===
+                                          itemdata?._id?.toString()
+                                    )
+                                    ?.cause?.find(
+                                      (data) =>
+                                        data?._id?.toString() ===
+                                        CauseDetails?._id?.toString()
+                                    )?.CauseName
+                                }
+                                placeholder="Name"
+                                disabled
+                                onChange={() =>
+                                  setcauseid(
+                                    patientObj?.cause?.find(
+                                      (data) =>
+                                        data?._id?.toString() ===
+                                        CauseDetails?._id?.toString()
+                                    )?._id
+                                  )
+                                }
+                              />
+                            </FloatingLabel> */}
+
+                            {/* <FloatingLabel
                               className="col-md-6 p-2"
                               controlId="floatingName"
                               label="Name"
@@ -1503,7 +1548,8 @@ const DoctorForms = () => {
                                 disabled
                                 onChange={(e) => setemail(e.target.value)}
                               />
-                            </FloatingLabel>
+                            </FloatingLabel> */}
+
                             <FloatingLabel
                               className="col-md-6 p-2"
                               controlId="floatingName"

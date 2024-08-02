@@ -4,6 +4,7 @@ import { BsCurrencyRupee } from "react-icons/bs";
 import { PiTestTubeFill } from "react-icons/pi";
 import Hospitallab from "./Hospitallab";
 import HospitallabCategory from "./HospitallabCategory";
+import HospitallabSubTest from "./HospitallabSubTest";
 import { GiTestTubes } from "react-icons/gi";
 import { TbReportSearch } from "react-icons/tb";
 import Hospitallabtestlist from "./HospitalLabTest";
@@ -141,6 +142,23 @@ export default function HospitalLabPanel() {
                       style={{ color: "white" }}
                     />
                     ADD-LAB-TEST
+                  </div>
+                </div>
+
+                <div className="col-lg-4">
+                  <div
+                    className="websiteMcards"
+                    onClick={() => {
+                      setViewModal(<HospitallabSubTest />);
+                      setView(true);
+                      setTitle("ADD-LAB-SUB-TEST");
+                    }}
+                  >
+                    <PiTestTubeFill
+                      className="WebMI"
+                      style={{ color: "white" }}
+                    />
+                    ADD-LAB-SUB-TEST-CATEGORY
                   </div>
                 </div>
 

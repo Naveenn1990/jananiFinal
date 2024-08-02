@@ -107,11 +107,6 @@ export default function ProductCustomerOrder() {
     }
   }, []);
 
-  const [ViewNewOrder, setViewNewOrder] = useState(true);
-  const [ViewOutForDelivery, setViewOutForDelivery] = useState(false);
-  const [ViewDelivered, setViewDelivered] = useState(false);
-  const [Selecteddata, setSelecteddata] = useState({});
-
   const [data, setdata] = useState([]);
 
   useEffect(() => {
@@ -307,110 +302,230 @@ export default function ProductCustomerOrder() {
               <th>Action</th>
             </thead>
             <tbody>
-              {orders
-                .filter((val) => val?.orderStatus === currStatus)
-                .map((details) => {
-                  return (
-                    <tr key={details._id}>
-                      <td>{details?._id}</td>
-                      <td>
-                        {details?.patientid?.Firstname}{" "}
-                        {details?.patientid?.Lastname}
-                      </td>
-                      <td>
-                        {details?.shippingAddress}, {details?.city},{" "}
-                        {details?.zipcode}
-                      </td>
-                      <td>{details?.totalOrderedItems}</td>
-                      <td>{details?.paymentOption}</td>
-                      <td>{details?.orderStatus}</td>
-                      <td
-                        style={{
-                          fontWeight: "600",
-                          color:
-                            details?.orderPayment === "PENDING"
-                              ? "red"
-                              : "green",
-                        }}
-                      >
-                        {details?.orderPayment}
-                      </td>
-                      <td>{details?.totalOrderedPrice}</td>
-                      <td>
-                        <FontAwesomeIcon
-                          icon={faCircleInfo}
-                          style={{ color: "#20958c", fontSize: "25px" }}
-                          onClick={() => {
-                            setorderInfo(details);
-                            handleShow1();
-                          }}
-                        />
-                      </td>
-                      <td>
-                        {details?.orderStatus === "PLACED_ORDER" ? (
-                          <div>
-                            <Button
-                              style={{
-                                color: "#ffffff",
-                                backgroundColor: "#20958C",
-                                border: "1px solid #20958C",
-                                marginTop: "2px",
-                              }}
-                              onClick={() => {
-                                changeorderStatus(
-                                  details?._id,
-                                  "OUT_FOR_DELIVERY"
-                                );
-                              }}
-                            >
-                              Out For Delivery
-                            </Button>
-                            <Button
-                              style={{
-                                color: "#ffffff",
-                                backgroundColor: "#FF0000",
-                                border: "1px solid #FF0000",
-                                marginTop: "2px",
-                              }}
-                              onClick={() => {
-                                changeorderStatus(
-                                  details?._id,
-                                  "CANCELLED_ORDER"
-                                );
-                              }}
-                            >
-                              Cancel Order
-                            </Button>
-                          </div>
-                        ) : details?.orderStatus === "OUT_FOR_DELIVERY" ? (
-                          <Button
+              {search.length > 0
+                ? tableFilter
+                    ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                    ?.map((details) => {
+                      return (
+                        <tr key={details._id}>
+                          <td>{details?._id}</td>
+                          <td>
+                            {details?.patientid?.Firstname}{" "}
+                            {details?.patientid?.Lastname}
+                          </td>
+                          <td>
+                            {details?.shippingAddress}, {details?.city},{" "}
+                            {details?.zipcode}
+                          </td>
+                          <td>{details?.totalOrderedItems}</td>
+                          <td>{details?.paymentOption}</td>
+                          <td>{details?.orderStatus}</td>
+                          <td
                             style={{
-                              color: "#ffffff",
-                              backgroundColor: "#00fc43",
-                              border: "1px solid #00fc43",
-                            }}
-                            onClick={() => {
-                              changeorderStatus(details?._id, "DELIVERED");
-                            }}
-                          >
-                            Delivered
-                          </Button>
-                        ) : details?.orderStatus === "DELIVERED" ? (
-                          <Button
-                            onClick={() => {
-                              handleShow2();
-                              setInvoice(details);
+                              fontWeight: "600",
+                              color:
+                                details?.orderPayment === "PENDING"
+                                  ? "red"
+                                  : "green",
                             }}
                           >
-                            Invoice
-                          </Button>
-                        ) : null}
-                      </td>
-                    </tr>
-                  );
-                })}
+                            {details?.orderPayment}
+                          </td>
+                          <td>{details?.totalOrderedPrice}</td>
+                          <td>
+                            <FontAwesomeIcon
+                              icon={faCircleInfo}
+                              style={{ color: "#20958c", fontSize: "25px" }}
+                              onClick={() => {
+                                setorderInfo(details);
+                                handleShow1();
+                              }}
+                            />
+                          </td>
+                          <td>
+                            {details?.orderStatus === "PLACED_ORDER" ? (
+                              <div>
+                                <Button
+                                  style={{
+                                    color: "#ffffff",
+                                    backgroundColor: "#20958C",
+                                    border: "1px solid #20958C",
+                                    marginTop: "2px",
+                                  }}
+                                  onClick={() => {
+                                    changeorderStatus(
+                                      details?._id,
+                                      "OUT_FOR_DELIVERY"
+                                    );
+                                  }}
+                                >
+                                  Out For Delivery
+                                </Button>
+                                <Button
+                                  style={{
+                                    color: "#ffffff",
+                                    backgroundColor: "#FF0000",
+                                    border: "1px solid #FF0000",
+                                    marginTop: "2px",
+                                  }}
+                                  onClick={() => {
+                                    changeorderStatus(
+                                      details?._id,
+                                      "CANCELLED_ORDER"
+                                    );
+                                  }}
+                                >
+                                  Cancel Order
+                                </Button>
+                              </div>
+                            ) : details?.orderStatus === "OUT_FOR_DELIVERY" ? (
+                              <Button
+                                style={{
+                                  color: "#ffffff",
+                                  backgroundColor: "#00fc43",
+                                  border: "1px solid #00fc43",
+                                }}
+                                onClick={() => {
+                                  changeorderStatus(details?._id, "DELIVERED");
+                                }}
+                              >
+                                Delivered
+                              </Button>
+                            ) : details?.orderStatus === "DELIVERED" ? (
+                              <Button
+                                onClick={() => {
+                                  handleShow2();
+                                  setInvoice(details);
+                                }}
+                              >
+                                Invoice
+                              </Button>
+                            ) : null}
+                          </td>
+                        </tr>
+                      );
+                    })
+                : orders
+                    .filter((val) => val?.orderStatus === currStatus)
+                    ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                    .map((details) => {
+                      return (
+                        <tr key={details._id}>
+                          <td>{details?._id}</td>
+                          <td>
+                            {details?.patientid?.Firstname}{" "}
+                            {details?.patientid?.Lastname}
+                          </td>
+                          <td>
+                            {details?.shippingAddress}, {details?.city},{" "}
+                            {details?.zipcode}
+                          </td>
+                          <td>{details?.totalOrderedItems}</td>
+                          <td>{details?.paymentOption}</td>
+                          <td>{details?.orderStatus}</td>
+                          <td
+                            style={{
+                              fontWeight: "600",
+                              color:
+                                details?.orderPayment === "PENDING"
+                                  ? "red"
+                                  : "green",
+                            }}
+                          >
+                            {details?.orderPayment}
+                          </td>
+                          <td>{details?.totalOrderedPrice}</td>
+                          <td>
+                            <FontAwesomeIcon
+                              icon={faCircleInfo}
+                              style={{ color: "#20958c", fontSize: "25px" }}
+                              onClick={() => {
+                                setorderInfo(details);
+                                handleShow1();
+                              }}
+                            />
+                          </td>
+                          <td>
+                            {details?.orderStatus === "PLACED_ORDER" ? (
+                              <div>
+                                <Button
+                                  style={{
+                                    color: "#ffffff",
+                                    backgroundColor: "#20958C",
+                                    border: "1px solid #20958C",
+                                    marginTop: "2px",
+                                  }}
+                                  onClick={() => {
+                                    changeorderStatus(
+                                      details?._id,
+                                      "OUT_FOR_DELIVERY"
+                                    );
+                                  }}
+                                >
+                                  Out For Delivery
+                                </Button>
+                                <Button
+                                  style={{
+                                    color: "#ffffff",
+                                    backgroundColor: "#FF0000",
+                                    border: "1px solid #FF0000",
+                                    marginTop: "2px",
+                                  }}
+                                  onClick={() => {
+                                    changeorderStatus(
+                                      details?._id,
+                                      "CANCELLED_ORDER"
+                                    );
+                                  }}
+                                >
+                                  Cancel Order
+                                </Button>
+                              </div>
+                            ) : details?.orderStatus === "OUT_FOR_DELIVERY" ? (
+                              <Button
+                                style={{
+                                  color: "#ffffff",
+                                  backgroundColor: "#00fc43",
+                                  border: "1px solid #00fc43",
+                                }}
+                                onClick={() => {
+                                  changeorderStatus(details?._id, "DELIVERED");
+                                }}
+                              >
+                                Delivered
+                              </Button>
+                            ) : details?.orderStatus === "DELIVERED" ? (
+                              <Button
+                                onClick={() => {
+                                  handleShow2();
+                                  setInvoice(details);
+                                }}
+                              >
+                                Invoice
+                              </Button>
+                            ) : null}
+                          </td>
+                        </tr>
+                      );
+                    })}
             </tbody>
           </Table>
+          <div style={{ display: "flex" }}>
+            <p style={{ width: "100%", marginTop: "20px" }}>
+              Total Count: {data?.length}
+            </p>
+            <ReactPaginate
+              previousLabel={"Back"}
+              nextLabel={"Next"}
+              pageCount={pageCount}
+              onPageChange={changePage}
+              containerClassName={"paginationBttns"}
+              previousLinkClassName={"previousBttn"}
+              nextLinkClassName={"nextBttn"}
+              disabledClassName={"paginationDisabled"}
+              activeClassName={"paginationActive"}
+            />
+          </div>
 
           <Modal size="lg" show={show1} onHide={handleClose1}>
             <Modal.Header>

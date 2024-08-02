@@ -23,6 +23,8 @@ import Badge from "@material-ui/core/Badge";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import { IconButton } from "@material-ui/core";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
 
 function AdminBookProduct() {
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
@@ -62,17 +64,17 @@ function AdminBookProduct() {
 
   const [productInfo, setproductInfo] = useState([]);
 
-  const [inventoryList, setinventoryList] = useState([]);
+  const [data, setdata] = useState([]);
   async function getInventoryList() {
     try {
       const res = await axios.get(
         "http://localhost:8521/api/admin/inventoryList"
       );
       if (res.status === 200) {
-        setinventoryList(res.data.inventoryList);
+        setdata(res.data.inventoryList);
       }
     } catch (error) {
-      setinventoryList([]);
+      setdata([]);
     }
   }
 
@@ -133,11 +135,19 @@ function AdminBookProduct() {
 
   const [search, setSearch] = useState("");
   const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 10;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
 
   const handleFilter = (e) => {
     if (e.target.value != "") {
       setSearch(e.target.value);
-      const filterTable = inventoryList.filter((o) =>
+      const filterTable = data.filter((o) =>
         Object.keys(o).some((k) =>
           String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
         )
@@ -145,26 +155,46 @@ function AdminBookProduct() {
       settableFilter([...filterTable]);
     } else {
       setSearch(e.target.value);
-      setinventoryList([...inventoryList]);
+      setdata([...data]);
     }
   };
 
-  console.log("inventoryList", inventoryList);
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Doctors");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
+  console.log("data", data);
   return (
     <div>
       <div style={{ padding: "1%" }}>
         <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
           Products
         </h6>
+
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             marginTop: "2%",
+            marginBottom: "2%",
           }}
         >
           <input
-            placeholder="Search Product"
+            placeholder="Search Product Name"
             style={{
               padding: "5px 10px",
               border: "1px solid #20958c",
@@ -172,6 +202,18 @@ function AdminBookProduct() {
             }}
             onChange={handleFilter}
           />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
           <div className="cart-badge holder col-lg-2 d-flex gap-2  justify-content-end px-2">
             <Link to="../admin/AdminBookProductCart">
               <IconButton aria-label="cart">
@@ -185,7 +227,6 @@ function AdminBookProduct() {
             </Link>
           </div>
         </div>
-
         {/* information of specific product */}
         <Modal size="lg" show={show2} onHide={handleClose2}>
           <Modal.Header>
@@ -578,7 +619,8 @@ function AdminBookProduct() {
             {search.length > 0
               ? tableFilter
                   ?.filter((val) => val?.stock > 0)
-                  ?.map((details) => {
+                  .slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((details, index) => {
                     return (
                       <tr style={{ fontSize: "15px", textAlign: "center" }}>
                         <td>
@@ -643,8 +685,9 @@ function AdminBookProduct() {
                       </tr>
                     );
                   })
-              : inventoryList
+              : data
                   ?.filter((val) => val?.stock > 0)
+                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
                   ?.map((details) => {
                     return (
                       <tr style={{ fontSize: "15px", textAlign: "center" }}>
@@ -712,6 +755,22 @@ function AdminBookProduct() {
                   })}
           </tbody>
         </Table>
+        <div style={{ display: "flex" }}>
+          <p style={{ width: "100%", marginTop: "20px" }}>
+            Total Count: {data?.length}
+          </p>
+          <ReactPaginate
+            previousLabel={"Back"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
+        </div>
       </div>
     </div>
   );
