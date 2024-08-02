@@ -246,7 +246,7 @@ export const PatientsList = () => {
         IPD
       </Button>
       <hr/>
-      <Container className="p-4">
+      <Container className="p-2">
         {FilterPatientType === "OPD" ? (
           <h3>
             <b>Out Patient's</b>
@@ -256,6 +256,7 @@ export const PatientsList = () => {
             <b>In Patient's</b>
           </h3>
         )}
+        <hr/>
         <div className="row mb-4">
           {filteredPatients?.map((item) => {
             return (
