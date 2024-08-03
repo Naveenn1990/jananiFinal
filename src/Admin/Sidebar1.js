@@ -302,7 +302,7 @@ export default function Sidebar1() {
           </Link>
         ) : null}
 
-        {admin?.serviceManagement === true ? (
+        {/* {admin?.serviceManagement === true ? (
           <h6 className="sidebarItem" onClick={() => setSerM(!SerM)}>
             Service management {SerM ? <IoIosArrowUp /> : <IoIosArrowDown />}
           </h6>
@@ -325,14 +325,7 @@ export default function Sidebar1() {
           >
             Add Service
           </h6>
-
-          {/* <h6
-              className="sidebarItem1"
-              onClick={() => navigate("/admin/RequestedService")}
-            >
-              Requested Service
-            </h6> */}
-        </div>
+        </div> */}
 
         {admin?.hospitalManagement === true ? (
           <h6 className="sidebarItem" onClick={() => setHosM(!HosM)}>

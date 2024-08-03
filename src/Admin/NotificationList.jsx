@@ -5,6 +5,13 @@ import React, { useEffect, useState } from "react";
 import { Button, Form, Modal, Table } from "react-bootstrap";
 import { CiEdit } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
+import exportFromJSON from "export-from-json";
+import ReactPaginate from "react-paginate";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
 
 function NotificationList() {
   const [show, setShow] = useState(false);
@@ -53,37 +60,25 @@ function NotificationList() {
         "http://localhost:8521/api/vendor/getvendorList"
       );
       if (res.status === 200) {
-        setVendorList(  res.data.allVendors);    
+        setVendorList(res.data.allVendors);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const [NotificationList, setNotificationList] = useState([]);
+  const [data, setdata] = useState([]);
   const getallNotification = async () => {
     try {
       const res = await axios.get(
         "http://localhost:8521/api/notification/getnotification"
       );
       if (res.status === 200) {
-        setNotificationList(res.data.notification);
-        setPagination(res.data.notification);
+        setdata(res.data.notification);
       }
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const [SearchItem, setSearchItem] = useState("");
-  // Pagination
-  const [pagination, setPagination] = useState([]);
-  const [pageNumber, setPageNumber] = useState(0);
-  const usersPerPage = 2;
-  const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(pagination?.length / usersPerPage);
-  const changePage = (selected) => {
-    setPageNumber(selected);
   };
 
   const [SelectDepartment, setSelectDepartment] = useState(false);
@@ -92,17 +87,33 @@ function NotificationList() {
   const [ReferalLabId, setReferalLabId] = useState("");
   const [ReferalDoctorId, setReferalDoctorId] = useState("");
   const [VendorId, setVendorId] = useState("");
+  const [selectedData, setselectedData] = useState({});
+
+  useEffect(() => {
+    if (ReferalLabId) {
+      const xyz = clinicalLabs?.find((item) => item?._id === ReferalLabId);
+      setselectedData(xyz);
+    } else if (ReferalDoctorId) {
+      const abc = ClinicDoctors?.find((item) => item?._id === ReferalDoctorId);
+      setselectedData(abc);
+    } else if (VendorId) {
+      const srs = VendorList?.find((item) => item?._id === VendorId);
+      setselectedData(srs);
+    }
+  }, [ReferalLabId, ReferalDoctorId, VendorId]);
+
+  console.log(
+    "selectedDoctor",
+    ReferalLabId,
+    ReferalDoctorId,
+    VendorId,
+    selectedData
+  );
 
   const sendnotification = async () => {
     if (!SelectDepartment) {
       return alert("please Select Department");
     }
-    // if(SelectDepartment === "Lab"){
-    //   return alert("please Select Lab")
-    // }
-    // if(SelectDepartment === "Doctor"){
-    //   return alert("please Select Doctor")
-    // }
     if (!Message) {
       return alert("please Write Something");
     }
@@ -118,6 +129,13 @@ function NotificationList() {
           vendorid: VendorId,
           message: Message,
           Department: SelectDepartment,
+          Name: ReferalLabId
+            ? selectedData?.ClinicLabName
+            : ReferalDoctorId
+            ? selectedData?.ClinicName
+            : VendorId
+            ? selectedData?.fname + " " + selectedData?.lname
+            : "",
         },
       };
       let res = await axios(config);
@@ -128,13 +146,12 @@ function NotificationList() {
         setReferalDoctorId("");
         handleClose();
         getallNotification();
-        setVendorId("")
+        setVendorId("");
       }
     } catch (error) {
       alert(error.response.data.error);
     }
   };
-
 
   const [ViewData, setViewData] = useState("");
   const deletenotification = async () => {
@@ -144,17 +161,17 @@ function NotificationList() {
       );
       if (res.status === 200) {
         alert(res.data.success);
-       handleClose1()
-       getallNotification();
+        handleClose1();
+        getallNotification();
       }
     } catch (error) {
       console.log(error);
       alert(error.response.data.error);
     }
   };
-useEffect(() => {
-  setMessage(ViewData?.message || "")
-}, [ViewData])
+  useEffect(() => {
+    setMessage(ViewData?.message || "");
+  }, [ViewData]);
 
   const editnotification = async () => {
     try {
@@ -183,8 +200,54 @@ useEffect(() => {
     getClinicalLabsList();
     getClinicDoctors();
     getallNotification();
-    getAllVendors()
+    getAllVendors();
   }, []);
+
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data?.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data?.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Notification");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data?.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
+  console.log("data", data);
 
   return (
     <div>
@@ -192,24 +255,44 @@ useEffect(() => {
         Notification List
       </h4>
       <div className="container mb-3">
-        <div className="d-flex mb-3">
-          <Form className="">
-            <Form.Control
-              style={{ width: "400px" }}
-              type="search"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
-              onChange={(e) => setSearchItem(e.target.value)}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "2%",
+            marginBottom: "2%",
+          }}
+        >
+          <input
+            placeholder="Search"
+            style={{
+              padding: "5px 10px",
+              border: "1px solid #20958c",
+              borderRadius: "0px",
+            }}
+            onChange={handleFilter}
+          />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <AiOutlinePlusCircle
+              className="AddIcon1"
+              onClick={() => handleShow()}
             />
-            {/* <Button variant="outline-primary">Search</Button> */}
-          </Form>
-
-          <Button variant="success" onClick={() => handleShow()}>
-            Add Notification
-          </Button>
+          </div>
         </div>
-        <Table bordered>
+
+        <Table bordered responsive>
           <thead>
             <tr className="admin-table-head">
               <th className="fw-bold">Sl.No</th>
@@ -220,65 +303,133 @@ useEffect(() => {
             </tr>
           </thead>
           <tbody>
-            {NotificationList?.slice(
-              pagesVisited,
-              pagesVisited + usersPerPage
-            )?.map((item, i) => {
-              if (
-                SearchItem === "" ||
-                Object.values(item).some((value) =>
-                  String(value).toLowerCase().includes(SearchItem.toLowerCase())
-                )
-              )
-                return (
-                  <tr className="admin-table-row">
-                    <td>{i + 1}</td>
-                    <td>{item?.Department}</td>
-                    <td>
-                      {item?.referallabid ? (
-                        <p>{item?.referallabid?.ClinicLabName}</p>
-                      ) : (
-                        ""
-                      )}
-                      {item?.referaldoctorid ? (
-                        <p>{item?.referaldoctorid?.ClinicName}</p>
-                      ) : (
-                        ""
-                      )}
-                    </td>
-                    <td>{item?.message}</td>
-                    <td>
-                      <div className="d-flex gap-3">
-                      <CiEdit 
-                     onClick={()=>{
-                      handleShow2();
-                      setViewData(item);
-                    }}
-                      style={{color:"green",cursor:"pointer",fontSize:"20px"}}/>
-                      <MdDelete
-                        onClick={()=>{
-                          handleShow1();
-                          setViewData(item);
-                        }}
-                      style={{color:"red",cursor:"pointer",fontSize:"20px"}} />
-                      </div>
-                    </td>
-                  </tr>
-                );
-            })}
+            {search.length > 0
+              ? tableFilter
+                  .slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item, i) => {
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{i + 1}</td>
+                        <td>{item?.Department}</td>
+                        <td>
+                          {/* {item?.referallabid ? (
+                            <p>{item?.referallabid?.ClinicLabName}</p>
+                          ) : (
+                            ""
+                          )}
+                          {item?.referaldoctorid ? (
+                            <p>{item?.referaldoctorid?.ClinicName}</p>
+                          ) : (
+                            ""
+                          )}
+                          {item?.vendorid ? (
+                            <p>
+                              {item?.vendorid?.fname +
+                                " " +
+                                item?.vendorid?.lname}
+                            </p>
+                          ) : (
+                            ""
+                          )} */}
+                          {item?.Name}
+                        </td>
+                        <td>{item?.message}</td>
+                        <td>
+                          <div className="d-flex gap-3">
+                            <CiEdit
+                              onClick={() => {
+                                handleShow2();
+                                setViewData(item);
+                              }}
+                              style={{
+                                color: "green",
+                                cursor: "pointer",
+                                fontSize: "20px",
+                              }}
+                            />
+                            <MdDelete
+                              onClick={() => {
+                                handleShow1();
+                                setViewData(item);
+                              }}
+                              style={{
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "20px",
+                              }}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+              : data
+                  ?.slice(pagesVisited, pagesVisited + usersPerPage)
+                  ?.map((item, i) => {
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{i + 1}</td>
+                        <td>{item?.Department}</td>
+                        <td>
+                          {/* {item?.referallabid ? (
+                            <p>{item?.referallabid?.ClinicLabName}</p>
+                          ) : (
+                            ""
+                          )}
+                          {item?.referaldoctorid ? (
+                            <p>{item?.referaldoctorid?.ClinicName}</p>
+                          ) : (
+                            ""
+                          )} */}
+                          {item?.Name}
+                        </td>
+                        <td>{item?.message}</td>
+                        <td>
+                          <div className="d-flex gap-3">
+                            <CiEdit
+                              onClick={() => {
+                                handleShow2();
+                                setViewData(item);
+                              }}
+                              style={{
+                                color: "green",
+                                cursor: "pointer",
+                                fontSize: "20px",
+                              }}
+                            />
+                            <MdDelete
+                              onClick={() => {
+                                handleShow1();
+                                setViewData(item);
+                              }}
+                              style={{
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "20px",
+                              }}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
           </tbody>
         </Table>
-
-        <div style={{ float: "right" }} className="my-3 d-flex justify-end">
-          <Stack spacing={2}>
-            <Pagination
-              count={pageCount}
-              onChange={(event, value) => {
-                changePage(value - 1);
-              }}
-              color="primary"
-            />
-          </Stack>
+        <div style={{ display: "flex" }}>
+          <p style={{ width: "100%", marginTop: "20px" }}>
+            Total Count: {data?.length}
+          </p>
+          <ReactPaginate
+            previousLabel={"Back"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
         </div>
       </div>
       <Modal show={show} onHide={handleClose}>
@@ -302,7 +453,13 @@ useEffect(() => {
             {SelectDepartment === "Lab" && (
               <Form.Group className="mb-3">
                 <Form.Label>Select Referal Lab</Form.Label>
-                <Form.Select onChange={(e) => setReferalLabId(e.target.value)}>
+                <Form.Select
+                  onChange={(e) => {
+                    setReferalLabId(e.target.value);
+                    setReferalDoctorId("");
+                    setVendorId("");
+                  }}
+                >
                   <option>Select lab</option>
                   {clinicalLabs?.map((item) => {
                     return (
@@ -319,7 +476,11 @@ useEffect(() => {
               <Form.Group className="mb-3">
                 <Form.Label>Select Referal Doctor</Form.Label>
                 <Form.Select
-                  onChange={(e) => setReferalDoctorId(e.target.value)}
+                  onChange={(e) => {
+                    setReferalLabId("");
+                    setReferalDoctorId(e.target.value);
+                    setVendorId("");
+                  }}
                 >
                   <option>Select Doctor</option>
                   {ClinicDoctors?.map((item) => {
@@ -337,14 +498,18 @@ useEffect(() => {
               <Form.Group className="mb-3">
                 <Form.Label>Select Vendor</Form.Label>
                 <Form.Select
-                  onChange={(e) => setVendorId(e.target.value)}
+                  onChange={(e) => {
+                    setReferalLabId("");
+                    setReferalDoctorId("");
+                    setVendorId(e.target.value);
+                  }}
                 >
                   <option>Select vendor</option>
                   {VendorList?.map((item) => {
                     return (
                       <option
                         value={item?._id}
-                      >{`${item?.fname}${item?.lname}  => ${item?.vendorId }`}</option>
+                      >{`${item?.fname}${item?.lname}  => ${item?.vendorId}`}</option>
                     );
                   })}
                 </Form.Select>
@@ -371,32 +536,30 @@ useEffect(() => {
         </Modal.Footer>
       </Modal>
       <Modal size="md" show={show1} onHide={handleClose1}>
-          <Modal.Header>
-            <Modal.Title>Delete Notification</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div>
-              Are You sure , You want to Delete this Doctor Clinic information.
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-          <Button 
-          variant="secondary"
-          onClick={() => handleClose1()}
-          >No</Button>
-          <Button 
-          variant="danger"
-          onClick={()=>deletenotification()}
-          >Yes</Button>
+        <Modal.Header>
+          <Modal.Title>Delete Notification</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            Are You sure , You want to Delete this Doctor Clinic information.
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => handleClose1()}>
+            No
+          </Button>
+          <Button variant="danger" onClick={() => deletenotification()}>
+            Yes
+          </Button>
         </Modal.Footer>
-        </Modal>
+      </Modal>
 
-        <Modal show={show2} onHide={handleClose2}>
+      <Modal show={show2} onHide={handleClose2}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Notification</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>  
+          <Form>
             <Form.Group className="mb-3">
               <Form.Label>Message</Form.Label>
               <Form.Control
@@ -412,9 +575,7 @@ useEffect(() => {
           <Button variant="secondary" onClick={handleClose2}>
             Close
           </Button>
-          <Button variant="success" 
-          onClick={editnotification}
-          >
+          <Button variant="success" onClick={editnotification}>
             Edit
           </Button>
         </Modal.Footer>
