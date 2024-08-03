@@ -1,5 +1,3 @@
-import { Checkbox } from "@mui/material";
-import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
@@ -167,14 +165,6 @@ function DoctorsViewForms() {
                   </h6>
                 </div>
               </div>
-              <div
-                className="text-center"
-                style={{
-                  borderBottom: "1px solid #20958C",
-                  width: "100%",
-                  textAlign: "center",
-                }}
-              ></div>
               <div className="text-center mt-1">
                 {" "}
                 <h6
@@ -231,7 +221,11 @@ function DoctorsViewForms() {
                         Pt ID : {item?.PatientId}
                       </td>
                       <td style={{ width: "50%", border: "2px solid #20958C" }}>
-                        Ward : 26/32
+                        Ward : {CauseDetails?.causeBillDetails?.[0]?.BedBillDetails?.map(
+                              (item) => {
+                                return <span> {item?.bedName}</span>;
+                              }
+                            )}
                       </td>
                     </tr>
                     <tr>
@@ -246,6 +240,7 @@ function DoctorsViewForms() {
                   </tbody>
                 </Table>
                 <Table
+                className="mt-2"
                   style={{
                     borderCollapse: "collapse",
                     width: "100%",
@@ -255,16 +250,16 @@ function DoctorsViewForms() {
                 >
                   <thead>
                     <tr style={{ textAlign: "center" }}>
-                      <th style={{ width: "10%", border: "2px solid #20958C" }}>
+                      <th style={{ width: "10%", border: "2px solid white" }}>
                         Date
                       </th>
-                      <th style={{ width: "10%", border: "2px solid #20958C" }}>
+                      <th style={{ width: "10%", border: "2px solid white" }}>
                         Time
                       </th>
-                      <th style={{ width: "50%", border: "2px solid #20958C" }}>
+                      <th style={{ width: "50%", border: "2px solid white" }}>
                         Notes
                       </th>
-                      <th style={{ width: "20%", border: "2px solid #20958C" }}>
+                      <th style={{ width: "20%", border: "2px solid white" }}>
                         Doctor's sign
                       </th>
                     </tr>
@@ -273,44 +268,44 @@ function DoctorsViewForms() {
                     {CauseDetails?.doctorstreatment?.map((item, i) => {
                       return (
                         <>
-                          {item?.DoctorsTreatment?.map((ele) => {
-                            return (
+                          
                               <tr style={{ textAlign: "center" }}>
                                 <td
                                   style={{
-                                    width: "15%",
                                     border: "2px solid #20958C",
                                   }}
                                 >
-                                  {ele?.DTdate}
+                                  {item?.DTdate}
                                 </td>
                                 <td
                                   style={{
-                                    width: "10%",
                                     border: "2px solid #20958C",
                                   }}
                                 >
-                                  {ele?.DTTime}
+                                  {item?.DTTime}
                                 </td>
                                 <td
                                   style={{
-                                    width: "50%",
                                     border: "2px solid #20958C",
                                   }}
                                 >
-                                  {ele?.DTNotes}
+                                  {item?.DTNotes}
                                 </td>
                                 <td
                                   style={{
-                                    width: "20%",
                                     border: "2px  solid #20958C",
                                   }}
                                 >
-                                  Pending
+                                  <b>Doctor Name : </b> <span>{`${item?.doctorid?.Firstname} ${item?.doctorid?.Lastname}`}</span>
+                                <br/>
+                                <hr/>
+                                <img
+                                  alt="sign"
+                                  src={`http://localhost:8521/PatientREG/${item?.doctortretmentSignature}`}
+                                />
                                 </td>
                               </tr>
-                            );
-                          })}
+                         
                         </>
                       );
                     })}
@@ -370,14 +365,6 @@ function DoctorsViewForms() {
                       </h6>
                     </div>
                   </div>
-                  <div
-                    className="text-center"
-                    style={{
-                      borderBottom: "1px solid #20958C",
-                      width: "100%",
-                      textAlign: "center",
-                    }}
-                  ></div>
                   <div className="text-center mt-1">
                     {" "}
                     <h6
@@ -453,7 +440,12 @@ function DoctorsViewForms() {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Ward: 32/23
+                            Ward :{" "}
+                            {CauseDetails?.causeBillDetails?.[0]?.BedBillDetails?.map(
+                              (item) => {
+                                return <span> {item?.bedName}</span>;
+                              }
+                            )}
                           </td>
                         </tr>
                         <tr>
@@ -463,7 +455,12 @@ function DoctorsViewForms() {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Dept: {doctorDetails?.Department}
+                            Dept :{" "}
+                            {CauseDetails?.causeBillDetails?.[0]?.BedBillDetails?.map(
+                              (item) => {
+                                return <span> {item?.wardtype}</span>;
+                              }
+                            )}
                           </td>
                           <td
                             style={{
@@ -489,6 +486,31 @@ function DoctorsViewForms() {
                           >
                             DOA: {moment(item?.createdAt).format("DD-MM-YYYY")}
                           </td>
+                          <td
+                            style={{
+                              width: "50%",
+                              border: "2px  solid #20958C",
+                            }}
+                          >
+                            <div className="d-flex align-items-center">
+                              <div>Known Drug Allergies : </div>
+                              <span>{item?.patientAllergies}</span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            colSpan={2}
+                            style={{
+                              width: "100%",
+                              border: "2px  solid #20958C",
+                            }}
+                          >
+                            <div className="d-flex align-items-center">
+                              <div>Diagnosis : </div>
+                              {CauseDetails?.CauseName}
+                            </div>
+                          </td>
                         </tr>
                       </tbody>
                     </Table>
@@ -507,14 +529,7 @@ function DoctorsViewForms() {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Diagnosis
-                          </th>
-                          <th
-                            style={{
-                              border: "2px  solid #20958C",
-                            }}
-                          >
-                            Drug Allergies
+                            Sl.No.
                           </th>
                           <th
                             style={{
@@ -548,14 +563,7 @@ function DoctorsViewForms() {
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                {item?.Diagnosis}
-                              </td>
-                              <td
-                                style={{
-                                  border: "2px  solid #20958C",
-                                }}
-                              >
-                                {item?.DrugAllergies}
+                                {i + 1}
                               </td>
 
                               <td
@@ -563,7 +571,7 @@ function DoctorsViewForms() {
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                {item?.DNDate}/ {item?.DNTime}
+                                {item?.DNDate}
                               </td>
                               <td
                                 style={{
@@ -576,7 +584,15 @@ function DoctorsViewForms() {
                                 style={{
                                   border: "2px  solid #20958C",
                                 }}
-                              ></td>
+                              >
+                                <b>Doctor Name : </b> <span>{`${item?.doctorid?.Firstname} ${item?.doctorid?.Lastname}`}</span>
+                                <br/>
+                                <hr/>
+                                <img
+                                  alt="sign"
+                                  src={`http://localhost:8521/PatientREG/${item?.doctornotesSignature}`}
+                                />
+                              </td>
                             </tr>
                           );
                         })}

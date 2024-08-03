@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Button, Table } from "react-bootstrap";
 import { IoMdAdd } from "react-icons/io";
@@ -8,7 +8,7 @@ import { Checkbox } from "@mui/material";
 import moment from "moment";
 import axios from "axios";
 import Select from "react-select";
-
+import SignatureCanvas from "react-signature-canvas";
 const DoctorForms = () => {
   const customStyles = {
     control: (provided, state) => ({
@@ -17,6 +17,8 @@ const DoctorForms = () => {
       minHeight: "60px", // Adjust the height here
     }),
   };
+
+  const formdata = new FormData();
   let doctorDetails = JSON.parse(sessionStorage.getItem("DoctorDetails"));
   const location = useLocation();
   const { item, causeId } = location.state;
@@ -34,6 +36,26 @@ const DoctorForms = () => {
   } else {
     ageOutput = `${ageYears} years`;
   }
+
+  const [DoctorTreatmentSignature, setDoctorTreatmentSignature] = useState(null);
+  const sigCanvas1 = useRef({});
+  const clear1 = () => sigCanvas1.current.clear();
+  const save1 = () => {
+    const DoctorTreatmentSignature = sigCanvas1.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setDoctorTreatmentSignature(DoctorTreatmentSignature);
+  };
+
+  const [DoctorNotesSignature, setDoctorNotesSignature] = useState(null);
+  const sigCanvas2 = useRef({});
+  const clear2 = () => sigCanvas2.current.clear();
+  const save2 = () => {
+    const DoctorNotesSignature = sigCanvas2.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setDoctorNotesSignature(DoctorNotesSignature);
+  };
 
   const [CauseDetails, setCauseDetails] = useState([]);
   const [PatientType, setPatientType] = useState("IPD");
@@ -198,17 +220,33 @@ const DoctorForms = () => {
   };
 
   const submitDoctorTreatment = async () => {
+    if(!DTdate){
+      return alert ("Please Select Date..")
+    }
+    if(!DTTime){
+      return alert ("Please Select Time..")
+    }
+    if(!DTNotes){
+      return alert ("Please Select Notes..")
+    }
+    if(!DoctorTreatmentSignature){
+      return alert ("sign is pending..")
+    }
     try {
+      const DoctorTreatemntsign = await fetch(DoctorTreatmentSignature).then((res) => res.blob());
+      formdata.set("patientId", item?._id);
+      formdata.set("causeId", CauseDetails?._id);
+      formdata.set("doctorid", doctorDetails?._id);
+      formdata.set("DTdate", DTdate);
+      formdata.set("DTTime", DTTime);
+      formdata.set("DTNotes", DTNotes);
+      formdata.set("doctortretmentSignature", DoctorTreatemntsign, "doctor-treatment-signature.png");
       const config = {
         url: "/adddoctorstreatment",
         method: "put",
         baseURL: "http://localhost:8521/api/staff",
-        headers: { "content-type": "application/json" },
-        data: {
-          patientId: item?._id,
-          causeId: CauseDetails?._id,
-          DoctorsTreatment: DoctorsTreatment,
-        },
+        headers: { "Content-Type": "multipart/form-data" },
+        data: formdata,
       };
       let res = await axios(config);
       if (res.status === 200) {
@@ -216,7 +254,7 @@ const DoctorForms = () => {
         setDTdate("");
         setDTTime("");
         setDTNotes("");
-        setDoctorsNotes([]);
+        setDoctorTreatmentSignature(null);
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -254,31 +292,36 @@ const DoctorForms = () => {
   };
 
   const submitDoctorNotes = async () => {
+    if(!DNDate){
+      return alert ("Please Select Date and Time ...!")
+    }
+    if(!DNOtes){
+      return alert ("Please wirte notes ...!")
+    }
+    if(!DoctorNotesSignature){
+      return alert ("sign is pending ...!")
+    }
     try {
+      const DoctorNotessign = await fetch(DoctorNotesSignature).then((res) => res.blob());
+      formdata.set("patientId", item?._id);
+      formdata.set("causeId", CauseDetails?._id);
+      formdata.set("doctorid", doctorDetails?._id);
+      formdata.set("DNDate", DNDate);
+      formdata.set("DNOtes", DNOtes);
+      formdata.set("doctornotesSignature", DoctorNotessign, "doctor-notes-signature.png");
       const config = {
         url: "/adddoctorsnotes",
         method: "put",
         baseURL: "http://localhost:8521/api/staff",
-        headers: { "content-type": "application/json" },
-        data: {
-          patientId: item?._id,
-          causeId: CauseDetails?._id,
-          doctorid: item?._id,
-          DNDate: DNDate,
-          DNTime: DNTime,
-          DNOtes: DNOtes,
-          DrugAllergies: DrugAllergies,
-          Diagnosis: Diagnosis,
-        },
+        headers: { "Content-Type": "multipart/form-data" },
+        data: formdata,
       };
       let res = await axios(config);
       if (res.status === 200) {
         alert(res.data.success);
-        setDrugAllergies("");
-        setDiagnosis("");
         setDNDate("");
-        setDNTime("");
         setDNOtes("");
+        setDoctorNotesSignature(null)
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -482,14 +525,6 @@ const DoctorForms = () => {
                   </h6>
                 </div>
               </div>
-              <div
-                className="text-center"
-                style={{
-                  borderBottom: "1px solid #20958C",
-                  width: "100%",
-                  textAlign: "center",
-                }}
-              ></div>
               <div className="text-center mt-1">
                 {" "}
                 <h6
@@ -546,7 +581,11 @@ const DoctorForms = () => {
                         Pt ID : {item?.PatientId}
                       </td>
                       <td style={{ width: "50%", border: "2px solid #20958C" }}>
-                        Ward : 26/32
+                        Ward :  {CauseDetails?.causeBillDetails?.[0]?.BedBillDetails?.map(
+                              (item) => {
+                                return <span> {item?.bedName}</span>;
+                              }
+                            )}
                       </td>
                     </tr>
                     <tr>
@@ -554,18 +593,6 @@ const DoctorForms = () => {
                         colSpan={2}
                         style={{ width: "100%", border: "2px  solid #20958C" }}
                       >
-                        {/* <div className="d-flex align-items-center">
-                          <div style={{ width: "12%" }}>
-                            {" "}
-                            Doctor Incharge :{" "}
-                          </div>
-
-                          <input
-                            type="text"
-                            className="vi_0"
-                            style={{ width: "90%" }}
-                          />
-                        </div> */}
                         Doctor Incharge :{" "}
                         {`${doctorDetails?.Firstname} ${doctorDetails?.Lastname} `}
                       </td>
@@ -573,6 +600,7 @@ const DoctorForms = () => {
                   </tbody>
                 </Table>
                 <Table
+                className="mt-2"
                   style={{
                     borderCollapse: "collapse",
                     width: "100%",
@@ -582,20 +610,17 @@ const DoctorForms = () => {
                 >
                   <thead>
                     <tr style={{ textAlign: "center" }}>
-                      <th style={{ width: "10%", border: "2px solid #20958C" }}>
+                      <th style={{ width: "10%", border: "2px solid white" }}>
                         Date
                       </th>
-                      <th style={{ width: "10%", border: "2px solid #20958C" }}>
+                      <th style={{ width: "10%", border: "2px solid white" }}>
                         Time
                       </th>
-                      <th style={{ width: "50%", border: "2px solid #20958C" }}>
+                      <th style={{ width: "50%", border: "2px solid white" }}>
                         Notes
                       </th>
-                      <th style={{ width: "20%", border: "2px solid #20958C" }}>
+                      <th style={{ width: "20%", border: "2px solid white" }}>
                         Doctor's sign
-                      </th>
-                      <th style={{ width: "20%", border: "2px solid #20958C" }}>
-                        Action
                       </th>
                     </tr>
                   </thead>
@@ -632,14 +657,30 @@ const DoctorForms = () => {
                       <td
                         style={{ width: "20%", border: "2px  solid #20958C" }}
                       >
-                        <input type="text" className="vi_0" />
-                      </td>
-                      <td
-                        style={{ width: "10%", border: "2px  solid #20958C" }}
-                      >
-                        <Button onClick={Adddoctorstreatment}>
-                          <IoMdAdd />
-                        </Button>
+                        {!DoctorTreatmentSignature ? (
+                          <div
+                            style={{
+                              border: "1px solid #dee2e6",
+                              margin: "10px",
+                            }}
+                          >
+                            <SignatureCanvas
+                              ref={sigCanvas1}
+                              penColor="black"
+                              canvasProps={{
+                                width: 180,
+                                height: 100,
+                                className: "sigCanvas",
+                              }}
+                            />
+                            <div className="d-flex gap-3">
+                              <button onClick={clear1}>Clear</button>
+                              <button onClick={save1}>Save</button>
+                            </div>
+                          </div>
+                        ) : (
+                          <img src={DoctorTreatmentSignature} alt="Signature" />
+                        )}
                       </td>
                     </tr>
                     {DoctorsTreatment?.map((item, i) => {
@@ -722,14 +763,6 @@ const DoctorForms = () => {
                       </h6>
                     </div>
                   </div>
-                  <div
-                    className="text-center"
-                    style={{
-                      borderBottom: "1px solid #20958C",
-                      width: "100%",
-                      textAlign: "center",
-                    }}
-                  ></div>
                   <div className="text-center mt-1">
                     {" "}
                     <h6
@@ -805,7 +838,12 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Ward: 32/23
+                            Ward :{" "}
+                            {CauseDetails?.causeBillDetails?.[0]?.BedBillDetails?.map(
+                              (item) => {
+                                return <span> {item?.bedName}</span>;
+                              }
+                            )}
                           </td>
                         </tr>
                         <tr>
@@ -815,7 +853,12 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Dept: {doctorDetails?.Department}
+                            Dept :
+                            {CauseDetails?.causeBillDetails?.[0]?.BedBillDetails?.map(
+                              (item) => {
+                                return <span> {item?.wardtype}</span>;
+                              }
+                            )}
                           </td>
                           <td
                             style={{
@@ -823,7 +866,7 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Doctor:{" "}
+                            Doctor :{" "}
                             {`${doctorDetails?.Firstname} ${doctorDetails?.Lastname} `}
                           </td>
                         </tr>
@@ -834,7 +877,7 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            DOA: {moment(item?.createdAt).format("DD-MM-YYYY")}
+                            DOA : {moment(item?.createdAt).format("DD-MM-YYYY")}
                           </td>
                           <td
                             style={{
@@ -843,16 +886,9 @@ const DoctorForms = () => {
                             }}
                           >
                             <div className="d-flex align-items-center">
-                              <div>Known Drug Allergies : </div>
+                              <div>Known Drug Allergies :{" "} </div>
                               <span>
-                                <input
-                                  type="text"
-                                  className="vi_0"
-                                  value={DrugAllergies}
-                                  onChange={(e) =>
-                                    setDrugAllergies(e.target.value)
-                                  }
-                                />
+                              {item?.patientAllergies}
                               </span>
                             </div>
                           </td>
@@ -866,13 +902,8 @@ const DoctorForms = () => {
                             }}
                           >
                             <div className="d-flex align-items-center">
-                              <div>Diagnosis:</div>
-                              <input
-                                type="text"
-                                className="vi_0"
-                                value={Diagnosis}
-                                onChange={(e) => setDiagnosis(e.target.value)}
-                              />
+                              <div>Diagnosis : {" "}</div>
+                              {CauseDetails?.CauseName}
                             </div>
                           </td>
                         </tr>
@@ -893,16 +924,9 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            Date
+                            Date / Time
                           </th>
-                          <th
-                            style={{
-                              width: "10%",
-                              border: "2px  solid #20958C",
-                            }}
-                          >
-                            Time
-                          </th>
+                          
                           <th
                             style={{
                               width: "60%",
@@ -930,26 +954,14 @@ const DoctorForms = () => {
                             }}
                           >
                             <input
-                              type="date"
+                              type="datetime-local"
                               className="vi_0"
                               value={DNDate}
                               onChange={(e) => setDNDate(e.target.value)}
                               min={new Date().toISOString().split("T")[0]}
                             />
                           </td>
-                          <td
-                            style={{
-                              width: "10%",
-                              border: "2px  solid #20958C",
-                            }}
-                          >
-                            <input
-                              type="time"
-                              className="vi_0"
-                              value={DNTime}
-                              onChange={(e) => setDNTime(e.target.value)}
-                            />
-                          </td>
+                          
                           <td
                             style={{
                               width: "50%",
@@ -970,11 +982,30 @@ const DoctorForms = () => {
                               border: "2px  solid #20958C",
                             }}
                           >
-                            <input
-                              type="file"
-                              className="vi_0"
-                              style={{ width: "100%" }}
-                            />
+                            {!DoctorNotesSignature ? (
+                            <div
+                              style={{
+                                border: "1px solid #dee2e6",
+                                margin: "10px",
+                              }}
+                            >
+                              <SignatureCanvas
+                                ref={sigCanvas2}
+                                penColor="black"
+                                canvasProps={{
+                                  width: 180,
+                                  height: 100,
+                                  className: "sigCanvas",
+                                }}
+                              />
+                              <div className="d-flex gap-3">
+                                <button onClick={clear2}>Clear</button>
+                                <button onClick={save2}>Save</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <img src={DoctorNotesSignature} alt="Signature" />
+                          )}
                           </td>
                         </tr>
                       </tbody>
@@ -1126,7 +1157,13 @@ const DoctorForms = () => {
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                Ward: 33
+                                Ward:
+                                {/* {
+                      SelectedCause?.[0]?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.bedName}</span>
+                        )
+                      })} */}
                               </td>
                             </tr>
                             <tr>
