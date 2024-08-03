@@ -46,6 +46,7 @@ export const Contact = () => {
         setenqGenContact("");
         setenquiryBody("");
         alert(res.data.success);
+        window.location.reload();
         return;
       } else {
         return alert("something went wrong!!!");

@@ -1,20 +1,11 @@
 import React, { useState } from "react";
-import {
-  AiOutlineFastBackward,
-} from "react-icons/ai";
-import {
-  BsFillImageFill,
-  BsPeople,
-} from "react-icons/bs";
-import {
-  FaBlog,
-  FaClinicMedical,
-  FaRegHospital,
-} from "react-icons/fa";
+import { AiOutlineFastBackward } from "react-icons/ai";
+import { BsFillImageFill, BsPeople } from "react-icons/bs";
+import { FaBlog, FaClinicMedical, FaRegHospital } from "react-icons/fa";
 import { HiOutlineInformationCircle } from "react-icons/hi";
-
+import { MdMedicalServices } from "react-icons/md";
 import { RiGalleryFill } from "react-icons/ri";
-
+import { RiServiceFill } from "react-icons/ri";
 import AddBanner from "./Addbanners";
 import AddAboutUS from "./AddAboutUS";
 import Addgallery from "./Addgallery";
@@ -24,6 +15,8 @@ import AddBestHospital from "./AddBestHospital";
 import { GoTrophy } from "react-icons/go";
 import AddHospitalDepartment from "./AddHospitalDepart";
 import AddTestimonial from "./AddTestimonial";
+import AddServiceCategory from "./AddServiceCategory";
+import AddService from "./AddService";
 
 export default function Websitemanagement() {
   const [ViewModal, setViewModal] = useState();
@@ -168,6 +161,33 @@ export default function Websitemanagement() {
               >
                 <FaClinicMedical className="WebMI" />
                 BEST-HOSPITAL-TOWN
+              </div>
+            </div>
+
+            <div className="col-lg-4">
+              {" "}
+              <div
+                className="websiteMcards"
+                onClick={() => {
+                  setViewModal(<AddServiceCategory />);
+                  setView(true);
+                }}
+              >
+                <MdMedicalServices className="WebMI" />
+                SERVICE-CATEGORY
+              </div>
+            </div>
+
+            <div className="col-lg-4">
+              <div
+                className="websiteMcards"
+                onClick={() => {
+                  setViewModal(<AddService />);
+                  setView(true);
+                }}
+              >
+                <RiServiceFill className="WebMI" />
+                ADD-SERVICE
               </div>
             </div>
           </div>
