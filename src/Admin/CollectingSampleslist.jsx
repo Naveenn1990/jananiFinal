@@ -9,6 +9,7 @@ import { IoEye } from "react-icons/io5";
 import { useReactToPrint } from "react-to-print";
 import { Pagination, Stack } from "@mui/material";
 import ReactPaginate from "react-paginate";
+import { MdDeleteOutline } from "react-icons/md";
 
 export default function CollectingSampleslist() {
   const AdminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
@@ -66,11 +67,14 @@ export default function CollectingSampleslist() {
           sampleName: sampleName,
           sampleCollectionDateTime: Date.now(),
           sampleCollectedBy: AdminDetails?._id,
+          sampleCollectionUsedProducts: usedProducts,
         },
       };
       const res = await axios(config);
       if (res.status === 200) {
         alert(res.data.success);
+        setEditCollectedSamples(false);
+        setUsedProducts([]);
         handleClose2();
         GetLabtestList();
       }
@@ -92,6 +96,8 @@ export default function CollectingSampleslist() {
       if (res.status === 200) {
         alert(res.data.success);
         GetLabtestList();
+        setEditCollectedSamples(false);
+        setUsedProducts([]);
         handleClose3();
       } else {
         handleClose3();
@@ -166,12 +172,71 @@ export default function CollectingSampleslist() {
 
   const [usedProducts, setUsedProducts] = useState([]);
   const [chooseusedProducts, setchooseUsedProducts] = useState("");
+  const [chooseusedProductsid, setchooseUsedProductsid] = useState("");
+  const [ChoosedProductAvailQuantity, setChoosedProductAvailQuantity] =
+    useState(0);
   const [chooseusedProductsQuantity, setchooseUsedProductsQuantity] =
     useState("");
+
+  const [EditCollectedSamples, setEditCollectedSamples] = useState(false);
+
+  function handleQuantityChange(e) {
+    if (e.target.value) {
+      if (
+        Number(e.target.value) >= 1 &&
+        Number(e.target.value) <= Number(ChoosedProductAvailQuantity)
+      ) {
+        setchooseUsedProductsQuantity(Number(e.target.value));
+      } else {
+        return alert("Product Quantity out of bound!");
+      }
+    }
+  }
+
   function addUsedProductsInSampleCollection() {
-    setUsedProducts((curr) => [
-      ...curr,
-      { productName: chooseusedProducts, Quantity: chooseusedProductsQuantity },
+    // let isProductAvail = usedProducts.some(
+    //   (val) => val.productid?.toString() === chooseusedProductsid?.toString()
+    // );
+    // if(isProductAvail){
+
+    // }
+
+    const isDataAvail = usedProducts.some(
+      (val) => val.productid?.toString() === chooseusedProductsid?.toString()
+    );
+
+    if (!isDataAvail) {
+      setUsedProducts((curr) => [
+        ...curr,
+        {
+          productid: chooseusedProductsid,
+          productName: chooseusedProducts,
+          Quantity: chooseusedProductsQuantity,
+        },
+      ]);
+    } else {
+      setUsedProducts([
+        ...usedProducts?.map((val) => {
+          if (val?.productid?.toString() === chooseusedProductsid?.toString()) {
+            return {
+              ...val,
+              Quantity: val?.Quantity + chooseusedProductsQuantity,
+            };
+          }
+          return val;
+        }),
+      ]);
+    }
+  }
+
+  console.log("usedProducts: ", usedProducts);
+
+  function removeUsedProductsInSampleCollection(id) {
+    console.log("uiouio; ", id);
+    setUsedProducts([
+      ...usedProducts.filter(
+        (val) => val?.productid?.toString() !== id?.toString()
+      ),
     ]);
   }
 
@@ -260,6 +325,8 @@ export default function CollectingSampleslist() {
       alert("Enter file name to export");
     }
   };
+
+  console.log("yuyuyuioi: ", InventoryOrderList);
 
   return (
     <div>
@@ -400,8 +467,9 @@ export default function CollectingSampleslist() {
               className="row p-3"
               style={{
                 backgroundColor: "white",
-                overflow: "hidden",
-                overflowX: "scroll",
+                height: "400px",
+                overflow: "hidden scroll",
+                // overflowX: "scroll",
               }}
             >
               {Labtests?.Labtests?.map((item) => {
@@ -410,7 +478,14 @@ export default function CollectingSampleslist() {
                   ?.slice(arrStr.length - 9, arrStr.length)
                   ?.join("");
                 return (
-                  <div style={{ marginBottom: "20px" }}>
+                  <div
+                    style={{
+                      marginBottom: "20px",
+                      border: "2px solid #20958c",
+                      padding: "10px",
+                      margin: "10px",
+                    }}
+                  >
                     <Table bordered>
                       <tbody>
                         <tr>
@@ -472,90 +547,363 @@ export default function CollectingSampleslist() {
                             />
                           </td>
                         </tr>
-                        <tr>
-                          <td>Sample Collected Used Products</td>
-                          <td>
-                            <select
-                              style={{
-                                width: "100%",
-                                height: "45px",
-                                padding: "10px",
-                              }}
-                              onChange={(e) =>
-                                setchooseUsedProducts(e.target.value)
-                              }
-                            >
-                              <option>Choose Option</option>
-                              {InventoryOrderList?.map((valEle) => {
-                                return (
-                                  <option
-                                    value={valEle?.vendorProductId?.productName}
-                                  >
-                                    {valEle?.vendorProductId?.productName}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                          </td>
-                          <td>
-                            <input
-                              type="number"
-                              placeholder="Quantity"
-                              value={chooseusedProductsQuantity}
-                              style={{
-                                width: "100%",
-                                height: "45px",
-                                padding: "10px",
-                              }}
-                              onChange={(e) =>
-                                setchooseUsedProductsQuantity(e.target.value)
-                              }
-                            />
-                          </td>
-                          <td>
-                            <Button onClick={addUsedProductsInSampleCollection}>
-                              Add
-                            </Button>
-                          </td>
-                        </tr>
-
-                        {item?.sampleCollectedBy ? (
-                          <></>
-                        ) : (
-                          <tr>
-                            <td></td>
-                            <td>
-                              <Button
-                                variant="primary"
-                                onClick={() => {
-                                  AddSampleData(item?._id, randomStr);
-                                }}
-                              >
-                                Save
-                              </Button>
-                            </td>
-                          </tr>
-                        )}
                       </tbody>
                     </Table>
-                    <div>
-                      <Table>
-                        <thead>
-                          <th>Product Name</th>
-                          <th>Quantity</th>
-                        </thead>
-                        <tbody>
-                          {usedProducts?.map((valdata) => {
-                            return (
+                    {item?.sampleName && !EditCollectedSamples ? (
+                      <div>
+                        <Table bordered>
+                          <thead>
+                            <th>S.no.</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                          </thead>
+                          <tbody>
+                            {item?.sampleCollectionUsedProducts?.map(
+                              (valdata, i) => {
+                                return (
+                                  <tr>
+                                    <td>{i + 1}. </td>
+                                    <td>{valdata?.productName}</td>
+                                    <td>{valdata?.Quantity}</td>
+                                    <td>
+                                      <Button
+                                        onClick={() =>
+                                          setEditCollectedSamples(true)
+                                        }
+                                      >
+                                        Edit
+                                      </Button>
+                                    </td>
+                                  </tr>
+                                );
+                              }
+                            )}
+                          </tbody>
+                        </Table>
+                      </div>
+                    ) : item?.sampleName && EditCollectedSamples ? (
+                      // want delete button so it will delete from database and increase the quantity in the inventory.
+                      <div>
+                        <div
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        >
+                          <Table bordered>
+                            <thead>
+                              <th>S.no.</th>
+                              <th>Product Name</th>
+                              <th>Quantity</th>
+                              <th>Action</th>
+                            </thead>
+                            <tbody>
+                              {item?.sampleCollectionUsedProducts?.map(
+                                (valdata, i) => {
+                                  return (
+                                    <tr>
+                                      <td>{i + 1}. </td>
+                                      <td>{valdata?.productName}</td>
+                                      <td>{valdata?.Quantity}</td>
+                                      <td>
+                                        <MdDeleteOutline
+                                          // onClick={() =>
+                                          //   removeUsedProductsInSampleCollection(
+                                          //     valdata?.productid
+                                          //   )
+                                          // }
+                                          style={{
+                                            color: "red",
+                                            fontSize: "20px",
+                                          }}
+                                        />
+                                      </td>
+                                    </tr>
+                                  );
+                                }
+                              )}
+                            </tbody>
+                          </Table>
+                        </div>
+                        <Table bordered>
+                          <tbody>
+                            <tr>
+                              <td>Sample Collected Used Products</td>
+                              <td>
+                                <select
+                                  style={{
+                                    width: "100%",
+                                    height: "45px",
+                                    padding: "10px",
+                                  }}
+                                  onChange={(e) => {
+                                    setchooseUsedProducts(
+                                      JSON.parse(e.target.value)
+                                        ?.vendorProductId?.productName
+                                    );
+                                    setchooseUsedProductsid(
+                                      JSON.parse(e.target.value)
+                                        ?.vendorProductId?._id
+                                    );
+                                    setChoosedProductAvailQuantity(
+                                      JSON.parse(e.target.value)?.quantity
+                                    );
+                                  }}
+                                >
+                                  <option>Choose Option</option>
+                                  {InventoryOrderList?.filter(
+                                    (data) => data.quantity > 0
+                                  )?.map((valEle) => {
+                                    return (
+                                      <option value={JSON.stringify(valEle)}>
+                                        {valEle?.vendorProductId?.productName}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </td>
+                              <td>
+                                <input
+                                  type="number"
+                                  placeholder="Quantity"
+                                  value={chooseusedProductsQuantity}
+                                  style={{
+                                    width: "100%",
+                                    height: "45px",
+                                    padding: "10px",
+                                  }}
+                                  name="quantity"
+                                  id="quantity"
+                                  min="1"
+                                  max={`${ChoosedProductAvailQuantity}`}
+                                  onChange={(e) => handleQuantityChange(e)}
+                                />
+                              </td>
+                              <td>
+                                <Button
+                                  onClick={addUsedProductsInSampleCollection}
+                                >
+                                  Add
+                                </Button>
+                              </td>
+                            </tr>
+
+                            {item?.sampleCollectedBy ? (
+                              <></>
+                            ) : (
                               <tr>
-                                <td>{valdata?.productName}</td>
-                                <td>{valdata?.Quantity}</td>
+                                <td></td>
+                                <td>
+                                  <Button
+                                    variant="primary"
+                                    onClick={() => {
+                                      AddSampleData(item?._id, randomStr);
+                                    }}
+                                  >
+                                    Save
+                                  </Button>
+                                </td>
                               </tr>
-                            );
-                          })}
-                        </tbody>
-                      </Table>
-                    </div>
+                            )}
+                          </tbody>
+                        </Table>
+                        <div>
+                          <Table bordered>
+                            <thead>
+                              <th>S.no.</th>
+                              <th>Product Name</th>
+                              <th>Quantity</th>
+                              <th>Action</th>
+                            </thead>
+                            <tbody>
+                              {usedProducts?.map((valdata, i) => {
+                                return (
+                                  <tr>
+                                    <td>{i + 1}. </td>
+                                    <td>{valdata?.productName}</td>
+                                    <td>{valdata?.Quantity}</td>
+                                    {/* {item?.sampleName ? (
+                                  <td>
+                                    <Button
+                                      onClick={() =>
+                                        setEditCollectedSamples(true)
+                                      }
+                                    >
+                                      Edit
+                                    </Button>
+                                  </td>
+                                ) : (
+                                  <></>
+                                )} */}
+
+                                    <td>
+                                      <MdDeleteOutline
+                                        onClick={() =>
+                                          removeUsedProductsInSampleCollection(
+                                            valdata?.productid
+                                          )
+                                        }
+                                        style={{
+                                          color: "red",
+                                          fontSize: "20px",
+                                        }}
+                                      />
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </Table>
+                        </div>
+
+                        <div className="d-flex justify-content-end">
+                          <Button
+                            onClick={() => AddSampleData(item?._id, randomStr)}
+                          >
+                            Add Sample
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <Table bordered>
+                          <tbody>
+                            <tr>
+                              <td>Sample Collected Used Products</td>
+                              <td>
+                                <select
+                                  style={{
+                                    width: "100%",
+                                    height: "45px",
+                                    padding: "10px",
+                                  }}
+                                  onChange={(e) => {
+                                    setchooseUsedProducts(
+                                      JSON.parse(e.target.value)
+                                        ?.vendorProductId?.productName
+                                    );
+                                    setchooseUsedProductsid(
+                                      JSON.parse(e.target.value)
+                                        ?.vendorProductId?._id
+                                    );
+                                    setChoosedProductAvailQuantity(
+                                      JSON.parse(e.target.value)?.quantity
+                                    );
+                                  }}
+                                >
+                                  <option>Choose Option</option>
+                                  {InventoryOrderList?.filter(
+                                    (data) => data.quantity > 0
+                                  )?.map((valEle) => {
+                                    return (
+                                      <option value={JSON.stringify(valEle)}>
+                                        {valEle?.vendorProductId?.productName}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </td>
+                              <td>
+                                <input
+                                  type="number"
+                                  placeholder="Quantity"
+                                  value={chooseusedProductsQuantity}
+                                  style={{
+                                    width: "100%",
+                                    height: "45px",
+                                    padding: "10px",
+                                  }}
+                                  name="quantity"
+                                  id="quantity"
+                                  min="1"
+                                  max={`${ChoosedProductAvailQuantity}`}
+                                  onChange={(e) => handleQuantityChange(e)}
+                                />
+                              </td>
+                              <td>
+                                <Button
+                                  onClick={addUsedProductsInSampleCollection}
+                                >
+                                  Add
+                                </Button>
+                              </td>
+                            </tr>
+
+                            {item?.sampleCollectedBy ? (
+                              <></>
+                            ) : (
+                              <tr>
+                                <td></td>
+                                <td>
+                                  <Button
+                                    variant="primary"
+                                    onClick={() => {
+                                      AddSampleData(item?._id, randomStr);
+                                    }}
+                                  >
+                                    Save
+                                  </Button>
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </Table>
+                        <div>
+                          <Table bordered>
+                            <thead>
+                              <th>S.no.</th>
+                              <th>Product Name</th>
+                              <th>Quantity</th>
+                              <th>Action</th>
+                            </thead>
+                            <tbody>
+                              {usedProducts?.map((valdata, i) => {
+                                return (
+                                  <tr>
+                                    <td>{i + 1}. </td>
+                                    <td>{valdata?.productName}</td>
+                                    <td>{valdata?.Quantity}</td>
+                                    {/* {item?.sampleName ? (
+                                  <td>
+                                    <Button
+                                      onClick={() =>
+                                        setEditCollectedSamples(true)
+                                      }
+                                    >
+                                      Edit
+                                    </Button>
+                                  </td>
+                                ) : (
+                                  <></>
+                                )} */}
+
+                                    <td>
+                                      <MdDeleteOutline
+                                        onClick={() =>
+                                          removeUsedProductsInSampleCollection(
+                                            valdata?.productid
+                                          )
+                                        }
+                                        style={{
+                                          color: "red",
+                                          fontSize: "20px",
+                                        }}
+                                      />
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </Table>
+                        </div>
+
+                        <div className="d-flex justify-content-end">
+                          <Button
+                            onClick={() => AddSampleData(item?._id, randomStr)}
+                          >
+                            Add Sample
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
