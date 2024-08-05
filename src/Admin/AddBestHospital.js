@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
-import { AiFillDelete, AiOutlinePlusCircle } from "react-icons/ai";
+import {
+  AiFillDelete,
+  AiFillFileExcel,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
 import { BsFillEyeFill, BsImages } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { FaUserMd } from "react-icons/fa";
 import { ImLab } from "react-icons/im";
 import { IoMdImages } from "react-icons/io";
 import axios from "axios";
+import exportFromJSON from "export-from-json";
+
 export default function AddBestHospital() {
   const [show, setShow] = useState(false);
 
@@ -20,69 +26,82 @@ export default function AddBestHospital() {
   const [Icon, setIcon] = useState("");
   // Add
   const AddBestHospitalTown = async () => {
-    try {
-      const config = {
-        url: "/admin/addbestHospital",
-        baseURL: "http://localhost:8521/api",
-        method: "post",
-        headers: { "Content-Type": "multipart/form-data" },
-        data: {
-          Header: Header,
-          Description: Description,
-          Icon: Icon,
-        },
-      };
-      const res = await axios(config);
-      if (res.status === 200) {
-        alert(res.data.success);
-        handleClose();
-        getBestHospitalTown();
+    if (!Header || !Description || !Icon) {
+      alert("Please fill all the fields");
+    } else {
+      try {
+        const config = {
+          url: "/admin/addbestHospital",
+          baseURL: "http://localhost:8521/api",
+          method: "post",
+          headers: { "Content-Type": "multipart/form-data" },
+          data: {
+            Header: Header,
+            Description: Description,
+            Icon: Icon,
+          },
+        };
+        const res = await axios(config);
+        if (res.status === 200) {
+          alert(res.data.success);
+          handleClose();
+          getBestHospitalTown();
+        }
+      } catch (error) {
+        alert(error.response.data.error);
       }
-    } catch (error) {
-      alert(error.response.data.error);
     }
   };
 
   // edit
+  const [editdata, seteditdata] = useState({});
   const handleClose1 = () => setShow1(false);
   const handleShow1 = (id) => {
     setShow1(true);
     seteditdata(id);
   };
-  const [editdata, seteditdata] = useState([]);
+
+  const [Header1, setHeader1] = useState("");
+  const [Description1, setDescription1] = useState("");
+  const [Icon1, setIcon1] = useState("");
+
   const editBestHospitalTown = async () => {
-    try {
-      const config = {
-        url: "/admin/editbestHospital/" + editdata,
-        baseURL: "http://localhost:8521/api",
-        method: "put",
-        headers: { "Content-Type": "multipart/form-data" },
-        data: {
-          Header: Header,
-          Description: Description,
-          Icon: Icon,
-        },
-      };
-      const res = await axios(config);
-      if (res.status === 200) {
-        alert(res.data.success);
-        handleClose1();
-        getBestHospitalTown();
+    if (!Header1 && !Description1 && !Icon1) {
+      alert("There is no changes to update");
+    } else {
+      try {
+        const config = {
+          url: "/admin/editbestHospital/" + editdata?._id,
+          baseURL: "http://localhost:8521/api",
+          method: "put",
+          headers: { "Content-Type": "multipart/form-data" },
+          data: {
+            Header: Header1 ? Header1 : editdata?.Header,
+            Description: Description1 ? Description1 : editdata?.Description,
+            Icon: Icon1 ? Icon1 : editdata?.Icon,
+          },
+        };
+        const res = await axios(config);
+        if (res.status === 200) {
+          alert(res.data.success);
+          handleClose1();
+          getBestHospitalTown();
+        }
+      } catch (error) {
+        alert(error.response.data.error);
       }
-    } catch (error) {
-      alert(error.response.data.error);
     }
   };
 
   // get
-  const [getbestHospital, setbestHospital] = useState([]);
+  const [data, setdata] = useState([]);
   const getBestHospitalTown = async () => {
     try {
       const res = await axios.get(
         "http://localhost:8521/api/admin/getbestHospital"
       );
       if (res.status === 200) {
-        setbestHospital(res.data.success);
+        setdata(res.data.success);
       }
     } catch (error) {
       console.log(error);
@@ -112,6 +131,52 @@ export default function AddBestHospital() {
     getBestHospitalTown();
   }, []);
 
+  const [search, setSearch] = useState("");
+  const [tableFilter, settableFilter] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(data?.length / usersPerPage);
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const handleFilter = (e) => {
+    if (e.target.value != "") {
+      setSearch(e.target.value);
+      const filterTable = data?.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+      settableFilter([...filterTable]);
+    } else {
+      setSearch(e.target.value);
+      setdata([...data]);
+    }
+  };
+
+  const exportType = "xls";
+
+  const [fileName, setfileName] = useState("Best-Hospital");
+
+  const ExportToExcel = () => {
+    if (fileName) {
+      if (data?.length != 0) {
+        exportFromJSON({ data, fileName, exportType });
+        // setfileName("");
+      } else {
+        alert("There is no data to export");
+        // setfileName("");
+      }
+    } else {
+      alert("Enter file name to export");
+    }
+  };
+
+  console.log("data", data);
+
   return (
     <div>
       <div style={{ padding: "1%" }}>
@@ -125,8 +190,38 @@ export default function AddBestHospital() {
           <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
             Best Hospital In Town
           </h6>
+        </div>
 
-          {getbestHospital?.length < 6 ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "2%",
+            marginBottom: "2%",
+          }}
+        >
+          <input
+            placeholder="Search"
+            style={{
+              padding: "5px 10px",
+              border: "1px solid #20958c",
+              borderRadius: "0px",
+            }}
+            onChange={handleFilter}
+          />
+          <button
+            style={{
+              backgroundColor: "#20958c",
+              color: "white",
+              border: "none",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+            onClick={ExportToExcel}
+          >
+            EXPORT <AiFillFileExcel />
+          </button>
+          {data?.length < 6 ? (
             <>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <AiOutlinePlusCircle
@@ -149,41 +244,77 @@ export default function AddBestHospital() {
             </tr>
           </thead>
           <tbody>
-            {getbestHospital?.map((item, i) => {
-              return (
-                <>
-                  <tr style={{ fontSize: "15px", textAlign: "center" }}>
-                    <td>{i + 1}</td>
-                    <td>{item?.Header}</td>
-                    <td>{item?.Description}</td>
-                    <td>
-                      <img
-                        src={`http://localhost:8521/BestHospital/${item?.Icon}`}
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          imageRendering: "pixelated",
-                        }}
-                      />
-                    </td>
-                    <td>
-                      <div className="d-flex gap-5 fs-5">
-                        <MdEdit
-                          style={{ color: "#20958c" }}
-                          onClick={() => {
-                            handleShow1(item?._id);
-                          }}
-                        />
-                        <AiFillDelete
-                          onClick={() => deleteBestHospitalTown(item?._id)}
-                          style={{ color: "red" }}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                </>
-              );
-            })}
+            {search.length > 0
+              ? tableFilter?.map((item, i) => {
+                  return (
+                    <>
+                      <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                        <td>{i + 1}</td>
+                        <td>{item?.Header}</td>
+                        <td>{item?.Description}</td>
+                        <td>
+                          <img
+                            src={`http://localhost:8521/BestHospital/${item?.Icon}`}
+                            style={{
+                              width: "50px",
+                              height: "50px",
+                              imageRendering: "pixelated",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <div className="d-flex gap-5 fs-5">
+                            <MdEdit
+                              style={{ color: "#20958c" }}
+                              onClick={() => {
+                                handleShow1(item);
+                              }}
+                            />
+                            <AiFillDelete
+                              onClick={() => deleteBestHospitalTown(item?._id)}
+                              style={{ color: "red" }}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    </>
+                  );
+                })
+              : data?.map((item, i) => {
+                  return (
+                    <>
+                      <tr style={{ fontSize: "15px", textAlign: "center" }}>
+                        <td>{i + 1}</td>
+                        <td>{item?.Header}</td>
+                        <td>{item?.Description}</td>
+                        <td>
+                          <img
+                            src={`http://localhost:8521/BestHospital/${item?.Icon}`}
+                            style={{
+                              width: "50px",
+                              height: "50px",
+                              imageRendering: "pixelated",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <div className="d-flex gap-5 fs-5">
+                            <MdEdit
+                              style={{ color: "#20958c" }}
+                              onClick={() => {
+                                handleShow1(item);
+                              }}
+                            />
+                            <AiFillDelete
+                              onClick={() => deleteBestHospitalTown(item?._id)}
+                              style={{ color: "red" }}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    </>
+                  );
+                })}
           </tbody>
         </Table>
       </div>
@@ -263,8 +394,9 @@ export default function AddBestHospital() {
         <Modal.Body>
           <div className="row">
             <div className="col-lg-12">
+              <label style={{ color: "white" }}>Header</label>
               <input
-                placeholder="Header"
+                placeholder={editdata?.Header}
                 style={{
                   width: "100%",
                   padding: "8px 20px",
@@ -273,13 +405,14 @@ export default function AddBestHospital() {
                   backgroundColor: "#ebebeb",
                   marginTop: "4%",
                 }}
-                onChange={(e) => setHeader(e.target.value)}
+                onChange={(e) => setHeader1(e.target.value)}
               ></input>
             </div>
 
             <div className="col-lg-12">
+              <label style={{ color: "white" }}>Description</label>
               <input
-                placeholder="Description"
+                placeholder={editdata?.Description}
                 style={{
                   width: "100%",
                   padding: "8px 20px",
@@ -288,11 +421,12 @@ export default function AddBestHospital() {
                   backgroundColor: "#ebebeb",
                   marginTop: "4%",
                 }}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => setDescription1(e.target.value)}
               ></input>
             </div>
 
             <div className="col-lg-12" htmlFor="upload">
+              <label style={{ color: "white" }}>Icon</label>
               <input
                 type="file"
                 accept="image/*"
@@ -305,7 +439,7 @@ export default function AddBestHospital() {
                   backgroundColor: "#ebebeb",
                   marginTop: "4%",
                 }}
-                onChange={(e) => setIcon(e.target.files[0])}
+                onChange={(e) => setIcon1(e.target.files[0])}
               ></input>
             </div>
           </div>

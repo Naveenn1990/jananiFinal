@@ -161,6 +161,8 @@ export const PatientsList = () => {
         setTopic("");
         setdescription("");
         setdocs("");
+        getpatientlist();
+        historyList()
         alert(res.data.msg);
       }
     } catch (error) {
@@ -245,18 +247,35 @@ export const PatientsList = () => {
       >
         IPD
       </Button>
-      <hr/>
+      <hr />
       <Container className="p-2">
         {FilterPatientType === "OPD" ? (
-          <h3>
+          <h3
+            className="text-center"
+            style={{
+              fontFamily: "Arial, sans-serif",
+              color: "#333",
+              textTransform: "uppercase",
+              letterSpacing: "1px",
+              margin: "20px 0",
+            }}
+          >
             <b>Out Patient's</b>
           </h3>
         ) : (
-          <h3>
+          <h3
+            className="text-center"
+            style={{
+              fontFamily: "Arial, sans-serif",
+              color: "#333",
+              textTransform: "uppercase",
+              letterSpacing: "1px",
+            }}
+          >
             <b>In Patient's</b>
           </h3>
         )}
-        <hr/>
+        <hr />
         <div className="row mb-4">
           {filteredPatients?.map((item) => {
             return (
@@ -275,39 +294,63 @@ export const PatientsList = () => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <div>
-                        {item?.profilepic ? (
-                          <img
-                            alt=""
-                            src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
-                            style={{
-                              width: "50px",
-                              height: "50px",
-                              borderRadius: "50%",
-                              margin: "4px",
-                            }}
-                          />
-                        ) : (
-                          <FaUserTag
-                            style={{
-                              fontSize: "50px",
-                              borderRadius: "50%",
-                              margin: "4px",
-                            }}
-                          />
-                        )}
-                        <span
-                          className="fw-bold"
-                          style={{ color: "rgb(32, 139, 140)" }}
-                        >
-                          {item?.Firstname}{" "}
-                        </span>
+                      <div className="d-flex gap-3">
+                        <div>
+                          {item?.profilepic ? (
+                            <img
+                              alt=""
+                              src={`http://localhost:8521/PatientREG/${item?.profilepic}`}
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                borderRadius: "50%",
+                                margin: "4px",
+                              }}
+                            />
+                          ) : (
+                            <FaUserTag
+                              style={{
+                                fontSize: "50px",
+                                borderRadius: "50%",
+                                margin: "4px",
+                              }}
+                            />
+                          )}
+                        </div>
+                        <div>
+                          <div>
+                            <b>Name : </b>
+                            <span
+                              className="fw-bold"
+                              style={{ color: "rgb(32, 139, 140)" }}
+                            >
+                              {item?.Firstname} {item?.Lastname}
+                            </span>
+                          </div>
+                          <div>
+                            <b>Patient Id : </b>
+                            <span
+                              className="fw-bold"
+                              style={{ color: "rgb(32, 139, 140)" }}
+                            >
+                              {item?.PatientId}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <div style={{ marginBottom: "4px" }}>
+                    </div>
+                  </Card.Header>
+
+                  <ListGroup variant="flush">
+                    <ListGroup.Item>
+                      <div className=" align-items-center justify-content-between">
+                        <div className="text-center">
+                          <b>Patient Medical Details : </b>
+                        </div>
+                        <div className="d-flex justify-content-evenly mt-2">
                           <button
                             title="past medical observation"
-                            className="table-details-btn"
+                            className="table-details-btn "
                             onClick={() => {
                               setchosenPatient(item._id);
                               medHistoryShow1();
@@ -324,8 +367,6 @@ export const PatientsList = () => {
                               +
                             </span>
                           </button>
-                        </div>
-                        <div>
                           <button
                             title="past medical observation"
                             className="table-details-btn"
@@ -342,72 +383,41 @@ export const PatientsList = () => {
                           </button>
                         </div>
                       </div>
-                    </div>
 
-                    <p>Patient Id : {item?.PatientId} </p>
-                  </Card.Header>
-
-                  <ListGroup variant="flush">
-                    <ListGroup.Item>
-                      <div className="d-flex justify-content-between">
-                        <div>
-                          <p>
-                            {" "}
-                            <FontAwesomeIcon
-                              icon={faLocationDot}
-                              className="me-3 "
-                            />
-                            {item?.Address1}{" "}
-                          </p>
-                          <p>
-                            {" "}
-                            <FontAwesomeIcon icon={faPhoneVolume} /> +
-                            {item?.PhoneNumber}
-                          </p>
+                      <div className=" align-items-center justify-content-between mt-2">
+                        <div className="text-center">
+                          {" "}
+                          <b>Daily Doctor Reports : </b>
                         </div>
-                        <div>
-                          {FilterPatientType === "OPD" ? (
-                            <button
-                              title="Daily Doctor report"
-                              className="table-details-btn mb-2"
-                              onClick={() => {
-                                handleShow6();
-                                setselectedcauseid(item);
-                              }}
-                            >
-                              Prescription
-                            </button>
-                          ) : (
-                            <></>
-                          )}
+                        <div className="d-flex justify-content-evenly mt-2">
                           {FilterPatientType === "IPD" ? (
                             <button
                               title="Daily Doctor report"
-                              className="table-details-btn mb-2"
-                              // onClick={() => {
-                              //   setchosenPatient(item._id);
-                              //   medHistoryShow1();
-                              // }}
-                              // onClick={() => navigate(`/doctorforms`, { state: { item, causeId: selectedcauseid } })}
+                              className="table-details-btn"
                               onClick={() => {
                                 handleShow3();
                                 setselectedcauseid(item);
                               }}
+                              style={{ width: "65px" }}
                             >
-                              DDR +
+                              DDR{" "}
+                              <span
+                                style={{
+                                  marginLeft: "2px",
+                                  fontSize: "15px",
+                                }}
+                              >
+                                +
+                              </span>
                             </button>
                           ) : (
                             <></>
                           )}
+
                           {FilterPatientType === "IPD" ? (
                             <button
                               title="Daily Doctor report"
-                              className="table-details-btn mb-2"
-                              // onClick={() => {
-                              //   setchosenPatient(item._id);
-                              //   medHistoryShow1();
-                              // }}
-                              // onClick={() => navigate(`/doctorforms`, { state: { item, causeId: selectedcauseid } })}
+                              className="table-details-btn "
                               onClick={() => {
                                 handleShow5();
                                 setselectedcauseid(item);
@@ -421,7 +431,37 @@ export const PatientsList = () => {
                           ) : (
                             <></>
                           )}
-
+                        </div>
+                      </div>
+                      {FilterPatientType === "OPD" ? (
+                      <div>
+                        <div className="text-center">
+                          {" "}
+                          <b>Prescription : </b>
+                        </div>
+                        <div className="mt-2">
+                         
+                            <button
+                              title="Daily Doctor report"
+                              className="table-details-btn mb-2"
+                              onClick={() => {
+                                handleShow6();
+                                setselectedcauseid(item);
+                              }}
+                            >
+                              Prescription
+                            </button>
+                          
+                        </div>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                      <div className=" justify-content-between mt-2">
+                        <div className="text-center">
+                          <b>Other Reports</b>
+                        </div>
+                        <div className="text-center">
                           {FilterPatientType === "IPD" ? (
                             <button
                               title="Daily Doctor report"
@@ -442,13 +482,13 @@ export const PatientsList = () => {
                     <ListGroup.Item>
                       {/* <p>Blood Group: O+</p> */}
                       <p className="d-flex justify-content-between">
-                        <span>
+                        {/* <span>
                           Reports:{" "}
                           <FontAwesomeIcon
                             icon={faFilePdf}
                             className="text-danger"
                           />
-                        </span>
+                        </span> */}
                         {item.registrationType === "OPD" ? (
                           <span>
                             <Button

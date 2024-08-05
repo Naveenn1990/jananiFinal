@@ -50,6 +50,14 @@ export const VendorOrders = () => {
   const viewClose = () => setShow(false);
   const viewShow = () => setShow(true);
 
+  const [replayFor, setreplayFor] = useState({});
+  const [showReply, setShowReply] = useState(false);
+  const handleCloseReply = () => setShowReply(false);
+  const handleShowReply = (item) => {
+    setShowReply(true);
+    setreplayFor(item);
+  };
+
   const [show2, setShow2] = useState(false);
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
@@ -72,6 +80,7 @@ export const VendorOrders = () => {
   const deleteBtnShow = () => setShow2(true);
 
   const [ProductList, setProductList] = useState([]);
+  const [Reason, setReason] = useState("");
 
   const getProductList = () => {
     axios
@@ -190,64 +199,75 @@ export const VendorOrders = () => {
     }
   };
 
-  const CANCELLEDORDER = async (data) => {
-    try {
-      {
-        const config = {
-          url: "/vendor/UpdateOrderInfo",
-          method: "put",
-          baseURL: "http://localhost:8521/api",
-          headers: { "content-type": "application/json" },
-          data: {
-            orderid: data?._id,
-            vendorId: data?.vendorId,
-            orderStatus: "CANCELLED_ORDER",
-            orderPayment: "PENDING",
-          },
-        };
-        let res = await axios(config);
-        if (res.status === 200) {
-          console.log(res.data);
-          console.log(res.data.success);
-          alert("Order Cancelled");
-          getOrderList();
+  const CANCELLEDORDER = async () => {
+    if (!Reason) {
+      alert("Please enter reason for rejection");
+    } else {
+      try {
+        {
+          const config = {
+            url: "/vendor/UpdateOrderInfo",
+            method: "put",
+            baseURL: "http://localhost:8521/api",
+            headers: { "content-type": "application/json" },
+            data: {
+              orderid: replayFor?._id,
+              vendorId: replayFor?.vendorId,
+              orderStatus: "CANCELLED_ORDER",
+              orderPayment: "PENDING",
+              Reason: Reason,
+            },
+          };
+          let res = await axios(config);
+          if (res.status === 200) {
+            console.log(res.data);
+            console.log(res.data.success);
+            alert("Order Cancelled");
+            getOrderList();
+            window.location.reload();
+          }
         }
-      }
-    } catch (error) {
-      console.log(error.response);
-      if (error.response) {
-        alert(error.response.data.error);
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
       }
     }
   };
 
   const CANCELLEDLABORDER = async (data) => {
-    try {
-      {
-        const config = {
-          url: "/admin/changeLabOrderValues",
-          method: "put",
-          baseURL: "http://localhost:8521/api",
-          headers: { "content-type": "application/json" },
-          data: {
-            orderid: data?._id,
-            vendorId: data?.vendorId,
-            orderStatus: "CANCELLED_ORDER",
-            orderPayment: "PENDING",
-          },
-        };
-        let res = await axios(config);
-        if (res.status === 200) {
-          console.log(res.data);
-          console.log(res.data.success);
-          alert("Order Accepted");
-          getLabOrderList();
+    if (!Reason) {
+      alert("Please enter reason for rejection");
+    } else {
+      try {
+        {
+          const config = {
+            url: "/admin/changeLabOrderValues",
+            method: "put",
+            baseURL: "http://localhost:8521/api",
+            headers: { "content-type": "application/json" },
+            data: {
+              orderid: data?._id,
+              vendorId: data?.vendorId,
+              orderStatus: "CANCELLED_ORDER",
+              orderPayment: "PENDING",
+              Reason: Reason,
+            },
+          };
+          let res = await axios(config);
+          if (res.status === 200) {
+            console.log(res.data);
+            console.log(res.data.success);
+            alert("Order Accepted");
+            getLabOrderList();
+          }
         }
-      }
-    } catch (error) {
-      console.log(error.response);
-      if (error.response) {
-        alert(error.response.data.error);
+      } catch (error) {
+        console.log(error.response);
+        if (error.response) {
+          alert(error.response.data.error);
+        }
       }
     }
   };
@@ -709,15 +729,16 @@ export const VendorOrders = () => {
                               </button>{" "}
                               /
                               <button
-                                onClick={() => {
-                                  Vendor?.VendorType === "Lab" ? (
-                                    CANCELLEDLABORDER(item)
-                                  ) : Vendor?.VendorType === "Pharmacy" ? (
-                                    CANCELLEDORDER(item)
-                                  ) : (
-                                    <></>
-                                  );
-                                }}
+                                // onClick={() => {
+                                //   Vendor?.VendorType === "Lab" ? (
+                                //     CANCELLEDLABORDER(item)
+                                //   ) : Vendor?.VendorType === "Pharmacy" ? (
+                                //     CANCELLEDORDER(item)
+                                //   ) : (
+                                //     <></>
+                                //   );
+                                // }}
+                                onClick={() => handleShowReply(item)}
                                 style={{
                                   backgroundColor: "#d32728",
                                   color: "white",
@@ -780,15 +801,16 @@ export const VendorOrders = () => {
                               </button>{" "}
                               /
                               <button
-                                onClick={() => {
-                                  Vendor?.VendorType === "Lab" ? (
-                                    CANCELLEDLABORDER(item)
-                                  ) : Vendor?.VendorType === "Pharmacy" ? (
-                                    CANCELLEDORDER(item)
-                                  ) : (
-                                    <></>
-                                  );
-                                }}
+                                // onClick={() => {
+                                //   Vendor?.VendorType === "Lab" ? (
+                                //     CANCELLEDLABORDER(item)
+                                //   ) : Vendor?.VendorType === "Pharmacy" ? (
+                                //     CANCELLEDORDER(item)
+                                //   ) : (
+                                //     <></>
+                                //   );
+                                // }}
+                                onClick={() => handleShowReply(item)}
                                 style={{
                                   backgroundColor: "#d32728",
                                   color: "white",
@@ -1374,6 +1396,43 @@ export const VendorOrders = () => {
               UPLOAD
             </button>
           </div>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showReply} onHide={handleCloseReply}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reason for rejection</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Message</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                onChange={(e) => setReason(e.target.value)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseReply}>
+            Close
+          </Button>
+          <Button
+            variant="success"
+            onClick={() => {
+              Vendor?.VendorType === "Lab" ? (
+                CANCELLEDLABORDER()
+              ) : Vendor?.VendorType === "Pharmacy" ? (
+                CANCELLEDORDER()
+              ) : (
+                <></>
+              );
+            }}
+          >
+            Send reply
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

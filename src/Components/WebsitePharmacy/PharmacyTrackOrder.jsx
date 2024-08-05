@@ -1,5 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Button, Container, Table, Modal, Row, Col } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Table,
+  Modal,
+  Row,
+  Col,
+  Form,
+} from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { Headerpharmacy } from "./headerpharmacy";
 import axios from "axios";
@@ -8,9 +16,13 @@ import { useReactToPrint } from "react-to-print";
 import { toWords } from "number-to-words";
 
 export const PharmacyTrackOrder = () => {
+  const [deleteData, setdeleteData] = useState({});
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = (item) => {
+    setShow(true);
+    setdeleteData(item);
+  };
 
   const navigate = useNavigate();
   let pharmacyUser = sessionStorage.getItem("pharmacyUser");
@@ -71,32 +83,61 @@ export const PharmacyTrackOrder = () => {
   const [selectedorderid, setselectedorderid] = useState("");
   const [selectedorderiddetails, setselectedorderiddetails] = useState("");
 
-  const cancelProductOrderStatus = async () => {
-    if (!selectedorderid) {
-      return alert("selectedorderid");
-    }
-    if (!selectedorderiddetails) {
-      return alert("selectedorderid");
-    }
-    try {
-      const config = {
-        url: "/pharmacy/cancelProductOrderStatus",
-        method: "put",
-        baseURL: "http://localhost:8521/api",
-        headers: { "content-type": "application/json" },
-        data: {
-          orderid: selectedorderid,
-          orderitemid: selectedorderiddetails,
-        },
-      };
-      let res = await axios(config);
-      if (res.status === 200) {
-        Orders();
-        alert(res.data.success);
+  // const cancelProductOrderStatus = async () => {
+  //   if (!selectedorderid) {
+  //     return alert("selectedorderid");
+  //   }
+  //   if (!selectedorderiddetails) {
+  //     return alert("selectedorderid");
+  //   }
+  //   try {
+  //     const config = {
+  //       url: "/pharmacy/cancelProductOrderStatus",
+  //       method: "put",
+  //       baseURL: "http://localhost:8521/api",
+  //       headers: { "content-type": "application/json" },
+  //       data: {
+  //         orderid: selectedorderid,
+  //         orderitemid: selectedorderiddetails,
+  //       },
+  //     };
+  //     let res = await axios(config);
+  //     if (res.status === 200) {
+  //       Orders();
+  //       alert(res.data.success);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     return alert("Something went wrong!");
+  //   }
+  // };
+  const [ReasonForRejection, setReasonForRejection] = useState("");
+  const cancelProductOrderStatus = async (orderid) => {
+    if (!ReasonForRejection) {
+      alert("Please enter reason for rejection");
+    } else {
+      try {
+        const config = {
+          url: "/pharmacy/cancelProductOrderStatus",
+          method: "put",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            orderid: orderid?._id,
+            ReasonForRejection: ReasonForRejection,
+          },
+        };
+        const res = await axios(config);
+        if (res.status === 200) {
+          // setOrders(res.data.updateStatus);
+          Orders();
+          alert("Order canceled successfully");
+          window.location.reload();
+        }
+      } catch (error) {
+        console.log(error);
+        alert(error.response.data.error);
       }
-    } catch (error) {
-      console.log(error);
-      return alert("Something went wrong!");
     }
   };
 
@@ -298,6 +339,15 @@ export const PharmacyTrackOrder = () => {
                             </span>
                           </li>
                         </ul>
+                        <Button
+                          style={{ backgroundColor: "#d51212" }}
+                          onClick={() => {
+                            setselectedorderid(orderVal?._id);
+                            handleShow(orderVal);
+                          }}
+                        >
+                          Cancel Order
+                        </Button>
                       </div>
 
                       <div className="col-lg-7">
@@ -311,22 +361,30 @@ export const PharmacyTrackOrder = () => {
                             >
                               Product Name
                             </th>
-                            {/* <th
-                            style={{
-                              textAlign: "center",
-                              border: "1px solid black",
-                            }}
-                          >
-                            Price
-                          </th>
-                          <th
-                            style={{
-                              textAlign: "center",
-                              border: "1px solid black",
-                            }}
-                          >
-                            Quantity
-                          </th> */}
+                            <th
+                              style={{
+                                textAlign: "center",
+                                border: "1px solid black",
+                              }}
+                            >
+                              Price
+                            </th>
+                            <th
+                              style={{
+                                textAlign: "center",
+                                border: "1px solid black",
+                              }}
+                            >
+                              Discount
+                            </th>
+                            <th
+                              style={{
+                                textAlign: "center",
+                                border: "1px solid black",
+                              }}
+                            >
+                              Quantity
+                            </th>
                             <th
                               style={{
                                 textAlign: "center",
@@ -342,14 +400,6 @@ export const PharmacyTrackOrder = () => {
                               }}
                             >
                               View Product details
-                            </th>
-                            <th
-                              style={{
-                                textAlign: "center",
-                                border: "1px solid black",
-                              }}
-                            >
-                              Action
                             </th>
                           </thead>
                           <tbody>
@@ -368,14 +418,12 @@ export const PharmacyTrackOrder = () => {
                                       {val?.productid?.productName}
                                     </span>
                                   </td>
-                                  {/* <td>
-                                  {val?.productid?.productPrice -
-                                    (val?.productid?.productPrice *
-                                      val?.productid?.discount) /
-                                      100}
-                                  /-
-                                </td>
-                                <td>{val?.quantity}</td> */}
+                                  <td>
+                                    {val?.productid?.productPrice}
+                                    /-
+                                  </td>
+                                  <td>{val?.productid?.discount}%</td>
+                                  <td>{val?.quantity}</td>
                                   <td>
                                     {(
                                       (val?.productid?.productPrice -
@@ -400,18 +448,6 @@ export const PharmacyTrackOrder = () => {
                                         style={{ color: "#208b8c" }}
                                       ></i>
                                     </Link>
-                                  </td>
-                                  <td>
-                                    <Button
-                                      style={{ backgroundColor: "#d51212" }}
-                                      onClick={() => {
-                                        setselectedorderid(orderVal?._id);
-                                        setselectedorderiddetails(val?._id);
-                                        handleShow();
-                                      }}
-                                    >
-                                      Cancel Order
-                                    </Button>
                                   </td>
                                 </tr>
                               );
@@ -441,30 +477,6 @@ export const PharmacyTrackOrder = () => {
                   );
                 })}
             </div>
-            <Modal show={show} onHide={handleClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Cancelling product</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <b>
-                  Are you really sure you want to{" "}
-                  <span style={{ color: "red" }}>cancel</span> the product from
-                  your Order?
-                </b>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="primary" onClick={handleClose}>
-                  NO
-                </Button>
-                <Button
-                  className="yesButtonHover"
-                  variant="secondary"
-                  onClick={cancelProductOrderStatus}
-                >
-                  YES
-                </Button>
-              </Modal.Footer>
-            </Modal>
           </>
         ) : (
           <>
@@ -570,6 +582,18 @@ export const PharmacyTrackOrder = () => {
                                 </span>
                               </li>
                             </ul>
+                            <div>
+                              <Button
+                                style={{ backgroundColor: "#d51212" }}
+                                // onClick={() => {
+                                //   setselectedorderid(orderVal?._id);
+                                //   handleShow(orderVal);
+                                // }}
+                                onClick={() => handleShow(orderVal)}
+                              >
+                                Cancel Order
+                              </Button>
+                            </div>
                           </div>
 
                           <div className="col-lg-7">
@@ -581,24 +605,32 @@ export const PharmacyTrackOrder = () => {
                                     border: "1px solid black",
                                   }}
                                 >
-                                  Product
+                                  Product Name
                                 </th>
-                                {/* <th
-                              style={{
-                                textAlign: "center",
-                                border: "1px solid black",
-                              }}
-                            >
-                              Price
-                            </th>
-                            <th
-                              style={{
-                                textAlign: "center",
-                                border: "1px solid black",
-                              }}
-                            >
-                              Quantity
-                            </th> */}
+                                <th
+                                  style={{
+                                    textAlign: "center",
+                                    border: "1px solid black",
+                                  }}
+                                >
+                                  Price
+                                </th>
+                                <th
+                                  style={{
+                                    textAlign: "center",
+                                    border: "1px solid black",
+                                  }}
+                                >
+                                  Discount
+                                </th>
+                                <th
+                                  style={{
+                                    textAlign: "center",
+                                    border: "1px solid black",
+                                  }}
+                                >
+                                  Quantity
+                                </th>
                                 <th
                                   style={{
                                     textAlign: "center",
@@ -613,7 +645,7 @@ export const PharmacyTrackOrder = () => {
                                     border: "1px solid black",
                                   }}
                                 >
-                                  Action
+                                  View Product details
                                 </th>
                               </thead>
                               <tbody>
@@ -632,14 +664,13 @@ export const PharmacyTrackOrder = () => {
                                           {val?.productid?.productName}
                                         </span>
                                       </td>
-                                      {/* <td>
-                                    {val?.productid?.productPrice -
-                                      (val?.productid?.productPrice *
-                                        val?.productid?.discount) /
-                                        100}
-                                    /-
-                                  </td>
-                                  <td>{val?.quantity}</td> */}
+                                      <td>
+                                        {val?.productid?.productPrice}
+                                        /-
+                                      </td>
+                                      <td>{val?.productid?.discount}%</td>
+
+                                      <td>{val?.quantity}</td>
                                       <td>
                                         {(val?.productid?.productPrice -
                                           (val?.productid?.productPrice *
@@ -649,19 +680,34 @@ export const PharmacyTrackOrder = () => {
                                         /-
                                       </td>
                                       <td>
+                                        <Link
+                                          style={{
+                                            border: "none",
+                                            backgroundColor: "transparent",
+                                          }}
+                                          to="/pharmacydesc"
+                                          state={{ item: val?.productid }}
+                                        >
+                                          <i
+                                            class="fas fa-eye"
+                                            style={{ color: "#208b8c" }}
+                                          ></i>
+                                        </Link>
+                                      </td>
+                                      {/* <td>
                                         <Button
                                           style={{ backgroundColor: "#d51212" }}
                                           onClick={() => {
-                                            // handleShow();
-                                            // // cancelProductOrderStatus(
-                                            // //   orderVal?._id,
-                                            // //   val?._id
-                                            // // );
+                                            handleShow();
+                                            // cancelProductOrderStatus(
+                                            //   orderVal?._id,
+                                            //   val?._id
+                                            // );
                                           }}
                                         >
                                           Cancel Order
                                         </Button>
-                                      </td>
+                                      </td> */}
                                     </tr>
                                   );
                                 })}
@@ -836,6 +882,14 @@ export const PharmacyTrackOrder = () => {
                                         border: "1px solid black",
                                       }}
                                     >
+                                      Discount
+                                    </th>
+                                    <th
+                                      style={{
+                                        textAlign: "center",
+                                        border: "1px solid black",
+                                      }}
+                                    >
                                       Quantity
                                     </th>
                                     <th
@@ -845,14 +899,6 @@ export const PharmacyTrackOrder = () => {
                                       }}
                                     >
                                       Total Price
-                                    </th>
-                                    <th
-                                      style={{
-                                        textAlign: "center",
-                                        border: "1px solid black",
-                                      }}
-                                    >
-                                      Status
                                     </th>
                                   </thead>
                                   <tbody>
@@ -872,14 +918,12 @@ export const PharmacyTrackOrder = () => {
                                             </span>
                                           </td>
                                           <td>
-                                            {(
-                                              val?.productid?.productPrice -
-                                              (val?.productid?.productPrice *
-                                                val?.productid?.discount) /
-                                                100
-                                            ).toFixed(1)}
+                                            {val?.productid?.productPrice.toFixed(
+                                              1
+                                            )}
                                             /-
                                           </td>
+                                          <td>{val?.productid?.discount}%</td>
                                           <td>{val?.quantity}</td>
                                           <td>
                                             {(
@@ -891,26 +935,22 @@ export const PharmacyTrackOrder = () => {
                                             ).toFixed(1)}
                                             /-
                                           </td>
-                                          <td>
-                                            <div
-                                              style={{
-                                                color:
-                                                  val?.orderDataStatus ===
-                                                  "PLACED_ORDER"
-                                                    ? "green"
-                                                    : "#d51212",
-                                              }}
-                                            >
-                                              {val?.orderDataStatus}
-                                            </div>
-                                          </td>
                                         </tr>
                                       );
                                     })}
                                   </tbody>
                                 </Table>
                               </div>
-
+                              <div
+                                style={{
+                                  color: "#d51212",
+                                }}
+                              >
+                                <p style={{ textAlign: "center" }}>
+                                  {" "}
+                                  {orderVal?.ReasonForRejection}
+                                </p>
+                              </div>
                               {/* <div className="col-lg-2">
                               <Button
                                 onClick={() => navigate("/pharmacyvieworder")}
@@ -1072,6 +1112,14 @@ export const PharmacyTrackOrder = () => {
                                             border: "1px solid black",
                                           }}
                                         >
+                                          Discount
+                                        </th>
+                                        <th
+                                          style={{
+                                            textAlign: "center",
+                                            border: "1px solid black",
+                                          }}
+                                        >
                                           Quantity
                                         </th>
                                         <th
@@ -1100,14 +1148,14 @@ export const PharmacyTrackOrder = () => {
                                                 </span>
                                               </td>
                                               <td>
-                                                {val?.productid?.productPrice -
-                                                  (val?.productid
-                                                    ?.productPrice *
-                                                    val?.productid?.discount) /
-                                                    100}
+                                                {val?.productid?.productPrice}
                                                 /-
                                               </td>
                                               <td>{val?.quantity}</td>
+
+                                              <td>
+                                                {val?.productid?.discount}%
+                                              </td>
                                               <td>
                                                 {(val?.productid?.productPrice -
                                                   (val?.productid
@@ -1166,6 +1214,41 @@ export const PharmacyTrackOrder = () => {
             )}
           </>
         )}
+
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Cancelling product</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <b>
+              Are you really sure you want to{" "}
+              <span style={{ color: "red" }}>cancel</span>
+              your Order?, Than Enter reason for cancel
+            </b>
+            <Form>
+              <Form.Group className="mb-3">
+                {/* <Form.Label>Message</Form.Label> */}
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  onChange={(e) => setReasonForRejection(e.target.value)}
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={handleClose}>
+              NO
+            </Button>
+            <Button
+              className="yesButtonHover"
+              variant="secondary"
+              onClick={() => cancelProductOrderStatus(deleteData)}
+            >
+              YES
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
         <Modal
           show={show2}

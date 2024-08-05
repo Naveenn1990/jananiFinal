@@ -1,6 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { Container, Table, Button, Modal, Row, Col } from "react-bootstrap";
+import {
+  Container,
+  Table,
+  Button,
+  Modal,
+  Row,
+  Col,
+  Form,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo, faTag } from "@fortawesome/free-solid-svg-icons";
 import Carousel from "react-multi-carousel";
@@ -43,10 +51,27 @@ export default function ProductCustomerOrder() {
   const [currStatus, setcurrStatus] = useState("PLACED_ORDER");
   const [orderInfo, setorderInfo] = useState({});
   const [orders, setOrders] = useState([]);
+  const [ReasonForRejection, setReasonForRejection] = useState("");
 
   const [show1, setShow1] = useState(false);
   const handleClose1 = () => setShow1(false);
   const handleShow1 = () => setShow1(true);
+
+  const [replayFor, setreplayFor] = useState({});
+  const [showReply, setShowReply] = useState(false);
+  const handleCloseReply = () => setShowReply(false);
+  const handleShowReply = (item) => {
+    setShowReply(true);
+    setreplayFor(item);
+  };
+
+  const [rejectionReason, setrejectionReason] = useState({});
+  const [showrejectionReason, setShowrejectionReason] = useState(false);
+  const handleCloserejectionReason = () => setShowrejectionReason(false);
+  const handleShowrejectionReason = (item) => {
+    setShowrejectionReason(true);
+    setrejectionReason(item);
+  };
 
   const [show2, setShow2] = useState(false);
   const handleClose2 = () => setShow2(false);
@@ -95,6 +120,35 @@ export default function ProductCustomerOrder() {
     } catch (error) {
       console.log(error);
       alert(error.response.data.error);
+    }
+  };
+
+  const cancelProductOrderStatus = async (orderid) => {
+    if (!ReasonForRejection) {
+      alert("Please enter reason for rejection");
+    } else {
+      try {
+        const config = {
+          url: "/pharmacy/cancelProductOrderStatus",
+          method: "put",
+          baseURL: "http://localhost:8521/api",
+          headers: { "content-type": "application/json" },
+          data: {
+            orderid: orderid,
+            ReasonForRejection: ReasonForRejection,
+          },
+        };
+        const res = await axios(config);
+        if (res.status === 200) {
+          // setOrders(res.data.updateStatus);
+          orderList();
+          alert("Order canceled successfully");
+          window.location.reload();
+        }
+      } catch (error) {
+        console.log(error);
+        alert(error.response.data.error);
+      }
     }
   };
 
@@ -368,12 +422,13 @@ export default function ProductCustomerOrder() {
                                     border: "1px solid #FF0000",
                                     marginTop: "2px",
                                   }}
-                                  onClick={() => {
-                                    changeorderStatus(
-                                      details?._id,
-                                      "CANCELLED_ORDER"
-                                    );
-                                  }}
+                                  // onClick={() => {
+                                  //   changeorderStatus(
+                                  //     details?._id,
+                                  //     "CANCELLED_ORDER"
+                                  //   );
+                                  // }}
+                                  onClick={() => handleShowReply(details)}
                                 >
                                   Cancel Order
                                 </Button>
@@ -471,12 +526,7 @@ export default function ProductCustomerOrder() {
                                     border: "1px solid #FF0000",
                                     marginTop: "2px",
                                   }}
-                                  onClick={() => {
-                                    changeorderStatus(
-                                      details?._id,
-                                      "CANCELLED_ORDER"
-                                    );
-                                  }}
+                                  onClick={() => handleShowReply(details)}
                                 >
                                   Cancel Order
                                 </Button>
@@ -503,6 +553,21 @@ export default function ProductCustomerOrder() {
                               >
                                 Invoice
                               </Button>
+                            ) : details?.orderStatus === "CANCELLED_ORDER" ? (
+                              <button
+                                style={{
+                                  border: "none",
+                                  backgroundColor: "transparent",
+                                }}
+                                onClick={() =>
+                                  handleShowrejectionReason(details)
+                                }
+                              >
+                                <i
+                                  class="fas fa-eye"
+                                  style={{ color: "red", fontSize: "22px" }}
+                                ></i>
+                              </button>
                             ) : null}
                           </td>
                         </tr>
@@ -1118,6 +1183,53 @@ export default function ProductCustomerOrder() {
               </Button>
               <Button variant="primary" onClick={handleprint}>
                 Print
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          <Modal show={showReply} onHide={handleCloseReply}>
+            <Modal.Header closeButton>
+              <Modal.Title>Reason for rejection</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>Message</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    onChange={(e) => setReasonForRejection(e.target.value)}
+                  />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleCloseReply}>
+                Close
+              </Button>
+              <Button
+                variant="success"
+                onClick={() => {
+                  cancelProductOrderStatus(replayFor?._id);
+                }}
+              >
+                Send reply
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          <Modal show={showrejectionReason} onHide={handleCloserejectionReason}>
+            <Modal.Header closeButton>
+              <Modal.Title>Reason for rejection</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <p style={{ color: "white" }}>
+                {rejectionReason?.ReasonForRejection}
+              </p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleCloserejectionReason}>
+                Close
               </Button>
             </Modal.Footer>
           </Modal>
