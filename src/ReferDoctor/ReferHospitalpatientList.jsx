@@ -71,6 +71,9 @@ function ReferHospitalpatientList() {
       });
   };
 
+  console.log("RefHospitalPatientList",RefHospitalPatientList);
+  
+
   const DeleteReferHospitalpatient = async () => {
     try {
       const res = await axios.delete(
@@ -249,6 +252,7 @@ function ReferHospitalpatientList() {
                   <th className="fw-bold">Mobile</th>
                   <th className="fw-bold">DOB</th>
                   <th className="fw-bold">Blood Group </th>
+                  <th className="fw-bold">Prescription </th>
                   <th className="fw-bold">Diesease </th>
                   <th className="fw-bold">Status </th>
                   <th className="fw-bold">Actions </th>
@@ -274,9 +278,16 @@ function ReferHospitalpatientList() {
                         <td>{item?.Gender}</td>
                         <td>{item?.Address1}</td>
                         <td>{item?.PhoneNumber}</td>
-                        <td>{moment(item?.DOB).format("DD-MM-YYYY")}</td>
+                        <td>{moment(item?.DOB)?.format("DD-MM-YYYY")}</td>
                         <td>{item?.BloodGroup}</td>
-
+                        <td>                          
+                        <a
+                            target="_blank"
+                            href={`http://localhost:8521/Clinic/${item?.OldPrescription}`}
+                          >
+                            View
+                          </a>
+                        </td>
                         <td>
                           <div
                             className="Diseases-btn"

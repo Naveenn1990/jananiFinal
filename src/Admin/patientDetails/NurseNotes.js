@@ -5,8 +5,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Table } from "react-bootstrap";
 import { useReactToPrint } from "react-to-print";
 
-const NurseNotes = ({ NursingNote, patientdetail,cause }) => {
-  console.log("NursingNote,patientdetail",cause, NursingNote, patientdetail);
+const NurseNotes = ({ NursingNote, patientdetail, cause }) => {
+  console.log("NursingNote,patientdetail", cause, NursingNote, patientdetail);
   const dobString = patientdetail?.DOB;
   const dob = new Date(dobString);
   const currentDate = new Date();
@@ -20,14 +20,15 @@ const NurseNotes = ({ NursingNote, patientdetail,cause }) => {
     ageOutput = `${ageYears} years`;
   }
 
-  const [Doctor, setDoctor] = useState([])
+  const [Doctor, setDoctor] = useState([]);
   useEffect(() => {
-    if(NursingNote){
-      const selecteddoc = patientdetail?.assigndocts?.filter((ele)=>ele?.doctorsId?._id ===  NursingNote?.[0]?.doctorId)
-      setDoctor(selecteddoc)
+    if (NursingNote) {
+      const selecteddoc = patientdetail?.assigndocts?.filter(
+        (ele) => ele?.doctorsId?._id === NursingNote?.[0]?.doctorId
+      );
+      setDoctor(selecteddoc);
     }
-  
-  }, [NursingNote,patientdetail?.assigndocts])
+  }, [NursingNote, patientdetail?.assigndocts]);
 
   const pdfdownload = async () => {
     const pdf = new jsPDF("portrait", "pt", "a4");
@@ -125,13 +126,14 @@ const NurseNotes = ({ NursingNote, patientdetail,cause }) => {
               <tbody>
                 <tr>
                   <td style={{ width: "33%", border: "2px  solid #20958C" }}>
-                    Name :{" "}{`${patientdetail?.Firstname} ${patientdetail?.Lastname}`}
+                    Name :{" "}
+                    {`${patientdetail?.Firstname} ${patientdetail?.Lastname}`}
                   </td>
                   <td style={{ width: "33%", border: "2px  solid #20958C" }}>
-                    Age :{" "} {ageOutput}
+                    Age : {ageOutput}
                   </td>
                   <td style={{ width: "33%", border: "2px  solid #20958C" }}>
-                    Sex :{" "}{patientdetail?.Gender}
+                    Sex : {patientdetail?.Gender}
                   </td>
                 </tr>
               </tbody>
@@ -146,44 +148,49 @@ const NurseNotes = ({ NursingNote, patientdetail,cause }) => {
               <tbody>
                 <tr>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Pt ID:{" "}{patientdetail?.PatientId}
+                    Pt ID: {patientdetail?.PatientId}
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
                     Ward:
-
-                    {
-                      cause?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
-                        return(
-                         <span> {item?.bedName}</span>
-                        )
-                      })}
+                    {cause?.causeBillDetails?.[0]?.BedBillDetails?.map(
+                      (item) => {
+                        return <span> {item?.bedName}</span>;
+                      }
+                    )}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Dept:{
-                      cause?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
-                        return(
-                         <span> {item?.wardtype}</span>
-                        )
-                      })}
+                    Dept:
+                    {cause?.causeBillDetails?.[0]?.BedBillDetails?.map(
+                      (item) => {
+                        return <span> {item?.wardtype}</span>;
+                      }
+                    )}
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
                     Doctor:
-                    <br/>
-                    {patientdetail?.assigndocts?.map((item,i)=>{
-                      return(
-                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
-                      )
+                    <br />
+                    {patientdetail?.assigndocts?.map((item, i) => {
+                      return (
+                        <div>
+                          {i + 1}).{" "}
+                          <span style={{ fontWeight: "bold" }}>
+                            Dr.{" "}
+                            {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}
+                          </span>
+                        </div>
+                      );
                     })}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    DOA:{" "}{moment(patientdetail?.createdAt)?.format("DD-MM-YYYY")}
+                    DOA:{" "}
+                    {moment(patientdetail?.createdAt)?.format("DD-MM-YYYY")}
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Known Drug Allergies :{" "}{patientdetail?.patientAllergies}
+                    Known Drug Allergies : {patientdetail?.patientAllergies}
                   </td>
                 </tr>
                 <tr>
@@ -218,25 +225,32 @@ const NurseNotes = ({ NursingNote, patientdetail,cause }) => {
                 </tr>
               </thead>
               <tbody>
-                {NursingNote?.map((item)=>{
-                  return(
+                {NursingNote?.map((item) => {
+                  return (
                     <tr style={{ textAlign: "center" }}>
-                    <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                      {moment(item?.timeanddate)?.format("DD-MM-YYYY || HH:MM")}
-                    </td>
-                    <td style={{ width: "60%", border: "2px  solid #20958C" }}>
-                     {item?.NurseReport}
-                    </td>
-                    <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    <img
-                            alt="sign"
-                            src={`http://localhost:8521/PatientREG/${item?.NurseSignature}`}
-                          /> 
-                    </td>
-                  </tr>
-                  )
+                      <td
+                        style={{ width: "20%", border: "2px  solid #20958C" }}
+                      >
+                        {moment(item?.timeanddate)?.format(
+                          "DD-MM-YYYY || HH:MM"
+                        )}
+                      </td>
+                      <td
+                        style={{ width: "60%", border: "2px  solid #20958C" }}
+                      >
+                        {item?.NurseReport}
+                      </td>
+                      <td
+                        style={{ width: "20%", border: "2px  solid #20958C" }}
+                      >
+                        <img
+                          alt="sign"
+                          src={`http://localhost:8521/PatientREG/${item?.NurseSignature}`}
+                        />
+                      </td>
+                    </tr>
+                  );
                 })}
-              
               </tbody>
             </Table>
           </div>

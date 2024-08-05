@@ -1,8 +1,14 @@
-import React from "react";
+import axios from "axios";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
 
-const DoctorTreatment = ({DoctTreatmentChat,patientdetail}) => {
+const DoctorTreatment = ({DoctTreatmentChat,patientdetail,cause}) => {
+
+  console.log("DoctTreatmentChat",DoctTreatmentChat);
+  
 
   const dobString = patientdetail?.DOB;
   const dob = new Date(dobString);
@@ -17,8 +23,57 @@ const DoctorTreatment = ({DoctTreatmentChat,patientdetail}) => {
   } else {
     ageOutput = `${ageYears} years`;
   }
+
+  // PDF Generate
+
+  const createPDF = async () => {
+    try {
+      const pdf = new jsPDF("portrait", "pt", "a4");
+      const element = document.querySelector("#pdf");
+      const data = await html2canvas(element, {
+        useCORS: true,
+        scale: 2,
+      });
+      const img = data.toDataURL("image/png");
+      const imgProperties = pdf.getImageProperties(img);
+      const scaleFactor =
+        pdf.internal.pageSize.getWidth() / imgProperties.width;
+      const pdfHeight = imgProperties.height * scaleFactor;
+      pdf.addImage(
+        img,
+        "PNG",
+        0,
+        0,
+        pdf.internal.pageSize.getWidth(),
+        pdfHeight
+      );
+      pdf.save("doctortreatment.pdf");
+    } catch (error) {
+      console.error("An error occurred while creating the PDF:", error);
+    }
+  };
+
+  const [PatientData, setPatientData] = useState("")
+  const getpatientbyid = async () => {
+    try {
+      let res = await axios.get(
+        `http://localhost:8521/api/user/getPatientDetailByid/${patientdetail?._id}`
+      );
+      if (res.status === 200) {
+        setPatientData(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+console.log("PatientData",PatientData);
+
+  useEffect(() => {
+    getpatientbyid();
+  }, []);
   return (
     <>
+    <hr/> 
       <div className="mt-2 d-dlex text-end gap-2">
         <Button
           style={{
@@ -29,8 +84,9 @@ const DoctorTreatment = ({DoctTreatmentChat,patientdetail}) => {
             borderRadius: "0px",
             marginRight: "20px",
           }}
+          onClick={createPDF}
         >
-          Print <FiDownload />
+          Download <FiDownload />
         </Button>
       </div>
       <div className="text-center mt-1">
@@ -76,14 +132,6 @@ const DoctorTreatment = ({DoctTreatmentChat,patientdetail}) => {
               </h6>
             </div>
           </div>
-          <div
-            className="text-center"
-            style={{
-              borderBottom: "1px solid #20958C",
-              width: "100%",
-              textAlign: "center",
-            }}
-          ></div>
           <div className="text-center mt-1">
             {" "}
             <h6
@@ -139,6 +187,12 @@ const DoctorTreatment = ({DoctTreatmentChat,patientdetail}) => {
                     style={{ width: "33%", border: "2px  solid #20958C" }}
                   >
                     Ward:{" "}
+                    {
+                      cause?.causeBillDetails?.[0]?.BedBillDetails?.map((item)=>{
+                        return(
+                         <span> {item?.bedName}</span>
+                        )
+                      })}
                   </td>
                 </tr>
                 <tr>
@@ -146,69 +200,89 @@ const DoctorTreatment = ({DoctTreatmentChat,patientdetail}) => {
                     colSpan={5}
                     style={{ width: "100%", border: "2px  solid #20958C" }}
                   >
-                    Doctor Incharge:{" "}
+                    Doctor Incharge : {" "}<br/>
+                    {patientdetail?.assigndocts?.map((item,i)=>{
+                      return(
+                        <div>{i+1}). <span style={{fontWeight:"bold"}}>Dr. {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}</span></div>
+                      )
+                    })}
                   </td>
                 </tr>
-                {DoctTreatmentChat?.map((item)=>{
-                  return(<>
-                   {item?.DoctorsTreatment?.map((ele, subIndex) => {
-                return (
-                  <tr key={subIndex}>
-                    <td style={{ width: "20%", border: "2px solid #20958C" }}>
-                      Treatment Given: 
-                    </td>
-                    <td style={{ width: "16%", border: "2px solid #20958C" }}>
-                    {ele.DTdate}
-                    </td>
-                    <td style={{ width: "16%", border: "2px solid #20958C" }}>
-                    {ele.DTTime}
-                    </td>
-                    <td style={{ width: "16%", border: "2px solid #20958C" }}>
-                    {ele.DTNotes}
-                    </td>
-                    <td style={{ width: "16%", border: "2px solid #20958C" }}>
-                      {/* Additional data from `ele` */}
-                    </td>
-                  </tr>
-                );
-              })}
-
-
-                  </>)
-                })}
-                {/* {DoctTreatmentChat?.map((item)=>{                             
-                  return(
-                    <> */}
-                    {/* {item?.DoctorsTreatment?.map((ele)=>{
-                      return(
-                        <tr>
-                              <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                                Treatment Given:{" "}
-                              </td>
-                              <td
-                                 style={{ width: "16%", border: "2px  solid #20958C" }}
-                              ></td>
-                             <td
-                               style={{ width: "16%", border: "2px  solid #20958C" }}
-                               ></td>
-                             
-                              <td
-                                style={{ width: "16%", border: "2px  solid #20958C" }}
-                              ></td>
-                               <td
-                                 style={{ width: "16%", border: "2px  solid #20958C" }}
-                               ></td>
-                             </tr>
-                      )
-                    })} */}
-                    {/* <p>hello</p>
-                    </>
-                  )
-                  
-                )} */}
-               
               </tbody>
             </Table>
+
+            <Table
+                className="mt-2"
+                  style={{
+                    borderCollapse: "collapse",
+                    width: "100%",
+                    margin: "auto",
+                  }}
+                  bordered
+                >
+                  <thead>
+                    <tr style={{ textAlign: "center" }}>
+                      <th style={{ width: "10%", border: "2px solid white" }}>
+                        Date
+                      </th>
+                      <th style={{ width: "10%", border: "2px solid white" }}>
+                        Time
+                      </th>
+                      <th style={{ width: "50%", border: "2px solid white" }}>
+                        Notes
+                      </th>
+                      <th style={{ width: "20%", border: "2px solid white" }}>
+                        Doctor's sign
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {DoctTreatmentChat?.map((item, i) => {
+                      return (
+                        <>
+                          
+                              <tr style={{ textAlign: "center" }}>
+                                <td
+                                  style={{
+                                    border: "2px solid #20958C",
+                                  }}
+                                >
+                                  {item?.DTdate}
+                                </td>
+                                <td
+                                  style={{
+                                    border: "2px solid #20958C",
+                                  }}
+                                >
+                                  {item?.DTTime}
+                                </td>
+                                <td
+                                  style={{
+                                    border: "2px solid #20958C",
+                                  }}
+                                >
+                                  {item?.DTNotes}
+                                </td>
+                                <td
+                                  style={{
+                                    border: "2px  solid #20958C",
+                                  }}
+                                >
+                                  {/* <b>Doctor Name : </b> <span>{`${item?.doctorid?.Firstname} ${item?.doctorid?.Lastname}`}</span> */}
+                                {/* <br/> */}
+                                {/* <hr/> */}
+                                <img
+                                  alt="sign"
+                                  src={`http://localhost:8521/PatientREG/${item?.doctortretmentSignature}`}
+                                />
+                                </td>
+                              </tr>
+                         
+                        </>
+                      );
+                    })}
+                  </tbody>
+                </Table>
           </div>
         </div>
       </div>
