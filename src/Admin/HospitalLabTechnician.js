@@ -62,6 +62,68 @@ export default function HospitalLabTechnician() {
   const handleClose10 = () => setShow10(false);
   const handleShow10 = () => setShow10(true);
 
+  const [ChosenLabTest, setChosenLabTest] = useState({});
+  console.log("ChosenLabTest12: ", ChosenLabTest);
+
+  const [relatedSubTests, setrelatedSubTests] = useState([]);
+  useEffect(() => {
+    async function getAllSubTests() {
+      try {
+        const res = await axios.get(
+          "http://localhost:8521/api/admin/getHospitalLabsubTestlist"
+        );
+        if (res.status === 200) {
+          setrelatedSubTests(
+            res.data.HospitalLabSubTest?.filter(
+              (val) =>
+                val.labtestid?._id?.toString() ===
+                ChosenLabTest?.testid?._id?.toString()
+            )
+          );
+        }
+      } catch (error) {
+        console.log(error);
+        if (error.response) {
+          return alert(error.response.data.error);
+        } else {
+          return alert("Server is not responding!");
+        }
+      }
+    }
+    if (ChosenLabTest?.testid?._id) {
+      getAllSubTests();
+    }
+  }, [ChosenLabTest?.testid?._id]);
+
+  const [subtestlist, setsubtestlist] = useState([]);
+  function addtosubtestlist(item) {
+    setsubtestlist((curr) => [
+      ...curr,
+      {
+        subtestid: item?._id,
+        subtestName: item?.subtestName,
+        subtestgeneralRefVal: item?.generalRefVal,
+        subtestunit: item?.unit,
+        subtestpatientReportVal: Labreport,
+      },
+    ]);
+    return alert("Added data successfully");
+  }
+
+  function editTosubtestlist(item) {
+    const indexVal = subtestlist.findIndex(
+      (x) => x.subtestid?.toString() === item?._id?.toString()
+    );
+    subtestlist[indexVal] = {
+      subtestid: item?._id,
+      subtestName: item?.subtestName,
+      subtestgeneralRefVal: item?.generalRefVal,
+      subtestunit: item?.unit,
+      subtestpatientReportVal: Labreport,
+    };
+    return alert("Edited data successfully");
+  }
+
   const componentRef = useRef();
   const handleprint = useReactToPrint({
     content: () => componentRef.current,
@@ -268,6 +330,26 @@ export default function HospitalLabTechnician() {
     }
   };
 
+  // ==========================================
+
+  const [InventoryOrderList, setInventoryOrderList] = useState([]);
+  const LabInventoryListFn = async () => {
+    try {
+      const res = await axios.get(
+        " http://localhost:8521/api/lab/getlabInventory "
+      );
+      if (res.status === 200) {
+        setInventoryOrderList(res.data.inventoryList);
+      }
+    } catch (error) {
+      console.log(error);
+      setInventoryOrderList([]);
+    }
+  };
+  useEffect(() => {
+    LabInventoryListFn();
+  }, []);
+
   // search
   const [search, setSearch] = useState("");
   let [FilteredCatList, setFilteredCatList] = useState([]);
@@ -332,6 +414,18 @@ export default function HospitalLabTechnician() {
   return (
     <div>
       <div style={{ padding: "1%" }}>
+        <div>
+          <h6
+            style={{
+              fontSize: "22px",
+              fontWeight: "600",
+              color: "grey",
+              marginTop: "10px",
+            }}
+          >
+            LAB TECHNICIAN
+          </h6>
+        </div>
         <div
           style={{
             display: "flex",
@@ -375,8 +469,6 @@ export default function HospitalLabTechnician() {
                 <th>Phone No</th>
                 <th>Email</th>
                 <th>Test Date</th>
-                <th>Test List</th>
-                <th>Total Amount</th>
                 {/* <th>Payment Status</th> */}
                 <th>Add Report</th>
                 {/* <th>Invoice</th> */}
@@ -401,9 +493,9 @@ export default function HospitalLabTechnician() {
                       )}
                     </td> */}
                     <td>
-                      {item?.patientid?._id ? (
+                      {item?.patientid?.PatientId ? (
                         <>
-                          {item?.patientid?._id}(
+                          {item?.patientid?.PatientId}(
                           {item?.patientid?.registrationType})
                         </>
                       ) : (
@@ -414,43 +506,6 @@ export default function HospitalLabTechnician() {
                     <td>{item?.Phoneno}</td>
                     <td>{item?.email}</td>
                     <td>{moment(item?.testDate).format("DD/MM/YYYY")}</td>
-                    <td>
-                      <Button
-                        onClick={() => {
-                          handleShow2();
-                          setLabtests(item);
-                        }}
-                      >
-                        View
-                      </Button>
-                    </td>
-                    <td>
-                      {item?.patientid?._id &&
-                      item?.patientid?.haveInsurance ? (
-                        <>
-                          ₹
-                          {item?.Labtests?.reduce(
-                            (acc, curr) => acc + curr.priceInsurance,
-                            0
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          ₹
-                          {item?.Labtests?.reduce(
-                            (acc, curr) => acc + curr.priceNonInsurance,
-                            0
-                          )}
-                        </>
-                      )}
-                    </td>
-                    {/* <td>
-                      {item?.paymentStatus === "UNPAID" ? (
-                        <b style={{ color: "red" }}>UNPAID</b>
-                      ) : (
-                        <b style={{ color: "green" }}>PAID</b>
-                      )}
-                    </td> */}
 
                     <td>
                       {item?.labTestBookingStatus === "TECHNICIAN DONE" ? (
@@ -459,7 +514,8 @@ export default function HospitalLabTechnician() {
                         item?.patientid?.registrationType === "IPD" ? (
                         <Button
                           onClick={() => {
-                            handleShow5();
+                            // handleShow5();
+                            handleShow2();
                             setLabtests(item);
                           }}
                         >
@@ -776,8 +832,7 @@ export default function HospitalLabTechnician() {
                   <tr>
                     <th>Sl.</th>
                     <th>Test Name</th>
-                    <th>Test Price</th>
-                    <th>Test Price(Insurance)</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -786,8 +841,16 @@ export default function HospitalLabTechnician() {
                       <tr>
                         <td>{i + 1}</td>
                         <td>{item?.testName}</td>
-                        <td>{item?.priceNonInsurance}</td>
-                        <td>{item?.priceInsurance}</td>
+                        <td>
+                          <Button
+                            onClick={() => {
+                              setChosenLabTest(item);
+                              handleShow5();
+                            }}
+                          >
+                            Report
+                          </Button>
+                        </td>
                       </tr>
                     );
                   })}
@@ -1084,57 +1147,157 @@ export default function HospitalLabTechnician() {
                   }}
                 >
                   <div className="">
-                    <div className="mb-5">
-                      <img
-                        style={{ width: "40px", height: "40px" }}
-                        className="logo me-2 "
-                        src="/img/logo.png"
-                        alt="Logo"
-                      />{" "}
-                      <br />
-                      <span
-                        className="fw-bold fs-4"
-                        style={{ color: "rgb(32 139 140)" }}
+                    <div
+                      className="mb-5 "
+                      style={{
+                        display: "flex",
+                      }}
+                    >
+                      <div>
+                        <img
+                          style={{ width: "115px", height: "115px" }}
+                          className="logo me-2 "
+                          src="/img/logo.png"
+                          alt="Logo"
+                        />{" "}
+                      </div>
+                      <div
+                        className="text-center"
+                        style={{ marginLeft: "30px" }}
                       >
-                        JANANI
-                      </span>
-                      <br />
-                      <span>JananiPharmacy@gmail.com</span>
-                      <br />
-                      <span>+1999212993</span>
-                      <br />
-                      <span>Singapur Layout, Banglore</span>
-                      <br />
+                        <span
+                          className="fw-bold fs-4"
+                          style={{ color: "rgb(32 139 140)" }}
+                        >
+                          JANANI CLINICAL LABORATORY
+                        </span>
+                        <br />
+                        <div>
+                          <b>
+                            Upstair Canara bank , Near BDA Cross, KK Colony,
+                            Jalanagar Main Road, Vijayapur--586109
+                          </b>
+                          <div>
+                            Phone:- 08352-277077 ,9606831158 , Email:-
+                            jananihospital2018@gmail.com
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   <div
                     className="row"
-                    style={{ border: "2px solid", padding: "0px" }}
+                    style={{
+                      borderBottom: "2px solid",
+                      padding: "0px",
+                      display: "flex",
+                      //   justifyContent: "space-between",
+                    }}
                   >
-                    <div className="col-sm-4">
-                      <div>
-                        <b>Patient Name : </b> {Labtests?.patientname}
-                      </div>
-                      <div>
-                        <b>Patient Age : </b> 45 years
-                      </div>
+                    <div className="col-sm-6">
+                      <Table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <b>Patient ID</b>{" "}
+                            </td>
+                            <td>{Labtests?.patientid?.PatientId}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Patient Name</b>{" "}
+                            </td>
+                            <td>
+                              {Labtests?.patientid?.Firstname}{" "}
+                              {Labtests?.patientid?.Lastname}
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Patient Age</b>{" "}
+                            </td>
+                            <td>
+                              {moment().diff(
+                                moment(Labtests?.patientid?.DOB),
+                                "years"
+                              )}{" "}
+                              years
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <b>Gender</b>
+                            </td>
+                            <td>{Labtests?.patientid?.Gender}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Email</b>
+                            </td>
+                            <td> {Labtests?.email}</td>
+                          </tr>
+                        </tbody>
+                      </Table>
                     </div>
-                    <div className="col-sm-4">
-                      <div>
-                        <b>Patient ID : </b> HJKD567
-                      </div>
-                      <div>
-                        <b>Gender : </b> Male
-                      </div>
+                    <div className="col-sm-6">
+                      <Table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <b>Phone</b>
+                            </td>
+                            <td>{Labtests?.patientid?.PhoneNumber}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Referred By</b>
+                            </td>
+                            <td>{Labtests?.hospitallabRefferedBy}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Register Date</b>
+                            </td>
+                            <td>
+                              {moment(Labtests?.testDate).format("DD/MM/YYYY")}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <b>Sample No</b>
+                            </td>
+                            <td> {ChosenLabTest?.sampleName}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Collected On</b>{" "}
+                            </td>
+                            <td>
+                              {`${new Date(
+                                ChosenLabTest?.sampleCollectionDateTime
+                              ).getDate()} - ${
+                                new Date(
+                                  ChosenLabTest?.sampleCollectionDateTime
+                                ).getMonth() + 1
+                              } - ${new Date(
+                                ChosenLabTest?.sampleCollectionDateTime
+                              ).getFullYear()}`}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </Table>
                     </div>
-                    <div className="col-sm-4">
-                      <div>
-                        <b>Register Date : </b>
-                        {moment(Labtests?.testDate).format("DD-MM-YYYY")}
-                      </div>
-                      <div></div>
-                    </div>
+                  </div>
+                  <div style={{ marginTop: "20px", marginBottom: "10px" }}>
+                    {" "}
+                    <h3>{ChosenLabTest?.testName}</h3>
                   </div>
                   <div className="row mt-2">
                     <Table bordered>
@@ -1143,50 +1306,45 @@ export default function HospitalLabTechnician() {
                           <th>Test Name</th>
                           <th>Result</th>
                           <th>Unit</th>
-                          <th>Normal Range</th>
+                          <th>General Reference Value</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {Labtests?.Labtests?.map((item) => {
+                        {relatedSubTests?.map((item) => {
                           return (
                             <tr>
-                              <td>
-                                {/* <Form.Select
-                                  className="vi_0"
-                                  onChange={handleTestChange}
-                                  value={TestId}
-                                >
-                                  <option>Select Test</option>
-                                  {Labtests?.Labtests?.filter(
-                                    (val) => !val.patientReportVal
-                                  )?.map((item) => {
-                                    return (
-                                      <option value={item?._id}> */}
-                                {item?.testName}
-                                {/* </option>
-                                    );
-                                  })}
-                                </Form.Select> */}
-                              </td>
+                              <td>{item?.subtestName}</td>
+
                               <td>
                                 <input
                                   type="text"
                                   className="vi_0"
-                                  placeholder={item?.patientReportVal}
+                                  // placeholder={item?.patientReportVal}
                                   onChange={(e) => setLabreport(e.target.value)}
                                 />
                               </td>
                               <td>{item?.unit}</td>
-                              <td>{item?.generalRefVal} </td>
+                              <td>{item?.generalRefVal}</td>
                               <td>
-                                <Button
-                                  onClick={() => {
-                                    addLabReport(item?._id);
-                                  }}
-                                >
-                                  Submit
-                                </Button>{" "}
+                                {subtestlist?.some(
+                                  (val) =>
+                                    val.subtestid?.toString() ===
+                                    item?._id?.toString()
+                                ) ? (
+                                  <Button
+                                    onClick={() => editTosubtestlist(item)}
+                                  >
+                                    Edit
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    onClick={() => addtosubtestlist(item)}
+                                  >
+                                    {" "}
+                                    save
+                                  </Button>
+                                )}
                               </td>
                             </tr>
                           );
@@ -1194,6 +1352,8 @@ export default function HospitalLabTechnician() {
                       </tbody>
                     </Table>
                   </div>
+
+                  <div></div>
                 </div>
               </div>
             </div>
@@ -1202,6 +1362,13 @@ export default function HospitalLabTechnician() {
             <Button variant="secondary" onClick={handleClose5}>
               Close
             </Button>
+            <Button
+              onClick={() => {
+                addLabReport(ChosenLabTest?._id);
+              }}
+            >
+              Submit
+            </Button>{" "}
           </Modal.Footer>
         </Modal>
 
