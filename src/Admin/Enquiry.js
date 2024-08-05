@@ -322,7 +322,7 @@ export default function Enquiry() {
             <p style={{ color: "white" }}>{selectedData?.Reply}</p>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="secondary" onClick={handleClose1}>
               Close
             </Button>
           </Modal.Footer>

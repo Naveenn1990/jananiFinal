@@ -240,6 +240,7 @@ export default function AdminBookProductCart() {
   const [SelectedDepartmentDoctors, setSelectedDepartmentDoctors] = useState(
     {}
   );
+  const [selectedCause, setselectedCause] = useState();
   const [SelectedDoctor, setSelectedDoctor] = useState();
 
   useEffect(() => {
@@ -280,6 +281,7 @@ export default function AdminBookProductCart() {
               PatientID: PatientId,
               PatientType: PatientType,
               PaymentMethod: PaymentMethod,
+              CauseID: selectedCause,
               PatientName:
                 selectedPateint[0]?.Firstname +
                 "" +
@@ -296,6 +298,7 @@ export default function AdminBookProductCart() {
                 SelectedDepartmentDoctors?.Firstname +
                 " " +
                 SelectedDepartmentDoctors?.Lastname,
+              AdminId: adminDetails?._id,
             },
           };
           let res = await axios(config);
@@ -1090,6 +1093,38 @@ export default function AdminBookProductCart() {
                   ) : (
                     ""
                   )}
+                  {selectedPateint?.length > 0 && PatientId ? (
+                    <>
+                      <div className="col-lg-6 col-sm-12 mt-2">
+                        <label style={{ color: "white" }}>Select Cause :</label>
+                      </div>
+                      <div className="col-lg-6 col-sm-12 mt-2">
+                        <select
+                          style={{
+                            width: "97%",
+                            padding: "8px 20px",
+                            borderRadius: "0px",
+                            border: "1px solid #ebebeb",
+                            backgroundColor: "#ebebeb",
+                            marginLeft: "13px",
+                          }}
+                          onChange={(e) => {
+                            setselectedCause(e.target.value);
+                          }}
+                        >
+                          <option>Select</option>
+                          {selectedPateint[0]?.cause?.map((cause) => (
+                            <option value={cause?._id}>
+                              {cause?.CauseName}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+
                   <div className="col-lg-6 col-sm-12 mt-2">
                     <label style={{ color: "white" }}>
                       Select Department :
