@@ -78,6 +78,14 @@ export default function VendorAddedProductsStatus() {
     setInvoice(item);
   };
 
+  const [rejectionReason, setrejectionReason] = useState({});
+  const [showrejectionReason, setShowrejectionReason] = useState(false);
+  const handleCloserejectionReason = () => setShowrejectionReason(false);
+  const handleShowrejectionReason = (item) => {
+    setShowrejectionReason(true);
+    setrejectionReason(item);
+  };
+
   const componentRef = useRef();
   const handleprint = useReactToPrint({
     content: () => componentRef.current,
@@ -244,18 +252,39 @@ export default function VendorAddedProductsStatus() {
                           />
                         </td>
                         <td>
-                          <button
-                            style={{
-                              border: "none",
-                              backgroundColor: "transparent",
-                            }}
-                            onClick={() => handleShowInvoice(val)}
-                          >
-                            <i
-                              class="fas fa-eye"
-                              style={{ color: "#20958c", fontSize: "22px" }}
-                            ></i>
-                          </button>
+                          {val.orderStatus === "DELIVERED" &&
+                          val.orderPayment === "DONE" &&
+                          val?.Invoice ? (
+                            <button
+                              style={{
+                                border: "none",
+                                backgroundColor: "transparent",
+                              }}
+                              onClick={() => handleShowInvoice(val)}
+                            >
+                              <i
+                                class="fas fa-eye"
+                                style={{ color: "#20958c", fontSize: "22px" }}
+                              ></i>
+                            </button>
+                          ) : val.orderStatus === "CANCELLED_ORDER" ? (
+                            <button
+                              style={{
+                                border: "none",
+                                backgroundColor: "transparent",
+                              }}
+                              onClick={() => handleShowrejectionReason(val)}
+                            >
+                              <i
+                                class="fas fa-eye"
+                                style={{ color: "red", fontSize: "22px" }}
+                              ></i>
+                            </button>
+                          ) : val.orderPayment === "PENDING" ? (
+                            "Waiting for payment"
+                          ) : (
+                            "Waiting for Invoice"
+                          )}
                         </td>
                         {/* <td>{val.totalPaidPrice}</td> */}
                       </tr>
@@ -316,7 +345,18 @@ export default function VendorAddedProductsStatus() {
                               ></i>
                             </button>
                           ) : val.orderStatus === "CANCELLED_ORDER" ? (
-                            "-"
+                            <button
+                              style={{
+                                border: "none",
+                                backgroundColor: "transparent",
+                              }}
+                              onClick={() => handleShowrejectionReason(val)}
+                            >
+                              <i
+                                class="fas fa-eye"
+                                style={{ color: "red", fontSize: "22px" }}
+                              ></i>
+                            </button>
                           ) : val.orderPayment === "PENDING" ? (
                             "Waiting for payment"
                           ) : (
@@ -544,6 +584,22 @@ export default function VendorAddedProductsStatus() {
           </Button>
           <Button variant="primary" onClick={handleprint}>
             Print
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showrejectionReason} onHide={handleCloserejectionReason}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reason for rejection</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p style={{ color: "white" }}>
+            {rejectionReason?.ReasonForRejection}
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloserejectionReason}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>
