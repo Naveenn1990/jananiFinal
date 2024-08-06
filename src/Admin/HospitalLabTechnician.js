@@ -7,6 +7,7 @@ import { useReactToPrint } from "react-to-print";
 import ReactPaginate from "react-paginate";
 import exportFromJSON from "export-from-json";
 import { AiFillFileExcel } from "react-icons/ai";
+import { MdDeleteOutline } from "react-icons/md";
 
 export default function HospitalLabTechnician() {
   // Select width
@@ -66,6 +67,156 @@ export default function HospitalLabTechnician() {
   console.log("ChosenLabTest12: ", ChosenLabTest);
 
   const [relatedSubTests, setrelatedSubTests] = useState([]);
+  const [usedProducts, setUsedProducts] = useState([]);
+  const [chooseusedProducts, setchooseUsedProducts] = useState("");
+  const [chooseusedProductsid, setchooseUsedProductsid] = useState("");
+  const [ChoosedProductAvailQuantity, setChoosedProductAvailQuantity] =
+    useState(0);
+  const [chooseusedProductsQuantity, setchooseUsedProductsQuantity] =
+    useState("");
+
+  const [EditCollectedTechnicianProducts, setEditCollectedTechnicianProducts] =
+    useState(false);
+
+  function handleQuantityChange(e) {
+    if (e.target.value) {
+      if (
+        Number(e.target.value) >= 1 &&
+        Number(e.target.value) <= Number(ChoosedProductAvailQuantity)
+      ) {
+        setchooseUsedProductsQuantity(Number(e.target.value));
+      } else {
+        return alert("Product Quantity out of bound!");
+      }
+    }
+  }
+  function addUsedProductsInLabTechnician() {
+    const isDataAvail = usedProducts.some(
+      (val) => val.productid?.toString() === chooseusedProductsid?.toString()
+    );
+
+    if (!isDataAvail) {
+      setUsedProducts((curr) => [
+        ...curr,
+        {
+          productid: chooseusedProductsid,
+          productName: chooseusedProducts,
+          Quantity: chooseusedProductsQuantity,
+        },
+      ]);
+    } else {
+      setUsedProducts([
+        ...usedProducts?.map((val) => {
+          if (val?.productid?.toString() === chooseusedProductsid?.toString()) {
+            return {
+              ...val,
+              Quantity: val?.Quantity + chooseusedProductsQuantity,
+            };
+          }
+          return val;
+        }),
+      ]);
+    }
+  }
+
+  console.log("usedProducts: ", usedProducts);
+
+  function removeUsedProductsInLabTechnician(id) {
+    console.log("uiouio; ", id);
+    setUsedProducts([
+      ...usedProducts.filter(
+        (val) => val?.productid?.toString() !== id?.toString()
+      ),
+    ]);
+  }
+
+  const [flag, setFlag] = useState(false);
+  const AddLabtechProducts = async (labtestid) => {
+    try {
+      const config = {
+        url: "/AddLabtechProducts",
+        method: "put",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "application/json" },
+        data: {
+          hospitallabtestid: Labtests?._id,
+          labtestid: labtestid,
+          // technicianUsedProducts: usedProducts,
+          productid: chooseusedProductsid,
+          productName: chooseusedProducts,
+          Quantity: chooseusedProductsQuantity,
+        },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+
+        setChosenLabTest(
+          res.data.technicianProductsUpdation?.Labtests?.find(
+            (x) => x._id.toString() === ChosenLabTest?._id?.toString()
+          )
+        );
+        setEditCollectedTechnicianProducts(false);
+        setchooseUsedProducts("");
+        setchooseUsedProductsid("");
+        setChoosedProductAvailQuantity("");
+        setchooseUsedProductsQuantity("");
+        setFlag(true);
+        GetLabtestList();
+        LabInventoryListFn();
+        setUsedProducts([]);
+        handleClose2();
+        GetLabtestList();
+      }
+    } catch (error) {
+      console.log(error);
+      return alert(error.response.data.error);
+    }
+  };
+
+  const removelabtechProductData = async (
+    labtestid,
+    removedUsedProductid,
+    labtechProductid,
+    labtechQuantity
+  ) => {
+    try {
+      const config = {
+        url: "/removeLabtechUsedProduct",
+        method: "put",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "application/json" },
+        data: {
+          hospitallabtestid: Labtests?._id,
+          labtestid: labtestid,
+          removedUsedProductid,
+          labtechProductid,
+          labtechQuantity,
+        },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        setUsedProducts([]);
+        console.log(
+          "res.data.labtechUpdation?.Labtests: ",
+          res.data.labtechUpdation
+        );
+        setChosenLabTest(
+          res.data.labtechUpdation?.Labtests?.find(
+            (x) => x._id.toString() === ChosenLabTest?._id?.toString()
+          )
+        );
+        LabInventoryListFn();
+        handleClose2();
+        GetLabtestList();
+      }
+    } catch (error) {
+      console.log(error);
+      return alert(error.response.data.error);
+    }
+  };
+
   useEffect(() => {
     async function getAllSubTests() {
       try {
@@ -96,17 +247,30 @@ export default function HospitalLabTechnician() {
   }, [ChosenLabTest?.testid?._id]);
 
   const [subtestlist, setsubtestlist] = useState([]);
-  function addtosubtestlist(item) {
-    setsubtestlist((curr) => [
-      ...curr,
-      {
+  function addtosubtestlist(item, e) {
+    const indexVal = subtestlist.findIndex(
+      (x) => x.subtestid?.toString() === item?._id?.toString()
+    );
+    if (indexVal > 0) {
+      subtestlist[indexVal] = {
         subtestid: item?._id,
         subtestName: item?.subtestName,
         subtestgeneralRefVal: item?.generalRefVal,
         subtestunit: item?.unit,
-        subtestpatientReportVal: Labreport,
-      },
-    ]);
+        subtestpatientReportVal: e.target.value,
+      };
+    } else {
+      setsubtestlist((curr) => [
+        ...curr,
+        {
+          subtestid: item?._id,
+          subtestName: item?.subtestName,
+          subtestgeneralRefVal: item?.generalRefVal,
+          subtestunit: item?.unit,
+          subtestpatientReportVal: e.target.value,
+        },
+      ]);
+    }
     return alert("Added data successfully");
   }
 
@@ -123,6 +287,8 @@ export default function HospitalLabTechnician() {
     };
     return alert("Edited data successfully");
   }
+
+  console.log("subtestlist: ", subtestlist);
 
   const componentRef = useRef();
   const handleprint = useReactToPrint({
@@ -1311,7 +1477,7 @@ export default function HospitalLabTechnician() {
                         </tr>
                       </thead>
                       <tbody>
-                        {relatedSubTests?.map((item) => {
+                        {relatedSubTests?.map((item, index) => {
                           return (
                             <tr>
                               <td>{item?.subtestName}</td>
@@ -1321,7 +1487,7 @@ export default function HospitalLabTechnician() {
                                   type="text"
                                   className="vi_0"
                                   // placeholder={item?.patientReportVal}
-                                  onChange={(e) => setLabreport(e.target.value)}
+                                  onChange={(e) => addtosubtestlist(item, e)}
                                 />
                               </td>
                               <td>{item?.unit}</td>
@@ -1353,7 +1519,119 @@ export default function HospitalLabTechnician() {
                     </Table>
                   </div>
 
-                  <div></div>
+                  <div>
+                    <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+                      <h3>Products Used</h3>
+                    </div>
+                    <div>
+                      <Table bordered>
+                        <tbody>
+                          <tr>
+                            <td>Technician Used Products</td>
+                            <td>
+                              <select
+                                style={{
+                                  width: "100%",
+                                  height: "45px",
+                                  padding: "10px",
+                                }}
+                                onChange={(e) => {
+                                  setchooseUsedProducts(
+                                    JSON.parse(e.target.value)?.vendorProductId
+                                      ?.productName
+                                  );
+                                  setchooseUsedProductsid(
+                                    JSON.parse(e.target.value)?.vendorProductId
+                                      ?._id
+                                  );
+                                  setChoosedProductAvailQuantity(
+                                    JSON.parse(e.target.value)?.quantity
+                                  );
+                                  setFlag(false);
+                                }}
+                              >
+                                <option selected={flag}>Choose Option</option>
+                                {InventoryOrderList?.filter(
+                                  (data) => data.quantity > 0
+                                )?.map((valEle) => {
+                                  return (
+                                    <option value={JSON.stringify(valEle)}>
+                                      {valEle?.vendorProductId?.productName}
+                                    </option>
+                                  );
+                                })}
+                              </select>
+                            </td>
+                            <td>
+                              <input
+                                type="number"
+                                placeholder="Quantity"
+                                value={chooseusedProductsQuantity}
+                                style={{
+                                  width: "100%",
+                                  height: "45px",
+                                  padding: "10px",
+                                }}
+                                name="quantity"
+                                id="quantity"
+                                min="1"
+                                max={`${ChoosedProductAvailQuantity}`}
+                                onChange={(e) => handleQuantityChange(e)}
+                              />
+                            </td>
+                            <td>
+                              <Button
+                                onClick={() =>
+                                  AddLabtechProducts(ChosenLabTest?._id)
+                                }
+                              >
+                                Add Products
+                              </Button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </Table>
+                      <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+                        <Table bordered>
+                          <thead>
+                            <th>S.no.</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                          </thead>
+                          <tbody>
+                            {ChosenLabTest?.technicianUsedProducts?.map(
+                              (valdata, i) => {
+                                return (
+                                  <tr>
+                                    <td>{i + 1}. </td>
+                                    <td>{valdata?.productName}</td>
+                                    <td>{valdata?.Quantity}</td>
+                                    <td>
+                                      <MdDeleteOutline
+                                        onClick={() =>
+                                          removelabtechProductData(
+                                            ChosenLabTest?._id,
+                                            valdata?._id,
+                                            valdata?.productid,
+                                            valdata?.Quantity
+                                          )
+                                        }
+                                        style={{
+                                          color: "red",
+                                          fontSize: "20px",
+                                        }}
+                                      />
+                                    </td>
+                                  </tr>
+                                );
+                              }
+                            )}
+                          </tbody>
+                        </Table>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
