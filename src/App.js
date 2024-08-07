@@ -278,6 +278,7 @@ import IPD_PatientList from "./Admin/IPD_PatientList";
 import Ward from "./Admin/Ward";
 import BedAssignIPD from "./Admin/BedAssignIPD";
 import SafetyCheckList from "./Admin/PatientAdmitForms/SafetyCheckList";
+import Addsurgey from "./Admin/Addsurgey";
 
 function App() {
   return (
@@ -2722,6 +2723,16 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<Bedmanagement />} />{" "}
+                </>
+              }
+            ></Route>
+
+            <Route
+              path="/admin/Addsurgey"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<Addsurgey />} />{" "}
                 </>
               }
             ></Route>

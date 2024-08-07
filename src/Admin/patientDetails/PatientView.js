@@ -71,87 +71,104 @@ const PatientView = ({ SelectCause, patientdetail }) => {
               >
                 IP Billing Sheet
               </button>
-              <button
-                style={{
-                  padding: "6px",
-                  border: "1px solid white",
-                  backgroundColor: "#20958c",
-                  color: "white",
-                  borderRadius: "0px",
-                }}
-                onClick={() => {
-                  setIPBilling(false);
-                  setDocTreatmentChart(true);
-                  setDocNotes(false);
-                  setMedicationChart(false);
-                  setNursesNotes(false);
-                  setHouslyObservChart(false);
-                  setNursingAssessmentOnAdmisssion(false);
-                  setIntakeOutput(false);
-                  setPreOperative(false);
-                  setSurgery(false);
-                  setSurgicalCount(false);
-                  setPostSurgeryChart(false);
-                  setPreAnaestheticAsses(false);
-                  setSafetyCheck(false);
-                }}
-              >
-                Doctor Treatment Chart ({SelectCause?.doctorstreatment?.length})
-              </button>
-              <button
-                style={{
-                  padding: "6px",
-                  border: "1px solid white",
-                  backgroundColor: "#20958c",
-                  color: "white",
-                  borderRadius: "0px",
-                }}
-                onClick={() => {
-                  setIPBilling(false);
-                  setDocTreatmentChart(false);
-                  setDocNotes(true);
-                  setMedicationChart(false);
-                  setNursesNotes(false);
-                  setHouslyObservChart(false);
-                  setNursingAssessmentOnAdmisssion(false);
-                  setIntakeOutput(false);
-                  setPreOperative(false);
-                  setSurgery(false);
-                  setSurgicalCount(false);
-                  setPostSurgeryChart(false);
-                  setPreAnaestheticAsses(false);
-                  setSafetyCheck(false);
-                }}
-              >
-                Doctors Notes ({SelectCause?.doctorsnotes?.length})
-              </button>
-              <button
-                style={{
-                  padding: "6px",
-                  border: "1px solid white",
-                  backgroundColor: "#20958c",
-                  color: "white",
-                  borderRadius: "0px",
-                }}
-                onClick={() => {
-                  setIPBilling(false);
-                  setDocTreatmentChart(false);
-                  setDocNotes(false);
-                  setMedicationChart(true);
-                  setNursesNotes(false);
-                  setHouslyObservChart(false);
-                  setNursingAssessmentOnAdmisssion(false);
-                  setIntakeOutput(false);
-                  setPreOperative(false);
-                  setSurgery(false);
-                  setSurgicalCount(false);
-                  setPostSurgeryChart(false);
-                  setPreAnaestheticAsses(false);
-                  setSafetyCheck(false);
-                }}
-              >
-                Medication Chart ({SelectCause?.drug?.length})
-              </button>
+              {SelectCause?.doctorstreatment?.length > 0 ? (
+                <button
+                  style={{
+                    padding: "6px",
+                    border: "1px solid white",
+                    backgroundColor: "#20958c",
+                    color: "white",
+                    borderRadius: "7px",
+                  }}
+                  onClick={() => {
+                    setIPBilling(false);
+                    setDocTreatmentChart(true);
+                    setDocNotes(false);
+                    setMedicationChart(false);
+                    setNursesNotes(false);
+                    setHouslyObservChart(false);
+                    setNursingAssessmentOnAdmisssion(false);
+                    setIntakeOutput(false);
+                    setPreOperative(false);
+                    setSurgery(false);
+                    setSurgicalCount(false);
+                    setPostSurgeryChart(false);
+                    setPreAnaestheticAsses(false);
+                    setSafetyCheck(false);
+                  }}
+                >
+                  Doctor Treatment Chart (
+                  {SelectCause?.doctorstreatment?.length})
+                </button>
+              ) : (
+                ""
+              )}
+
+              {SelectCause?.doctorstreatment?.length > 0 ? (
+                <button
+                  style={{
+                    padding: "6px",
+                    border: "1px solid white",
+                    backgroundColor: "#20958c",
+                    color: "white",
+                    borderRadius: "7px",
+                  }}
+                  onClick={() => {
+                    setIPBilling(false);
+                    setDocTreatmentChart(false);
+                    setDocNotes(true);
+                    setMedicationChart(false);
+                    setNursesNotes(false);
+                    setHouslyObservChart(false);
+                    setNursingAssessmentOnAdmisssion(false);
+                    setIntakeOutput(false);
+                    setPreOperative(false);
+                    setSurgery(false);
+                    setSurgicalCount(false);
+                    setPostSurgeryChart(false);
+                    setPreAnaestheticAsses(false);
+                    setSafetyCheck(false);
+                  }}
+                >
+                  Doctors Notes ({SelectCause?.doctorsnotes?.length})
+                </button>
+              ) : (
+                ""
+              )}
+
+              {SelectCause?.drug?.length > 0 ? (
+               ""
+              ) : (
+                ""
+              )}
+               <button
+                  style={{
+                    padding: "6px",
+                    border: "1px solid white",
+                    backgroundColor: "#20958c",
+                    color: "white",
+                    borderRadius: "0px",
+                  }}
+                  onClick={() => {
+                    setIPBilling(false);
+                    setDocTreatmentChart(false);
+                    setDocNotes(false);
+                    setMedicationChart(true);
+                    setNursesNotes(false);
+                    setHouslyObservChart(false);
+                    setNursingAssessmentOnAdmisssion(false);
+                    setIntakeOutput(false);
+                    setPreOperative(false);
+                    setSurgery(false);
+                    setSurgicalCount(false);
+                    setPostSurgeryChart(false);
+                    setPreAnaestheticAsses(false);
+                    setSafetyCheck(false);
+                  }}
+                >
+                  Medication Chart ({SelectCause?.drug?.length})
+                </button>
+
               {SelectCause?.nursingassessment?.length > 0 ? (
                 <button
                   style={{
@@ -376,37 +393,37 @@ const PatientView = ({ SelectCause, patientdetail }) => {
                 Checklist for surgical count/ swab/ needle count
               </button>
               {SelectCause?.surgicalsafety?.length > 0 ? (
- <button
- style={{
-   padding: "6px",
-   border: "1px solid white",
-   backgroundColor: "#20958c",
-   color: "white",
-   borderRadius: "7px",
- }}
- onClick={() => {
-   setIPBilling(false);
-   setDocTreatmentChart(false);
-   setDocNotes(false);
-   setMedicationChart(false);
-   setNursesNotes(false);
-   setHouslyObservChart(false);
-   setNursingAssessmentOnAdmisssion(false);
-   setSurgicalCount(false);
-   setIntakeOutput(false);
-   setPreOperative(false);
-   setSurgery(false);
-   setPostSurgeryChart(false);
-   setPreAnaestheticAsses(false);
-   setSafetyCheck(true);
- }}
->
- Surgical Safety(
-   {SelectCause?.surgicalsafety?.length})
-</button>
-
-              ):("")}
-             
+                <button
+                  style={{
+                    padding: "6px",
+                    border: "1px solid white",
+                    backgroundColor: "#20958c",
+                    color: "white",
+                    borderRadius: "7px",
+                  }}
+                  onClick={() => {
+                    setIPBilling(false);
+                    setDocTreatmentChart(false);
+                    setDocNotes(false);
+                    setMedicationChart(false);
+                    setNursesNotes(false);
+                    setHouslyObservChart(false);
+                    setNursingAssessmentOnAdmisssion(false);
+                    setSurgicalCount(false);
+                    setIntakeOutput(false);
+                    setPreOperative(false);
+                    setSurgery(false);
+                    setPostSurgeryChart(false);
+                    setPreAnaestheticAsses(false);
+                    setSafetyCheck(true);
+                  }}
+                >
+                  Surgical Safety(
+                  {SelectCause?.surgicalsafety?.length})
+                </button>
+              ) : (
+                ""
+              )}
             </div>
             <div
               className="d-flex gap-2"
@@ -477,11 +494,13 @@ const PatientView = ({ SelectCause, patientdetail }) => {
           <IpBillingSheet />
         ) : DocTreatmentChart ? (
           <DoctorTreatment
+            cause={SelectCause}
             DoctTreatmentChat={SelectCause?.doctorstreatment}
             patientdetail={patientdetail}
           />
         ) : DocNotes ? (
           <DoctorNotes
+            cause={SelectCause}
             DoctorsNotes={SelectCause?.doctorsnotes}
             patientdetail={patientdetail}
           />
@@ -489,7 +508,7 @@ const PatientView = ({ SelectCause, patientdetail }) => {
           <MedicationChart />
         ) : NursesNotes ? (
           <NurseNotes
-            cause ={SelectCause}
+            cause={SelectCause}
             NursingNote={SelectCause?.nursenote}
             patientdetail={patientdetail}
           />
@@ -507,13 +526,13 @@ const PatientView = ({ SelectCause, patientdetail }) => {
           <SurgeryReport />
         ) : IntakeOutput ? (
           <IntakeOutputChart
-          cause ={SelectCause}
+            cause={SelectCause}
             Intakeoutlist={SelectCause?.intakeout}
             patientdetail={patientdetail}
           />
         ) : preOperative ? (
           <PreOperative
-          cause ={SelectCause}
+            cause={SelectCause}
             CHECKLIST={SelectCause?.preoperativelist}
             patientdetail={patientdetail}
           />
@@ -521,23 +540,23 @@ const PatientView = ({ SelectCause, patientdetail }) => {
           <SurgicalCount />
         ) : postSurgeryChary ? (
           <PostSurgeryChart
-          postsurgicalmonitor={SelectCause?.postsurgicalmonitor}
-          patientdetail={patientdetail}
+            postsurgicalmonitor={SelectCause?.postsurgicalmonitor}
+            patientdetail={patientdetail}
           />
         ) : preAnaestheticAsses ? (
           <>
             <PreAnaestheticAsses
-            cause ={SelectCause}
+              cause={SelectCause}
               preanesthetica={SelectCause?.preanesthetica}
               patientdetail={patientdetail}
             />
             {/* <AnaesthesiaRecord /> */}
           </>
         ) : safetyCheck ? (
-          <SafetyCheckList 
-          cause ={SelectCause}
-          safetyChckList={SelectCause?.surgicalsafety}
-          patientdetail={patientdetail}
+          <SafetyCheckList
+            cause={SelectCause}
+            safetyChckList={SelectCause?.surgicalsafety}
+            patientdetail={patientdetail}
           />
         ) : (
           <></>

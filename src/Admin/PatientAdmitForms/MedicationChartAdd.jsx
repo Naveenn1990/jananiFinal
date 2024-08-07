@@ -10,7 +10,7 @@ const MedicationChartAdd = () => {
   // const navigate = useNavigate();
   const location = useLocation();
   const { patientdetails, cause } = location.state || {};
-  
+
   console.log("patientdetails", patientdetails);
   console.log("cause", cause);
 
@@ -34,66 +34,63 @@ const MedicationChartAdd = () => {
   const [DrugDate, setDrugDate] = useState("");
   const [DrugTime, setDrugTime] = useState("");
 
-  const [Drug, setDrug] = useState([])
+  const [Drug, setDrug] = useState([]);
 
-  const adddrug = async()=>{
-   const newDrug = {
-    causename:cause?.CauseName,
-    Drugname:Drugname,
-    DrugDate:DrugDate,
-    DrugTime:DrugTime,
-   }
-   setDrug((prevDrug) => [...prevDrug, newDrug]);
-  }
+  const adddrug = async () => {
+    const newDrug = {
+      causename: cause?.CauseName,
+      Drugname: Drugname,
+      DrugDate: DrugDate,
+      DrugTime: DrugTime,
+    };
+    setDrug((prevDrug) => [...prevDrug, newDrug]);
+  };
   const deleteDrug = async (indexToDelete) => {
     const updatedDrugList = Drug.filter((_, index) => index !== indexToDelete);
     setDrug(updatedDrugList);
   };
 
-const [causeName, setcauseName] = useState("")
+  const [causeName, setcauseName] = useState("");
 
-console.log("causeName",causeName);
-  const submitalldurgs = async()=>{
+  console.log("causeName", causeName);
+  const submitalldurgs = async () => {
     try {
-      const config ={
-        url:"/adddrug",
-        method:"put",
-        baseURL:"http://localhost:8521/api/staff",
-        headers:{"content-type":"application/json"},
-        data:{
-          patientId:patientdetails?._id,
-          causeId:cause?._id,
-          Drug:Drug
-        }
-      }
+      const config = {
+        url: "/adddrug",
+        method: "put",
+        baseURL: "http://localhost:8521/api/staff",
+        headers: { "content-type": "application/json" },
+        data: {
+          patientId: patientdetails?._id,
+          causeId: cause?._id,
+          Drug: Drug,
+        },
+      };
       let res = await axios(config);
-      if(res.status === 200){
-        alert(res.data.success)
+      if (res.status === 200) {
+        alert(res.data.success);
       }
     } catch (error) {
-      alert(error.response.data.error)
+      alert(error.response.data.error);
     }
-  }
+  };
 
-  
   return (
     <div>
       <div>
         <button
           className="mt-2"
           style={{
-            border:"#20958c",
+            border: "#20958c",
             padding: "8px",
             backgroundColor: "#20958c",
             color: "white",
             borderRadius: "6px",
-             boxShadow: " 8px 8px 16px #20958c,-8px -8px 16px #20958c",
-           
+            boxShadow: " 8px 8px 16px #20958c,-8px -8px 16px #20958c",
           }}
           onClick={() => window.history.go(-1)}
         >
-         <FaBackward />  &nbsp;      
-         Back
+          <FaBackward /> &nbsp; Back
         </button>
       </div>
 
@@ -158,15 +155,13 @@ console.log("causeName",causeName);
             <p style={{ fontSize: "17px" }}>
               <div className="container">
                 <div className="row" style={{ border: "1px solid #20958C" }}>
-                  <div
-                    className="col-md-7 consentformhd">
+                  <div className="col-md-7 consentformhd">
                     Patient Name:{" "}
                     <span>
                       {`${patientdetails?.Firstname} ${patientdetails?.Lastname} `}
                     </span>
                   </div>
-                  <div
-                    className="col-md-2 consentformhd">
+                  <div className="col-md-2 consentformhd">
                     Age: <span>{ageOutput}</span>
                   </div>
                   <div
@@ -204,7 +199,21 @@ console.log("causeName",causeName);
                       fontSize: "17px",
                     }}
                   >
-                    Doctors Name: <span>jk</span>
+                    Doctors Name:{" "}
+                    <span>
+                      <br />
+                      {patientdetails?.assigndocts?.map((item, i) => {
+                        return (
+                          <div>
+                            {i + 1}).{" "}
+                            <span style={{ fontWeight: "bold" }}>
+                              Dr.{" "}
+                              {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </span>
                   </div>
                 </div>
                 <div className="mt-2">
@@ -220,72 +229,68 @@ console.log("causeName",causeName);
                     </thead>
                     <tbody>
                       <tr>
-                        <td> 
-                          {cause?.CauseName}
-                          </td>
+                        <td>{cause?.CauseName}</td>
                         <td>
                           <textarea
                             className="vi_0"
                             value={Drugname}
-                           onChange={(e)=>setDrugname(e.target.value)}
-                          ></textarea>
+                            onChange={(e) => setDrugname(e.target.value)}
+                          />
                         </td>
                         <td>
-                        <input
-                          type="date"                       
-                          className="vi_0" 
-                          value={DrugDate}
-                          onChange={(e)=>setDrugDate(e.target.value)}                        
-                        />
+                          <input
+                            type="date"
+                            className="vi_0"
+                            value={DrugDate}
+                            onChange={(e) => setDrugDate(e.target.value)}
+                          />
                         </td>
                         <td>
-                        <input
-                          type="time"                       
-                          className="vi_0"
-                          value={DrugTime}
-                          onChange={(e)=>setDrugTime(e.target.value)}                         
-                        />
+                          <input
+                            type="time"
+                            className="vi_0"
+                            value={DrugTime}
+                            onChange={(e) => setDrugTime(e.target.value)}
+                          />
                         </td>
                         <td>
-                       <Button 
-                       onClick={adddrug}
-                       >
-                       <IoMdAdd />
-                        </Button> 
+                          <Button onClick={adddrug}>
+                            <IoMdAdd />
+                          </Button>
                         </td>
                       </tr>
-{Drug?.map((item,i)=>{
-  return(
-    <tr>
-    <td>{item?.causename}</td>
-    <td>{item?.Drugname}</td>
-    <td>{item?.DrugDate}</td>
-    <td>{item?.DrugTime}</td>
-    <td>
-      <MdDelete 
-      onClick={()=>deleteDrug(i)}
-      style={{
-      cursor:"pointer" , 
-      color:"red"}} />
-      </td>
-  </tr>
-  )
-})}
-                     
+                      {Drug?.map((item, i) => {
+                        return (
+                          <tr>
+                            <td>{item?.causename}</td>
+                            <td>{item?.Drugname}</td>
+                            <td>{item?.DrugDate}</td>
+                            <td>{item?.DrugTime}</td>
+                            <td>
+                              <MdDelete
+                                onClick={() => deleteDrug(i)}
+                                style={{
+                                  cursor: "pointer",
+                                  color: "red",
+                                }}
+                              />
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </Table>
-                </div>              
+                </div>
               </div>
             </p>
           </div>
         </div>
       </div>
-    
+
       <div className="text-center mt-2 mb-2">
-        <button 
-        className="btn btn-success"
-        onClick={submitalldurgs}
-        >Submit</button>
+        <button className="btn btn-success" onClick={submitalldurgs}>
+          Submit
+        </button>
       </div>
     </div>
   );
