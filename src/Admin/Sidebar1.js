@@ -18,6 +18,7 @@ export default function Sidebar1() {
   const [Pharmacy, setPharmacy] = useState(false);
   const [HosM, setHosM] = useState(false);
   const [BedM, setBedM] = useState(false);
+  const [surgery, setsurgery] = useState(false);
 
   function logoutAdmin() {
     sessionStorage.removeItem("adminDetails");
@@ -376,6 +377,25 @@ export default function Sidebar1() {
           >
             Notification
           </h6> */}
+        </div>
+
+        {admin?.bedManagement === true ? (
+          <h6 className="sidebarItem" onClick={() => setsurgery(!surgery)}>
+            surgery Management{surgery ? <IoIosArrowUp /> : <IoIosArrowDown />}
+          </h6>
+        ) : null}
+        <div
+          style={{
+            display: surgery ? "block" : "none",
+            backgroundColor: "#d0f7f4",
+          }}
+        >
+          <h6
+            className="sidebarItem1"
+            onClick={() => navigate("/admin/Addsurgey")}
+          >
+            Add surgery
+          </h6>
         </div>
 
         {admin?.bedManagement === true ? (
