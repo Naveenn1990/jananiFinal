@@ -10,6 +10,7 @@ import { AiFillFileExcel } from "react-icons/ai";
 import { MdDeleteOutline } from "react-icons/md";
 
 export default function HospitalLabTechnician() {
+  const AdminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
   // Select width
 
   //   const [show, setShow] = useState(false);
@@ -246,12 +247,16 @@ export default function HospitalLabTechnician() {
     }
   }, [ChosenLabTest?.testid?._id]);
 
-  const [subtestlist, setsubtestlist] = useState([]);
+  const [subtestlist] = useState([]);
   function addtosubtestlist(item, e) {
+    let val = e.target.value;
+    if (!val) {
+      return;
+    }
     const indexVal = subtestlist.findIndex(
       (x) => x.subtestid?.toString() === item?._id?.toString()
     );
-    if (indexVal > 0) {
+    if (indexVal >= 0) {
       subtestlist[indexVal] = {
         subtestid: item?._id,
         subtestName: item?.subtestName,
@@ -259,36 +264,16 @@ export default function HospitalLabTechnician() {
         subtestunit: item?.unit,
         subtestpatientReportVal: e.target.value,
       };
-    } else {
-      setsubtestlist((curr) => [
-        ...curr,
-        {
-          subtestid: item?._id,
-          subtestName: item?.subtestName,
-          subtestgeneralRefVal: item?.generalRefVal,
-          subtestunit: item?.unit,
-          subtestpatientReportVal: e.target.value,
-        },
-      ]);
+    } else if (indexVal === -1) {
+      subtestlist.push({
+        subtestid: item?._id,
+        subtestName: item?.subtestName,
+        subtestgeneralRefVal: item?.generalRefVal,
+        subtestunit: item?.unit,
+        subtestpatientReportVal: e.target.value,
+      });
     }
-    return alert("Added data successfully");
   }
-
-  function editTosubtestlist(item) {
-    const indexVal = subtestlist.findIndex(
-      (x) => x.subtestid?.toString() === item?._id?.toString()
-    );
-    subtestlist[indexVal] = {
-      subtestid: item?._id,
-      subtestName: item?.subtestName,
-      subtestgeneralRefVal: item?.generalRefVal,
-      subtestunit: item?.unit,
-      subtestpatientReportVal: Labreport,
-    };
-    return alert("Edited data successfully");
-  }
-
-  console.log("subtestlist: ", subtestlist);
 
   const componentRef = useRef();
   const handleprint = useReactToPrint({
@@ -395,14 +380,17 @@ export default function HospitalLabTechnician() {
         data: {
           hospitallabtestid: Labtests?._id,
           labtestid: testid,
-          patientReportVal: Labreport,
+          subTest: subtestlist,
+          technicianReportDateTime: new Date(),
+          reportByTechnician: AdminDetails?._id,
         },
       };
       let res = await axios(config);
       if (res.status === 200) {
         alert(res.data.success);
         GetLabtestList();
-        // handleClose5();
+        handleClose3();
+        handleClose5();
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -744,20 +732,20 @@ export default function HospitalLabTechnician() {
                       )}
                     </td> */}
                     <td>
-                      {item?.Labtests?.length ===
+                      {/* {item?.Labtests?.length ===
                       item?.Labtests?.filter((val) => val.patientReportVal)
-                        ?.length ? (
-                        <Button
-                          onClick={() => {
-                            setLabtests(item);
-                            handleShow10();
-                          }}
-                        >
-                          Confirm
-                        </Button>
-                      ) : (
+                        ?.length ? ( */}
+                      <Button
+                        onClick={() => {
+                          setLabtests(item);
+                          handleShow10();
+                        }}
+                      >
+                        Confirm
+                      </Button>
+                      {/* ) : (
                         <>--/--</>
-                      )}
+                      )} */}
                     </td>
                     <td>
                       <b>{item?.labTestBookingStatus}</b>
@@ -1477,7 +1465,6 @@ export default function HospitalLabTechnician() {
                           <th>Result</th>
                           <th>Unit</th>
                           <th>General Reference Value</th>
-                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1491,31 +1478,17 @@ export default function HospitalLabTechnician() {
                                   type="text"
                                   className="vi_0"
                                   // placeholder={item?.patientReportVal}
-                                  onChange={(e) => addtosubtestlist(item, e)}
+                                  onChange={(e) => {
+                                    let timeoutid;
+                                    timeoutid = setTimeout(() => {
+                                      clearTimeout(timeoutid);
+                                      addtosubtestlist(item, e);
+                                    }, 800);
+                                  }}
                                 />
                               </td>
                               <td>{item?.unit}</td>
                               <td>{item?.generalRefVal}</td>
-                              <td>
-                                {subtestlist?.some(
-                                  (val) =>
-                                    val.subtestid?.toString() ===
-                                    item?._id?.toString()
-                                ) ? (
-                                  <Button
-                                    onClick={() => editTosubtestlist(item)}
-                                  >
-                                    Edit
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    onClick={() => addtosubtestlist(item)}
-                                  >
-                                    {" "}
-                                    save
-                                  </Button>
-                                )}
-                              </td>
                             </tr>
                           );
                         })}
