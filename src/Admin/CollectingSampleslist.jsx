@@ -227,13 +227,6 @@ export default function CollectingSampleslist() {
   }
 
   function addUsedProductsInSampleCollection() {
-    // let isProductAvail = usedProducts.some(
-    //   (val) => val.productid?.toString() === chooseusedProductsid?.toString()
-    // );
-    // if(isProductAvail){
-
-    // }
-
     const isDataAvail = usedProducts.some(
       (val) => val.productid?.toString() === chooseusedProductsid?.toString()
     );
