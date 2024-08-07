@@ -368,6 +368,7 @@ export default function HospitalLabTechnician() {
       setFilteredCatList([...AllTestList1]);
     }
   }
+  // fdsaf
 
   useEffect(() => {
     handleFilter();
@@ -1146,6 +1147,7 @@ export default function HospitalLabTechnician() {
                     padding: "20px",
                   }}
                 >
+                  {/* report hospital info- start */}
                   <div className="">
                     <div
                       className="mb-5 "
@@ -1185,14 +1187,15 @@ export default function HospitalLabTechnician() {
                       </div>
                     </div>
                   </div>
+                  {/* report hospital info- end */}
 
+                  {/* report top-basic information --> start  */}
                   <div
                     className="row"
                     style={{
                       borderBottom: "2px solid",
                       padding: "0px",
                       display: "flex",
-                      //   justifyContent: "space-between",
                     }}
                   >
                     <div className="col-sm-6">
@@ -1295,6 +1298,7 @@ export default function HospitalLabTechnician() {
                       </Table>
                     </div>
                   </div>
+                  {/* report top-basic information --> end  */}
                   <div style={{ marginTop: "20px", marginBottom: "10px" }}>
                     {" "}
                     <h3>{ChosenLabTest?.testName}</h3>
