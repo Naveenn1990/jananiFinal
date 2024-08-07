@@ -57,6 +57,8 @@ export const ReferLabPatientList = () => {
     }
   };
 
+  console.log("LabPatientList", LabPatientList);
+
   const [SearchItem, setSearchItem] = useState("");
   // Pagination
   const [pagination, setPagination] = useState([]);
@@ -64,8 +66,8 @@ export const ReferLabPatientList = () => {
   const usersPerPage = 5;
   const pagesVisited = pageNumber * usersPerPage;
   const pageCount = Math.ceil(pagination?.length / usersPerPage);
-  const changePage = ( selected ) => {
-      setPageNumber(selected);
+  const changePage = (selected) => {
+    setPageNumber(selected);
   };
   const [LabPatientId, setLabPatientId] = useState("");
   const DeleteLabpatient = async () => {
@@ -97,7 +99,6 @@ export const ReferLabPatientList = () => {
         setHospitalLabList([]);
       });
   };
-
 
   const [firstname, setfirstname] = useState("");
   const [lastname, setlastname] = useState("");
@@ -197,120 +198,138 @@ export const ReferLabPatientList = () => {
             ></Button>
           </div>
 
-          <Table bordered>
-            <thead>
-              <tr className="admin-table-head">
-                <th>Sl.No</th>
-                <th>Name</th>
-                <th>Gender</th>
-                <th>Address</th>
-                <th>Mobile</th>
-                <th>Age</th>
-                <th>Blood Group </th>
-                <th>Diesease </th>
-                <th>Test List </th>
-                <th>Actions </th>
-                <th>Refer-Status </th>
-              </tr>
-            </thead>
-            <tbody>
-              {LabPatientList?.slice(pagesVisited, pagesVisited + usersPerPage)?.map((item, i) => {
-                if (
-                  SearchItem === "" ||
-                  Object.values(item).some((value) =>
-                    String(value)
-                      .toLowerCase()
-                      .includes(SearchItem.toLowerCase())
+          <div style={{ overflow: "hidden", overflowX: "scroll" }}>
+            <Table bordered>
+              <thead>
+                <tr className="admin-table-head">
+                  <th>Sl.No</th>
+                  <th>Name</th>
+                  <th>Gender</th>
+                  <th>Address</th>
+                  <th>Mobile</th>
+                  <th>Age</th>
+                  <th>Blood Group </th>
+                  <th>Prescription</th>
+                  <th>Diesease </th>
+                  <th>Test List </th>
+                  <th>Actions </th>
+                  <th>Refer-Status </th>
+                </tr>
+              </thead>
+              <tbody>
+                {LabPatientList?.slice(
+                  pagesVisited,
+                  pagesVisited + usersPerPage
+                )?.map((item, i) => {
+                  if (
+                    SearchItem === "" ||
+                    Object.values(item).some((value) =>
+                      String(value)
+                        .toLowerCase()
+                        .includes(SearchItem.toLowerCase())
+                    )
                   )
-                )
-                  return (
-                    <tr className="admin-table-row">
-                      <td>{i + 1} </td>
-                      <td>{`${item?.LabPatientsFname} ${item?.LabPatientsLname}`}</td>
-                      <td>{item?.Gender}</td>
-                      <td>{item?.Address}</td>
-                      <td>{item?.PhoneNumber}</td>
-                      <td>{item?.Age}</td>
-                      <td>{item?.BloodGroup}</td>
-                      <td>
-                        <div
-                          className="Diseases-btn"
-                          style={{ color: "red", border: "1px solid green" }}
-                        >
-                          {item?.InjuryCondition}
-                        </div>
-                      </td>
-                      <td>
-                        <Button
-                          onClick={() => {
-                            setLabPatientId(item);
-                            handleShow4();
-                          }}
-                        >
-                          Test List
-                        </Button>
-                      </td>
-                      <td>
-                        {item?.isRefer === false ? (
-                          <div className="d-flex gap-4">
-                            <MdEdit
-                              style={{
-                                color: "green",
-                                fontSize: "18px",
-                                cursor: "pointer",
-                              }}
-                              onClick={() => {
-                                handleShow();
-                                setLabPatientId(item);
-                              }}
-                            />
-                            <MdDelete
-                              style={{
-                                color: "red",
-                                fontSize: "18px",
-                                cursor: "pointer",
-                              }}
-                              onClick={() => {
-                                deleteBtnShow();
-                                setLabPatientId(item);
-                              }}
-                            />
+                    return (
+                      <tr className="admin-table-row">
+                        <td>{i + 1} </td>
+                        <td>{`${item?.LabPatientsFname} ${item?.LabPatientsLname}`}</td>
+                        <td>{item?.Gender}</td>
+                        <td>{item?.Address}</td>
+                        <td>{item?.PhoneNumber}</td>
+                        <td>{item?.Age}</td>
+                        <td>{item?.BloodGroup}</td>
+                        <td>
+                          <a
+                            target="_blank"
+                            href={`http://localhost:8521/ClinicLab/${item?.OldPrescription}`}
+                          >
+                            View
+                          </a>
+                        </td>
+                        <td>
+                          <div
+                            className="Diseases-btn"
+                            style={{ color: "red", border: "1px solid green" }}
+                          >
+                            {item?.InjuryCondition}
                           </div>
-                        ) : (
-                          <p>Can't Do Anything</p>
-                        )}
-                      </td>
-                      <td>
-                        {item?.isRefer === false ? (
+                        </td>
+                        <td>
                           <Button
                             onClick={() => {
-                              handleShow3();
                               setLabPatientId(item);
+                              handleShow4();
                             }}
                           >
-                            {" "}
-                            Refer{" "}
+                            Test List
                           </Button>
-                        ) : (
-                          <p>Refered</p>
-                        )}
-                      </td>
-                    </tr>
-                  );
-              })}
-            </tbody>
-          </Table>
-          <div style={{justifyContent:"end"}} className="my-3 d-flex justify-end">
-                        <Stack spacing={2}>
-                            <Pagination
-                                count={pageCount}
-                                onChange={(event, value)=>{
-                                    changePage(value-1)
-                                  }}
-                                color="primary"                          
-                            />
-                        </Stack>
-                    </div>
+                        </td>
+                        <td>
+                          {item?.isRefer === false ? (
+                            <div className="d-flex gap-4">
+                              <MdEdit
+                                style={{
+                                  color: "green",
+                                  fontSize: "18px",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => {
+                                  handleShow();
+                                  setLabPatientId(item);
+                                }}
+                              />
+                              <MdDelete
+                                style={{
+                                  color: "red",
+                                  fontSize: "18px",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => {
+                                  deleteBtnShow();
+                                  setLabPatientId(item);
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            <p>Can't Do Anything</p>
+                          )}
+                        </td>
+                        <td>
+                          {item?.isRefer === false ? (
+                            <Button
+                              onClick={() => {
+                                handleShow3();
+                                setLabPatientId(item);
+                              }}
+                            >
+                              {" "}
+                              Refer{" "}
+                            </Button>
+                          ) : (
+                            <p>Refered</p>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                })}
+              </tbody>
+            </Table>
+          </div>
+
+          <div
+            style={{ justifyContent: "end" }}
+            className="my-3 d-flex justify-end"
+          >
+            <Stack spacing={2}>
+              <Pagination
+                count={pageCount}
+                onChange={(event, value) => {
+                  changePage(value - 1);
+                }}
+                color="primary"
+              />
+            </Stack>
+          </div>
         </div>
       </Container>
 
@@ -798,7 +817,7 @@ export const ReferLabPatientList = () => {
               {LabPatientId?.Labtests?.map((item, i) => {
                 return (
                   <tr>
-                    <td>{i+1}</td>
+                    <td>{i + 1}</td>
                     <td>{item?.testName}</td>
                   </tr>
                 );
