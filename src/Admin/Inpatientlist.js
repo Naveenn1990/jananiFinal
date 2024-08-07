@@ -331,6 +331,8 @@ export default function Inpatientlist() {
         console.log(error);
       });
   };
+  console.log("IPDPatientList",IPDPatientList);
+  
 
   const [Doctors, setDoctors] = useState([]);
   const getDoctors = () => {

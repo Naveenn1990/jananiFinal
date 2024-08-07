@@ -326,6 +326,7 @@ export const ReferDoctorPatientList = () => {
                 <th className="fw-bold">Mobile</th>
                 <th className="fw-bold">DOB</th>
                 <th className="fw-bold">Blood Group </th>
+                <th className="fw-bold">prescription</th>
                 <th className="fw-bold">Diesease </th>
                 <th className="fw-bold">Refer</th>
                 <th className="fw-bold">Actions </th>
@@ -359,7 +360,14 @@ export const ReferDoctorPatientList = () => {
                         </div>
                       </td>
                       <td>{item?.BloodGroup}</td>
-
+                      <td>
+                          <a
+                            target="_blank"
+                            href={`http://localhost:8521/Doctor/${item?.oldprescriptionDoc}`}
+                          >
+                            View
+                          </a>
+                        </td>
                       <td>
                         <div
                           className="Diseases-btn"

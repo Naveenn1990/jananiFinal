@@ -1,9 +1,12 @@
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import moment from "moment";
 import React from "react";
 import { Button, Table } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
 
-const DoctorNotes = ({DoctorsNotes,patientdetail}) => {
-  console.log("check",DoctorsNotes);
+const DoctorNotes = ({ DoctorsNotes, patientdetail, cause }) => {
+  console.log("check", DoctorsNotes);
   const dobString = patientdetail?.DOB;
   const dob = new Date(dobString);
   const currentDate = new Date();
@@ -17,6 +20,35 @@ const DoctorNotes = ({DoctorsNotes,patientdetail}) => {
   } else {
     ageOutput = `${ageYears} years`;
   }
+
+  // PDF Generate
+
+  const createPDF = async () => {
+    try {
+      const pdf = new jsPDF("portrait", "pt", "a4");
+      const element = document.querySelector("#pdf");
+      const data = await html2canvas(element, {
+        useCORS: true,
+        scale: 2,
+      });
+      const img = data.toDataURL("image/png");
+      const imgProperties = pdf.getImageProperties(img);
+      const scaleFactor =
+        pdf.internal.pageSize.getWidth() / imgProperties.width;
+      const pdfHeight = imgProperties.height * scaleFactor;
+      pdf.addImage(
+        img,
+        "PNG",
+        0,
+        0,
+        pdf.internal.pageSize.getWidth(),
+        pdfHeight
+      );
+      pdf.save("doctornotes.pdf");
+    } catch (error) {
+      console.error("An error occurred while creating the PDF:", error);
+    }
+  };
   return (
     <>
       <div className="mt-2 d-dlex text-end gap-2">
@@ -29,8 +61,9 @@ const DoctorNotes = ({DoctorsNotes,patientdetail}) => {
             borderRadius: "0px",
             marginRight: "20px",
           }}
+          onClick={createPDF}
         >
-          Print <FiDownload />
+          Download <FiDownload />
         </Button>
       </div>
       <div className="text-center mt-1">
@@ -101,7 +134,8 @@ const DoctorNotes = ({DoctorsNotes,patientdetail}) => {
               <tbody>
                 <tr>
                   <td style={{ width: "33%", border: "2px  solid #20958C" }}>
-                    Name:{`${patientdetail?.Firstname} ${patientdetail?.Lastname}`}
+                    Name:
+                    {`${patientdetail?.Firstname} ${patientdetail?.Lastname}`}
                   </td>
                   <td style={{ width: "33%", border: "2px  solid #20958C" }}>
                     Age:{ageOutput}
@@ -125,23 +159,45 @@ const DoctorNotes = ({DoctorsNotes,patientdetail}) => {
                     Pt ID:{patientdetail?.PatientId}
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Ward:
+                    Ward :{" "}
+                    {cause?.causeBillDetails?.[0]?.BedBillDetails?.map(
+                      (item) => {
+                        return <span> {item?.bedName}</span>;
+                      }
+                    )}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Dept:{" "}
+                    Dept :{" "}
+                    {cause?.causeBillDetails?.[0]?.BedBillDetails?.map(
+                      (item) => {
+                        return <span> {item?.wardtype}</span>;
+                      }
+                    )}
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Doctor:{" "}
+                    Doctor : <br />
+                    {patientdetail?.assigndocts?.map((item, i) => {
+                      return (
+                        <div>
+                          {i + 1}).{" "}
+                          <span style={{ fontWeight: "bold" }}>
+                            Dr.{" "}
+                            {`${item?.doctorsId?.Firstname} ${item?.doctorsId?.Lastname}`}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    DOA:{" "}
+                    DOA :{" "}
+                    {moment(patientdetail?.createdAt)?.format("DD-MM-YYYY")}
                   </td>
                   <td style={{ width: "50%", border: "2px  solid #20958C" }}>
-                    Known Drug Allergies:{" "}
+                    Known Drug Allergies : {patientdetail?.patientAllergies}
                   </td>
                 </tr>
                 <tr>
@@ -149,7 +205,7 @@ const DoctorNotes = ({DoctorsNotes,patientdetail}) => {
                     colSpan={2}
                     style={{ width: "100%", border: "2px  solid #20958C" }}
                   >
-                    Diagnosis:
+                    Diagnosis : {cause?.CauseName}
                   </td>
                 </tr>
               </tbody>
@@ -175,24 +231,34 @@ const DoctorNotes = ({DoctorsNotes,patientdetail}) => {
                 </tr>
               </thead>
               <tbody>
-                {DoctorsNotes?.map((item)=>{
-                  return(
-                  <tr style={{ textAlign: "center" }}>
-                  <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    {item?.DNDate} - {item?.DNTime}
-                  </td>
-                  <td style={{ width: "60%", border: "2px  solid #20958C" }}>
-                    {item?.DNOtes}
-                  </td>
-                  <td style={{ width: "20%", border: "2px  solid #20958C" }}>
-                    sign pending
-                  </td>
-                </tr>
-                  )
+                {DoctorsNotes?.map((item) => {
+                  return (
+                    <tr style={{ textAlign: "center" }}>
+                      <td
+                        style={{ width: "20%", border: "2px  solid #20958C" }}
+                      >
+                        {moment(item?.DNDate).format(
+                          item?.isTime ? "HH:mm" : "DD-MM-YYYY"
+                        )}
+                      </td>
+                      <td
+                        style={{ width: "60%", border: "2px  solid #20958C" }}
+                      >
+                        {item?.DNOtes}
+                      </td>
+                      <td
+                        style={{ width: "20%", border: "2px  solid #20958C" }}
+                      >
+                        <img
+                          alt="sign"
+                          src={`http://localhost:8521/PatientREG/${item?.doctornotesSignature}`}
+                        />
+                      </td>
+                    </tr>
+                  );
                 })}
-                
               </tbody>
-            </Table>          
+            </Table>
           </div>
         </div>
       </div>
