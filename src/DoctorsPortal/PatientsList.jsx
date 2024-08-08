@@ -46,6 +46,43 @@ export const PatientsList = () => {
   const handleClose6 = () => setShow6(false);
   const handleShow6 = () => setShow6(true);
 
+  const [selectedPatient_Surgery, setselectedPatient_Surgery] = useState({});
+  const [showSurgery, setShowSurgery] = useState(false);
+  const handleCloseSurgery = () => setShowSurgery(false);
+  const handleShowSurgery = (item) => {
+    setShowSurgery(true);
+    setselectedPatient_Surgery(item);
+  };
+  const [selectedCauseid_Surgery, setselectedCauseid_Surgery] = useState();
+  const [SurgeryDoctor, setSurgeryDoctor] = useState([]);
+
+  useEffect(() => {
+    getDoctors();
+  }, []);
+
+  const getDoctors = () => {
+    axios
+      .get("http://localhost:8521/api/Doctor/getDoctorsList")
+      .then(function (response) {
+        // handle success
+        setSurgeryDoctor(
+          response.data.DoctorsInfo?.filter(
+            (data) =>
+              data.DoctorType === "hospital" && data.Department === "Surgery"
+          )
+        );
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+  };
+
+  console.log("SurgeryDoctor", SurgeryDoctor);
+
+  console.log("selectedCauseid_Surgery", selectedCauseid_Surgery);
+  console.log("selectedPatient_Surgery", selectedPatient_Surgery);
+
   const createPDF = async () => {
     const input = document.getElementById("pdf");
     const options = { scrollY: -window.scrollY };
@@ -162,7 +199,7 @@ export const PatientsList = () => {
         setdescription("");
         setdocs("");
         getpatientlist();
-        historyList()
+        historyList();
         alert(res.data.msg);
       }
     } catch (error) {
@@ -434,13 +471,12 @@ export const PatientsList = () => {
                         </div>
                       </div>
                       {FilterPatientType === "OPD" ? (
-                      <div>
-                        <div className="text-center">
-                          {" "}
-                          <b>Prescription : </b>
-                        </div>
-                        <div className="mt-2">
-                         
+                        <div>
+                          <div className="text-center">
+                            {" "}
+                            <b>Prescription : </b>
+                          </div>
+                          <div className="mt-2">
                             <button
                               title="Daily Doctor report"
                               className="table-details-btn mb-2"
@@ -451,33 +487,49 @@ export const PatientsList = () => {
                             >
                               Prescription
                             </button>
-                          
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                      <div className=" justify-content-between mt-2">
-                        <div className="text-center">
-                          <b>Other Reports</b>
+                      ) : (
+                        <></>
+                      )}
+                      {FilterPatientType === "IPD" ? (
+                        <div
+                          className=" justify-content-between mt-2"
+                          style={{ display: "flex" }}
+                        >
+                          <div>
+                            <b>Other Reports</b>
+                            <div>
+                              <button
+                                title="Daily Doctor report"
+                                className="table-details-btn"
+                                // onClick={() => {
+                                //   setchosenPatient(item._id);
+                                //   medHistoryShow1();
+                                // }}
+                              >
+                                Other Reports
+                              </button>
+                            </div>
+                          </div>
+                          <div>
+                            <b>Refer for Surgery</b>
+                            <div>
+                              <button
+                                title="Daily Doctor report"
+                                className="table-details-btn"
+                                onClick={() => {
+                                  handleShowSurgery(item);
+                                }}
+                              >
+                                Refer +
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-center">
-                          {FilterPatientType === "IPD" ? (
-                            <button
-                              title="Daily Doctor report"
-                              className="table-details-btn"
-                              // onClick={() => {
-                              //   setchosenPatient(item._id);
-                              //   medHistoryShow1();
-                              // }}
-                            >
-                              Other Reports
-                            </button>
-                          ) : (
-                            <></>
-                          )}
-                        </div>
-                      </div>
+                      ) : (
+                        <></>
+                      )}
                     </ListGroup.Item>
                     <ListGroup.Item>
                       {/* <p>Blood Group: O+</p> */}
@@ -969,6 +1021,62 @@ export const PatientsList = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose6}>
+            Close
+          </Button>
+          {selectedcauseid?.cause?.length > 0 ? (
+            <Button
+              variant="primary"
+              onClick={() =>
+                navigate(`/patientcasestudy`, {
+                  state: { item: JSON.parse(SelectTime) },
+                })
+              }
+            >
+              Submit
+            </Button>
+          ) : (
+            ""
+          )}
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showSurgery} onHide={handleCloseSurgery}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Refer For Surgery - {selectedPatient_Surgery?.Firstname}&nbsp;
+            {selectedPatient_Surgery?.Lastname}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {!selectedCauseid_Surgery ? (
+            <Form.Select
+              onChange={(e) => setselectedCauseid_Surgery(e.target.value)}
+              aria-label="Default select example"
+            >
+              <option>select date</option>
+              {selectedPatient_Surgery?.cause?.map((item) => {
+                return <option value={item?._id}>{item?.CauseName}</option>;
+              })}
+            </Form.Select>
+          ) : (
+            <>
+              <Form.Select
+                onChange={(e) => setselectedCauseid_Surgery(e.target.value)}
+                aria-label="Default select example"
+              >
+                <option>select Doctor</option>
+                {SurgeryDoctor?.map((item) => {
+                  return (
+                    <option value={item?._id}>
+                      {item?.Firstname}&nbsp;{item?.Lastname} - {item?.DoctorId}
+                    </option>
+                  );
+                })}
+              </Form.Select>
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseSurgery}>
             Close
           </Button>
           {selectedcauseid?.cause?.length > 0 ? (

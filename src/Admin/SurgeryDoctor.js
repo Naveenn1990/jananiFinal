@@ -21,7 +21,7 @@ import {
   AiOutlinePlusCircle,
 } from "react-icons/ai";
 
-export default function Hospitaldoctors() {
+export default function SurgeryDoctor() {
   const Input = styled("input")({
     display: "none",
   });
@@ -239,7 +239,7 @@ export default function Hospitaldoctors() {
       phonenumber(mobileno) &&
       CheckPassword(password)
     ) {
-      formdata.set("DoctorType", "hospital");
+      formdata.set("DoctorType", "Surgery");
       formdata.set("Firstname", doctorfirstname);
       formdata.set("Lastname", doctorlastname);
       formdata.set("Gender", gender);
@@ -438,7 +438,7 @@ export default function Hospitaldoctors() {
         // handle success
         setdata(
           response.data.DoctorsInfo?.filter(
-            (data) => data.DoctorType === "hospital"
+            (data) => data.DoctorType === "Surgery"
           )
         );
       })
@@ -729,9 +729,9 @@ export default function Hospitaldoctors() {
 
   const [scheduleDate, setScheduleDate] = useState("");
   const [timeInterval, settimeInterval] = useState("");
-  // const [startTime, setStartTime] = useState("");
-  // const [endTime, setEndTime] = useState("");
-  const [endTime, startTime] = timeInterval.split(" - ");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  //   const [endTime, startTime] = timeInterval.split(" - ");
   const handleTimeChange = (e, setTime) => {
     const [hours, minutes] = e.target.value.split(":");
     const period = hours >= 12 ? "PM" : "AM";
@@ -748,8 +748,11 @@ export default function Hospitaldoctors() {
     if (!scheduleDate) {
       return alert("Select date..!");
     }
-    if (!timeInterval) {
-      return alert("Select time..!");
+    if (!startTime) {
+      return alert("Select start time..!");
+    }
+    if (!endTime) {
+      return alert("Select end time..!");
     }
     const newSchedule = {
       scheduleDate,
@@ -824,7 +827,7 @@ export default function Hospitaldoctors() {
     <div>
       <div style={{ padding: "1%" }}>
         <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-          Hospital doctors
+          Surgery doctors
         </h6>
         <div
           style={{
@@ -1852,16 +1855,14 @@ export default function Hospitaldoctors() {
                         onChange={(e) => handleTimeChange(e, setStartTime)}
                       /> */}
                         <Form.Select
-                          value={timeInterval}
+                          value={startTime}
                           className="vi_0"
-                          onChange={(e) => settimeInterval(e.target.value)}
+                          onChange={(e) => setStartTime(e.target.value)}
                         >
                           <option value="">Select Time</option>
                           {allTimes?.map((item) => {
                             return (
-                              <option
-                                value={`${item?.gettime} - ${item?.settime}`}
-                              >
+                              <option value={item?.settime}>
                                 {item?.settime}
                               </option>
                             );
@@ -1876,7 +1877,21 @@ export default function Hospitaldoctors() {
                         type="time"
                         onChange={(e) => handleTimeChange(e, setEndTime)}
                       /> */}
-                        <Form.Control className="vi_0" value={endTime} />
+                        {/* <Form.Control className="vi_0" value={endTime} /> */}
+                        <Form.Select
+                          value={endTime}
+                          className="vi_0"
+                          onChange={(e) => setEndTime(e.target.value)}
+                        >
+                          <option value="">Select Time</option>
+                          {allTimes?.map((item) => {
+                            return (
+                              <option value={item?.settime}>
+                                {item?.settime}
+                              </option>
+                            );
+                          })}
+                        </Form.Select>
                       </Form.Group>
                     </td>
                     <td>
@@ -2454,33 +2469,33 @@ export default function Hospitaldoctors() {
                             </a>
                           </td>
                           {/* <td>
-                          <div
-                            style={{
-                              display: "flex",
-                              textAlign: "center",
-                              justifyContent: "space-evenly",
-                            }}
-                          >
-                            <MdEdit
-                              style={{ color: "#20958c", marginRight: "1%" }}
-                              onClick={() => setShow4(true)}
-                            />
-                            <AiFillDelete style={{ color: "red" }} />
-                            <br></br>
-                          </div>
-                          <button
-                            style={{
-                              fontSize: "12px",
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              fontWeight: "600",
-                              borderRadius: "4px",
-                            }}
-                          >
-                            BLOCK
-                          </button>
-                        </td> */}
+                <div
+                  style={{
+                    display: "flex",
+                    textAlign: "center",
+                    justifyContent: "space-evenly",
+                  }}
+                >
+                  <MdEdit
+                    style={{ color: "#20958c", marginRight: "1%" }}
+                    onClick={() => setShow4(true)}
+                  />
+                  <AiFillDelete style={{ color: "red" }} />
+                  <br></br>
+                </div>
+                <button
+                  style={{
+                    fontSize: "12px",
+                    border: "none",
+                    backgroundColor: "#20958c",
+                    color: "white",
+                    fontWeight: "600",
+                    borderRadius: "4px",
+                  }}
+                >
+                  BLOCK
+                </button>
+              </td> */}
 
                           <td
                             style={{
@@ -2662,13 +2677,13 @@ export default function Hospitaldoctors() {
                                 )}
 
                                 {/* <li>
-                                <a
-                                  href="javascript:;"
-                                  style={{ textDecoration: "none", color: "#20958c" }}
-                                >
-                                  <i class="fa fa-file-excel-o"style={{marginRight:"2%"}}></i> Export to Excel{" "}
-                                </a>
-                              </li> */}
+                      <a
+                        href="javascript:;"
+                        style={{ textDecoration: "none", color: "#20958c" }}
+                      >
+                        <i class="fa fa-file-excel-o"style={{marginRight:"2%"}}></i> Export to Excel{" "}
+                      </a>
+                    </li> */}
                               </ul>
                             </div>
                           </td>
