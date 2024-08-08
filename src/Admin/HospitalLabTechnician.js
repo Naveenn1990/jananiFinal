@@ -7,8 +7,10 @@ import { useReactToPrint } from "react-to-print";
 import ReactPaginate from "react-paginate";
 import exportFromJSON from "export-from-json";
 import { AiFillFileExcel } from "react-icons/ai";
+import { MdDeleteOutline } from "react-icons/md";
 
 export default function HospitalLabTechnician() {
+  const AdminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
   // Select width
 
   //   const [show, setShow] = useState(false);
@@ -61,6 +63,217 @@ export default function HospitalLabTechnician() {
   const [show10, setShow10] = useState(false);
   const handleClose10 = () => setShow10(false);
   const handleShow10 = () => setShow10(true);
+
+  const [ChosenLabTest, setChosenLabTest] = useState({});
+  console.log("ChosenLabTest12: ", ChosenLabTest);
+
+  const [relatedSubTests, setrelatedSubTests] = useState([]);
+  const [usedProducts, setUsedProducts] = useState([]);
+  const [chooseusedProducts, setchooseUsedProducts] = useState("");
+  const [chooseusedProductsid, setchooseUsedProductsid] = useState("");
+  const [ChoosedProductAvailQuantity, setChoosedProductAvailQuantity] =
+    useState(0);
+  const [chooseusedProductsQuantity, setchooseUsedProductsQuantity] =
+    useState("");
+
+  const [EditCollectedTechnicianProducts, setEditCollectedTechnicianProducts] =
+    useState(false);
+
+  function handleQuantityChange(e) {
+    if (e.target.value) {
+      if (
+        Number(e.target.value) >= 1 &&
+        Number(e.target.value) <= Number(ChoosedProductAvailQuantity)
+      ) {
+        setchooseUsedProductsQuantity(Number(e.target.value));
+      } else {
+        return alert("Product Quantity out of bound!");
+      }
+    }
+  }
+  function addUsedProductsInLabTechnician() {
+    const isDataAvail = usedProducts.some(
+      (val) => val.productid?.toString() === chooseusedProductsid?.toString()
+    );
+
+    if (!isDataAvail) {
+      setUsedProducts((curr) => [
+        ...curr,
+        {
+          productid: chooseusedProductsid,
+          productName: chooseusedProducts,
+          Quantity: chooseusedProductsQuantity,
+        },
+      ]);
+    } else {
+      setUsedProducts([
+        ...usedProducts?.map((val) => {
+          if (val?.productid?.toString() === chooseusedProductsid?.toString()) {
+            return {
+              ...val,
+              Quantity: val?.Quantity + chooseusedProductsQuantity,
+            };
+          }
+          return val;
+        }),
+      ]);
+    }
+  }
+
+  console.log("usedProducts: ", usedProducts);
+
+  function removeUsedProductsInLabTechnician(id) {
+    console.log("uiouio; ", id);
+    setUsedProducts([
+      ...usedProducts.filter(
+        (val) => val?.productid?.toString() !== id?.toString()
+      ),
+    ]);
+  }
+
+  const [flag, setFlag] = useState(false);
+  const AddLabtechProducts = async (labtestid) => {
+    try {
+      const config = {
+        url: "/AddLabtechProducts",
+        method: "put",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "application/json" },
+        data: {
+          hospitallabtestid: Labtests?._id,
+          labtestid: labtestid,
+          // technicianUsedProducts: usedProducts,
+          productid: chooseusedProductsid,
+          productName: chooseusedProducts,
+          Quantity: chooseusedProductsQuantity,
+        },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+
+        setChosenLabTest(
+          res.data.technicianProductsUpdation?.Labtests?.find(
+            (x) => x._id.toString() === ChosenLabTest?._id?.toString()
+          )
+        );
+        setEditCollectedTechnicianProducts(false);
+        setchooseUsedProducts("");
+        setchooseUsedProductsid("");
+        setChoosedProductAvailQuantity("");
+        setchooseUsedProductsQuantity("");
+        setFlag(true);
+        GetLabtestList();
+        LabInventoryListFn();
+        setUsedProducts([]);
+        handleClose2();
+        GetLabtestList();
+      }
+    } catch (error) {
+      console.log(error);
+      return alert(error.response.data.error);
+    }
+  };
+
+  const removelabtechProductData = async (
+    labtestid,
+    removedUsedProductid,
+    labtechProductid,
+    labtechQuantity
+  ) => {
+    try {
+      const config = {
+        url: "/removeLabtechUsedProduct",
+        method: "put",
+        baseURL: "http://localhost:8521/api/user",
+        headers: { "content-type": "application/json" },
+        data: {
+          hospitallabtestid: Labtests?._id,
+          labtestid: labtestid,
+          removedUsedProductid,
+          labtechProductid,
+          labtechQuantity,
+        },
+      };
+      const res = await axios(config);
+      if (res.status === 200) {
+        alert(res.data.success);
+        setUsedProducts([]);
+        console.log(
+          "res.data.labtechUpdation?.Labtests: ",
+          res.data.labtechUpdation
+        );
+        setChosenLabTest(
+          res.data.labtechUpdation?.Labtests?.find(
+            (x) => x._id.toString() === ChosenLabTest?._id?.toString()
+          )
+        );
+        LabInventoryListFn();
+        handleClose2();
+        GetLabtestList();
+      }
+    } catch (error) {
+      console.log(error);
+      return alert(error.response.data.error);
+    }
+  };
+
+  useEffect(() => {
+    async function getAllSubTests() {
+      try {
+        const res = await axios.get(
+          "http://localhost:8521/api/admin/getHospitalLabsubTestlist"
+        );
+        if (res.status === 200) {
+          setrelatedSubTests(
+            res.data.HospitalLabSubTest?.filter(
+              (val) =>
+                val.labtestid?._id?.toString() ===
+                ChosenLabTest?.testid?._id?.toString()
+            )
+          );
+        }
+      } catch (error) {
+        console.log(error);
+        if (error.response) {
+          return alert(error.response.data.error);
+        } else {
+          return alert("Server is not responding!");
+        }
+      }
+    }
+    if (ChosenLabTest?.testid?._id) {
+      getAllSubTests();
+    }
+  }, [ChosenLabTest?.testid?._id]);
+
+  const [subtestlist] = useState([]);
+  function addtosubtestlist(item, e) {
+    let val = e.target.value;
+    if (!val) {
+      return;
+    }
+    const indexVal = subtestlist.findIndex(
+      (x) => x.subtestid?.toString() === item?._id?.toString()
+    );
+    if (indexVal >= 0) {
+      subtestlist[indexVal] = {
+        subtestid: item?._id,
+        subtestName: item?.subtestName,
+        subtestgeneralRefVal: item?.generalRefVal,
+        subtestunit: item?.unit,
+        subtestpatientReportVal: e.target.value,
+      };
+    } else if (indexVal === -1) {
+      subtestlist.push({
+        subtestid: item?._id,
+        subtestName: item?.subtestName,
+        subtestgeneralRefVal: item?.generalRefVal,
+        subtestunit: item?.unit,
+        subtestpatientReportVal: e.target.value,
+      });
+    }
+  }
 
   const componentRef = useRef();
   const handleprint = useReactToPrint({
@@ -167,14 +380,17 @@ export default function HospitalLabTechnician() {
         data: {
           hospitallabtestid: Labtests?._id,
           labtestid: testid,
-          patientReportVal: Labreport,
+          subTest: subtestlist,
+          technicianReportDateTime: new Date(),
+          reportByTechnician: AdminDetails?._id,
         },
       };
       let res = await axios(config);
       if (res.status === 200) {
         alert(res.data.success);
         GetLabtestList();
-        // handleClose5();
+        handleClose3();
+        handleClose5();
       }
     } catch (error) {
       alert(error.response.data.error);
@@ -268,6 +484,26 @@ export default function HospitalLabTechnician() {
     }
   };
 
+  // ==========================================
+
+  const [InventoryOrderList, setInventoryOrderList] = useState([]);
+  const LabInventoryListFn = async () => {
+    try {
+      const res = await axios.get(
+        " http://localhost:8521/api/lab/getlabInventory "
+      );
+      if (res.status === 200) {
+        setInventoryOrderList(res.data.inventoryList);
+      }
+    } catch (error) {
+      console.log(error);
+      setInventoryOrderList([]);
+    }
+  };
+  useEffect(() => {
+    LabInventoryListFn();
+  }, []);
+
   // search
   const [search, setSearch] = useState("");
   let [FilteredCatList, setFilteredCatList] = useState([]);
@@ -286,6 +522,7 @@ export default function HospitalLabTechnician() {
       setFilteredCatList([...AllTestList1]);
     }
   }
+  // fdsaf
 
   useEffect(() => {
     handleFilter();
@@ -332,6 +569,18 @@ export default function HospitalLabTechnician() {
   return (
     <div>
       <div style={{ padding: "1%" }}>
+        <div>
+          <h6
+            style={{
+              fontSize: "22px",
+              fontWeight: "600",
+              color: "grey",
+              marginTop: "10px",
+            }}
+          >
+            LAB TECHNICIAN
+          </h6>
+        </div>
         <div
           style={{
             display: "flex",
@@ -375,8 +624,6 @@ export default function HospitalLabTechnician() {
                 <th>Phone No</th>
                 <th>Email</th>
                 <th>Test Date</th>
-                <th>Test List</th>
-                <th>Total Amount</th>
                 {/* <th>Payment Status</th> */}
                 <th>Add Report</th>
                 {/* <th>Invoice</th> */}
@@ -401,9 +648,9 @@ export default function HospitalLabTechnician() {
                       )}
                     </td> */}
                     <td>
-                      {item?.patientid?._id ? (
+                      {item?.patientid?.PatientId ? (
                         <>
-                          {item?.patientid?._id}(
+                          {item?.patientid?.PatientId}(
                           {item?.patientid?.registrationType})
                         </>
                       ) : (
@@ -414,43 +661,6 @@ export default function HospitalLabTechnician() {
                     <td>{item?.Phoneno}</td>
                     <td>{item?.email}</td>
                     <td>{moment(item?.testDate).format("DD/MM/YYYY")}</td>
-                    <td>
-                      <Button
-                        onClick={() => {
-                          handleShow2();
-                          setLabtests(item);
-                        }}
-                      >
-                        View
-                      </Button>
-                    </td>
-                    <td>
-                      {item?.patientid?._id &&
-                      item?.patientid?.haveInsurance ? (
-                        <>
-                          ₹
-                          {item?.Labtests?.reduce(
-                            (acc, curr) => acc + curr.priceInsurance,
-                            0
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          ₹
-                          {item?.Labtests?.reduce(
-                            (acc, curr) => acc + curr.priceNonInsurance,
-                            0
-                          )}
-                        </>
-                      )}
-                    </td>
-                    {/* <td>
-                      {item?.paymentStatus === "UNPAID" ? (
-                        <b style={{ color: "red" }}>UNPAID</b>
-                      ) : (
-                        <b style={{ color: "green" }}>PAID</b>
-                      )}
-                    </td> */}
 
                     <td>
                       {item?.labTestBookingStatus === "TECHNICIAN DONE" ? (
@@ -459,7 +669,8 @@ export default function HospitalLabTechnician() {
                         item?.patientid?.registrationType === "IPD" ? (
                         <Button
                           onClick={() => {
-                            handleShow5();
+                            // handleShow5();
+                            handleShow2();
                             setLabtests(item);
                           }}
                         >
@@ -521,20 +732,20 @@ export default function HospitalLabTechnician() {
                       )}
                     </td> */}
                     <td>
-                      {item?.Labtests?.length ===
+                      {/* {item?.Labtests?.length ===
                       item?.Labtests?.filter((val) => val.patientReportVal)
-                        ?.length ? (
-                        <Button
-                          onClick={() => {
-                            setLabtests(item);
-                            handleShow10();
-                          }}
-                        >
-                          Confirm
-                        </Button>
-                      ) : (
+                        ?.length ? ( */}
+                      <Button
+                        onClick={() => {
+                          setLabtests(item);
+                          handleShow10();
+                        }}
+                      >
+                        Confirm
+                      </Button>
+                      {/* ) : (
                         <>--/--</>
-                      )}
+                      )} */}
                     </td>
                     <td>
                       <b>{item?.labTestBookingStatus}</b>
@@ -776,8 +987,7 @@ export default function HospitalLabTechnician() {
                   <tr>
                     <th>Sl.</th>
                     <th>Test Name</th>
-                    <th>Test Price</th>
-                    <th>Test Price(Insurance)</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -786,8 +996,16 @@ export default function HospitalLabTechnician() {
                       <tr>
                         <td>{i + 1}</td>
                         <td>{item?.testName}</td>
-                        <td>{item?.priceNonInsurance}</td>
-                        <td>{item?.priceInsurance}</td>
+                        <td>
+                          <Button
+                            onClick={() => {
+                              setChosenLabTest(item);
+                              handleShow5();
+                            }}
+                          >
+                            Report
+                          </Button>
+                        </td>
                       </tr>
                     );
                   })}
@@ -1083,58 +1301,161 @@ export default function HospitalLabTechnician() {
                     padding: "20px",
                   }}
                 >
+                  {/* report hospital info- start */}
                   <div className="">
-                    <div className="mb-5">
-                      <img
-                        style={{ width: "40px", height: "40px" }}
-                        className="logo me-2 "
-                        src="/img/logo.png"
-                        alt="Logo"
-                      />{" "}
-                      <br />
-                      <span
-                        className="fw-bold fs-4"
-                        style={{ color: "rgb(32 139 140)" }}
+                    <div
+                      className="mb-5 "
+                      style={{
+                        display: "flex",
+                      }}
+                    >
+                      <div>
+                        <img
+                          style={{ width: "115px", height: "115px" }}
+                          className="logo me-2 "
+                          src="/img/logo.png"
+                          alt="Logo"
+                        />{" "}
+                      </div>
+                      <div
+                        className="text-center"
+                        style={{ marginLeft: "30px" }}
                       >
-                        JANANI
-                      </span>
-                      <br />
-                      <span>JananiPharmacy@gmail.com</span>
-                      <br />
-                      <span>+1999212993</span>
-                      <br />
-                      <span>Singapur Layout, Banglore</span>
-                      <br />
+                        <span
+                          className="fw-bold fs-4"
+                          style={{ color: "rgb(32 139 140)" }}
+                        >
+                          JANANI CLINICAL LABORATORY
+                        </span>
+                        <br />
+                        <div>
+                          <b>
+                            Upstair Canara bank , Near BDA Cross, KK Colony,
+                            Jalanagar Main Road, Vijayapur--586109
+                          </b>
+                          <div>
+                            Phone:- 08352-277077 ,9606831158 , Email:-
+                            jananihospital2018@gmail.com
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  {/* report hospital info- end */}
 
+                  {/* report top-basic information --> start  */}
                   <div
                     className="row"
-                    style={{ border: "2px solid", padding: "0px" }}
+                    style={{
+                      borderBottom: "2px solid",
+                      padding: "0px",
+                      display: "flex",
+                    }}
                   >
-                    <div className="col-sm-4">
-                      <div>
-                        <b>Patient Name : </b> {Labtests?.patientname}
-                      </div>
-                      <div>
-                        <b>Patient Age : </b> 45 years
-                      </div>
+                    <div className="col-sm-6">
+                      <Table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <b>Patient ID</b>{" "}
+                            </td>
+                            <td>{Labtests?.patientid?.PatientId}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Patient Name</b>{" "}
+                            </td>
+                            <td>
+                              {Labtests?.patientid?.Firstname}{" "}
+                              {Labtests?.patientid?.Lastname}
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Patient Age</b>{" "}
+                            </td>
+                            <td>
+                              {moment().diff(
+                                moment(Labtests?.patientid?.DOB),
+                                "years"
+                              )}{" "}
+                              years
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <b>Gender</b>
+                            </td>
+                            <td>{Labtests?.patientid?.Gender}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Email</b>
+                            </td>
+                            <td> {Labtests?.email}</td>
+                          </tr>
+                        </tbody>
+                      </Table>
                     </div>
-                    <div className="col-sm-4">
-                      <div>
-                        <b>Patient ID : </b> HJKD567
-                      </div>
-                      <div>
-                        <b>Gender : </b> Male
-                      </div>
+                    <div className="col-sm-6">
+                      <Table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <b>Phone</b>
+                            </td>
+                            <td>{Labtests?.patientid?.PhoneNumber}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Referred By</b>
+                            </td>
+                            <td>{Labtests?.hospitallabRefferedBy}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Register Date</b>
+                            </td>
+                            <td>
+                              {moment(Labtests?.testDate).format("DD/MM/YYYY")}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <b>Sample No</b>
+                            </td>
+                            <td> {ChosenLabTest?.sampleName}</td>
+                          </tr>
+
+                          <tr>
+                            <td>
+                              <b>Collected On</b>{" "}
+                            </td>
+                            <td>
+                              {`${new Date(
+                                ChosenLabTest?.sampleCollectionDateTime
+                              ).getDate()} - ${
+                                new Date(
+                                  ChosenLabTest?.sampleCollectionDateTime
+                                ).getMonth() + 1
+                              } - ${new Date(
+                                ChosenLabTest?.sampleCollectionDateTime
+                              ).getFullYear()}`}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </Table>
                     </div>
-                    <div className="col-sm-4">
-                      <div>
-                        <b>Register Date : </b>
-                        {moment(Labtests?.testDate).format("DD-MM-YYYY")}
-                      </div>
-                      <div></div>
-                    </div>
+                  </div>
+                  {/* report top-basic information --> end  */}
+                  <div style={{ marginTop: "20px", marginBottom: "10px" }}>
+                    {" "}
+                    <h3>{ChosenLabTest?.testName}</h3>
                   </div>
                   <div className="row mt-2">
                     <Table bordered>
@@ -1143,56 +1464,150 @@ export default function HospitalLabTechnician() {
                           <th>Test Name</th>
                           <th>Result</th>
                           <th>Unit</th>
-                          <th>Normal Range</th>
-                          <th>Action</th>
+                          <th>General Reference Value</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {Labtests?.Labtests?.map((item) => {
+                        {relatedSubTests?.map((item, index) => {
                           return (
                             <tr>
-                              <td>
-                                {/* <Form.Select
-                                  className="vi_0"
-                                  onChange={handleTestChange}
-                                  value={TestId}
-                                >
-                                  <option>Select Test</option>
-                                  {Labtests?.Labtests?.filter(
-                                    (val) => !val.patientReportVal
-                                  )?.map((item) => {
-                                    return (
-                                      <option value={item?._id}> */}
-                                {item?.testName}
-                                {/* </option>
-                                    );
-                                  })}
-                                </Form.Select> */}
-                              </td>
+                              <td>{item?.subtestName}</td>
+
                               <td>
                                 <input
                                   type="text"
                                   className="vi_0"
-                                  placeholder={item?.patientReportVal}
-                                  onChange={(e) => setLabreport(e.target.value)}
+                                  // placeholder={item?.patientReportVal}
+                                  onChange={(e) => {
+                                    let timeoutid;
+                                    timeoutid = setTimeout(() => {
+                                      clearTimeout(timeoutid);
+                                      addtosubtestlist(item, e);
+                                    }, 800);
+                                  }}
                                 />
                               </td>
                               <td>{item?.unit}</td>
-                              <td>{item?.generalRefVal} </td>
-                              <td>
-                                <Button
-                                  onClick={() => {
-                                    addLabReport(item?._id);
-                                  }}
-                                >
-                                  Submit
-                                </Button>{" "}
-                              </td>
+                              <td>{item?.generalRefVal}</td>
                             </tr>
                           );
                         })}
                       </tbody>
                     </Table>
+                  </div>
+
+                  <div>
+                    <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+                      <h3>Products Used</h3>
+                    </div>
+                    <div>
+                      <Table bordered>
+                        <tbody>
+                          <tr>
+                            <td>Technician Used Products</td>
+                            <td>
+                              <select
+                                style={{
+                                  width: "100%",
+                                  height: "45px",
+                                  padding: "10px",
+                                }}
+                                onChange={(e) => {
+                                  setchooseUsedProducts(
+                                    JSON.parse(e.target.value)?.vendorProductId
+                                      ?.productName
+                                  );
+                                  setchooseUsedProductsid(
+                                    JSON.parse(e.target.value)?.vendorProductId
+                                      ?._id
+                                  );
+                                  setChoosedProductAvailQuantity(
+                                    JSON.parse(e.target.value)?.quantity
+                                  );
+                                  setFlag(false);
+                                }}
+                              >
+                                <option selected={flag}>Choose Option</option>
+                                {InventoryOrderList?.filter(
+                                  (data) => data.quantity > 0
+                                )?.map((valEle) => {
+                                  return (
+                                    <option value={JSON.stringify(valEle)}>
+                                      {valEle?.vendorProductId?.productName}
+                                    </option>
+                                  );
+                                })}
+                              </select>
+                            </td>
+                            <td>
+                              <input
+                                type="number"
+                                placeholder="Quantity"
+                                value={chooseusedProductsQuantity}
+                                style={{
+                                  width: "100%",
+                                  height: "45px",
+                                  padding: "10px",
+                                }}
+                                name="quantity"
+                                id="quantity"
+                                min="1"
+                                max={`${ChoosedProductAvailQuantity}`}
+                                onChange={(e) => handleQuantityChange(e)}
+                              />
+                            </td>
+                            <td>
+                              <Button
+                                onClick={() =>
+                                  AddLabtechProducts(ChosenLabTest?._id)
+                                }
+                              >
+                                Add Products
+                              </Button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </Table>
+                      <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+                        <Table bordered>
+                          <thead>
+                            <th>S.no.</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                          </thead>
+                          <tbody>
+                            {ChosenLabTest?.technicianUsedProducts?.map(
+                              (valdata, i) => {
+                                return (
+                                  <tr>
+                                    <td>{i + 1}. </td>
+                                    <td>{valdata?.productName}</td>
+                                    <td>{valdata?.Quantity}</td>
+                                    <td>
+                                      <MdDeleteOutline
+                                        onClick={() =>
+                                          removelabtechProductData(
+                                            ChosenLabTest?._id,
+                                            valdata?._id,
+                                            valdata?.productid,
+                                            valdata?.Quantity
+                                          )
+                                        }
+                                        style={{
+                                          color: "red",
+                                          fontSize: "20px",
+                                        }}
+                                      />
+                                    </td>
+                                  </tr>
+                                );
+                              }
+                            )}
+                          </tbody>
+                        </Table>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1202,6 +1617,13 @@ export default function HospitalLabTechnician() {
             <Button variant="secondary" onClick={handleClose5}>
               Close
             </Button>
+            <Button
+              onClick={() => {
+                addLabReport(ChosenLabTest?._id);
+              }}
+            >
+              Submit
+            </Button>{" "}
           </Modal.Footer>
         </Modal>
 
