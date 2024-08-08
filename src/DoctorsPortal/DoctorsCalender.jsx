@@ -12,6 +12,7 @@ import {
   Modal,
 } from "react-bootstrap";
 import axios from "axios";
+import moment from "moment";
 
 const styles = {
   wrap: {
@@ -36,20 +37,20 @@ export const DoctorsCalender = () => {
     viewType: "Week",
     durationBarVisible: false,
     timeRangeSelectedHandling: "Enabled",
-    onTimeRangeSelected: async (args) => {
-      handleShow();
-      // console.log("Dekho bhai kya hal chal",args);
-      //   const dp = calendarRef.current.control;
-      //   const modal = await DayPilot.Modal.prompt("Create a new event:", "Event 1");
-      //   dp.clearSelection();
-      //   if (!modal.result) { return; }
-      //   dp.events.add({
-      //     start: args.start,
-      //     end: args.end,
-      //     id: DayPilot.guid(),
-      //     text: modal.result
-      //   });
-    },
+    // onTimeRangeSelected: async (args) => {
+    //   handleShow();
+    //   // console.log("Dekho bhai kya hal chal",args);
+    //   //   const dp = calendarRef.current.control;
+    //   //   const modal = await DayPilot.Modal.prompt("Create a new event:", "Event 1");
+    //   //   dp.clearSelection();
+    //   //   if (!modal.result) { return; }
+    //   //   dp.events.add({
+    //   //     start: args.start,
+    //   //     end: args.end,
+    //   //     id: DayPilot.guid(),
+    //   //     text: modal.result
+    //   //   });
+    // },
     eventDeleteHandling: "Update",
     // onClick={ handleShow }
 
@@ -82,43 +83,49 @@ export const DoctorsCalender = () => {
     getAppointmentList();
   }, []);
 
-  console.log("AppointmentList",AppointmentList);
+  console.log("AppointmentList", AppointmentList);
+
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    const events = [
-      {
-        id: 1,
-        text: "Event 1",
-        start: "2023-10-02T10:30:00",
-        end: "2023-10-02T13:00:00",
-      },
-      {
-        id: 2,
-        text: "Event 2",
-        start: "2023-10-03T09:30:00",
-        end: "2023-10-03T11:30:00",
-        backColor: "#6aa84f",
-      },
-      {
-        id: 3,
-        text: "Event 3",
-        start: "2023-10-03T12:00:00",
-        end: "2023-10-03T15:00:00",
-        backColor: "#f1c232",
-      },
-      {
-        id: 4,
-        text: "Event 4",
-        start: "2023-10-01T11:30:00",
-        end: "2023-10-01T14:30:00",
-        backColor: "#cc4125",
-      },
-    ];
+    if (AppointmentList?.length > 0) {
+      const newEvents = [];
 
-    const startDate = "2024-10-02";
+      for (let i = 0; i < AppointmentList?.length; i++) {
+        const startDateTime = moment(
+          `${AppointmentList[i].Dateofappointment} ${AppointmentList[i].starttime}`,
+          "YYYY-MM-DD hh:mm A"
+        ).format("YYYY-MM-DDTHH:mm:ss");
 
-    calendarRef.current.control.update({ startDate, events });
-  }, []);
+        const endDateTime = moment(
+          `${AppointmentList[i].Dateofappointment} ${AppointmentList[i].endtime}`,
+          "YYYY-MM-DD hh:mm A"
+        ).format("YYYY-MM-DDTHH:mm:ss");
+
+        newEvents.push({
+          id: AppointmentList[i]._id,
+          text: `Appointment :${AppointmentList[i].starttime}-${AppointmentList[i].endtime}`,
+          start: startDateTime,
+          end: endDateTime,
+          backColor: "#20958c", // example color
+          fontColor: "#ffffff", // example font color
+          borderColor: "#343a40",
+        });
+      }
+
+      // Update state only once after the loop
+      setEvents(newEvents);
+    }
+  }, [AppointmentList]);
+
+  useEffect(() => {
+    if (calendarRef.current) {
+      const dp = calendarRef.current.control;
+      dp.update({ events: events });
+    }
+  }, [events]);
+
+  console.log("events", events);
 
   return (
     <div style={styles.wrap}>
@@ -127,7 +134,8 @@ export const DoctorsCalender = () => {
           selectMode={"Week"}
           showMonths={3}
           skipMonths={3}
-          onClick={handleShow}
+          // onClick={handleShow}
+          events={events}
           startDate={"2024-06-02"}
           selectionDay={"2024-06-02"}
           onTimeRangeSelected={(args) => {
@@ -139,12 +147,13 @@ export const DoctorsCalender = () => {
       </div>
       <div style={styles.main}>
         <DayPilotCalendar
-          onClick={handleShow}
+          // onClick={handleShow}
           {...calendarConfig}
           ref={calendarRef}
+          events={events}
         />
       </div>
-
+      x
       <Modal
         show={show}
         onHide={handleClose}

@@ -29,28 +29,32 @@ export default function Addsurgey() {
   const [AmountFI, setAmountFI] = useState();
 
   const ASurgery = async () => {
-    try {
-      const config = {
-        url: "/Addsurgery",
-        baseURL: "http://localhost:8521/api/admin",
-        method: "post",
-        headers: { "content-type": "application/json" },
-        data: {
-          SurgeryName: SurgeryName,
-          AmountFNI: AmountFNI,
-          AmountFI: AmountFI,
-        },
-      };
-      axios(config).then((res) => {
-        if (res.status === 200) {
-          alert(res.data.success);
-          handleClose();
-          Getsurgery();
-        }
-      });
-    } catch (error) {
-      console.log(error);
-      alert(error.response.data.error);
+    if (!SurgeryName || !AmountFNI || !AmountFI) {
+      alert("Please fill all the fields");
+    } else {
+      try {
+        const config = {
+          url: "/Addsurgery",
+          baseURL: "http://localhost:8521/api/admin",
+          method: "post",
+          headers: { "content-type": "application/json" },
+          data: {
+            SurgeryName: SurgeryName,
+            AmountFNI: AmountFNI,
+            AmountFI: AmountFI,
+          },
+        };
+        axios(config).then((res) => {
+          if (res.status === 200) {
+            alert(res.data.success);
+            handleClose();
+            Getsurgery();
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        alert(error.response.data.error);
+      }
     }
   };
 
@@ -193,7 +197,7 @@ export default function Addsurgey() {
           }}
         >
           <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-            Add surgery
+            surgery
           </h6>
         </div>
 
