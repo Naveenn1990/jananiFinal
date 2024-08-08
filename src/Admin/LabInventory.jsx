@@ -1,6 +1,9 @@
+import { faUpload } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Modal, Table } from "react-bootstrap";
+import { AiOutlinePlusCircle } from "react-icons/ai";
 
 function LabInventory() {
   let adminDetails = JSON.parse(sessionStorage.getItem("adminDetails"));
@@ -11,6 +14,7 @@ function LabInventory() {
     } else {
     }
   }, []);
+  const [show, setShow] = useState(false);
   const [InventoryOrderList, setInventoryOrderList] = useState([]);
   const LabInventoryList = async () => {
     try {
@@ -40,7 +44,7 @@ function LabInventory() {
           }}
         >
           <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-           Lab Inventory List
+            Lab Inventory List
           </h6>
           <input
             placeholder="Search Orders"
@@ -51,11 +55,17 @@ function LabInventory() {
             }}
             //   onChange={handleFilter}
           />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <AiOutlinePlusCircle
+              className="AddIcon1"
+              onClick={() => setShow(true)}
+            />
+          </div>
         </div>
         <Table
           className="table "
           responsive
-        //   style={{ width: "1500px" }}
+          //   style={{ width: "1500px" }}
           bordered
         >
           <thead>
@@ -65,7 +75,7 @@ function LabInventory() {
               <th>Vendor Price</th>
               <th>Admin Price</th>
               <th>Quantity</th>
-              <th>Total</th>                          
+              <th>Total</th>
             </tr>
           </thead>
           <tbody>
@@ -77,7 +87,7 @@ function LabInventory() {
                   <td>₹ {item?.VendorPrice} /-</td>
                   <td>₹ {item?.AdminPrice} /-</td>
                   <td>{item?.quantity} /-</td>
-                  <td>₹ {item?.totalPrice} /-</td>                                 
+                  <td>₹ {item?.totalPrice} /-</td>
                 </tr>
               );
             })}

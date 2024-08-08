@@ -123,7 +123,7 @@ const Labvendorproducts = () => {
       );
     try {
       const config = {
-        url: "/admin/addtoLabcart",
+        url: "/vendor/adminaddtocart",
         method: "post",
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
@@ -149,7 +149,7 @@ const Labvendorproducts = () => {
   const [getAddtocart, setgetAddtocart] = useState([]);
   const getaddtocart = () => {
     axios
-      .get("http://localhost:8521/api/admin/getLabcart")
+      .get("http://localhost:8521/api/vendor/getaddtocartdata")
       .then(function (response) {
         setgetAddtocart(response.data.addtocart);
       })

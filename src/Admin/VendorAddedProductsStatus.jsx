@@ -70,6 +70,8 @@ export default function VendorAddedProductsStatus() {
     }
   };
 
+  console.log("data:454545 ", data);
+
   const [Invoice, setInvoice] = useState({});
   const [showInvoice, setShowInvoice] = useState(false);
   const handleCloseInvoice = () => setShowInvoice(false);
@@ -214,6 +216,7 @@ export default function VendorAddedProductsStatus() {
           <tbody>
             {search.length > 0
               ? tableFilter
+                  ?.filter((ele) => ele.vendorId.VendorType === "Pharmacy")
                   .slice(pagesVisited, pagesVisited + usersPerPage)
                   ?.map((val, index) => {
                     return (
@@ -291,6 +294,7 @@ export default function VendorAddedProductsStatus() {
                     );
                   })
               : data
+                  ?.filter((ele) => ele.vendorId.VendorType === "Pharmacy")
                   ?.slice(pagesVisited, pagesVisited + usersPerPage)
                   ?.map((val, index) => {
                     return (
