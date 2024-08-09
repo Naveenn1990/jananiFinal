@@ -75,6 +75,9 @@ export default function LaborderHistory() {
     }
   };
 
+  const [InvoiceNumber, setInvoiceNumber] = useState('');
+  const [InvoiceDoc, setInvoiceDoc] = useState('');
+
   const addToInventory = async (val) => {
     const obj = {
       vendorProductId: val?.productId?._id,
@@ -83,8 +86,8 @@ export default function LaborderHistory() {
       AdminPrice: val?.AdminPrice,
       quantity: val?.quantity,
       invoiceDate: new Date(),
-      invoiceNumber: val?.quantity,
-      invoiceDoc: val?.quantity,
+      invoiceNumber: InvoiceNumber,
+      invoiceDoc:InvoiceDoc,
     };
     try {
       const config = {
@@ -94,6 +97,10 @@ export default function LaborderHistory() {
         headers: { "content-type": "multipart/form-data" },
         data: obj,
       };
+      const res = await axios(config);
+      if( res.status === 201 || res.status === 200 ) {
+        return alert(res.data.success);
+      }
     } catch (error) {
       console.log(error);
       return alert(error.response.data.error);
@@ -404,7 +411,7 @@ export default function LaborderHistory() {
         </Table>
         <div style={{ display: "flex" }}>
           <p style={{ width: "100%", marginTop: "20px" }}>
-            Total Count: {data?.length}
+            Total Count: {data?.filter((ele) => ele.vendorId.VendorType === "Lab")?.length}
           </p>
           <ReactPaginate
             previousLabel={"Back"}
@@ -545,14 +552,14 @@ export default function LaborderHistory() {
                         <td>{item?.quantity}</td>
                         <td>₹ {item?.totalPrice}</td>
                         <td>
-                          <input />
+                          <input onChange={(e)=>setInvoiceNumber(e.target.value)}/>
                         </td>
 
                         <td>
-                          <input type="file" />
+                          <input type="file" onChange={(e)=>setInvoiceDoc(e.target.files[0])}/>
                         </td>
                         <td>
-                          <Button onClick={(e) => addToInventory(item)}>
+                          <Button onClick={() => addToInventory(item)}>
                             Add
                           </Button>
                         </td>
