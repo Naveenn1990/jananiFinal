@@ -4,6 +4,7 @@ import {
   faPhoneVolume,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Theaters } from "@mui/icons-material";
 import axios from "axios";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -351,9 +352,7 @@ export const PatientsList = () => {
   const [selectedcauseid, setselectedcauseid] = useState("");
   const [Patientcauseid, setPatientcauseid] = useState("");
 
-  // console.log("patientlist: ", patientlist);
-  // console.log("selectedcauseid43493:", selectedcauseid);
-  // console.log("filteredPatients: ", filteredPatients);
+  console.log("selectedcauseid: ", selectedcauseid);
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
@@ -1090,13 +1089,13 @@ export const PatientsList = () => {
           <Modal.Title>Select Appointment Date</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Select
+          {/* <Form.Select
             onChange={(e) => setSelectTime(e.target.value)}
             aria-label="Default select example"
           >
             <option>select date</option>
             {AppointmentList?.filter(
-              (ele) => ele?.PatientId === selectedcauseid?._id
+              (ele) => ele?.PatientId === selectedcauseid?.PatientId
             )?.map((item) => {
               return (
                 <option value={JSON.stringify(item)}>
@@ -1104,26 +1103,42 @@ export const PatientsList = () => {
                 </option>
               );
             })}
-          </Form.Select>
+          </Form.Select> */}
+          <Table bordered>
+            <thead>
+              <th>Appointment Date</th>
+              <th>Details</th>
+            </thead>
+            <tbody>
+              {AppointmentList?.filter(
+                (ele) => ele?.PatientId === selectedcauseid?.PatientId
+              )?.map((item) => {
+                return (
+                  <tr>
+                    <td>
+                      <b>{item?.Dateofappointment}</b>
+                    </td>
+                    <td>
+                      <div
+                        onClick={() =>
+                          navigate("/patientcasestudy", {
+                            state: { item: item },
+                          })
+                        }
+                      >
+                        <Button>View Reports</Button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose6}>
             Close
           </Button>
-          {selectedcauseid?.cause?.length > 0 ? (
-            <Button
-              variant="primary"
-              onClick={() =>
-                navigate(`/patientcasestudy`, {
-                  state: { item: JSON.parse(SelectTime) },
-                })
-              }
-            >
-              Submit
-            </Button>
-          ) : (
-            ""
-          )}
         </Modal.Footer>
       </Modal>
       <Modal show={showSurgery} onHide={handleCloseSurgery}>

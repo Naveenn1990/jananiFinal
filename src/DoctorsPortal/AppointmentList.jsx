@@ -226,15 +226,21 @@ export const AppointmentList = () => {
                           <div style={{ textAlign: "center" }}>--/--</div>
                         )}
                         <td>
-                          <div
-                            onClick={() =>
-                              navigate("/patientcasestudy", {
-                                state: { item: item },
-                              })
-                            }
-                          >
-                            <Button>View Reports</Button>
-                          </div>
+                          {item?.payment === "unpaid" ? (
+                            <>
+                              <p>Payment Pending</p>
+                            </>
+                          ) : (
+                            <div
+                              onClick={() =>
+                                navigate("/patientcasestudy", {
+                                  state: { item: item },
+                                })
+                              }
+                            >
+                              <Button>View Reports</Button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     );
@@ -290,15 +296,21 @@ export const AppointmentList = () => {
                           <div style={{ textAlign: "center" }}>--/--</div>
                         )}
                         <td>
-                          <div
-                            onClick={() =>
-                              navigate("/patientcasestudy", {
-                                state: { item: item },
-                              })
-                            }
-                          >
-                            <Button>View Reports</Button>
-                          </div>
+                          {item?.payment === "unpaid" ? (
+                            <>
+                              <p>Payment Pending</p>
+                            </>
+                          ) : (
+                            <div
+                              onClick={() =>
+                                navigate("/patientcasestudy", {
+                                  state: { item: item },
+                                })
+                              }
+                            >
+                              <Button>View Reports</Button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     );
@@ -353,15 +365,21 @@ export const AppointmentList = () => {
                           <div style={{ textAlign: "center" }}>--/--</div>
                         )}
                         <td>
-                          <div
-                            onClick={() =>
-                              navigate("/patientcasestudy", {
-                                state: { item: item },
-                              })
-                            }
-                          >
-                            <Button>View Reports</Button>
-                          </div>
+                          {item?.payment === "unpaid" ? (
+                            <>
+                              <p>Payment Pending</p>
+                            </>
+                          ) : (
+                            <div
+                              onClick={() =>
+                                navigate("/patientcasestudy", {
+                                  state: { item: item },
+                                })
+                              }
+                            >
+                              <Button>View Reports</Button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     );
