@@ -177,6 +177,8 @@ const IPDConsentFroms = () => {
   const [Witness2, setWitness2] = useState("");
   const [Witness1Number, setWitness1Number] = useState("");
   const [Witness2Number, setWitness2Number] = useState("");
+  const [AuthperName, setAuthperName] = useState("");
+  const [AuthperDesignation, setAuthperDesignation] = useState("");
 
   const [TypeofAnesthesia, setTypeofAnesthesia] = useState("");
   const [ConDoctorName, setConDoctorName] = useState("");
@@ -210,9 +212,43 @@ const IPDConsentFroms = () => {
       if (!WardRoomCharges) {
         return alert("Please Enter Ward/ Room Charges");
       }
+      if (!NameofProcedure) {
+        return alert("Please Enter Name of Procedure");
+      }
+      if (!ProcedureCost) {
+        return alert("Please Enter Procedure Cost");
+      }
+      if (!ProcedurRemark) {
+        return alert("Please Enter Procedur Remark");
+      }
+      if (!InvestigationName) {
+        return alert("Please Enter Investigation Name");
+      }
+      if (!InvestigationCost) {
+        return alert("Please Enter Investigation Cost");
+      }
+      if (!InvestigationRemark) {
+        return alert("Please Enter Investigation Remark");
+      }
       if (!RealivesName) {
         return alert("Please Enter Relatives Name");
       }
+      if (!RelativeSignature) {
+        return alert(" Relatives sign pending");
+      }
+      if (!AuthperName) {
+        return alert(" Enter Your Name");
+      }
+      if (!AuthperName) {
+        return alert(" Enter Your Name");
+      }
+      if (!AuthperDesignation) {
+        return alert(" Enter Your designation");
+      }
+      if (!HospitalizeDocSignature) {
+        return alert(" Your Sign is Pending..");
+      }
+      
     }
 
     if (ConsentFormName === "HighriskConsentForms") {
@@ -356,6 +392,9 @@ const IPDConsentFroms = () => {
     const RelativeSign = await fetch(RelativeSignature).then((res) =>
       res.blob()
     );
+    const AuthperSign = await fetch(HospitalizeDocSignature).then((res) =>
+      res.blob()
+    );
 
     formdata.set("causeId", CauseId);
     formdata.set("patientId", userdetail?._id);
@@ -377,9 +416,17 @@ const IPDConsentFroms = () => {
     formdata.set("Witness2", Witness2);
     formdata.set("Witness1Number", Witness1Number);
     formdata.set("Witness2Number", Witness2Number);
-    formdata.set("SurgeryPackages", SurgeryPackages);
-    formdata.set("ProcedureDetails", ProcedureDetails);
-    formdata.set("InvestigationChargeList", InvestigationChargeList);
+    // formdata.set("SurgeryPackages", SurgeryPackages);
+    // formdata.set("ProcedureDetails", ProcedureDetails);
+    // formdata.set("InvestigationChargeList", InvestigationChargeList);
+    formdata.set("NameofProcedure", NameofProcedure);
+    formdata.set("ProcedureCost", ProcedureCost);
+    formdata.set("ProcedurRemark", ProcedurRemark);
+    formdata.set("InvestigationName", InvestigationName);
+    formdata.set("InvestigationCost", InvestigationCost);
+    formdata.set("InvestigationRemark", InvestigationRemark);
+    formdata.set("AuthperName", AuthperName);
+    formdata.set("AuthperDesignation", AuthperDesignation);
 
     formdata.set("Patientage", Patientage);
     formdata.set("OpNumber", OpNumber);
@@ -405,6 +452,7 @@ const IPDConsentFroms = () => {
     formdata.set("Gender", userdetail?.Gender);
     formdata.set("NameOfSurgery2", NameOfSurgery2);
 
+
     formdata.set("doctorsign", DoctorSignature, "doctor-signature.png");
     formdata.set("patientsign", PatientSignature1, "patient-signature.png");
     formdata.set("witnesssign", WitnessSignature, "witness-signature.png");
@@ -414,6 +462,7 @@ const IPDConsentFroms = () => {
       "legalgurdiation-signature.png"
     );
     formdata.set("relativesign", RelativeSign, "relative-signature.png");
+    formdata.set("authpersonsign", AuthperSign, "authperson-signature.png");
     try {
       const config = {
         url: "/consentform",
@@ -497,14 +546,22 @@ const IPDConsentFroms = () => {
 
   const [RelativeSignature, setRelativeSignature] = useState(null);
   const sigCanvas5 = useRef({});
-
   const clear5 = () => sigCanvas5.current.clear();
-
   const save5 = () => {
     const RelativeSignature = sigCanvas5.current
       .getTrimmedCanvas()
       .toDataURL("image/png");
     setRelativeSignature(RelativeSignature);
+  };
+
+  const [HospitalizeDocSignature, setHospitalizeDocSignature] = useState(null);
+  const sigCanvas6 = useRef({});
+  const clear6 = () => sigCanvas6.current.clear();
+  const save6 = () => {
+    const HospitalizeDocSignature = sigCanvas6.current
+      .getTrimmedCanvas()
+      .toDataURL("image/png");
+    setHospitalizeDocSignature(HospitalizeDocSignature);
   };
 
   return (
@@ -1166,14 +1223,14 @@ const IPDConsentFroms = () => {
                           className="row"
                           style={{ border: "1px solid #20958C" }}
                         >
-                          <div className="col-md-3 consentformhd">
+                          <div className="col-md-4 consentformhd">
                             Name of the Procedure/ Procedures
                           </div>
-                          <div className="col-md-3 consentformhd">
+                          <div className="col-md-4 consentformhd">
                             Estimated Cost
                           </div>
                           <div
-                            className="col-md-3"
+                            className="col-md-4"
                             style={{
                               border: "1px solid #20958C",
                               paddingLeft: "unset",
@@ -1183,22 +1240,11 @@ const IPDConsentFroms = () => {
                           >
                             Remark
                           </div>
-                          <div
-                            className="col-md-3"
-                            style={{
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                              fontSize: "18px",
-                            }}
-                          >
-                            Action
-                          </div>
                         </div>
 
                         <div className="row">
                           <div
-                            className="col-md-3"
+                            className="col-md-4"
                             style={{
                               border: "1px solid #20958C",
                               paddingLeft: "unset",
@@ -1209,7 +1255,7 @@ const IPDConsentFroms = () => {
                               <input
                                 type="text"
                                 className="vi_0"
-                                style={{ width: "241px" }}
+                                // style={{ width: "241px" }}
                                 placeholder="enter procedure name"
                                 onChange={(e) =>
                                   setNameofProcedure(e.target.value)
@@ -1218,7 +1264,7 @@ const IPDConsentFroms = () => {
                             </span>{" "}
                           </div>
                           <div
-                            className="col-md-3"
+                            className="col-md-4"
                             style={{
                               border: "1px solid #20958C",
                               paddingLeft: "unset",
@@ -1230,7 +1276,7 @@ const IPDConsentFroms = () => {
                                 placeholder="enter producer cost"
                                 type="number"
                                 className="vi_0"
-                                style={{ width: "241px" }}
+                                // style={{ width: "241px" }}
                                 onChange={(e) =>
                                   setProcedureCost(e.target.value)
                                 }
@@ -1238,7 +1284,7 @@ const IPDConsentFroms = () => {
                             </span>{" "}
                           </div>
                           <div
-                            className="col-md-3"
+                            className="col-md-4"
                             style={{
                               border: "1px solid #20958C",
                               paddingLeft: "unset",
@@ -1250,14 +1296,14 @@ const IPDConsentFroms = () => {
                                 placeholder="enter procuder remark"
                                 type="text"
                                 className="vi_0"
-                                style={{ width: "241px" }}
+                                // style={{ width: "241px" }}
                                 onChange={(e) =>
                                   setProcedurRemark(e.target.value)
                                 }
                               />
                             </span>{" "}
                           </div>
-                          <div
+                          {/* <div
                             className="col-md-3"
                             style={{
                               border: "1px solid #20958C",
@@ -1268,9 +1314,9 @@ const IPDConsentFroms = () => {
                             <span style={{ borderBottom: "1px solid black" }}>
                               <Button onClick={ProcedureCharges}>Add</Button>
                             </span>
-                          </div>
+                          </div> */}
                         </div>
-                        {ProcedureDetails?.map((item, i) => {
+                        {/* {ProcedureDetails?.map((item, i) => {
                           return (
                             <div className="row">
                               <div
@@ -1322,15 +1368,15 @@ const IPDConsentFroms = () => {
                               </div>
                             </div>
                           );
-                        })}
+                        })} */}
                       </div>
                     </p>
-                    <p style={{ fontSize: "18px" }}>
-                      4. Special Investigation Charges
+                    <p style={{ fontSize: "18px" }} className="mt-3">
+                     <b>4. Special Investigation Charges</b> 
                       <div className="container">
                         <div className="row">
                           <div
-                            className="col-md-3"
+                            className="col-md-4"
                             style={{
                               border: "1px solid #20958C",
                               paddingLeft: "unset",
@@ -1341,7 +1387,7 @@ const IPDConsentFroms = () => {
                             Name of the Investigation Charges
                           </div>
                           <div
-                            className="col-md-3"
+                            className="col-md-4"
                             style={{
                               border: "1px solid #20958C",
                               paddingLeft: "unset",
@@ -1352,7 +1398,7 @@ const IPDConsentFroms = () => {
                             Estimated Cost
                           </div>
                           <div
-                            className="col-md-3"
+                            className="col-md-4"
                             style={{
                               border: "1px solid #20958C",
                               paddingLeft: "unset",
@@ -1362,22 +1408,11 @@ const IPDConsentFroms = () => {
                           >
                             Remark
                           </div>
-                          <div
-                            className="col-md-3"
-                            style={{
-                              border: "1px solid #20958C",
-                              paddingLeft: "unset",
-                              paddingRight: "unset",
-                              fontSize: "18px",
-                            }}
-                          >
-                            Action
-                          </div>
                         </div>
 
                         <div className="row">
                           <div
-                            className="col-md-3"
+                            className="col-md-4"
                             style={{
                               border: "1px solid #20958C",
                               paddingLeft: "unset",
@@ -1388,7 +1423,7 @@ const IPDConsentFroms = () => {
                               <input
                                 type="text"
                                 className="vi_0"
-                                style={{ width: "241px" }}
+                                // style={{ width: "241px" }}
                                 placeholder="enter investigation "
                                 onChange={(e) =>
                                   setInvestigationName(e.target.value)
@@ -1397,7 +1432,7 @@ const IPDConsentFroms = () => {
                             </span>{" "}
                           </div>
                           <div
-                            className="col-md-3"
+                            className="col-md-4"
                             style={{
                               border: "1px solid #20958C",
                               paddingLeft: "unset",
@@ -1408,7 +1443,7 @@ const IPDConsentFroms = () => {
                               <input
                                 type="number"
                                 className="vi_0"
-                                style={{ width: "241px" }}
+                                // style={{ width: "241px" }}
                                 placeholder="enter cost"
                                 onChange={(e) =>
                                   setInvestigationCost(e.target.value)
@@ -1417,7 +1452,7 @@ const IPDConsentFroms = () => {
                             </span>{" "}
                           </div>
                           <div
-                            className="col-md-3"
+                            className="col-md-4"
                             style={{
                               border: "1px solid #20958C",
                               paddingLeft: "unset",
@@ -1429,14 +1464,14 @@ const IPDConsentFroms = () => {
                                 placeholder="enter remark"
                                 type="text"
                                 className="vi_0"
-                                style={{ width: "241px" }}
+                                // style={{ width: "241px" }}
                                 onChange={(e) =>
                                   setInvestigationRemark(e.target.value)
                                 }
                               />
                             </span>{" "}
                           </div>
-                          <div
+                          {/* <div
                             className="col-md-3"
                             style={{
                               border: "1px solid #20958C",
@@ -1449,9 +1484,9 @@ const IPDConsentFroms = () => {
                                 Add
                               </Button>
                             </span>
-                          </div>
+                          </div> */}
                         </div>
-                        {InvestigationChargeList?.map((item, i) => {
+                        {/* {InvestigationChargeList?.map((item, i) => {
                           return (
                             <div className="row">
                               <div
@@ -1503,7 +1538,7 @@ const IPDConsentFroms = () => {
                               </div>
                             </div>
                           );
-                        })}
+                        })} */}
                       </div>
                     </p>
                     <br />
@@ -1569,7 +1604,7 @@ const IPDConsentFroms = () => {
                                 ref={sigCanvas5}
                                 penColor="black"
                                 canvasProps={{
-                                  width: 180,
+                                  width: 220,
                                   height: 100,
                                   className: "sigCanvas",
                                 }}
@@ -1578,7 +1613,9 @@ const IPDConsentFroms = () => {
                               <button onClick={save5}>Save</button>
                             </div>
                           ) : (
-                            <img src={RelativeSignature} alt="Signature" />
+                            <img 
+                            style={{marginLeft:"40px"}}
+                            src={RelativeSignature} alt="Signature" />
                           )}
                         </div>
                       </div>
@@ -1645,8 +1682,9 @@ const IPDConsentFroms = () => {
                           className="vi_0"
                           style={{ width: "270px" }}
                           placeholder="Your Name "
-                          onChange={(e) => setWitness2Number(e.target.value)}
-                          maxLength={10}
+                          value={AuthperName}
+                          onChange={(e) => setAuthperName(e.target.value)}
+                         
                         />
                         </p>                 
                        <p>
@@ -1655,30 +1693,30 @@ const IPDConsentFroms = () => {
                           className="vi_0"
                           style={{ width: "270px" }}
                           placeholder="Your designation"
-                          onChange={(e) => setWitness2Number(e.target.value)}
-                          maxLength={10}
+                          onChange={(e) => setAuthperDesignation(e.target.value)}
+                          value={AuthperDesignation}
                         />
                        </p>                      
-                        {!RelativeSignature ? (
+                        {!HospitalizeDocSignature ? (
                             <div
                               style={{
                                 border: "1px solid #dee2e6",
                               }}
                             >
                               <SignatureCanvas
-                                ref={sigCanvas5}
+                                ref={sigCanvas6}
                                 penColor="black"
                                 canvasProps={{
-                                  width: 180,
+                                  width: 200,
                                   height: 100,
                                   className: "sigCanvas",
                                 }}
                               />
-                              <button onClick={clear5}>Clear</button>
-                              <button onClick={save5}>Save</button>
+                              <button onClick={clear6}>Clear</button>
+                              <button onClick={save6}>Save</button>
                             </div>
                           ) : (
-                            <img src={RelativeSignature} alt="Signature" />
+                            <img style={{marginLeft:"40px"}} src={HospitalizeDocSignature} alt="Signature" />
                           )}
                           </div>
                     </div>

@@ -7,10 +7,10 @@ import { FiDownload } from "react-icons/fi";
 import { useReactToPrint } from "react-to-print";
 
 const AnesthesiaConsent = ({ AnesthesiaCForm,patientdetail }) => {
-  const createPDF = async () => {
+  const createPDF = async (id) => {
     try {
       const pdf = new jsPDF("portrait", "pt", "a4");
-      const element = document.querySelector("#pdf");
+      const element = document.querySelector(`#${id}`);
       const data = await html2canvas(element, {
         useCORS: true,
         scale: 2,
@@ -58,14 +58,14 @@ const AnesthesiaConsent = ({ AnesthesiaCForm,patientdetail }) => {
                   borderRadius: "0px",
                   marginRight: "20px",
                 }}
-                onClick={createPDF}
+                onClick={()=>createPDF(`pdf${i+1}`)}
               >
                 Download <FiDownload />
               </Button>
             </div>
             <div
               ref={componentRef}
-              id="pdf"
+              id={`pdf${i+1}`}
               style={{
                 padding: "15px",
                 overflow: "hidden",

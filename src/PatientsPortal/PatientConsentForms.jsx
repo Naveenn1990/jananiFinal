@@ -47,10 +47,10 @@ const PatientConsentForms = () => {
   const [btn3, setbtn3] = useState(true);
   const [btn4, setbtn4] = useState(true);
 
-  const createPDF = async () => {
+  const createPDF = async (id) => {
     try {
       const pdf = new jsPDF("portrait", "pt", "a4");
-      const element = document.querySelector("#pdf");
+      const element = document.querySelector(`#${id}`);
       const data = await html2canvas(element, {
         useCORS: true,
         scale: 2,
@@ -74,10 +74,10 @@ const PatientConsentForms = () => {
     }
   };
 
-  const createPDF1 = async () => {
+  const createPDF1 = async (id) => {
     try {
       const pdf = new jsPDF("portrait", "pt", "a4");
-      const element = document.querySelector("#pdf");
+      const element = document.querySelector(`#${id}`);
       const data = await html2canvas(element, {
         useCORS: true,
         scale: 2,
@@ -101,10 +101,10 @@ const PatientConsentForms = () => {
     }
   };
 
-  const createPDF2 = async () => {
+  const createPDF2 = async (id) => {
     try {
       const pdf = new jsPDF("portrait", "pt", "a4");
-      const element = document.querySelector("#pdf");
+      const element = document.querySelector(`#${id}`);
       const data = await html2canvas(element, {
         useCORS: true,
         scale: 2,
@@ -128,10 +128,10 @@ const PatientConsentForms = () => {
     }
   };
 
-  const createPDF4 = async () => {
+  const createPDF4 = async (id) => {
     try {
       const pdf = new jsPDF("portrait", "pt", "a4");
-      const element = document.querySelector("#pdf");
+      const element = document.querySelector(`#${id}`);
       const data = await html2canvas(element, {
         useCORS: true,
         scale: 2,
@@ -235,7 +235,7 @@ const PatientConsentForms = () => {
               setConsentForm("GeneralConsentForms");
             }}
           >
-            General Consent Forms
+            General Consent Forms({CauseDetails?.consentform?.filter((ele) => ele.formname === "GeneralConsentForms")?.length})
           </button>
           <button
             style={{
@@ -254,6 +254,7 @@ const PatientConsentForms = () => {
             }}
           >
             Hospitalized Estimated Charge Sheet Cum Consent Form
+            ({CauseDetails?.consentform?.filter((ele) => ele.formname === "HospitalizedConsentForms")?.length})
           </button>
           <button
             style={{
@@ -272,6 +273,7 @@ const PatientConsentForms = () => {
             }}
           >
             Informed Consent for High risk Procedure
+            ({CauseDetails?.consentform?.filter((ele) => ele.formname === "HighriskConsentForms")?.length})
           </button>
           <button
             style={{
@@ -290,6 +292,7 @@ const PatientConsentForms = () => {
             }}
           >
             Consent For Anesthesia / Sedation
+            ({CauseDetails?.consentform?.filter((ele) => ele.formname === "AnesthesiaConsentForms")?.length})
           </button>
         </div>
       </div>
@@ -298,7 +301,7 @@ const PatientConsentForms = () => {
         <>
           {CauseDetails?.consentform
             ?.filter((ele) => ele.formname === ConsentForm)
-            ?.map((item) => {
+            ?.map((item,i) => {
               return (
                 <div>
                   <hr />
@@ -311,13 +314,13 @@ const PatientConsentForms = () => {
                         color: "white",
                         borderRadius: "0px",
                       }}
-                      onClick={createPDF}
+                      onClick={()=>createPDF(`pdf${i+1}`)}
                     >
                       Download <FiDownload />
                     </button>
                   </div>
                   <div
-                    id="pdf"
+                    id={`pdf${i+1}`}
                     style={{
                       padding: "15px",
                       overflow: "hidden",
@@ -536,7 +539,7 @@ const PatientConsentForms = () => {
             <>
               {CauseDetails?.consentform
                 ?.filter((ele) => ele.formname === ConsentForm)
-                ?.map((item) => {
+                ?.map((item,i) => {
                   return (
                     <div>
                       <hr/>
@@ -549,14 +552,14 @@ const PatientConsentForms = () => {
                             color: "white",
                             borderRadius: "0px",
                           }}
-                          onClick={createPDF1}
+                          onClick={()=>createPDF1(`pdf${i+1}`)}
                         >
                           Download <FiDownload />
                         </button>
                       </div>
 
                       <div
-                        id="pdf"
+                       id={`pdf${i+1}`}
                         style={{
                           padding: "15px",
                           overflow: "hidden",
@@ -1026,7 +1029,7 @@ const PatientConsentForms = () => {
                 <>
                   {CauseDetails?.consentform
                     ?.filter((ele) => ele.formname === ConsentForm)
-                    ?.map((item) => {
+                    ?.map((item,i) => {
                       return (
                         <div>
                           <hr/>
@@ -1039,13 +1042,13 @@ const PatientConsentForms = () => {
                                 color: "white",
                                 borderRadius: "0px",
                               }}
-                              onClick={createPDF2}
+                              onClick={()=>createPDF2(`pdf${i+1}`)}
                             >
                               Download <FiDownload />
                             </button>
                           </div>
                           <div
-                            id="pdf"
+                             id={`pdf${i+1}`}
                             style={{
                               padding: "15px",
                               overflow: "hidden",
@@ -1541,7 +1544,7 @@ const PatientConsentForms = () => {
                     <>
                       {CauseDetails?.consentform
                         ?.filter((ele) => ele.formname === ConsentForm)
-                        ?.map((item) => {
+                        ?.map((item,i) => {
                           return (
                             <div>
                               <hr/>
@@ -1554,13 +1557,13 @@ const PatientConsentForms = () => {
                                     color: "white",
                                     borderRadius: "0px",
                                   }}
-                                  onClick={createPDF4}
+                                  onClick={()=>createPDF4(`pdf${i+1}`)}
                                 >
                                   Download <FiDownload />
                                 </button>
                               </div>
                               <div
-                                id="pdf"
+                                 id={`pdf${i+1}`}
                                 style={{
                                   padding: "15px",
                                   overflow: "hidden",
