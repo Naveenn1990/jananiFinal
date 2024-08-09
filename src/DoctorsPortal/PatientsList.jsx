@@ -46,6 +46,134 @@ export const PatientsList = () => {
   const handleClose6 = () => setShow6(false);
   const handleShow6 = () => setShow6(true);
 
+  const [selectedPatient_Surgery, setselectedPatient_Surgery] = useState({});
+  const [showSurgery, setShowSurgery] = useState(false);
+  const handleCloseSurgery = () => setShowSurgery(false);
+  const handleShowSurgery = (item) => {
+    setShowSurgery(true);
+    setselectedPatient_Surgery(item);
+  };
+  const [selectedCauseid_Surgery, setselectedCauseid_Surgery] = useState();
+  const [SurgeryDoctor, setSurgeryDoctor] = useState([]);
+  const [SelectedDoctor, setSelectedDoctor] = useState();
+
+  const [GetDepartmentData, setGetDepartmentData] = useState([]);
+  const [SelectedDepartment, setSelectedDepartment] = useState();
+
+  const [surgery, setsurgery] = useState([]);
+  const [Selectedsurgery, setSelectedsurgery] = useState();
+
+  const [ReasonForSurgery, setReasonForSurgery] = useState();
+
+  useEffect(() => {
+    GetDepartment();
+    Getsurgery();
+  }, []);
+
+  useEffect(() => {
+    if (SelectedDepartment) {
+      getDoctors();
+    }
+  }, [SelectedDepartment]);
+
+  const Getsurgery = async () => {
+    try {
+      const res = await axios.get("http://localhost:8521/api/admin/Getsurgery");
+      if (res.status === 200) {
+        setsurgery(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getDoctors = () => {
+    axios
+      .get("http://localhost:8521/api/Doctor/getDoctorsList")
+      .then(function (response) {
+        // handle success
+        console.log("doctors", response.data.DoctorsInfo);
+
+        setSurgeryDoctor(
+          response.data.DoctorsInfo?.filter(
+            (data) =>
+              data.DoctorType === "Surgery" &&
+              data.Department === SelectedDepartment
+          )
+        );
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+  };
+
+  const GetDepartment = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8521/api/admin/getDepartment"
+      );
+      if (res.status === 200) {
+        setGetDepartmentData(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const ReferSurgery = async (e) => {
+    e.preventDefault();
+    if (
+      !selectedCauseid_Surgery ||
+      !SelectedDepartment ||
+      !SelectedDoctor ||
+      !Selectedsurgery ||
+      !ReasonForSurgery
+    ) {
+      alert("Please fill all the fields");
+    } else {
+      try {
+        const abcd = selectedCauseid_Surgery?.split("-");
+        const ssurgery = Selectedsurgery?.split("-");
+        const doct = SelectedDoctor?.split("-");
+        const config = {
+          url: "/AddSurgeryPatients",
+          baseURL: "http://localhost:8521/api/admin",
+          method: "post",
+          headers: { "content-type": "application/json" },
+          data: {
+            PatientId: selectedPatient_Surgery?._id,
+            PatientName:
+              selectedPatient_Surgery?.Firstname +
+              " " +
+              selectedPatient_Surgery?.Lastname,
+            CauseId: abcd[0],
+            CauseName: abcd[1],
+            SurgeryId: ssurgery[0],
+            SurgeryName: ssurgery[1],
+            DepartmentName: SelectedDepartment,
+            DoctorID: doct[0],
+            DoctorName: doct[1],
+            ReasonForSurgery: ReasonForSurgery,
+            ReferedDoctorId: doctorData?._id,
+            ReferedDoctorName:
+              doctorData?.Firstname + " " + doctorData?.Lastname,
+          },
+        };
+        axios(config).then((res) => {
+          if (res.status === 200) {
+            alert(res.data.success);
+            Getsurgery();
+            window.location.reload();
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        alert(error.response.data.error);
+      }
+    }
+  };
+
   const createPDF = async () => {
     const input = document.getElementById("pdf");
     const options = { scrollY: -window.scrollY };
@@ -162,7 +290,7 @@ export const PatientsList = () => {
         setdescription("");
         setdocs("");
         getpatientlist();
-        historyList()
+        historyList();
         alert(res.data.msg);
       }
     } catch (error) {
@@ -192,7 +320,6 @@ export const PatientsList = () => {
   useEffect(() => {
     historyList();
   }, []);
-  console.log("add though", patientHistoryList);
 
   const [filteredPatients, setFilteredPatients] = useState([]);
 
@@ -220,16 +347,13 @@ export const PatientsList = () => {
       ]);
     }
   }, [patientlist, FilterPatientType]);
-  //  &&
-  //   val?.consultationBillDetails[
-  //     val?.consultationBillDetails?.length - 1
-  //   ]["Doctor"]?.toString() === doctor?._id?.toString()
 
-  console.log("patientlist: ", patientlist);
   const [selectedcauseid, setselectedcauseid] = useState("");
   const [Patientcauseid, setPatientcauseid] = useState("");
-  console.log("selectedcauseid43493:", selectedcauseid);
-  console.log("filteredPatients: ", filteredPatients);
+
+  // console.log("patientlist: ", patientlist);
+  // console.log("selectedcauseid43493:", selectedcauseid);
+  // console.log("filteredPatients: ", filteredPatients);
   return (
     <div>
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
@@ -434,13 +558,12 @@ export const PatientsList = () => {
                         </div>
                       </div>
                       {FilterPatientType === "OPD" ? (
-                      <div>
-                        <div className="text-center">
-                          {" "}
-                          <b>Prescription : </b>
-                        </div>
-                        <div className="mt-2">
-                         
+                        <div>
+                          <div className="text-center">
+                            {" "}
+                            <b>Prescription : </b>
+                          </div>
+                          <div className="mt-2">
                             <button
                               title="Daily Doctor report"
                               className="table-details-btn mb-2"
@@ -451,33 +574,49 @@ export const PatientsList = () => {
                             >
                               Prescription
                             </button>
-                          
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                      <div className=" justify-content-between mt-2">
-                        <div className="text-center">
-                          <b>Other Reports</b>
+                      ) : (
+                        <></>
+                      )}
+                      {FilterPatientType === "IPD" ? (
+                        <div
+                          className=" justify-content-between mt-2"
+                          style={{ display: "flex" }}
+                        >
+                          <div>
+                            <b>Other Reports</b>
+                            <div>
+                              <button
+                                title="Daily Doctor report"
+                                className="table-details-btn"
+                                // onClick={() => {
+                                //   setchosenPatient(item._id);
+                                //   medHistoryShow1();
+                                // }}
+                              >
+                                Other Reports
+                              </button>
+                            </div>
+                          </div>
+                          <div>
+                            <b>Refer for Surgery</b>
+                            <div>
+                              <button
+                                title="Daily Doctor report"
+                                className="table-details-btn"
+                                onClick={() => {
+                                  handleShowSurgery(item);
+                                }}
+                              >
+                                Refer +
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-center">
-                          {FilterPatientType === "IPD" ? (
-                            <button
-                              title="Daily Doctor report"
-                              className="table-details-btn"
-                              // onClick={() => {
-                              //   setchosenPatient(item._id);
-                              //   medHistoryShow1();
-                              // }}
-                            >
-                              Other Reports
-                            </button>
-                          ) : (
-                            <></>
-                          )}
-                        </div>
-                      </div>
+                      ) : (
+                        <></>
+                      )}
                     </ListGroup.Item>
                     <ListGroup.Item>
                       {/* <p>Blood Group: O+</p> */}
@@ -985,6 +1124,97 @@ export const PatientsList = () => {
           ) : (
             ""
           )}
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showSurgery} onHide={handleCloseSurgery}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Refer For Surgery - {selectedPatient_Surgery?.Firstname}&nbsp;
+            {selectedPatient_Surgery?.Lastname}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <label style={{ color: "white" }}>Select Cause</label>
+          <Form.Select
+            onChange={(e) => setselectedCauseid_Surgery(e.target.value)}
+            aria-label="Default select example"
+          >
+            <option>select Cause</option>
+            {selectedPatient_Surgery?.cause?.map((item) => {
+              return (
+                <option value={`${item?._id}-${item?.CauseName}`}>
+                  {item?.CauseName}
+                </option>
+              );
+            })}
+          </Form.Select>
+
+          <label style={{ color: "white" }}>Select Surgery</label>
+          <Form.Select
+            onChange={(e) => setSelectedsurgery(e.target.value)}
+            aria-label="Default select example"
+          >
+            <option>select Surgery</option>
+            {surgery?.map((item) => {
+              return (
+                <option value={`${item?._id}-${item?.SurgeryName}`}>
+                  {item?.SurgeryName}
+                </option>
+              );
+            })}
+          </Form.Select>
+
+          <label style={{ color: "white" }}>Select Department</label>
+          <Form.Select
+            onChange={(e) => setSelectedDepartment(e.target.value)}
+            aria-label="Default select example"
+          >
+            <option>select Department</option>
+            {GetDepartmentData?.map((item) => {
+              return (
+                <option value={item?.DepartmentName}>
+                  {item?.DepartmentName}
+                </option>
+              );
+            })}
+          </Form.Select>
+
+          <label style={{ color: "white" }}>Select Doctor's</label>
+          <Form.Select
+            onChange={(e) => setSelectedDoctor(e.target.value)}
+            aria-label="Default select example"
+          >
+            <option>select Doctor</option>
+            {SurgeryDoctor?.map((item) => {
+              return (
+                <option
+                  value={`${item?._id}-${
+                    item?.Firstname + "" + item?.Lastname
+                  }`}
+                >
+                  {item?.Firstname}&nbsp;{item?.Lastname} - {item?.DoctorId}
+                </option>
+              );
+            })}
+          </Form.Select>
+          <label style={{ color: "white" }}>Reason for Surgery</label>
+          <Form.Group className="mb-3">
+            <Form.Control
+              as="textarea"
+              onChange={(e) => setReasonForSurgery(e.target.value)}
+              className="vi_0"
+              style={{ height: "100px" }}
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseSurgery}>
+            Close
+          </Button>
+
+          <Button variant="primary" onClick={(e) => ReferSurgery(e)}>
+            Submit
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

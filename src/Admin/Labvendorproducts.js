@@ -123,7 +123,7 @@ const Labvendorproducts = () => {
       );
     try {
       const config = {
-        url: "/admin/addtoLabcart",
+        url: "/vendor/adminaddtocart",
         method: "post",
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
@@ -149,7 +149,7 @@ const Labvendorproducts = () => {
   const [getAddtocart, setgetAddtocart] = useState([]);
   const getaddtocart = () => {
     axios
-      .get("http://localhost:8521/api/admin/getLabcart")
+      .get("http://localhost:8521/api/vendor/getaddtocartdata")
       .then(function (response) {
         setgetAddtocart(response.data.addtocart);
       })
@@ -171,67 +171,54 @@ const Labvendorproducts = () => {
         <Container>
           <div className="row mb-3">
             <div className="col-lg-8  d-flex gap-2">
-              <Form className="">
-                <Form.Control
-                  style={{ width: "400px" }}
-                  type="search"
-                  placeholder="Search"
-                  className="me-2"
-                  aria-label="Search"
-                />
-              </Form>
-
-              <Dropdown>
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
-                  <FontAwesomeIcon icon={faFilter} /> Filtered By
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item href="#">Tablet</Dropdown.Item>
-                  <Dropdown.Item href="#">Syrup</Dropdown.Item>
-                  <Dropdown.Item href="#">Other Drugs</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-
-              <Button className="all-bg-green">Search Product</Button>
-
-              <div className="cart-badge holder col-lg-2 d-flex gap-2  justify-content-end px-2">
-                <Link to="../admin/Labvendorproductcart">
-                  <IconButton aria-label="cart">
-                    <StyledBadge
-                      badgeContent={getAddtocart?.length}
-                      color="secondary"
-                    >
-                      <ShoppingCartIcon />
-                    </StyledBadge>
-                  </IconButton>
-                </Link>
-              </div>
+              <div className="cart-badge holder col-lg-2 d-flex gap-2  justify-content-end px-2"></div>
             </div>
           </div>
-          <div className="row">
-            <p
-              style={{ color: "#20958c", fontSize: "20px", fontWeight: "bold" }}
-            >
-              Select Vendor
-            </p>
-            <select
-              className="me-2"
-              style={{
-                width: "400px",
-                margin: "10px",
-                padding: "10px",
-                borderColor: "#bdbdbd",
-                borderRadius: "5px",
-              }}
-              onChange={(e) => setSelectedVendor(e.target.value)}
-            >
-              <option>Select</option>
-              {VendorList?.map((vendor) => (
-                <option value={vendor?.vendorId}>
-                  {vendor?.fname}&nbsp;{vendor?.lname} - ({vendor?.vendorId})
-                </option>
-              ))}
-            </select>
+          <div className="d-flex">
+            <div>
+              <p
+                style={{
+                  color: "#20958c",
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                }}
+              >
+                Select Vendor
+              </p>
+              <select
+                className="me-2"
+                style={{
+                  width: "400px",
+                  margin: "10px",
+                  padding: "10px",
+                  borderColor: "#bdbdbd",
+                  borderRadius: "5px",
+                }}
+                onChange={(e) => setSelectedVendor(e.target.value)}
+              >
+                <option>Select</option>
+                {VendorList?.map((vendor) => (
+                  <option value={vendor?.vendorId}>
+                    {vendor?.fname}&nbsp;{vendor?.lname} - ({vendor?.vendorId})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <Link to="../admin/Labvendorproductcart">
+                <IconButton aria-label="cart">
+                  <StyledBadge
+                    badgeContent={getAddtocart?.length}
+                    color="secondary"
+                  >
+                    <ShoppingCartIcon
+                      style={{ fontSize: "50px", marginLeft: "10px" }}
+                    />
+                  </StyledBadge>
+                </IconButton>
+              </Link>
+            </div>
           </div>
           {SelectedVendor ? (
             <Table

@@ -261,7 +261,64 @@ export default function AdminBookProductCart() {
   }
 
   const addBooking = async () => {
-    if (PatientType === "OPD" || PatientType === "IPD") {
+    if (PatientType === "IPD") {
+      if (!PatientId) {
+        alert("Please Enter Patient Id");
+      } else if (!SelectedDepartment) {
+        alert("Please select Department");
+      } else if (!SelectedDoctor) {
+        alert("Please select Doctor");
+      } else if (!PaymentMethod) {
+        alert("Please select payment method");
+      } else {
+        try {
+          const config = {
+            url: "/admin/AdminOrder",
+            method: "post",
+            baseURL: "http://localhost:8521/api",
+            // headers: { "content-type": "multipart/form-data" },
+            data: {
+              PatientID: PatientId,
+              PatientType: PatientType,
+              PaymentMethod: PaymentMethod,
+              CauseID: selectedCause,
+              PatientName:
+                selectedPateint[0]?.Firstname +
+                "" +
+                selectedPateint[0]?.Lastname,
+              PatientContactNumber: selectedPateint[0]?.PhoneNumber,
+              PatientAddress:
+                selectedPateint[0]?.Address1 +
+                "," +
+                selectedPateint[0]?.Zipcode,
+              Products: CartProducts,
+              Department: SelectedDepartment,
+              DoctorID: SelectedDepartmentDoctors?.DoctorId,
+              DoctorName:
+                SelectedDepartmentDoctors?.Firstname +
+                " " +
+                SelectedDepartmentDoctors?.Lastname,
+              AdminId: adminDetails?._id,
+            },
+          };
+          let res = await axios(config);
+          if (res.status === 200) {
+            const x = addBill();
+            if (x) {
+              getAdmincartproduct();
+              setselectedPateint([]);
+              alert("Booking done successfully");
+              window.location.reload();
+            }
+          }
+        } catch (error) {
+          if (error.response) {
+            alert(error.response.data.error);
+          }
+        }
+      }
+    }
+    if (PatientType === "OPD") {
       if (!PatientId) {
         alert("Please Enter Patient Id");
       } else if (!SelectedDepartment) {
@@ -338,6 +395,7 @@ export default function AdminBookProductCart() {
                 PatientContactNumber: PatientContactNumber,
                 PatientAddress: PatientAddress,
                 Products: CartProducts,
+                AdminId: adminDetails?._id,
               },
             };
             console.log("config", config);
@@ -353,6 +411,48 @@ export default function AdminBookProductCart() {
               alert(error.response.data.error);
             }
           }
+        }
+      }
+    }
+  };
+
+  const addBill = async () => {
+    if (!PatientId) {
+      alert("Please Enter Patient Id");
+    } else if (!SelectedDepartment) {
+      alert("Please select Department");
+    } else if (!SelectedDoctor) {
+      alert("Please select Doctor");
+    } else if (!PaymentMethod) {
+      alert("Please select payment method");
+    } else {
+      try {
+        const config = {
+          url: "/user/AddPharmacyDetailsToTheBillOfPatient",
+          method: "put",
+          baseURL: "http://localhost:8521/api",
+          // headers: { "content-type": "multipart/form-data" },
+          data: {
+            patientid: PatientId,
+            PaymentMethod: PaymentMethod,
+            causeid: selectedCause,
+            Products: CartProducts,
+            Department: SelectedDepartment,
+            DoctorID: SelectedDepartmentDoctors?.DoctorId,
+            DoctorName:
+              SelectedDepartmentDoctors?.Firstname +
+              " " +
+              SelectedDepartmentDoctors?.Lastname,
+            AdminId: adminDetails?._id,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          return true;
+        }
+      } catch (error) {
+        if (error.response) {
+          alert(error.response.data.error);
         }
       }
     }

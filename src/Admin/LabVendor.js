@@ -6,6 +6,7 @@ import axios from "axios";
 import { Pagination, Stack } from "@mui/material";
 import exportFromJSON from "export-from-json";
 import { FaRegEdit } from "react-icons/fa";
+import ReactPaginate from "react-paginate";
 
 export default function LabVendor() {
   const formdata = new FormData();
@@ -93,9 +94,7 @@ export default function LabVendor() {
         setFilteredCatList(
           res.data.allVendors?.filter((item) => item?.VendorType === "Lab")
         );
-        setPagination(
-          res.data.allVendors?.filter((item) => item?.VendorType === "Lab")
-        );
+     
       }
     } catch (error) {
       console.log(error);
@@ -211,12 +210,11 @@ export default function LabVendor() {
   //===================
 
   // Pagination
-  const [pagination, setPagination] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const usersPerPage = 3;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(pagination?.length / usersPerPage);
-  const changePage = (selected) => {
+  const pageCount = Math.ceil(FilteredCatList?.length / usersPerPage);
+  const changePage = ({ selected }) => {
     setPageNumber(selected);
   };
 
@@ -348,7 +346,6 @@ export default function LabVendor() {
                           handleShow2();
                         }}
                       />
-                     
                     </div>
                   </td>
                 </tr>
@@ -358,15 +355,22 @@ export default function LabVendor() {
         </Table>
 
         <div style={{ float: "left" }} className="my-3 d-flex justify-end">
-          <Stack spacing={2}>
-            <Pagination
-              count={pageCount}
-              onChange={(event, value) => {
-                changePage(value - 1);
-              }}
-              color="primary"
+          <div style={{ display: "flex" }}>
+            <p style={{ width: "100%", marginTop: "20px" }}>
+              Total Count: {FilteredCatList?.length}
+            </p>
+            <ReactPaginate
+              previousLabel={"Back"}
+              nextLabel={"Next"}
+              pageCount={pageCount}
+              onPageChange={changePage}
+              containerClassName={"paginationBttns"}
+              previousLinkClassName={"previousBttn"}
+              nextLinkClassName={"nextBttn"}
+              disabledClassName={"paginationDisabled"}
+              activeClassName={"paginationActive"}
             />
-          </Stack>
+          </div>
         </div>
 
         <AiOutlinePlusCircle className="AddIcon1" onClick={handleShow} />

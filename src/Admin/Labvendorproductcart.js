@@ -18,7 +18,7 @@ const Labvendorproductcart = () => {
   const [getAddtocart, setgetAddtocart] = useState([]);
   const getaddtocart = () => {
     axios
-      .get("http://localhost:8521/api/admin/getLabcart")
+      .get("http://localhost:8521/api/vendor/getaddtocartdata")
       .then(function (response) {
         setgetAddtocart(response.data.addtocart);
       })
@@ -81,9 +81,10 @@ const Labvendorproductcart = () => {
               (item?.quantity + 1)}
         </>
       );
+
     try {
       const config = {
-        url: "/admin/updateLabquantity",
+        url: "/vendor/updateAdminquantity",
         method: "post",
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
@@ -152,7 +153,7 @@ const Labvendorproductcart = () => {
 
       try {
         const config = {
-          url: "/admin/updateLabquantity",
+          url: "/vendor/updateAdminquantity",
           method: "post",
           baseURL: "http://localhost:8521/api",
           headers: { "content-type": "application/json" },
@@ -268,14 +269,13 @@ const Labvendorproductcart = () => {
                   Number(item?.productid?.productPrice) +
                     (Number(item?.productid?.productPrice) *
                       Number(item?.productid?.CGST)) /
-                      100) +
-                  (Number(item?.productid?.productPrice) *
-                    Number(item?.productid?.SGST)) /
-                    100 -
-                  ((Number(item?.productid?.productPrice) *
-                    Number(item?.productid?.discount)) /
-                    100) *
-                    item?.quantity}
+                      100 +
+                    (Number(item?.productid?.productPrice) *
+                      Number(item?.productid?.SGST)) /
+                      100 -
+                    (Number(item?.productid?.productPrice) *
+                      Number(item?.productid?.discount)) /
+                      100) * item?.quantity}
               </>
             );
           return {
@@ -290,7 +290,7 @@ const Labvendorproductcart = () => {
         });
         console.log("products", products);
         const config = {
-          url: "/admin/postLaborder",
+          url: "/vendor/postAdminOrders",
           method: "post",
           baseURL: "http://localhost:8521/api",
           headers: { "content-type": "application/json" },
@@ -333,7 +333,7 @@ const Labvendorproductcart = () => {
   const deletecart = async (item) => {
     try {
       const config = {
-        url: "/admin/deleteLabcart",
+        url: "/vendor/deletecart",
         method: "delete",
         baseURL: "http://localhost:8521/api",
         headers: { "content-type": "application/json" },
@@ -351,8 +351,7 @@ const Labvendorproductcart = () => {
       }
     }
   };
-
-  console.log("amount", amounts);
+  console.log("amounts", amounts);
   return (
     <div className="p-5">
       <h4 style={{ backgroundColor: "#dae1f3" }} className="p-4 fw-bold mb-4">
@@ -519,14 +518,13 @@ const Labvendorproductcart = () => {
                           Number(item?.productid?.productPrice) +
                             (Number(item?.productid?.productPrice) *
                               Number(item?.productid?.CGST)) /
-                              100) +
-                          (Number(item?.productid?.productPrice) *
-                            Number(item?.productid?.SGST)) /
-                            100 -
-                          ((Number(item?.productid?.productPrice) *
-                            Number(item?.productid?.discount)) /
-                            100) *
-                            item?.quantity}
+                              100 +
+                            (Number(item?.productid?.productPrice) *
+                              Number(item?.productid?.SGST)) /
+                              100 -
+                            (Number(item?.productid?.productPrice) *
+                              Number(item?.productid?.discount)) /
+                              100) * item?.quantity}
                       </>
                     )}
                   </td>

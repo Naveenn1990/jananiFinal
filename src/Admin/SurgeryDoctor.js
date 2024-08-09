@@ -21,7 +21,7 @@ import {
   AiOutlinePlusCircle,
 } from "react-icons/ai";
 
-export default function Hospitaldoctors() {
+export default function SurgeryDoctor() {
   const Input = styled("input")({
     display: "none",
   });
@@ -239,7 +239,7 @@ export default function Hospitaldoctors() {
       phonenumber(mobileno) &&
       CheckPassword(password)
     ) {
-      formdata.set("DoctorType", "hospital");
+      formdata.set("DoctorType", "Surgery");
       formdata.set("Firstname", doctorfirstname);
       formdata.set("Lastname", doctorlastname);
       formdata.set("Gender", gender);
@@ -438,7 +438,7 @@ export default function Hospitaldoctors() {
         // handle success
         setdata(
           response.data.DoctorsInfo?.filter(
-            (data) => data.DoctorType === "hospital"
+            (data) => data.DoctorType === "Surgery"
           )
         );
       })
@@ -448,162 +448,10 @@ export default function Hospitaldoctors() {
       });
   };
 
-  // ======================================================
-
-  const [mondayweekoff, setmondayweekoff] = useState("false");
-  const [mondayweekstatus, setmondayweekstatus] = useState("");
-  const [mondaystartingtime, setmondaystartingtime] = useState("");
-  const [mondayendingtime, setmondayendingtime] = useState("");
-  const [tuesdayweekoff, settuesdayweekoff] = useState("false");
-  const [tuesdayweekstatus, settuesdayweekstatus] = useState("");
-  const [tuesdaystartingtime, settuesdaystartingtime] = useState("");
-  const [tuesdayendingtime, settuesdayendingtime] = useState("");
-  const [wednesdayweekoff, setwednesdayweekoff] = useState("false");
-  const [wednesdayweekstatus, setwednesdayweekstatus] = useState("");
-  const [wednesdaystartingtime, setwednesdaystartingtime] = useState("");
-  const [wednesdayendingtime, setwednesdayendingtime] = useState("");
-  const [thrusdayweekoff, setthrusdayweekoff] = useState("false");
-  const [thrusdayweekstatus, setthrusdayweekstatus] = useState("");
-  const [thrusdaystartingtime, setthrusdaystartingtime] = useState("");
-  const [thrusdayendingtime, setthrusdayendingtime] = useState("");
-  const [fridayweekoff, setfridayweekoff] = useState("false");
-  const [fridayweekstatus, setfridayweekstatus] = useState("");
-  const [fridaystartingtime, setfridaystartingtime] = useState("");
-  const [fridayendingtime, setfridayendingtime] = useState("");
-  const [saturdayweekoff, setsaturdayweekoff] = useState("false");
-  const [saturdayweekstatus, setsaturdayweekstatus] = useState("");
-  const [saturdaystartingtime, setsaturdaystartingtime] = useState("");
-  const [saturdayendingtime, setsaturdayendingtime] = useState("");
-  const [sundayweekoff, setsundayweekoff] = useState("false");
-  const [sundayweekstatus, setsundayweekstatus] = useState("");
-  const [sundaystartingtime, setsundaystartingtime] = useState("");
-  const [sundayendingtime, setsundayendingtime] = useState("");
   const [appointmentcharge, setappointmentcharge] = useState("");
   const [salary, setsalary] = useState("");
   const [salaryDate, setsalaryDate] = useState("");
   const [remark, setremark] = useState("");
-
-  function ScheduleValidation() {
-    if (
-      (mondayweekoff === false || mondayweekoff === "false") &&
-      !(mondaystartingtime && mondayendingtime)
-    ) {
-      return "Please add scheduled time for monday";
-    }
-    if (
-      (tuesdayweekoff === false || tuesdayweekoff === "false") &&
-      !(tuesdaystartingtime && tuesdayendingtime)
-    ) {
-      return "Please add scheduled time for tuesday";
-    }
-    if (
-      (wednesdayweekoff === false || wednesdayweekoff === "false") &&
-      !(wednesdaystartingtime && wednesdayendingtime)
-    ) {
-      return "Please add scheduled time for wednesday";
-    }
-    if (
-      (thrusdayweekoff === false || thrusdayweekoff === "false") &&
-      !(thrusdaystartingtime && thrusdayendingtime)
-    ) {
-      return "Please add scheduled time for thrusday";
-    }
-    if (
-      (fridayweekoff === false || fridayweekoff === "false") &&
-      !(fridaystartingtime && fridayendingtime)
-    ) {
-      return "Please add scheduled time for friday";
-    }
-    if (
-      (saturdayweekoff === false || saturdayweekoff === "false") &&
-      !(saturdaystartingtime && saturdayendingtime)
-    ) {
-      return "Please add scheduled time for saturday";
-    }
-    if (
-      (sundayweekoff === false || sundayweekoff === "false") &&
-      !(sundaystartingtime && sundayendingtime)
-    ) {
-      return "Please add scheduled time for sunday";
-    }
-    return false;
-  }
-
-  const addSchedule = async (e) => {
-    e.preventDefault();
-    try {
-      const validationVal = ScheduleValidation();
-      if (validationVal) {
-        return alert(validationVal);
-      }
-      const config = {
-        url: `/Doctor/editDoctorDetails/${View?._id}`,
-        method: "put",
-        baseURL: "http://localhost:8521/api",
-        headers: { "Content-Type": "application/json" },
-        data: {
-          mondayweekoff: mondayweekoff,
-          mondaystartingtime: mondaystartingtime,
-          mondayendingtime: mondayendingtime,
-          tuesdayweekoff: tuesdayweekoff,
-          tuesdaystartingtime: tuesdaystartingtime,
-          tuesdayendingtime: tuesdayendingtime,
-          wednesdayweekoff: wednesdayweekoff,
-          wednesdaystartingtime: wednesdaystartingtime,
-          wednesdayendingtime: wednesdayendingtime,
-          thrusdayweekoff: thrusdayweekoff,
-          thrusdaystartingtime: thrusdaystartingtime,
-          thrusdayendingtime: thrusdayendingtime,
-          fridayweekoff: fridayweekoff,
-          fridaystartingtime: fridaystartingtime,
-          fridayendingtime: fridayendingtime,
-          saturdayweekoff: saturdayweekoff,
-          saturdaystartingtime: saturdaystartingtime,
-          saturdayendingtime: saturdayendingtime,
-          sundayweekoff: sundayweekoff,
-          sundaystartingtime: sundaystartingtime,
-          sundayendingtime: sundayendingtime,
-        },
-      };
-      let res = await axios(config);
-      if (res.status === 200) {
-        setmondayweekoff("false");
-        setmondaystartingtime("");
-        setmondayendingtime("");
-        settuesdayweekoff("false");
-        settuesdaystartingtime("");
-        settuesdayendingtime("");
-        setwednesdayweekoff("false");
-        setwednesdaystartingtime("");
-        setwednesdayendingtime("");
-        setthrusdayweekoff("false");
-        setthrusdaystartingtime("");
-        setthrusdayendingtime("");
-        setfridayweekoff("false");
-        setfridaystartingtime("");
-        setfridayendingtime("");
-        setsaturdayweekoff("false");
-        setsaturdaystartingtime("");
-        setsaturdayendingtime("");
-        setsundayweekoff("false");
-        setsundaystartingtime("");
-        setsundayendingtime("");
-        setmondayweekstatus("");
-        settuesdayweekstatus("");
-        setwednesdayweekstatus("");
-        setthrusdayweekstatus("");
-        setfridayweekstatus("");
-        setsaturdayweekstatus("");
-        setsundayweekstatus("");
-        getDoctors();
-        setShow6(false);
-        alert(res.data.success);
-      }
-    } catch (error) {
-      console.log(error);
-      alert(error.response.data.error);
-    }
-  };
 
   const addAppoinbtmentSchedule = async (e) => {
     e.preventDefault();
@@ -729,9 +577,9 @@ export default function Hospitaldoctors() {
 
   const [scheduleDate, setScheduleDate] = useState("");
   const [timeInterval, settimeInterval] = useState("");
-  // const [startTime, setStartTime] = useState("");
-  // const [endTime, setEndTime] = useState("");
-  const [endTime, startTime] = timeInterval.split(" - ");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  //   const [endTime, startTime] = timeInterval.split(" - ");
   const handleTimeChange = (e, setTime) => {
     const [hours, minutes] = e.target.value.split(":");
     const period = hours >= 12 ? "PM" : "AM";
@@ -748,8 +596,11 @@ export default function Hospitaldoctors() {
     if (!scheduleDate) {
       return alert("Select date..!");
     }
-    if (!timeInterval) {
-      return alert("Select time..!");
+    if (!startTime) {
+      return alert("Select start time..!");
+    }
+    if (!endTime) {
+      return alert("Select end time..!");
     }
     const newSchedule = {
       scheduleDate,
@@ -824,7 +675,7 @@ export default function Hospitaldoctors() {
     <div>
       <div style={{ padding: "1%" }}>
         <h6 style={{ fontSize: "22px", fontWeight: "600", color: "grey" }}>
-          Hospital doctors
+          Surgery doctors
         </h6>
         <div
           style={{
@@ -1852,16 +1703,14 @@ export default function Hospitaldoctors() {
                         onChange={(e) => handleTimeChange(e, setStartTime)}
                       /> */}
                         <Form.Select
-                          value={timeInterval}
+                          value={startTime}
                           className="vi_0"
-                          onChange={(e) => settimeInterval(e.target.value)}
+                          onChange={(e) => setStartTime(e.target.value)}
                         >
                           <option value="">Select Time</option>
                           {allTimes?.map((item) => {
                             return (
-                              <option
-                                value={`${item?.gettime} - ${item?.settime}`}
-                              >
+                              <option value={item?.settime}>
                                 {item?.settime}
                               </option>
                             );
@@ -1876,7 +1725,21 @@ export default function Hospitaldoctors() {
                         type="time"
                         onChange={(e) => handleTimeChange(e, setEndTime)}
                       /> */}
-                        <Form.Control className="vi_0" value={endTime} />
+                        {/* <Form.Control className="vi_0" value={endTime} /> */}
+                        <Form.Select
+                          value={endTime}
+                          className="vi_0"
+                          onChange={(e) => setEndTime(e.target.value)}
+                        >
+                          <option value="">Select Time</option>
+                          {allTimes?.map((item) => {
+                            return (
+                              <option value={item?.settime}>
+                                {item?.settime}
+                              </option>
+                            );
+                          })}
+                        </Form.Select>
                       </Form.Group>
                     </td>
                     <td>
@@ -2454,33 +2317,33 @@ export default function Hospitaldoctors() {
                             </a>
                           </td>
                           {/* <td>
-                          <div
-                            style={{
-                              display: "flex",
-                              textAlign: "center",
-                              justifyContent: "space-evenly",
-                            }}
-                          >
-                            <MdEdit
-                              style={{ color: "#20958c", marginRight: "1%" }}
-                              onClick={() => setShow4(true)}
-                            />
-                            <AiFillDelete style={{ color: "red" }} />
-                            <br></br>
-                          </div>
-                          <button
-                            style={{
-                              fontSize: "12px",
-                              border: "none",
-                              backgroundColor: "#20958c",
-                              color: "white",
-                              fontWeight: "600",
-                              borderRadius: "4px",
-                            }}
-                          >
-                            BLOCK
-                          </button>
-                        </td> */}
+                <div
+                  style={{
+                    display: "flex",
+                    textAlign: "center",
+                    justifyContent: "space-evenly",
+                  }}
+                >
+                  <MdEdit
+                    style={{ color: "#20958c", marginRight: "1%" }}
+                    onClick={() => setShow4(true)}
+                  />
+                  <AiFillDelete style={{ color: "red" }} />
+                  <br></br>
+                </div>
+                <button
+                  style={{
+                    fontSize: "12px",
+                    border: "none",
+                    backgroundColor: "#20958c",
+                    color: "white",
+                    fontWeight: "600",
+                    borderRadius: "4px",
+                  }}
+                >
+                  BLOCK
+                </button>
+              </td> */}
 
                           <td
                             style={{
@@ -2662,13 +2525,13 @@ export default function Hospitaldoctors() {
                                 )}
 
                                 {/* <li>
-                                <a
-                                  href="javascript:;"
-                                  style={{ textDecoration: "none", color: "#20958c" }}
-                                >
-                                  <i class="fa fa-file-excel-o"style={{marginRight:"2%"}}></i> Export to Excel{" "}
-                                </a>
-                              </li> */}
+                      <a
+                        href="javascript:;"
+                        style={{ textDecoration: "none", color: "#20958c" }}
+                      >
+                        <i class="fa fa-file-excel-o"style={{marginRight:"2%"}}></i> Export to Excel{" "}
+                      </a>
+                    </li> */}
                               </ul>
                             </div>
                           </td>
