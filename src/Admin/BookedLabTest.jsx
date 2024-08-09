@@ -88,7 +88,7 @@ function BookedLabTest() {
   const componentRef1 = useRef();
   const handleprint1 = useReactToPrint({
     content: () => componentRef1.current,
-    documentTitle: "LabTestInvoice",
+    documentTitle: "LabTestReport",
   });
 
   // Get All Lab Test Requests
@@ -2046,7 +2046,8 @@ function BookedLabTest() {
                       <span>{SpecificTestInfo?.testid?.testDescription}</span>
                     </p>
                     <p>
-                      GeneratedBy: <b>{SpecificTestInfo?.reportByTechnician?.name}</b>
+                      GeneratedBy:{" "}
+                      <b>{SpecificTestInfo?.reportByTechnician?.name}</b>
                     </p>
                     <p style={{ textAlign: "center" }}>
                       ---------The end of Report---------

@@ -1,9 +1,10 @@
 import moment from "moment";
-import React, { useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
+import React, { useEffect, useState, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
+import { Table, Modal, Button } from "react-bootstrap";
 
 import { useLocation } from "react-router-dom";
-
+import { FaRegFilePdf } from "react-icons/fa";
 function DoctorsViewForms() {
   let doctorDetails = JSON.parse(sessionStorage.getItem("DoctorDetails"));
   const location = useLocation();
@@ -21,6 +22,15 @@ function DoctorsViewForms() {
   } else {
     ageOutput = `${ageYears} years`;
   }
+
+  const [show, setShow] = useState(false);
+  const [labreportObj, setlabreportObj] = useState({});
+  const [Item2Details, setItem2Details] = useState({});
+  const componentRef1 = useRef();
+  const handleprint1 = useReactToPrint({
+    content: () => componentRef1.current,
+    documentTitle: "LabTestReport",
+  });
   const [CauseDetails, setCauseDetails] = useState([]);
   useEffect(() => {
     const assignedPatients = item?.cause?.filter((val) => val._id === causeId);
@@ -221,11 +231,12 @@ function DoctorsViewForms() {
                         Pt ID : {item?.PatientId}
                       </td>
                       <td style={{ width: "50%", border: "2px solid #20958C" }}>
-                        Ward : {CauseDetails?.causeBillDetails?.[0]?.BedBillDetails?.map(
-                              (item) => {
-                                return <span> {item?.bedName}</span>;
-                              }
-                            )}
+                        Ward :{" "}
+                        {CauseDetails?.causeBillDetails?.[0]?.BedBillDetails?.map(
+                          (item) => {
+                            return <span> {item?.bedName}</span>;
+                          }
+                        )}
                       </td>
                     </tr>
                     <tr>
@@ -240,7 +251,7 @@ function DoctorsViewForms() {
                   </tbody>
                 </Table>
                 <Table
-                className="mt-2"
+                  className="mt-2"
                   style={{
                     borderCollapse: "collapse",
                     width: "100%",
@@ -268,44 +279,43 @@ function DoctorsViewForms() {
                     {CauseDetails?.doctorstreatment?.map((item, i) => {
                       return (
                         <>
-                          
-                              <tr style={{ textAlign: "center" }}>
-                                <td
-                                  style={{
-                                    border: "2px solid #20958C",
-                                  }}
-                                >
-                                  {item?.DTdate}
-                                </td>
-                                <td
-                                  style={{
-                                    border: "2px solid #20958C",
-                                  }}
-                                >
-                                  {item?.DTTime}
-                                </td>
-                                <td
-                                  style={{
-                                    border: "2px solid #20958C",
-                                  }}
-                                >
-                                  {item?.DTNotes}
-                                </td>
-                                <td
-                                  style={{
-                                    border: "2px  solid #20958C",
-                                  }}
-                                >
-                                  <b>Doctor Name : </b> <span>{`${item?.doctorid?.Firstname} ${item?.doctorid?.Lastname}`}</span>
-                                <br/>
-                                <hr/>
-                                <img
-                                  alt="sign"
-                                  src={`http://localhost:8521/PatientREG/${item?.doctortretmentSignature}`}
-                                />
-                                </td>
-                              </tr>
-                         
+                          <tr style={{ textAlign: "center" }}>
+                            <td
+                              style={{
+                                border: "2px solid #20958C",
+                              }}
+                            >
+                              {item?.DTdate}
+                            </td>
+                            <td
+                              style={{
+                                border: "2px solid #20958C",
+                              }}
+                            >
+                              {item?.DTTime}
+                            </td>
+                            <td
+                              style={{
+                                border: "2px solid #20958C",
+                              }}
+                            >
+                              {item?.DTNotes}
+                            </td>
+                            <td
+                              style={{
+                                border: "2px  solid #20958C",
+                              }}
+                            >
+                              <b>Doctor Name : </b>{" "}
+                              <span>{`${item?.doctorid?.Firstname} ${item?.doctorid?.Lastname}`}</span>
+                              <br />
+                              <hr />
+                              <img
+                                alt="sign"
+                                src={`http://localhost:8521/PatientREG/${item?.doctortretmentSignature}`}
+                              />
+                            </td>
+                          </tr>
                         </>
                       );
                     })}
@@ -585,9 +595,10 @@ function DoctorsViewForms() {
                                   border: "2px  solid #20958C",
                                 }}
                               >
-                                <b>Doctor Name : </b> <span>{`${item?.doctorid?.Firstname} ${item?.doctorid?.Lastname}`}</span>
-                                <br/>
-                                <hr/>
+                                <b>Doctor Name : </b>{" "}
+                                <span>{`${item?.doctorid?.Firstname} ${item?.doctorid?.Lastname}`}</span>
+                                <br />
+                                <hr />
                                 <img
                                   alt="sign"
                                   src={`http://localhost:8521/PatientREG/${item?.doctornotesSignature}`}
@@ -969,7 +980,23 @@ function DoctorsViewForms() {
                                                 <tr>
                                                   <td>{i}.</td>
                                                   <td>{valitem?.testName}</td>
-                                                  <td>Not Generated Yet</td>
+                                                  <td>
+                                                    <FaRegFilePdf
+                                                      onClick={() => {
+                                                        setItem2Details(
+                                                          dataval
+                                                        );
+                                                        setlabreportObj(
+                                                          valitem
+                                                        );
+                                                        setShow(true);
+                                                      }}
+                                                      style={{
+                                                        color: "#20958C",
+                                                        fontSize: "20px",
+                                                      }}
+                                                    />
+                                                  </td>
                                                 </tr>
                                               );
                                             }
@@ -984,6 +1011,260 @@ function DoctorsViewForms() {
                           </tbody>
                         </Table>
                       </div>
+
+                      <Modal
+                        show={show}
+                        onHide={() => setShow(false)}
+                        size="lg"
+                      >
+                        <Modal.Header closeButton>
+                          <Modal.Title>Lab Report</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <div ref={componentRef1}>
+                            <div
+                              style={{
+                                overflow: "hidden",
+                                overflowX: "scroll",
+                              }}
+                            >
+                              <div
+                                className="invoice-rspns"
+                                style={{
+                                  boxShadow:
+                                    " 0px 8px 32px 0px rgba(19, 19, 20, 0.37)",
+                                  background: "#f5f6fa",
+                                  backdropFilter: "blur(4px)",
+                                  padding: "20px",
+                                }}
+                              >
+                                <div className="">
+                                  <div
+                                    className="mb-5 "
+                                    style={{
+                                      display: "flex",
+                                    }}
+                                  >
+                                    <div>
+                                      <img
+                                        style={{
+                                          width: "115px",
+                                          height: "115px",
+                                        }}
+                                        className="logo me-2 "
+                                        src="/img/logo.png"
+                                        alt="Logo"
+                                      />{" "}
+                                    </div>
+                                    <div
+                                      className="text-center"
+                                      style={{ marginLeft: "30px" }}
+                                    >
+                                      <span
+                                        className="fw-bold fs-4"
+                                        style={{ color: "rgb(32 139 140)" }}
+                                      >
+                                        JANANI CLINICAL LABORATORY
+                                      </span>
+                                      <br />
+                                      <div>
+                                        <b>
+                                          Upstair Canara bank , Near BDA Cross,
+                                          KK Colony, Jalanagar Main Road,
+                                          Vijayapur--586109
+                                        </b>
+                                        <div>
+                                          Phone:- 08352-277077 ,9606831158 ,
+                                          Email:- jananihospital2018@gmail.com
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div
+                                  className="row"
+                                  style={{
+                                    borderBottom: "2px solid",
+                                    padding: "0px",
+                                    display: "flex",
+                                    //   justifyContent: "space-between",
+                                  }}
+                                >
+                                  <div className="col-sm-6">
+                                    <Table>
+                                      <tbody>
+                                        <tr>
+                                          <td>
+                                            <b>Patient ID</b>{" "}
+                                          </td>
+                                          <td>{item.PatientId}</td>
+                                        </tr>
+
+                                        <tr>
+                                          <td>
+                                            <b>Patient Name</b>{" "}
+                                          </td>
+                                          <td>
+                                            {item?.Firstname} {item?.Lastname}
+                                          </td>
+                                        </tr>
+
+                                        <tr>
+                                          <td>
+                                            <b>Patient Age</b>{" "}
+                                          </td>
+                                          <td>
+                                            {moment().diff(
+                                              moment(item?.DOB),
+                                              "years"
+                                            )}{" "}
+                                            years
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td>
+                                            <b>Gender</b>
+                                          </td>
+                                          <td>{item?.Gender}</td>
+                                        </tr>
+
+                                        <tr>
+                                          <td>
+                                            <b>Email</b>
+                                          </td>
+                                          <td> {item?.Email}</td>
+                                        </tr>
+                                      </tbody>
+                                    </Table>
+                                  </div>
+                                  <div className="col-sm-6">
+                                    <Table>
+                                      <tbody>
+                                        <tr>
+                                          <td>
+                                            <b>Phone</b>
+                                          </td>
+                                          <td>{item?.PhoneNumber}</td>
+                                        </tr>
+
+                                        <tr>
+                                          <td>
+                                            <b>Referred By</b>
+                                          </td>
+                                          <td>
+                                            {
+                                              Item2Details?.labTestBookingId
+                                                ?.hospitallabRefferedBy
+                                            }
+                                          </td>
+                                        </tr>
+
+                                        <tr>
+                                          <td>
+                                            <b>Register Date</b>
+                                          </td>
+                                          <td>
+                                            {moment(item?.testDate).format(
+                                              "DD/MM/YYYY"
+                                            )}
+                                            years
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td>
+                                            <b>Sample </b>
+                                          </td>
+                                          <td> {labreportObj?.sampleName}</td>
+                                        </tr>
+
+                                        <tr>
+                                          <td>
+                                            <b>Collected On</b>{" "}
+                                          </td>
+                                          <td>
+                                            {`${new Date(
+                                              labreportObj?.sampleCollectionDateTime
+                                            ).getDate()} - ${
+                                              new Date(
+                                                labreportObj?.sampleCollectionDateTime
+                                              ).getMonth() + 1
+                                            } - ${new Date(
+                                              labreportObj?.sampleCollectionDateTime
+                                            ).getFullYear()}`}
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </Table>
+                                  </div>
+                                </div>
+
+                                <div
+                                  style={{
+                                    marginTop: "20px",
+                                    marginBottom: "10px",
+                                  }}
+                                >
+                                  {" "}
+                                  <h3>{labreportObj?.testName}</h3>
+                                </div>
+                                <div className="row mt-2">
+                                  <Table bordered>
+                                    <thead>
+                                      <tr>
+                                        <th>Test Name</th>
+                                        <th>Result</th>
+                                        <th>Unit</th>
+                                        <th>General Reference Value</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {labreportObj?.subTest?.map(
+                                        (itemdata) => {
+                                          return (
+                                            <tr>
+                                              <td>{itemdata?.subtestName}</td>
+                                              <td>
+                                                <b>
+                                                  {
+                                                    itemdata?.subtestpatientReportVal
+                                                  }
+                                                </b>
+                                              </td>
+                                              <td>{itemdata?.subtestunit}</td>
+                                              <td>
+                                                {itemdata?.subtestgeneralRefVal}
+                                              </td>
+                                            </tr>
+                                          );
+                                        }
+                                      )}
+                                    </tbody>
+                                  </Table>
+                                </div>
+
+                                <div>
+                                  <p style={{ textAlign: "center" }}>
+                                    ---------The end of Report---------
+                                  </p>
+                                </div>
+                                <hr />
+                              </div>
+                            </div>
+                          </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button
+                            variant="secondary"
+                            onClick={() => setShow(false)}
+                          >
+                            Close
+                          </Button>
+                          <Button variant="primary" onClick={handleprint1}>
+                            Print
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
                     </>
                   ) : (
                     <></>

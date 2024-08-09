@@ -6,11 +6,10 @@ import { Button, Table } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
 
 const GeneralConsent = ({ viewGeneralConsentform, patientdetail }) => {
-  console.log("patientdetail", patientdetail);
-  const createPDF = async () => {
+  const createPDF = async (id) => {
     try {
       const pdf = new jsPDF("portrait", "pt", "a4");
-      const element = document.querySelector("#pdf");
+      const element = document.querySelector(`#${id}`);
       const data = await html2canvas(element, {
         useCORS: true,
         scale: 2,
@@ -49,13 +48,13 @@ const GeneralConsent = ({ viewGeneralConsentform, patientdetail }) => {
                   borderRadius: "0px",
                   marginRight: "20px",
                 }}
-                onClick={createPDF}
+                onClick={()=>createPDF(`pdf${i+1}`)}
               >
                 Download <FiDownload />
               </Button>
             </div>
             <div
-              id="pdf"
+             id={`pdf${i+1}`}
               style={{
                 padding: "15px",
                 overflow: "hidden",
