@@ -147,43 +147,36 @@ export const DoctorsCaseStudy = () => {
 
   const bookLabTest = async () => {
     let obj;
-    if (
-      AppointmentList?.appointmentType === "SELF" &&
-      AppointmentList?.patientDBId?.registrationType === "IPD"
-    ) {
-      obj = {
-        causeid: causeid,
-        patientid: patientObj?._id,
-        patientname: patientObj?.Firstname,
-        Phoneno: patientObj?.PhoneNumber,
-        email: patientObj?.Email,
-        testDate: testDate,
-        Labtests: selectedOptions,
-        hospitallabRefferedBy: `${DoctorDetailsData?.Firstname} ${DoctorDetailsData?.Lastname}`,
-      };
-    } else if (
-      AppointmentList?.appointmentType === "SELF" &&
-      AppointmentList?.patientDBId?.registrationType === "OPD"
-    ) {
-      obj = {
-        patientid: patientObj?._id,
-        patientname: patientObj?.Firstname,
-        Phoneno: patientObj?.PhoneNumber,
-        email: patientObj?.Email,
-        testDate: testDate,
-        Labtests: selectedOptions,
-        hospitallabRefferedBy: `${DoctorDetailsData?.Firstname} ${DoctorDetailsData?.Lastname}`,
-      };
-    } else {
-      obj = {
-        patientname: patientname,
-        Phoneno: Phoneno,
-        email: email,
-        testDate: testDate,
-        Labtests: selectedOptions,
-        hospitallabRefferedBy: `${DoctorDetailsData?.Firstname} ${DoctorDetailsData?.Lastname}`,
-      };
-    }
+    console.log(
+      patientlist?.find(
+        (item) =>
+          item?.registrationType ===
+            "OPD" &&
+          item?.PatientId ===
+            AppointmentList?.PatientId
+      )
+    );
+    let patientObj1 = JSON.parse(
+      JSON.stringify(
+        patientlist?.find(
+          (item) =>
+            item?.registrationType ===
+              "OPD" &&
+            item?.PatientId ===
+              AppointmentList?.PatientId
+        )
+      )
+    );
+    obj = {
+      patientid: patientObj1?._id,
+      patientname: patientObj1?.Firstname,
+      Phoneno: patientObj1?.PhoneNumber,
+      email: patientObj1?.Email,
+      testDate: testDate,
+      Labtests: selectedOptions,
+      hospitallabRefferedBy: `${DoctorDetailsData?.Firstname} ${DoctorDetailsData?.Lastname}`,
+    };
+
     try {
       const config = {
         url: "/user/bookHospitalLabTest",
@@ -1158,136 +1151,7 @@ export const DoctorsCaseStudy = () => {
               <h5 className="fw-bold">Choose Lab Test</h5>
 
               <Row>
-                {AppointmentList?.appointmentType === "SELF" ? (
-                  <FloatingLabel
-                    className="col-md-6 p-2"
-                    controlId="floatingName"
-                    label="Patient List"
-                  >
-                    <Form.Select
-                      onChange={(e) =>
-                        setpatientObj(JSON.parse(e.target.value))
-                      }
-                    >
-                      <option>Choose Options</option>
-                      {patientlist
-                        ?.filter(
-                          (item) =>
-                            item?.registrationType ===
-                              AppointmentList?.patientDBId?.registrationType &&
-                            item?._id?.toString() ===
-                              AppointmentList?.patientDBId?._id?.toString()
-                        )
-                        ?.map((val) => {
-                          return (
-                            <option value={JSON.stringify(val)}>
-                              {val?.Firstname} {val?.Lastname}
-                            </option>
-                          );
-                        })}
-                    </Form.Select>
-                  </FloatingLabel>
-                ) : (
-                  <></>
-                )}
-
-                {AppointmentList?.appointmentType === "SELF" &&
-                AppointmentList?.patientDBId?.registrationType === "IPD" ? (
-                  <FloatingLabel
-                    className="col-md-6 p-2"
-                    controlId="floatingName"
-                    label="Cause"
-                  >
-                    <Form.Select onChange={(e) => setcauseid(e.target.value)}>
-                      <option>Choose Options</option>
-                      {patientObj?.cause?.map((val) => {
-                        return (
-                          <option value={val?._id}>{val?.CauseName}</option>
-                        );
-                      })}
-                    </Form.Select>
-                  </FloatingLabel>
-                ) : (
-                  <></>
-                )}
-
-                <FloatingLabel
-                  className="col-md-6 p-2"
-                  controlId="floatingName"
-                  label="Name"
-                >
-                  {AppointmentList?.appointmentType === "SELF" &&
-                  (AppointmentList?.patientDBId?.registrationType === "IPD" ||
-                    AppointmentList?.patientDBId?.registrationType ===
-                      "OPD") ? (
-                    <Form.Control
-                      type="text"
-                      value={patientObj?.Firstname}
-                      placeholder="Name"
-                      disabled
-                      onChange={(e) => setpatientname(e.target.value)}
-                    />
-                  ) : (
-                    <Form.Control
-                      type="text"
-                      value={patientname}
-                      placeholder="Name"
-                      onChange={(e) => setpatientname(e.target.value)}
-                    />
-                  )}
-                </FloatingLabel>
-                <FloatingLabel
-                  className="  col-md-6 p-2"
-                  controlId="floatingMobile"
-                  label="Mobile"
-                >
-                  {AppointmentList?.appointmentType === "SELF" &&
-                  (AppointmentList?.patientDBId?.registrationType === "IPD" ||
-                    AppointmentList?.patientDBId?.registrationType ===
-                      "OPD") ? (
-                    <Form.Control
-                      type="number"
-                      value={patientObj?.PhoneNumber}
-                      placeholder="Mobile"
-                      disabled
-                      onChange={(e) => setPhoneno(e.target.value)}
-                    />
-                  ) : (
-                    <Form.Control
-                      type="number"
-                      value={Phoneno}
-                      placeholder="Mobile"
-                      onChange={(e) => setPhoneno(e.target.value)}
-                    />
-                  )}
-                </FloatingLabel>
-
-                <FloatingLabel
-                  className="col-md-6 p-2"
-                  controlId="floatingEmail"
-                  label="Email"
-                >
-                  {AppointmentList?.appointmentType === "SELF" &&
-                  (AppointmentList?.patientDBId?.registrationType === "IPD" ||
-                    AppointmentList?.patientDBId?.registrationType ===
-                      "OPD") ? (
-                    <Form.Control
-                      type="email"
-                      value={patientObj?.Email}
-                      placeholder="Email"
-                      disabled
-                      onChange={(e) => setemail(e.target.value)}
-                    />
-                  ) : (
-                    <Form.Control
-                      type="email"
-                      value={email}
-                      placeholder="Email"
-                      onChange={(e) => setemail(e.target.value)}
-                    />
-                  )}
-                </FloatingLabel>
-                <FloatingLabel
+              <FloatingLabel
                   className="col-md-6 p-2"
                   controlId="floatingName"
                   label={hasSelectedOptions ? "" : "Select Lab Tests"}
@@ -1322,6 +1186,7 @@ export const DoctorsCaseStudy = () => {
                     onChange={(e) => settestDate(e.target.value)}
                   />
                 </FloatingLabel>
+                
               </Row>
 
               <div className="row gap-3 ms-2">
@@ -1348,43 +1213,7 @@ export const DoctorsCaseStudy = () => {
                   Submit
                 </button>
               </div>
-              <div className="mt-5">
-                <Table responsive bordered>
-                  <thead>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Recommended Tests</th>
-                  </thead>
-                  <tbody>
-                    {AppointmentList?.investigationList?.map((val) => {
-                      return (
-                        <tr>
-                          <td>{val?.labid?.email}</td>
-                          <td>{val?.labid?.Phoneno}</td>
-                          <td>
-                            <button
-                              style={{
-                                backgroundColor: "#20958C",
-                                color: "white",
-                                width: "90px",
-                                height: "40px",
-                                border: "0px",
-                                borderRadius: "10px",
-                              }}
-                              onClick={() => {
-                                setTestView(val?.labid);
-                                handleShow2();
-                              }}
-                            >
-                              Tests
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
-              </div>
+              
             </Tab.Pane>
 
             <Tab.Pane eventKey="four" className="p-2">

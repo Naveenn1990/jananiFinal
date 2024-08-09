@@ -130,11 +130,11 @@ export const VendorOrders = () => {
 
   useEffect(() => {
     getProductList();
-    if (Vendor?.VendorType === "Lab") {
-      getLabOrderList();
-    } else if (Vendor?.VendorType === "Pharmacy") {
-      getOrderList();
-    }
+    // if (Vendor?.VendorType === "Lab") {
+    //   getLabOrderList();
+    // } else if (Vendor?.VendorType === "Pharmacy") {
+    getOrderList();
+    // }
   }, []);
 
   const AcceptOrder = async (data) => {
@@ -782,13 +782,13 @@ export const VendorOrders = () => {
                             <div style={{ display: "flex", gap: "10px" }}>
                               <button
                                 onClick={() => {
-                                  Vendor?.VendorType === "Lab" ? (
-                                    AcceptLabOrder(item)
-                                  ) : Vendor?.VendorType === "Pharmacy" ? (
-                                    AcceptOrder(item)
-                                  ) : (
-                                    <></>
-                                  );
+                                  // Vendor?.VendorType === "Lab" ? (
+                                  //   AcceptLabOrder(item)
+                                  // ) : Vendor?.VendorType === "Pharmacy" ? (
+                                  AcceptOrder(item);
+                                  // ) : (
+                                  //   <></>
+                                  // );
                                 }}
                                 style={{
                                   backgroundColor: "green",
@@ -1221,13 +1221,13 @@ export const VendorOrders = () => {
           <Button
             variant="success"
             onClick={() => {
-              Vendor?.VendorType === "Lab" ? (
-                DeliverLabOrder()
-              ) : Vendor?.VendorType === "Pharmacy" ? (
-                DeliverOrder()
-              ) : (
-                <></>
-              );
+              // Vendor?.VendorType === "Lab" ? (
+              //   DeliverLabOrder()
+              // ) : Vendor?.VendorType === "Pharmacy" ? (
+              DeliverOrder();
+              // ) : (
+              //   <></>
+              // );
             }}
           >
             DELIVER

@@ -255,7 +255,8 @@ function BookedLabTest() {
       let res = await axios(config);
       if (res.status === 200) {
         alert(res.data.success);
-        handleClose5();
+        GetLabtestList();
+        handleClose6();
       }
     } catch (error) {
       alert(error.response.data.error);

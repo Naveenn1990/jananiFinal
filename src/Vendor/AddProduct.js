@@ -57,102 +57,199 @@ export const AddProduct = () => {
   const AddProduct = async (e) => {
     e.preventDefault();
 
-    if (productType?.toLowerCase() === "tablet") {
-      if (!No_of_Strips) {
-        alert("Please Enter Number of Strips");
-      } else if (!No_Tablets_strips) {
-        alert("Please Enter Number of Tablets in Strips");
-      } else if (
-        !HSN ||
-        !Batch ||
-        !MRP ||
-        !CGST ||
-        !SGST ||
-        !productType ||
-        !productName ||
-        !productPrice ||
-        !ProductCategory ||
-        !ProductSubCategory ||
-        !manufacturingDate ||
-        !expiryDate ||
-        !discount ||
-        !productSize ||
-        !packSize ||
-        !colour ||
-        !flavour ||
-        !fragrance ||
-        !variant ||
-        !description ||
-        !brand ||
-        !countryOfOrigin ||
-        !manufacturercompanyname ||
-        !manufactureraddress ||
-        !stock ||
-        !currencyFormat ||
-        productImgs?.length === 0 ||
-        !safetyDoc ||
-        !GstDocument
-      ) {
-        alert("Please fill all the fields");
-      } else {
-        let obj1 = {
-          HSN: HSN,
-          Batch: Batch,
-          No_of_Strips: No_of_Strips,
-          No_Tablets_strips: No_Tablets_strips,
-          Scheme: Scheme,
-          MRP: MRP,
-          CGST: CGST,
-          SGST: SGST,
-          vendorid: Vendor?._id,
-          productName: productName,
-          productPrice: productPrice,
-          productType: productType,
-          categoryid: ProductCategory,
-          subcategoryid: ProductSubCategory,
-          // Category: ProductCategory?.categoryName,
-          // Subcategory: ProductSubCategory?.subcategoryName,
-          manufacturingDate: manufacturingDate,
-          expiryDate: expiryDate,
-          discount: discount,
-          productSize: productSize,
-          packSize: packSize,
-          colour: colour,
-          flavour: flavour,
-          fragrance: fragrance,
-          variant: variant,
-          description: description,
-          brand: brand,
-          countryOfOrigin: countryOfOrigin,
-          manufacturercompanyname: manufacturercompanyname,
-          manufactureraddress: manufactureraddress,
-          stock: stock,
-          // minstock: minstock,
-          currencyFormat: currencyFormat,
-          productImgs: productImgs,
-          safetyDoc: safetyDoc,
-          GstDocument: GstDocument,
-        };
-
-        try {
-          const config = {
-            url: "/vendor/addProduct",
-            method: "post",
-            baseURL: "http://localhost:8521/api",
-            headers: { "content-type": "multipart/form-data" },
-            data: obj1,
+    if (Vendor?.VendorType !== "Lab") {
+      if (productType?.toLowerCase() === "tablet") {
+        if (!No_of_Strips) {
+          alert("Please Enter Number of Strips");
+        } else if (!No_Tablets_strips) {
+          alert("Please Enter Number of Tablets in Strips");
+        } else if (
+          !HSN ||
+          !Batch ||
+          !MRP ||
+          !CGST ||
+          !SGST ||
+          !productType ||
+          !productName ||
+          !productPrice ||
+          !ProductCategory ||
+          !ProductSubCategory ||
+          !manufacturingDate ||
+          !expiryDate ||
+          !discount ||
+          !productSize ||
+          !packSize ||
+          !colour ||
+          !flavour ||
+          !fragrance ||
+          !variant ||
+          !description ||
+          !brand ||
+          !countryOfOrigin ||
+          !manufacturercompanyname ||
+          !manufactureraddress ||
+          !stock ||
+          !currencyFormat ||
+          productImgs?.length === 0 ||
+          !safetyDoc ||
+          !GstDocument
+        ) {
+          alert("Please fill all the fields");
+        } else {
+          let obj1 = {
+            HSN: HSN,
+            Batch: Batch,
+            No_of_Strips: No_of_Strips,
+            No_Tablets_strips: No_Tablets_strips,
+            Scheme: Scheme,
+            MRP: MRP,
+            CGST: CGST,
+            SGST: SGST,
+            vendorid: Vendor?._id,
+            productName: productName,
+            productPrice: productPrice,
+            productType: productType,
+            categoryid: ProductCategory,
+            subcategoryid: ProductSubCategory,
+            // Category: ProductCategory?.categoryName,
+            // Subcategory: ProductSubCategory?.subcategoryName,
+            manufacturingDate: manufacturingDate,
+            expiryDate: expiryDate,
+            discount: discount,
+            productSize: productSize,
+            packSize: packSize,
+            colour: colour,
+            flavour: flavour,
+            fragrance: fragrance,
+            variant: variant,
+            description: description,
+            brand: brand,
+            countryOfOrigin: countryOfOrigin,
+            manufacturercompanyname: manufacturercompanyname,
+            manufactureraddress: manufactureraddress,
+            stock: stock,
+            // minstock: minstock,
+            currencyFormat: currencyFormat,
+            productImgs: productImgs,
+            safetyDoc: safetyDoc,
+            GstDocument: GstDocument,
           };
-          let res = await axios(config);
-          if (res.status === 200) {
-            console.log(res.data);
-            console.log(res.data.success);
-            alert("Product Added");
-            window.location.assign("/VendorAddProducts");
+
+          try {
+            const config = {
+              url: "/vendor/addProduct",
+              method: "post",
+              baseURL: "http://localhost:8521/api",
+              headers: { "content-type": "multipart/form-data" },
+              data: obj1,
+            };
+            let res = await axios(config);
+            if (res.status === 200) {
+              console.log(res.data);
+              console.log(res.data.success);
+              alert("Product Added");
+              window.location.assign("/VendorAddProducts");
+            }
+          } catch (error) {
+            console.log(error.response);
+            if (error.response) {
+              alert(error.response.data.error);
+            }
           }
-        } catch (error) {
-          console.log(error.response);
-          if (error.response) {
-            alert(error.response.data.error);
+        }
+      } else {
+        if (
+          !HSN ||
+          !Batch ||
+          !MRP ||
+          !CGST ||
+          !SGST ||
+          !productType ||
+          !productName ||
+          !productPrice ||
+          !ProductCategory ||
+          !ProductSubCategory ||
+          !manufacturingDate ||
+          !expiryDate ||
+          !discount ||
+          !productSize ||
+          !packSize ||
+          !colour ||
+          !flavour ||
+          !fragrance ||
+          !variant ||
+          !description ||
+          !brand ||
+          !countryOfOrigin ||
+          !manufacturercompanyname ||
+          !manufactureraddress ||
+          !stock ||
+          !currencyFormat ||
+          productImgs?.length === 0 ||
+          !safetyDoc ||
+          !GstDocument
+        ) {
+          alert("Please fill all the fields");
+        } else {
+          let obj1 = {
+            HSN: HSN,
+            Batch: Batch,
+            MRP: MRP,
+            CGST: CGST,
+            SGST: SGST,
+            No_of_Strips: No_of_Strips,
+            No_Tablets_strips: No_Tablets_strips,
+            Scheme: Scheme,
+            vendorid: Vendor?._id,
+            productName: productName,
+            productPrice: productPrice,
+            productType: productType,
+            categoryid: ProductCategory,
+            subcategoryid: ProductSubCategory,
+            // Category: ProductCategory?.categoryName,
+            // Subcategory: ProductSubCategory?.subcategoryName,
+            manufacturingDate: manufacturingDate,
+            expiryDate: expiryDate,
+            discount: discount,
+            productSize: productSize,
+            packSize: packSize,
+            colour: colour,
+            flavour: flavour,
+            fragrance: fragrance,
+            variant: variant,
+            description: description,
+            brand: brand,
+            countryOfOrigin: countryOfOrigin,
+            manufacturercompanyname: manufacturercompanyname,
+            manufactureraddress: manufactureraddress,
+            stock: stock,
+            // minstock: minstock,
+            currencyFormat: currencyFormat,
+            productImgs: productImgs,
+            safetyDoc: safetyDoc,
+            GstDocument: GstDocument,
+          };
+
+          try {
+            const config = {
+              url: "/vendor/addProduct",
+              method: "post",
+              baseURL: "http://localhost:8521/api",
+              headers: { "content-type": "multipart/form-data" },
+              data: obj1,
+            };
+            let res = await axios(config);
+            if (res.status === 200) {
+              console.log(res.data);
+              console.log(res.data.success);
+              alert("Product Added");
+              window.location.assign("/VendorAddProducts");
+            }
+          } catch (error) {
+            console.log(error.response);
+            if (error.response) {
+              alert(error.response.data.error);
+            }
           }
         }
       }
@@ -166,19 +263,12 @@ export const AddProduct = () => {
         !productType ||
         !productName ||
         !productPrice ||
-        !ProductCategory ||
-        !ProductSubCategory ||
         !manufacturingDate ||
         !expiryDate ||
         !discount ||
         !productSize ||
         !packSize ||
-        !colour ||
-        !flavour ||
-        !fragrance ||
-        !variant ||
         !description ||
-        !brand ||
         !countryOfOrigin ||
         !manufacturercompanyname ||
         !manufactureraddress ||
@@ -196,28 +286,19 @@ export const AddProduct = () => {
           MRP: MRP,
           CGST: CGST,
           SGST: SGST,
-          No_of_Strips: No_of_Strips,
-          No_Tablets_strips: No_Tablets_strips,
-          Scheme: Scheme,
+
           vendorid: Vendor?._id,
           productName: productName,
           productPrice: productPrice,
           productType: productType,
-          categoryid: ProductCategory,
-          subcategoryid: ProductSubCategory,
-          // Category: ProductCategory?.categoryName,
-          // Subcategory: ProductSubCategory?.subcategoryName,
+
           manufacturingDate: manufacturingDate,
           expiryDate: expiryDate,
           discount: discount,
           productSize: productSize,
           packSize: packSize,
-          colour: colour,
-          flavour: flavour,
-          fragrance: fragrance,
-          variant: variant,
+
           description: description,
-          brand: brand,
           countryOfOrigin: countryOfOrigin,
           manufacturercompanyname: manufacturercompanyname,
           manufactureraddress: manufactureraddress,
@@ -376,35 +457,47 @@ export const AddProduct = () => {
             </InputGroup>
           </div>
 
-          <div className="col-lg-3">
-            <label className="fw-bold text-dark">Product Category*</label>
-            <Form.Select
-              aria-label="Default select example"
-              onChange={(e) => setProductCategory(e.target.value)}
-            >
-              <option>Select Product Category</option>
-              {categoryList?.map((item) => {
-                return <option value={item?._id}>{item?.categoryName}</option>;
-              })}
-            </Form.Select>
-          </div>
+          {Vendor?.VendorType !== "Lab" ? (
+            <>
+              <div className="col-lg-3">
+                <label className="fw-bold text-dark">Product Category*</label>
+                <Form.Select
+                  aria-label="Default select example"
+                  onChange={(e) => setProductCategory(e.target.value)}
+                >
+                  <option>Select Product Category</option>
+                  {categoryList?.map((item) => {
+                    return (
+                      <option value={item?._id}>{item?.categoryName}</option>
+                    );
+                  })}
+                </Form.Select>
+              </div>
 
-          <div className="col-lg-3">
-            <label className="fw-bold text-dark">Product Sub-Category*</label>
-            <Form.Select
-              aria-label="Default select example"
-              onChange={(e) => setProductSubCategory(e.target.value)}
-            >
-              <option>Select Product Sub-Category</option>
-              {subcategoryList
-                ?.filter((sub) => sub?.categoryid?._id === ProductCategory)
-                .map((item) => {
-                  return (
-                    <option value={item?._id}>{item?.subcategoryName}</option>
-                  );
-                })}
-            </Form.Select>
-          </div>
+              <div className="col-lg-3">
+                <label className="fw-bold text-dark">
+                  Product Sub-Category*
+                </label>
+                <Form.Select
+                  aria-label="Default select example"
+                  onChange={(e) => setProductSubCategory(e.target.value)}
+                >
+                  <option>Select Product Sub-Category</option>
+                  {subcategoryList
+                    ?.filter((sub) => sub?.categoryid?._id === ProductCategory)
+                    .map((item) => {
+                      return (
+                        <option value={item?._id}>
+                          {item?.subcategoryName}
+                        </option>
+                      );
+                    })}
+                </Form.Select>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
 
           {productType?.toLowerCase() === "tablet" ? (
             <>
@@ -547,17 +640,21 @@ export const AddProduct = () => {
             </InputGroup>
           </div>
 
-          <div className="col-lg-3">
-            <label className="fw-bold text-dark">Product variant*</label>
-            <InputGroup className="mb-3">
-              <Form.Control
-                type="text"
-                placeholder="Product variant"
-                aria-describedby="basic-addon1"
-                onChange={(e) => setvariant(e.target.value)}
-              />
-            </InputGroup>
-          </div>
+          {Vendor?.VendorType !== "Lab" ? (
+            <div className="col-lg-3">
+              <label className="fw-bold text-dark">Product variant*</label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Product variant"
+                  aria-describedby="basic-addon1"
+                  onChange={(e) => setvariant(e.target.value)}
+                />
+              </InputGroup>
+            </div>
+          ) : (
+            <></>
+          )}
 
           <div className="col-lg-3">
             <label className="fw-bold text-dark">Manufacturing Date*</label>
@@ -607,41 +704,47 @@ export const AddProduct = () => {
             </InputGroup>
           </div>
 
-          <div className="col-lg-3">
-            <label className="fw-bold text-dark">Colour</label>
-            <InputGroup className="mb-3">
-              <Form.Control
-                type="SAC"
-                placeholder="Colour"
-                aria-describedby="basic-addon1"
-                onChange={(e) => setcolour(e.target.value)}
-              />
-            </InputGroup>
-          </div>
+          {Vendor?.VendorType !== "Lab" ? (
+            <>
+              <div className="col-lg-3">
+                <label className="fw-bold text-dark">Colour</label>
+                <InputGroup className="mb-3">
+                  <Form.Control
+                    type="SAC"
+                    placeholder="Colour"
+                    aria-describedby="basic-addon1"
+                    onChange={(e) => setcolour(e.target.value)}
+                  />
+                </InputGroup>
+              </div>
 
-          <div className="col-lg-3">
-            <label className="fw-bold text-dark">Flavour</label>
-            <InputGroup className="mb-3">
-              <Form.Control
-                type="text"
-                placeholder="flavour"
-                aria-describedby="basic-addon1"
-                onChange={(e) => setflavour(e.target.value)}
-              />
-            </InputGroup>
-          </div>
+              <div className="col-lg-3">
+                <label className="fw-bold text-dark">Flavour</label>
+                <InputGroup className="mb-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="flavour"
+                    aria-describedby="basic-addon1"
+                    onChange={(e) => setflavour(e.target.value)}
+                  />
+                </InputGroup>
+              </div>
 
-          <div className="col-lg-3">
-            <label className="fw-bold text-dark">Fragrance</label>
-            <InputGroup className="mb-3">
-              <Form.Control
-                type="text"
-                placeholder="fragrance"
-                aria-describedby="basic-addon1"
-                onChange={(e) => setfragrance(e.target.value)}
-              />
-            </InputGroup>
-          </div>
+              <div className="col-lg-3">
+                <label className="fw-bold text-dark">Fragrance</label>
+                <InputGroup className="mb-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="fragrance"
+                    aria-describedby="basic-addon1"
+                    onChange={(e) => setfragrance(e.target.value)}
+                  />
+                </InputGroup>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
 
           <div className="col-lg-3">
             <label className="fw-bold text-dark">Description</label>
@@ -655,26 +758,30 @@ export const AddProduct = () => {
             </InputGroup>
           </div>
 
-          <div className="col-lg-3">
-            <label className="fw-bold text-dark">Brand</label>
-            <InputGroup className="mb-3">
-              {/* <Form.Control
+          {Vendor?.VendorType !== "Lab" ? (
+            <div className="col-lg-3">
+              <label className="fw-bold text-dark">Brand</label>
+              <InputGroup className="mb-3">
+                {/* <Form.Control
                 type="text"
                 placeholder="brand"
                 aria-describedby="basic-addon1"
                 onChange={(e) => setbrand(e.target.value)}
               /> */}
-              <Form.Select
-                aria-label="Default select example"
-                onChange={(e) => setbrand(e.target.value)}
-              >
-                <option>Select Brand</option>
-                {brandList?.map((brand) => (
-                  <option value={brand?.brandName}>{brand?.brandName}</option>
-                ))}
-              </Form.Select>
-            </InputGroup>
-          </div>
+                <Form.Select
+                  aria-label="Default select example"
+                  onChange={(e) => setbrand(e.target.value)}
+                >
+                  <option>Select Brand</option>
+                  {brandList?.map((brand) => (
+                    <option value={brand?.brandName}>{brand?.brandName}</option>
+                  ))}
+                </Form.Select>
+              </InputGroup>
+            </div>
+          ) : (
+            <></>
+          )}
 
           <div className="col-lg-3">
             <label className="fw-bold text-dark">Country Of Origin</label>
