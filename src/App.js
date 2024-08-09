@@ -281,6 +281,7 @@ import SafetyCheckList from "./Admin/PatientAdmitForms/SafetyCheckList";
 import Addsurgey from "./Admin/Addsurgey";
 import OTRooms from "./Admin/OTRooms";
 import SurgeryDoctor from "./Admin/SurgeryDoctor";
+import SurgeryPatients from "./Admin/SurgeryPatients";
 
 function App() {
   return (
@@ -2753,6 +2754,15 @@ function App() {
                 <>
                   <PageLoaderA />
                   <Adminpanel children={<SurgeryDoctor />} />{" "}
+                </>
+              }
+            ></Route>
+            <Route
+              path="/admin/SurgeryPatients"
+              element={
+                <>
+                  <PageLoaderA />
+                  <Adminpanel children={<SurgeryPatients />} />{" "}
                 </>
               }
             ></Route>

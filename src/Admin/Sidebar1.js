@@ -408,6 +408,12 @@ export default function Sidebar1() {
           >
             Surgery Doctor
           </h6>
+          <h6
+            className="sidebarItem1"
+            onClick={() => navigate("/admin/SurgeryPatients")}
+          >
+            Surgery
+          </h6>
         </div>
 
         {admin?.bedManagement === true ? (
