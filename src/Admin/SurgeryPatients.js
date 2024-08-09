@@ -26,13 +26,93 @@ export default function SurgeryPatients() {
     setSelectedData(item);
   };
 
+  const [REasonForRejection, setREasonForRejection] = useState();
+  const [show1, setShow1] = useState(false);
+  const handleClose1 = () => setShow1(false);
+  const handleShow1 = (item) => {
+    setShow1(true);
+    setSelectedData(item);
+  };
+
+  const [showaccepted, setShowaccepted] = useState(false);
+  const handleCloseaccepted = () => setShowaccepted(false);
+  const handleShowaccepted = (item) => {
+    setShowaccepted(true);
+    setSelectedData(item);
+  };
+
+  const [showrejected, setShowrejected] = useState(false);
+  const handleCloserejected = () => setShowrejected(false);
+  const handleShowrejected = (item) => {
+    setShowrejected(true);
+    setSelectedData(item);
+  };
+
   // Get Data
+  const allTimes = [
+    { settime: "12:00 AM", gettime: "12:30 AM" },
+    { settime: "12:30 AM", gettime: "1:00 AM" },
+    { settime: "1:00 AM", gettime: "1:30 AM" },
+    { settime: "1:30 AM", gettime: "2:00 AM" },
+    { settime: "2:00 AM", gettime: "2:30 AM" },
+    { settime: "2:30 AM", gettime: "3:00 AM" },
+    { settime: "3:00 AM", gettime: "3:30 AM" },
+    { settime: "3:30 AM", gettime: "4:00 AM" },
+    { settime: "4:00 AM", gettime: "4:30 AM" },
+    { settime: "4:30 AM", gettime: "5:00 AM" },
+    { settime: "5:00 AM", gettime: "5:30 AM" },
+    { settime: "5:30 AM", gettime: "6:00 AM" },
+    { settime: "6:00 AM", gettime: "6:30 AM" },
+    { settime: "6:30 AM", gettime: "7:00 AM" },
+    { settime: "7:00 AM", gettime: "7:30 AM" },
+    { settime: "7:30 AM", gettime: "8:00 AM" },
+    { settime: "8:00 AM", gettime: "8:30 AM" },
+    { settime: "8:30 AM", gettime: "9:00 AM" },
+    { settime: "9:00 AM", gettime: "9:30 AM" },
+    { settime: "9:30 AM", gettime: "10:00 AM" },
+    { settime: "10:00 AM", gettime: "10:30 AM" },
+    { settime: "10:30 AM", gettime: "11:00 AM" },
+    { settime: "11:00 AM", gettime: "11:30 AM" },
+    { settime: "11:30 AM", gettime: "12:00 PM" },
+    { settime: "12:00 PM", gettime: "12:30 PM" },
+    { settime: "12:30 PM", gettime: "1:00 PM" },
+    { settime: "1:00 PM", gettime: "1:30 PM" },
+    { settime: "1:30 PM", gettime: "2:00 PM" },
+    { settime: "2:00 PM", gettime: "2:30 PM" },
+    { settime: "2:30 PM", gettime: "3:00 PM" },
+    { settime: "3:00 PM", gettime: "3:30 PM" },
+    { settime: "3:30 PM", gettime: "4:00 PM" },
+    { settime: "4:00 PM", gettime: "4:30 PM" },
+    { settime: "4:30 PM", gettime: "5:00 PM" },
+    { settime: "5:00 PM", gettime: "5:30 PM" },
+    { settime: "5:30 PM", gettime: "6:00 PM" },
+    { settime: "6:00 PM", gettime: "6:30 PM" },
+    { settime: "6:30 PM", gettime: "7:00 PM" },
+    { settime: "7:00 PM", gettime: "7:30 PM" },
+    { settime: "7:30 PM", gettime: "8:00 PM" },
+    { settime: "8:00 PM", gettime: "8:30 PM" },
+    { settime: "8:30 PM", gettime: "9:00 PM" },
+    { settime: "9:00 PM", gettime: "9:30 PM" },
+    { settime: "9:30 PM", gettime: "10:00 PM" },
+    { settime: "10:00 PM", gettime: "10:30 PM" },
+    { settime: "10:30 PM", gettime: "11:00 PM" },
+    { settime: "11:00 PM", gettime: "11:30 PM" },
+    { settime: "11:30 PM", gettime: "12:00 AM" },
+  ];
   const [data, setdata] = useState([]);
   const [Department, setDepartment] = useState([]);
+  const [Surgeon, setSurgeon] = useState([]);
+  const [OtRooms, setOtRooms] = useState([]);
+
+  const [AvailabelNurse, setAvailabelNurse] = useState([]);
+  const [AvailabelDoctor, setAvailabelDoctor] = useState([]);
+  const [AnaesthetistDoctors, setAnaesthetistDoctors] = useState([]);
+  const [AvailabelOtRooms, setAvailabelOtRooms] = useState([]);
 
   const [SelectedDepartment, setSelectedDepartment] = useState();
   const [SurgeryDate, setSurgeryDate] = useState();
-  const [SurgeryTime, setSurgeryTime] = useState();
+  const [StartTime, setStartTime] = useState();
+  const [EndTime, setEndTime] = useState();
   const [SelectedSurgeon, setSelectedSurgeon] = useState();
   const [SelectedAssistant1, setSelectedAssistant1] = useState();
   const [SelectedAssistant2, setSelectedAssistant2] = useState();
@@ -58,6 +138,8 @@ export default function SurgeryPatients() {
   useEffect(() => {
     GetSurgeryPatients();
     GetDepartment();
+    getDoctors();
+    GetOtRooms();
   }, []);
 
   const GetDepartment = async () => {
@@ -66,12 +148,214 @@ export default function SurgeryPatients() {
         "http://localhost:8521/api/admin/getDepartment"
       );
       if (res.status === 200) {
-        setDepartment(res.data.success);
+        setDepartment(
+          res.data.success.filter((data) => data.DepartmentName !== "Nursing")
+        );
       }
     } catch (error) {
       console.log(error);
     }
   };
+
+  const getDoctors = () => {
+    axios
+      .get("http://localhost:8521/api/Doctor/getDoctorsList")
+      .then(function (response) {
+        // handle success
+        setSurgeon(
+          response.data.DoctorsInfo?.filter(
+            (data) => data.DoctorType === "Surgery"
+          )
+        );
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+  };
+
+  const GetOtRooms = async () => {
+    try {
+      const res = await axios.get("http://localhost:8521/api/admin/GetOtRooms");
+      if (res.status === 200) {
+        setOtRooms(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log("OtRooms", OtRooms);
+
+  useEffect(() => {
+    if ((SelectedDepartment, SurgeryDate, StartTime, EndTime)) {
+      const xyz = Surgeon?.filter(
+        (item) =>
+          item?.Department === SelectedDepartment &&
+          item?.scheduleList?.find(
+            (tim) =>
+              tim.startTime === StartTime &&
+              tim.endTime === EndTime &&
+              tim.scheduleDate === SurgeryDate &&
+              tim.bookingstatus === "Vacant"
+          )
+      );
+      setAvailabelDoctor(xyz);
+    }
+  }, [SelectedDepartment, SurgeryDate, StartTime, EndTime]);
+
+  useEffect(() => {
+    if ((SurgeryDate, StartTime, EndTime)) {
+      const bhbg = Surgeon?.filter(
+        (item) =>
+          item?.Department === "Anaesthetist" &&
+          item?.scheduleList?.find(
+            (tim) =>
+              tim.startTime === StartTime &&
+              tim.endTime === EndTime &&
+              tim.scheduleDate === SurgeryDate &&
+              tim.bookingstatus === "Vacant"
+          )
+      );
+      setAnaesthetistDoctors(bhbg);
+    }
+  }, [SurgeryDate, StartTime, EndTime]);
+
+  useEffect(() => {
+    if ((SurgeryDate, StartTime, EndTime)) {
+      const sdfg = Surgeon?.filter(
+        (item) =>
+          item?.Department === "Nursing" &&
+          item?.scheduleList?.find(
+            (tim) =>
+              tim.startTime === StartTime &&
+              tim.endTime === EndTime &&
+              tim.scheduleDate === SurgeryDate &&
+              tim.bookingstatus === "Vacant"
+          )
+      );
+      setAvailabelNurse(sdfg);
+    }
+  }, [SurgeryDate, StartTime, EndTime]);
+
+  useEffect(() => {
+    if ((SurgeryDate, StartTime, EndTime)) {
+      const sdfg = OtRooms?.filter((item) =>
+        item?.scheduleList?.find(
+          (tim) =>
+            tim.startTime === StartTime &&
+            tim.endTime === EndTime &&
+            tim.scheduleDate === SurgeryDate &&
+            tim.bookingstatus === "Vacant"
+        )
+      );
+      setAvailabelOtRooms(sdfg);
+    }
+  }, [SurgeryDate, StartTime, EndTime]);
+
+  console.log(
+    "SelectedSurgeon",
+    SelectedSurgeon,
+    SelectedAssistant1,
+    SelectedAssistant2,
+    SelectedAnaesthetist,
+    SelectedScrubNurse,
+    SelectedCircNurse,
+    SelectedOTRoom
+  );
+
+  const confirmSurgery = async (e) => {
+    e.preventDefault();
+    if (
+      !SelectedDepartment ||
+      !SurgeryDate ||
+      !StartTime ||
+      !EndTime ||
+      !Note ||
+      !SelectedSurgeon ||
+      !SelectedAssistant1 ||
+      !SelectedAssistant2 ||
+      !SelectedAnaesthetist ||
+      !SelectedScrubNurse ||
+      !SelectedCircNurse ||
+      !SelectedOTRoom
+    ) {
+      alert("Please fill all the fields");
+    }
+    {
+      const SSurgeon = SelectedSurgeon?.split("-");
+      const SAssistant1 = SelectedAssistant1?.split("-");
+      const SAssistant2 = SelectedAssistant2?.split("-");
+      const SAnaesthetist = SelectedAnaesthetist?.split("-");
+      const SScrubNurse = SelectedScrubNurse?.split("-");
+      const SCircNurse = SelectedCircNurse?.split("-");
+      try {
+        const config = {
+          url: `/admin/confirmSurgery`,
+          method: "post",
+          baseURL: "http://localhost:8521/api",
+          headers: { "Content-Type": "application/json" },
+          data: {
+            id: SelectedData?._id,
+            causeId: SelectedData?.CauseId,
+            causename: SelectedData?.CauseName,
+            Department: SelectedDepartment,
+            SurgeryDate: SurgeryDate,
+            StartTime: StartTime,
+            EndTime: EndTime,
+            Note: Note,
+            Surgeon: SSurgeon[0],
+            Assistant1: SAssistant1[0],
+            Assistant2: SAssistant2[0],
+            Anaesthetist: SAnaesthetist[0],
+            ScrubNurse: SScrubNurse[0],
+            CircNurse: SCircNurse[0],
+            OTRoom: SelectedOTRoom,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          GetOtRooms();
+          alert(res?.data?.success);
+          window.location.reload();
+          // setScheduleList("");
+        }
+      } catch (error) {
+        console.log(error);
+        alert(error.response.data.message);
+      }
+    }
+  };
+
+  const rejectSurgery = async (e) => {
+    e.preventDefault();
+    if (!REasonForRejection) {
+      alert("Please enter reason for rejection");
+    } else {
+      try {
+        const config = {
+          url: `/admin/RejectSurgery`,
+          method: "post",
+          baseURL: "http://localhost:8521/api",
+          headers: { "Content-Type": "application/json" },
+          data: {
+            id: SelectedData?._id,
+            REasonForRejection: REasonForRejection,
+          },
+        };
+        let res = await axios(config);
+        if (res.status === 200) {
+          alert(res?.data?.success);
+          window.location.reload();
+        }
+      } catch (error) {
+        console.log(error);
+        alert(error.response.data.message);
+      }
+    }
+  };
+
+  console.log("AvailabelDoctor", AvailabelDoctor);
 
   const [search, setSearch] = useState("");
   const [tableFilter, settableFilter] = useState([]);
@@ -231,15 +515,48 @@ export default function SurgeryPatients() {
                           <td>{item?.DoctorName}</td>
                           <td>{item?.ReasonForSurgery}</td>
                           <td>
-                            <div className="d-flex gap-5 fs-5">
-                              <Button
-                                style={{ backgroundColor: "#20958c" }}
-                                onClick={() => handleShow(item)}
-                              >
-                                Accept
-                              </Button>
-                              <Button>Reject</Button>
-                            </div>
+                            {item?.Status === "Accepted" ? (
+                              <>
+                                <button
+                                  style={{
+                                    backgroundColor: "transparent",
+                                    border: "none",
+                                  }}
+                                  onClick={() => handleShowaccepted(item)}
+                                >
+                                  <i class="fas fa-eye"></i>
+                                </button>
+                              </>
+                            ) : item?.Status === "Rejected" ? (
+                              <>
+                                <button
+                                  style={{
+                                    backgroundColor: "transparent",
+                                    border: "none",
+                                  }}
+                                  onClick={() => handleShowrejected(item)}
+                                >
+                                  <i
+                                    class="fas fa-eye"
+                                    style={{ color: "red" }}
+                                  ></i>
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <div className="d-flex gap-5 fs-5">
+                                  <Button
+                                    style={{ backgroundColor: "#20958c" }}
+                                    onClick={() => handleShow(item)}
+                                  >
+                                    Accept
+                                  </Button>
+                                  <Button onClick={() => handleShow1(item)}>
+                                    Reject
+                                  </Button>
+                                </div>
+                              </>
+                            )}
                           </td>
                         </tr>
                       </>
@@ -279,6 +596,48 @@ export default function SurgeryPatients() {
           <div className="row" style={{ padding: "10px" }}>
             <Row>
               <Col md={6}>
+                <Row>
+                  <Col md={4}>
+                    <label style={{ color: "white" }}>
+                      Select Surgery Date
+                    </label>
+                    <Form.Control
+                      onChange={(e) => setSurgeryDate(e.target.value)}
+                      aria-label="Default select example"
+                      type="date"
+                    />
+                  </Col>
+                  <Col md={4}>
+                    <label style={{ color: "white" }}>Select start Time</label>
+                    <Form.Select
+                      onChange={(e) => setStartTime(e.target.value)}
+                      aria-label="Default select example"
+                    >
+                      <option>select Time</option>
+                      {allTimes?.map((item) => {
+                        return (
+                          <option value={item?.settime}>{item?.settime}</option>
+                        );
+                      })}
+                    </Form.Select>
+                  </Col>
+                  <Col md={4}>
+                    <label style={{ color: "white" }}>Select End Time</label>
+                    <Form.Select
+                      onChange={(e) => setEndTime(e.target.value)}
+                      aria-label="Default select example"
+                    >
+                      <option>select Time</option>
+                      {allTimes?.map((item) => {
+                        return (
+                          <option value={item?.settime}>{item?.settime}</option>
+                        );
+                      })}
+                    </Form.Select>
+                  </Col>
+                </Row>
+              </Col>
+              <Col md={6}>
                 <label style={{ color: "white" }}>Select Department</label>
                 <Form.Select
                   onChange={(e) => setSelectedDepartment(e.target.value)}
@@ -294,39 +653,6 @@ export default function SurgeryPatients() {
                   })}
                 </Form.Select>
               </Col>
-              <Col md={6}>
-                <Row>
-                  <Col md={6}>
-                    <label style={{ color: "white" }}>
-                      Select Surgery Date
-                    </label>
-                    <Form.Control
-                      onChange={(e) => setSurgeryDate(e.target.value)}
-                      aria-label="Default select example"
-                      type="date"
-                    />
-                  </Col>
-                  <Col md={6}>
-                    {" "}
-                    <label style={{ color: "white" }}>
-                      Select Surgery Time
-                    </label>
-                    <Form.Select
-                      onChange={(e) => setSurgeryTime(e.target.value)}
-                      aria-label="Default select example"
-                    >
-                      <option>select Surgery Time</option>
-                      {SelectedData?.cause?.map((item) => {
-                        return (
-                          <option value={`${item?._id}-${item?.CauseName}`}>
-                            {item?.CauseName}
-                          </option>
-                        );
-                      })}
-                    </Form.Select>
-                  </Col>
-                </Row>
-              </Col>
             </Row>
             <Row>
               <Col md={6}>
@@ -336,10 +662,13 @@ export default function SurgeryPatients() {
                   aria-label="Default select example"
                 >
                   <option>select Surgeon</option>
-                  {SelectedData?.cause?.map((item) => {
+                  {AvailabelDoctor?.map((item) => {
                     return (
-                      <option value={`${item?._id}-${item?.CauseName}`}>
-                        {item?.CauseName}
+                      <option
+                        value={`${item?._id}-${item?.Firstname} ${item?.Lastname}`}
+                      >
+                        {item?.Firstname}&nbsp;{item?.Lastname}&nbsp;-&nbsp;
+                        {item?.DoctorId}
                       </option>
                     );
                   })}
@@ -352,10 +681,13 @@ export default function SurgeryPatients() {
                   aria-label="Default select example"
                 >
                   <option>select Assistant-1</option>
-                  {SelectedData?.cause?.map((item) => {
+                  {AvailabelDoctor?.map((item) => {
                     return (
-                      <option value={`${item?._id}-${item?.CauseName}`}>
-                        {item?.CauseName}
+                      <option
+                        value={`${item?._id}-${item?.Firstname} ${item?.Lastname}`}
+                      >
+                        {item?.Firstname}&nbsp;{item?.Lastname}&nbsp;-&nbsp;
+                        {item?.DoctorId}
                       </option>
                     );
                   })}
@@ -370,10 +702,13 @@ export default function SurgeryPatients() {
                   aria-label="Default select example"
                 >
                   <option>select Assistant-2</option>
-                  {SelectedData?.cause?.map((item) => {
+                  {AvailabelDoctor?.map((item) => {
                     return (
-                      <option value={`${item?._id}-${item?.CauseName}`}>
-                        {item?.CauseName}
+                      <option
+                        value={`${item?._id}-${item?.Firstname} ${item?.Lastname}`}
+                      >
+                        {item?.Firstname}&nbsp;{item?.Lastname}&nbsp;-&nbsp;
+                        {item?.DoctorId}
                       </option>
                     );
                   })}
@@ -386,10 +721,13 @@ export default function SurgeryPatients() {
                   aria-label="Default select example"
                 >
                   <option>select Anaesthetist</option>
-                  {SelectedData?.cause?.map((item) => {
+                  {AnaesthetistDoctors?.map((item) => {
                     return (
-                      <option value={`${item?._id}-${item?.CauseName}`}>
-                        {item?.CauseName}
+                      <option
+                        value={`${item?._id}-${item?.Firstname} ${item?.Lastname}`}
+                      >
+                        {item?.Firstname}&nbsp;{item?.Lastname}&nbsp;-&nbsp;
+                        {item?.DoctorId}
                       </option>
                     );
                   })}
@@ -405,10 +743,13 @@ export default function SurgeryPatients() {
                   aria-label="Default select example"
                 >
                   <option>select Scrub Nurse</option>
-                  {SelectedData?.cause?.map((item) => {
+                  {AvailabelNurse?.map((item) => {
                     return (
-                      <option value={`${item?._id}-${item?.CauseName}`}>
-                        {item?.CauseName}
+                      <option
+                        value={`${item?._id}-${item?.Firstname} ${item?.Lastname}`}
+                      >
+                        {item?.Firstname}&nbsp;{item?.Lastname}&nbsp;-&nbsp;
+                        {item?.DoctorId}
                       </option>
                     );
                   })}
@@ -421,10 +762,13 @@ export default function SurgeryPatients() {
                   aria-label="Default select example"
                 >
                   <option>select Circ Nurse</option>
-                  {SelectedData?.cause?.map((item) => {
+                  {AvailabelNurse?.map((item) => {
                     return (
-                      <option value={`${item?._id}-${item?.CauseName}`}>
-                        {item?.CauseName}
+                      <option
+                        value={`${item?._id}-${item?.Firstname} ${item?.Lastname}`}
+                      >
+                        {item?.Firstname}&nbsp;{item?.Lastname}&nbsp;-&nbsp;
+                        {item?.DoctorId}
                       </option>
                     );
                   })}
@@ -439,12 +783,8 @@ export default function SurgeryPatients() {
                   aria-label="Default select example"
                 >
                   <option>select OT Room</option>
-                  {SelectedData?.cause?.map((item) => {
-                    return (
-                      <option value={`${item?._id}-${item?.CauseName}`}>
-                        {item?.CauseName}
-                      </option>
-                    );
+                  {AvailabelOtRooms?.map((item) => {
+                    return <option value={item?._id}>{item?.Name}</option>;
                   })}
                 </Form.Select>
               </Col>
@@ -467,7 +807,184 @@ export default function SurgeryPatients() {
             <Button variant="secondary" onClick={() => setShow(false)}>
               Cancel
             </Button>
-            <Button variant="warning">Add</Button>
+            <Button variant="warning" onClick={(e) => confirmSurgery(e)}>
+              Add
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal size="md" show={show1} onHide={handleClose1}>
+        <Modal.Header>
+          <Modal.Title>Reject surgery </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="row" style={{ padding: "10px" }}>
+            <label style={{ color: "white" }}>Enter reason for rejection</label>
+            <Form.Control
+              onChange={(e) => setREasonForRejection(e.target.value)}
+              aria-label="Default select example"
+              type="text"
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="d-flex gap-2">
+            <Button variant="secondary" onClick={() => setShow1(false)}>
+              Cancel
+            </Button>
+            <Button variant="warning" onClick={(e) => rejectSurgery(e)}>
+              Reject
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        size="md"
+        show={showaccepted}
+        onHide={handleCloseaccepted}
+        className="custom-modal"
+      >
+        <Modal.Header>
+          <Modal.Title>Surgery Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="row" style={{ padding: "10px" }}>
+            <Row>
+              <Col md={6}>
+                <Row>
+                  <Col md={4}>
+                    <label style={{ color: "white" }}>Surgery Date</label>
+                    <Form.Control
+                      value={SelectedData?.SurgeryDate}
+                      aria-label="Default select example"
+                    />
+                  </Col>
+                  <Col md={4}>
+                    <label style={{ color: "white" }}>Start Time</label>
+
+                    <Form.Control
+                      value={SelectedData?.StartTime}
+                      aria-label="Default select example"
+                    />
+                  </Col>
+                  <Col md={4}>
+                    <label style={{ color: "white" }}>End Time</label>
+
+                    <Form.Control
+                      value={SelectedData?.EndTime}
+                      aria-label="Default select example"
+                    />
+                  </Col>
+                </Row>
+              </Col>
+              <Col md={6}>
+                <label style={{ color: "white" }}>Department</label>
+
+                <Form.Control
+                  value={SelectedData?.DepartmentName}
+                  aria-label="Default select example"
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <label style={{ color: "white" }}>Surgeon</label>
+
+                <Form.Control
+                  value={`${SelectedData?.Surgeon?.Firstname} ${SelectedData?.Surgeon?.Lastname}`}
+                  aria-label="Default select example"
+                />
+              </Col>
+              <Col md={6}>
+                <label style={{ color: "white" }}>Assistant-1</label>
+
+                <Form.Control
+                  value={`${SelectedData?.Assistant1?.Firstname} ${SelectedData?.Assistant1?.Lastname}`}
+                  aria-label="Default select example"
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <label style={{ color: "white" }}> Assistant-2</label>
+
+                <Form.Control
+                  value={`${SelectedData?.Assistant2?.Firstname} ${SelectedData?.Assistant2?.Lastname}`}
+                  aria-label="Default select example"
+                />
+              </Col>
+              <Col md={6}>
+                <label style={{ color: "white" }}>Anaesthetist</label>
+
+                <Form.Control
+                  value={`${SelectedData?.Anaesthetist?.Firstname} ${SelectedData?.Anaesthetist?.Lastname}`}
+                  aria-label="Default select example"
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <label style={{ color: "white" }}>Scrub Nurse</label>
+                <Form.Control
+                  value={`${SelectedData?.ScrubNurse?.Firstname} ${SelectedData?.ScrubNurse?.Lastname}`}
+                  aria-label="Default select example"
+                />
+              </Col>
+              <Col md={6}>
+                <label style={{ color: "white" }}>Circ Nurse</label>
+
+                <Form.Control
+                  value={`${SelectedData?.CircNurse?.Firstname} ${SelectedData?.CircNurse?.Lastname}`}
+                  aria-label="Default select example"
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <label style={{ color: "white" }}>OT Room</label>
+
+                <Form.Control
+                  value={SelectedData?.OTRoom?.Name}
+                  aria-label="Default select example"
+                />
+              </Col>
+              <Col md={6}></Col>
+            </Row>
+
+            <label style={{ color: "white" }}>Note</label>
+            <Form.Group className="mb-3">
+              <Form.Control
+                value={SelectedData?.Note}
+                aria-label="Default select example"
+              />
+            </Form.Group>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="d-flex gap-2">
+            <Button variant="secondary" onClick={() => setShowaccepted(false)}>
+              Cancel
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal size="md" show={showrejected} onHide={handleCloserejected}>
+        <Modal.Header>
+          <Modal.Title>Rejection reason for surgery </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="row" style={{ padding: "10px" }}>
+            <p style={{ color: "white" }}>{SelectedData?.REasonForRejection}</p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="d-flex gap-2">
+            <Button variant="secondary" onClick={() => setShowrejected(false)}>
+              Cancel
+            </Button>
           </div>
         </Modal.Footer>
       </Modal>

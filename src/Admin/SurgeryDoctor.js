@@ -478,6 +478,25 @@ export default function SurgeryDoctor() {
     }
   };
 
+  const deleteDoctorSchedul = async (RoomId, slotId) => {
+    try {
+      const config = {
+        url: "Doctor/deleteDoctorSchedul/" + RoomId + "/" + slotId,
+        baseURL: "http://localhost:8521/api",
+        method: "delete",
+        headers: { "content-type": "application-json" },
+      };
+      await axios(config).then((res) => {
+        if (res.status === 200) {
+          alert(res.data.success);
+          window.location.reload();
+        }
+      });
+    } catch (error) {
+      alert(error.response.data.error);
+    }
+  };
+
   const addAppointmentCharge = async (e) => {
     e.preventDefault();
     if (!appointmentcharge) {
@@ -1841,7 +1860,12 @@ export default function SurgeryDoctor() {
                         )}
                       </td>
                       <td>
-                        <MdDelete style={{ color: "red" }} />
+                        <MdDelete
+                          style={{ color: "red" }}
+                          onClick={() =>
+                            deleteDoctorSchedul(View?._id, item?._id)
+                          }
+                        />
                       </td>
                     </tr>
                   );
